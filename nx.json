@@ -14,7 +14,13 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "build-storybook"
+        ]
       }
     }
   },
@@ -38,7 +44,30 @@
     },
     "csr-frontend-e2e": {
       "tags": [],
-      "implicitDependencies": ["csr-frontend"]
+      "implicitDependencies": [
+        "csr-frontend"
+      ]
+    },
+    "socket-server": {
+      "tags": [
+        "socket.io server"
+      ]
+    },
+    "static-frontend": {
+      "tags": [
+        "static"
+      ]
+    },
+    "static-frontend-e2e": {
+      "tags": [],
+      "implicitDependencies": [
+        "static-frontend"
+      ]
+    },
+    "ui": {
+      "tags": [
+        "ui"
+      ]
     }
   }
 }

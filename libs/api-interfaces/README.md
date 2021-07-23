@@ -1,3 +1,3 @@
 # api-interfaces
 
-This library was generated with [Nx](https://nx.dev).
+Interfaces that describe API requests and responses.

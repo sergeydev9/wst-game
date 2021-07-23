@@ -1,0 +1,10 @@
+{
+  "name": "static-frontend",
+  "private": true,
+  "description": "Static site for who said true",
+  "version": "0.0.0",
+  "license": "none",
+  "dependencies": {
+    "gatsby": "*"
+  }
+}
