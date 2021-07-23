@@ -1,27 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { Message } from '@whosaidtrue/api-interfaces';
+import React from "react";
+import { Layout } from "@whosaidtrue/ui";
+import { Redirect, Route, Switch } from "react-router-dom";
+import { ROUTES } from "../util/constants";
+import { GuardedRoute } from "../features";
 
-export const App = () => {
-  const [m, setMessage] = useState<Message>({ message: '' });
+// TODO: make a suspense fallback so these can be lazy loaded.
+import Home from "../pages/home/Home";
+import Login from "../pages/login/Login";
+import Register from "../pages/register/Register";
 
-  useEffect(() => {
-    fetch('/api')
-      .then((r) => r.json())
-      .then(setMessage);
-  }, []);
-
+const App: React.FC = () => {
   return (
-    <>
-      <div style={{ textAlign: 'center' }}>
-        <h1>Welcome to csr-frontend!</h1>
-        <img
-          width="450"
-          src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png"
-          alt="Nx - Smart, Extensible Build Framework"
-        />
-      </div>
-      <div>{m.message}</div>
-    </>
+    <Layout>
+      <Switch>
+        <GuardedRoute component={Home} exact={true} path={ROUTES.home} />
+        <Route exact path={ROUTES.login} component={Login} />
+        <Route exact path={ROUTES.register} component={Register} />
+        <Route path="*">
+          <Redirect to={ROUTES.login} />
+        </Route>
+      </Switch>
+    </Layout>
   );
 };
 
