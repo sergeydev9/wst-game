@@ -5,8 +5,21 @@
  * @param {'DEVELOPMENT' | 'PRODUCTION'} options.mode - change the build configuration. 'PRODUCTION' is used when building the static version of storybook.
  */
 module.exports = async ({ config, mode }) => {
-  // Make whatever fine-grained changes you need
-
-  // Return the altered config
+  config.module.rules.push({
+    test: /\,css&/,
+    use: [
+      {
+        loader: 'postcss-loader',
+        options: {
+          ident: 'postcss',
+          plugins: [
+            require('tailwindcss'),
+            require('autoprefixer')
+          ]
+        }
+      }
+    ],
+    include: path.resolve(__dirname, '../'),
+  })
   return config;
 };
