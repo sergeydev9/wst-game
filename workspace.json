@@ -424,6 +424,13 @@
               "quiet": true
             }
           }
+        },
+        "build-tailwind-storybook": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [],
+          "options": {
+            "command": "npx tailwindcss-cli@latest build -i tailwind.css -o dist/storybook/ui/tailwind.css"
+          }
         }
       }
     }
