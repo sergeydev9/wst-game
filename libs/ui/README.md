@@ -1,7 +1,9 @@
 # ui
 
-This library was generated with [Nx](https://nx.dev).
+Reusable UI components built with "tailwind-styled-compoents". Components should only contain styling.
 
-## Running unit tests
+## Storybook
 
-Run `nx test ui` to execute the unit tests via [Jest](https://jestjs.io).
+Each component has an associated storybook story so that it can be developed in isolation. 
+
+The library's storybook instance can be started by running `nx storybook ui`
