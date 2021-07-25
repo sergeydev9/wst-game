@@ -6,10 +6,11 @@ export interface LoginResponse {
   message: "login";
 }
 
+//TODO: Rewrite all this with axios
 const logIn = async (
   email: string,
   password: string
-): Promise<LoginResponse> => {
+): Promise<Response> => {
   const result = await fetch(`${BASE_URL}/login`, {
     method: "POST",
     mode: "cors",
@@ -23,16 +24,17 @@ const logIn = async (
     }),
   });
 
-  const json = await result.json();
 
   if (result.status !== 200) {
+    const json = await result.json();
+
     if (json.message) {
       throw new Error(json.message);
     }
     throw new Error("An Unknown error occured during login");
   }
 
-  return json;
+  return result;
 };
 
 export default logIn;

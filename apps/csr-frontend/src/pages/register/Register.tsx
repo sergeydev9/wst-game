@@ -15,7 +15,7 @@ import {
   Heading,
   TextInput,
   FullPageForm,
-} from "../../ui";
+} from "@whosaidtrue/ui";
 
 // TODO: Add loading spinner while request is pending
 // TODO: Add confirmation on page leave attempt

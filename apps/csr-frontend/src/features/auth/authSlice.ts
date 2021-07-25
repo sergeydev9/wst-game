@@ -4,7 +4,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { history } from "../../app/hooks";
 import { ROUTES } from "../../util/constants";
 import { RootState } from "../../app/store";
-import login from "./authAPI";
+import login, { LoginResponse } from "./authAPI";
 
 export interface AuthState {
   status: "loggedOut" | "loggedIn" | "loading" | "failed";
@@ -27,20 +27,15 @@ export const initialState: AuthState = {
   email: "",
 };
 
-export const logInThunk = createAsyncThunk(
+export const logInThunk = createAsyncThunk<LoginResponse, logInProps, { rejectValue: string }>(
   "auth/login",
-  async ({ email, password }: logInProps, { rejectWithValue }) => {
+  async ({ email, password }, { rejectWithValue }) => {
     try {
-      const { user, token } = await login(email, password);
-
-      if (user && token) {
-        return { user, token };
-      } else {
-        rejectWithValue("Login response missing required attributes");
-      }
+      const response = await login(email, password);
+      return (await response.json()) as LoginResponse;
     } catch (e) {
       // TODO: Look over this logic. May want to display different messages for server error or authentication failure.
-      rejectWithValue("login failed");
+      return rejectWithValue("login failed");
     }
   }
 );

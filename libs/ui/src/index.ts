@@ -1,4 +1,3 @@
-import './tailwind.css'
 export { default as Layout } from "./lib/layout/Layout";
 export { default as TextInput } from "./lib/text-input/TextInput";
 export { default as ErrorText } from "./lib/error-text/ErrorText";

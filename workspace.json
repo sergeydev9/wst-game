@@ -117,8 +117,7 @@
           "executor": "@nrwl/web:dev-server",
           "options": {
             "buildTarget": "csr-frontend:build",
-            "hmr": true,
-            "proxyConfig": "apps/csr-frontend/proxy.conf.json"
+            "hmr": true
           },
           "configurations": {
             "production": {

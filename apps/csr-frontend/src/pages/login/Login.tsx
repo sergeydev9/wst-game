@@ -13,7 +13,7 @@ import {
   Heading,
   TextInput,
   FullPageForm,
-} from "../../ui";
+} from "@whosaidtrue/ui";
 import { ROUTES } from "../../util/constants";
 
 const Login: React.FC = () => {
