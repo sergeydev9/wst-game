@@ -4,6 +4,7 @@ module.exports = {
     description: `Static site for the card game Who Said True.`,
   },
   plugins: [
+    `gatsby-plugin-postcss`,
     {
       resolve: 'gatsby-plugin-svgr',
       options: {
@@ -19,6 +20,13 @@ module.exports = {
         path: `${__dirname}/src/images`,
       },
     },
+    {
+      resolve: require.resolve(`gatsby-plugin-styled-components`),
+      options: {
+        pure: true,
+      },
+    },
+
     `gatsby-transformer-sharp`,
     {
       resolve: require.resolve(`@nrwl/gatsby/plugins/nx-gatsby-ext-plugin`),
@@ -37,6 +45,14 @@ module.exports = {
         theme_color: `#663399`,
         display: `minimal-ui`,
         icon: `src/images/logo.svg`,
+      },
+    },
+
+    {
+      resolve: require.resolve('gatsby-plugin-purgecss'),
+      options: {
+        tailwind: true,
+        purgeOnly: ["src/styles.css"],
       },
     },
   ],
