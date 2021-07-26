@@ -1,12 +1,11 @@
 import * as fs from 'fs';
 import * as winston from 'winston';
 import * as winstonDaily from 'winston-daily-rotate-file';
-import * as path from 'path'
 
 
 // TODO: Make sure this works with new directory structure
 // logs dir
-const logDir = path.resolve(__dirname + '../logs');
+const logDir = 'logs';
 
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);

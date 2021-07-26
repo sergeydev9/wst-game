@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+
+  # DATABASE
+  postgres:
+    image: postgres:11
+    container_name: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: sequelize
+    ports:
+      - '5432:5432'
+    volumes:
+      - data:/var/lib/postgresql/data
+  
+  
+# named volume to help identify db data volume
+volumes: 
+  data:

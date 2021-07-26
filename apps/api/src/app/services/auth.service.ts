@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import DB from '../db';
 import { CreateUserDto } from '@whosaidtrue/middleware';

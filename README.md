@@ -7,6 +7,43 @@ This project was generated using [Nx](https://nx.dev).
 <p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
 
 
+## Applications
+Each component is split into its own application. Applications are located in the `/apps` directory.
+
+
+## Libraries
+
+Anything potentially re-usable is placed in a library, and imported into applications. These are located in the `/libs` directory.
+
+## Development server
+
+Run `nx serve {my-app}` for a dev server (e.g. `nx serve api`)
+
+## Build
+
+Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+## api
+
+The api app requires a running database. Start up postgres by running `docker-compose up`. Once the database is up and running, start the api server by running `nx serve api`. 
+
+### Envirnment Variables
+
+The api reads from the following env variables:
+- POSTGRES_DB=sequelize
+- POSTGRES_HOST=localhost
+- POSTGRES_USER=root
+- POSTGRES_PASSWORD=password
+- JWT_SECRET=mySecret
+- DB_POOL_MIN=1
+- DB_POOL_MAX=5
+- NODE_ENV=development
+- PORT=3000
+
+
+These can be changed for local dev in `.local.env`
+
+**warning** Values in `.local.env` must match values in `docker-compose.yml`
 
 ## Generate an application
 
@@ -24,17 +61,6 @@ Run `nx g @nrwl/react:lib my-lib` to generate a library.
 
 Libraries are shareable across libraries and applications. They can be imported from `@whosaidtrue/mylib`.
 
-## Development server
-
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
-
-## Build
-
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 ## Running unit tests
 

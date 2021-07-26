@@ -2,6 +2,7 @@
 
 /dist
 /coverage
+/logs
 
 /apps/static-frontend/node_modules
 /apps/static-frontend/public

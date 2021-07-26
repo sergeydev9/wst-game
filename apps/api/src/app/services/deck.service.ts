@@ -1,5 +1,5 @@
-import DB from '@databases';
-import { DecksAttributes } from '@models/deck';
+import DB from '../db';
+import { DecksAttributes } from '@whosaidtrue/data';
 
 export class DeckService {
   decks = DB.Decks;

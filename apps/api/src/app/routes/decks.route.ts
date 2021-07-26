@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import Route from '@interfaces/routes.interface';
-import { DeckController } from '@controllers/deck.controller';
-import authMiddleware from '@middlewares/auth.middleware';
+import { DeckController } from '../controllers/deck.controller';
+import authMiddleware from '../auth.middleware';
 
-class DecksRoute implements Route {
+class DecksRoute {
   public path = '/decks';
   public router = Router();
   public deckController = new DeckController();
