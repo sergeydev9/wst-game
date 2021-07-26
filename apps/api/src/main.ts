@@ -1,16 +1,22 @@
-import * as express from 'express';
-import { Message } from '@whosaidtrue/api-interfaces';
+import App from './app/App'
+import AuthRoute from './app/routes/auth.route';
+import IndexRoute from './app/routes/index.route';
+import UsersRoute from './app/routes/users.route';
+import DecksRoute from './app/routes/decks.route';
+import validateEnv from './app/utils/validateEnv';
 
-const app = express();
+validateEnv();
 
-const greeting: Message = { message: 'Welcome to api!' };
+const app = new App([new IndexRoute().router, new UsersRoute().router, new AuthRoute().router, new DecksRoute().router]);
 
-app.get('/api', (req, res) => {
-  res.send(greeting);
-});
+app.listen();
 
-const port = process.env.port || 3333;
-const server = app.listen(port, () => {
-  console.log('Listening at http://localhost:' + port + '/api');
-});
-server.on('error', console.error);
+// TODO: apply proper error reporting before production
+process
+  .on('unhandledRejection', (reason, p) => {
+    console.error(reason, 'Unhandled Rejection at Promise', p);
+  })
+  .on('uncaughtException', err => {
+    console.error(err, 'Uncaught Exception thrown');
+    process.exit(1);
+  });
