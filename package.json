@@ -28,6 +28,7 @@
   "private": true,
   "dependencies": {
     "@fontsource/nunito": "^4.5.0",
+    "@fontsource/work-sans": "^4.5.0",
     "@reduxjs/toolkit": "^1.6.1",
     "@types/react-router-dom": "^5.1.8",
     "autoprefixer": "^10.3.1",
