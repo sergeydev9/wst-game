@@ -1,10 +1,12 @@
 import tw from "tailwind-styled-components";
 
 export default tw.button`
-    bg-iris-dark
     font-light
     px-12
     py-2
-    text-white
-    hover:bg-iris-light
+    text-iris-dark
+    border-2
+    border-iris-dark
+    hover:border-iris-light
+    hover:text-iris-light
 `

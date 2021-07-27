@@ -1,0 +1,13 @@
+import React from 'react';
+import { BsStar } from '@react-icons/all-files/bs/BsStar'
+import { BsStarFill } from '@react-icons/all-files/bs/BsStarFill'
+
+export interface StarProps {
+    favorite: boolean
+}
+
+const favStar: React.FC<StarProps> = ({ favorite }) => {
+    return favorite ? <BsStarFill className="text-black" /> : <BsStar className="text-black" />
+}
+
+export default favStar
