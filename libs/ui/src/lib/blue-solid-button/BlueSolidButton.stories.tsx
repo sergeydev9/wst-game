@@ -1,14 +1,25 @@
-import Button from "./BlueSolidButton";
+import Button, { SolidButtonProps } from "./BlueSolidButton";
+import { Story, Meta } from "@storybook/react";
 
 export default {
     component: Button,
-    title: "Blue Solid Button"
-}
+    title: "Blue Solid Button",
+    argTypes: {
+        light: {
+            type: 'boolean',
+            default: false
+        }
+    }
+} as Meta;
 
-const Template = () => {
+const Template: Story<SolidButtonProps> = (args) => {
     return (
-        <Button>Login or Sign up</Button>
+        <Button {...args}>Login or Sign up</Button>
     )
 }
 
 export const BlueButton = Template.bind({})
+
+BlueButton.args = {
+    light: false
+}

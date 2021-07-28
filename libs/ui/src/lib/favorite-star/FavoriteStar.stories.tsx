@@ -1,5 +1,4 @@
-import Fav from "./FavoriteStar";
-import { StarProps } from './FavoriteStar';
+import Fav, { StarProps } from "./FavoriteStar";
 import { Story, Meta } from '@storybook/react';
 
 
