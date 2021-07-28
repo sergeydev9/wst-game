@@ -10,6 +10,7 @@ import { history } from "./app/hooks";
 import { store } from "./app/store";
 import "./styles.css";
 
+
 // TODO: Add a root SEO component with React Helmet
 ReactDOM.render(
   <StrictMode>

@@ -9,3 +9,9 @@ export class HttpException extends Error {
   }
 }
 
+/**
+ * Home page slider box. An array of strings representing a conversation.
+ */
+export interface UserStory {
+  lines: string[];
+}

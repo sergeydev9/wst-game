@@ -3,11 +3,11 @@ module.exports = {
         extend: {
             colors: {
                 'dark-grey': '#E5E5E5',
+                'darker-grey': '#c7c5c5',
                 'light-grey': '#EFF7FF',
                 'iris-dark': '#5D5FEF',
                 'iris-light': '#A5A6F6',
                 'iris-very-light': "#cbccf5"
-
             }
         },
         fontFamily: {

@@ -1,7 +1,7 @@
 import tw from "tailwind-styled-components"
 
 export interface BoxProps {
-    light: boolean
+    light?: boolean
 }
 
 export default tw.span<BoxProps>`
