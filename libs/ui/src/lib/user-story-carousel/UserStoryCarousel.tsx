@@ -22,15 +22,12 @@ const storyCarousel: React.FC<IUserStoryCarousel> = ({ stories }) => {
 
     // use inline css for more fine grained control than tailwind provides.
     const arrowStyles: CSSProperties = {
-        position: 'absolute',
         zIndex: 2,
-        top: 0,
         width: 30,
-        height: '100%',
-        cursor: 'pointer',
     };
 
-    const arrowClass = "text-gray-400 hover:bg-gray-400 hover:text-gray-200 h-full w-full"
+    // Tailwind class applied to arrow icons
+    const arrowClass = "absolute top-0 cursor-pointer text-gray-400 hover:bg-gray-400 hover:text-gray-200 h-full w-full"
 
     const helper = stories.map((story, i) => {
         return (
