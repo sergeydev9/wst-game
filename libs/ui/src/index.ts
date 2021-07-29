@@ -17,4 +17,4 @@ export { default as SectionSubHeader } from './lib/section-subheader/SectionSubh
 export { default as SocialMediaLinks } from './lib/social-media-links/SocialMediaLinks';
 export { default as Textinput } from './lib/text-input/TextInput';
 export { default as UserStoryCarousel } from './lib/user-story-carousel/UserStoryCarousel';
-
+export { default as Hamburger } from './lib/hamburger/Hamburger';

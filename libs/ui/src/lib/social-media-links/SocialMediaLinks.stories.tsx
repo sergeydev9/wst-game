@@ -1,4 +1,4 @@
-import Socials from './SocialLinks'
+import Socials from './SocialMediaLinks'
 
 
 export default {
@@ -8,4 +8,4 @@ export default {
 
 const Template = () => <Socials fbook="facebook.com" insta="instagram.com" twitter="twitter.com" twitch="twitch.com" />
 
-export const SocialLinks = Template.bind({})
+export const SocialMediaLinks = Template.bind({})

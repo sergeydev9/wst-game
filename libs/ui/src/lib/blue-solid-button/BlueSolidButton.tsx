@@ -1,7 +1,7 @@
 import tw from "tailwind-styled-components";
 
 export interface SolidButtonProps {
-    light: boolean
+    light?: boolean
 }
 
 export default tw.button<SolidButtonProps>`

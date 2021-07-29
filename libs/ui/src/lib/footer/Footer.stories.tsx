@@ -1,7 +1,7 @@
 import FooterLinks from "../footer-links/FooterLinks";
 import BlueLink from '../blue-link/BlueLink';
 import Foot from "./Footer";
-import Socials from "../social-links/SocialLinks";
+import Socials from "../social-media-links/SocialMediaLinks";
 
 export default {
     component: Foot,

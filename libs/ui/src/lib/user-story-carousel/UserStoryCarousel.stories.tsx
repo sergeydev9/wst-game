@@ -20,4 +20,4 @@ const Template = () => {
     return <StoryCarousel stories={stories} />
 }
 
-export const Carousel = Template.bind({})
+export const UserStoryCarousel = Template.bind({})

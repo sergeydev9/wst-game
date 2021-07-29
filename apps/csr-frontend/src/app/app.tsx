@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout } from "@whosaidtrue/ui";
+import Layout from "./Layout";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ROUTES } from "../util/constants";
 import { GuardedRoute } from "../features";

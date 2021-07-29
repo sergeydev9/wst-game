@@ -7,7 +7,7 @@ import { Carousel } from 'react-responsive-carousel';
 import { UserStory } from '@whosaidtrue/app-interfaces';
 import BoxedSpan from '../boxed-span/BoxedSpan';
 import SectionHeader from '../section-header/SectionHeader';
-import SectionSubheader from '../section-subheading/SectionSubheader';
+import SectionSubheader from '../section-subheader/SectionSubheader';
 
 
 export interface IUserStoryCarousel {

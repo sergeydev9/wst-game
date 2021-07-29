@@ -2,7 +2,7 @@ import tw from "tailwind-styled-components";
 
 export default tw.footer`
     bg-dark-grey
-    w-full
+    w-screen
     flex
     flex-col
     gap-6
