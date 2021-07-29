@@ -1,8 +1,20 @@
-export { default as Layout } from "./lib/layout/Layout";
 export { default as TextInput } from "./lib/text-input/TextInput";
 export { default as ErrorText } from "./lib/error-text/ErrorText";
 export { default as FormContainer } from "./lib/form-container/FormContainer";
-export { default as FormButton } from "./lib/form-button/FormButton";
-export { default as Heading } from "./lib/heading/Heading";
-export { default as FullPageForm } from "./lib/full-page-form/FullPageForm";
+export { default as BlackRoundedTag } from './lib/black-rounded-tag/BlackRoundedTag';
+export { default as BlueBorderButton } from './lib/blue-border-button/BlueBorderButton';
+export { default as BlueLink } from './lib/blue-link/BlueLink';
+export { default as BlueSolidButton } from './lib/blue-solid-button/BlueSolidButton';
+export { default as BoxedSpan } from './lib/boxed-span/BoxedSpan';
+export { default as FavoriteStar } from './lib/favorite-star/FavoriteStar';
+export { default as Footer } from './lib/footer/Footer';
+export { default as FooterLinks } from './lib/footer-links/FooterLinks';
+export { default as HeroHeader } from './lib/hero-header/HeroHeader';
+export { default as NavLogo } from './lib/nav-logo/NavLogo';
+export { default as RatingLabel } from './lib/rating-label/RatingLabel';
+export { default as SectionHeader } from './lib/section-header/SectionHeader';
+export { default as SectionSubHeader } from './lib/section-subheader/SectionSubheader';
+export { default as SocialMediaLinks } from './lib/social-media-links/SocialMediaLinks';
+export { default as Textinput } from './lib/text-input/TextInput';
+export { default as UserStoryCarousel } from './lib/user-story-carousel/UserStoryCarousel';
 
