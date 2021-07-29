@@ -18,8 +18,8 @@ const Template: Story<SolidButtonProps> = (args) => {
     )
 }
 
-export const BlueButton = Template.bind({})
+export const BlueSolidButton = Template.bind({})
 
-BlueButton.args = {
+BlueSolidButton.args = {
     light: false
 }

@@ -20,8 +20,8 @@ const Template: Story<TagProps> = (args) => {
     )
 }
 
-export const Tag = Template.bind({});
+export const BlackRoundedTag = Template.bind({});
 
-Tag.args = {
+BlackRoundedTag.args = {
     selected: true
 }

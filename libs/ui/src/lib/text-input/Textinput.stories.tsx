@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react";
 
 export default {
     component: Input,
-    title: "Text input",
+    title: "Text Input",
     argTypes: {
         light: {
             type: 'boolean',
@@ -19,3 +19,7 @@ const Template: Story<ITextInputProps> = (args) => {
 }
 
 export const TextInput = Template.bind({})
+
+TextInput.args = {
+    light: false
+}

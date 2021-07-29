@@ -11,4 +11,4 @@ const Template = () => {
     )
 }
 
-export const BlueButton = Template.bind({})
+export const BlueBorderButton = Template.bind({})

@@ -1,16 +1,16 @@
-import SectionHeader from './SectionHeader';
+import Header from './SectionHeader';
 
 export default {
-    component: SectionHeader,
+    component: Header,
     title: "Section Header"
 }
 
 const Template = () => {
     return (
         <section className="w-sceen text-center">
-            <SectionHeader>Can you guess how many of your friends...</SectionHeader >
+            <Header>Can you guess how many of your friends...</Header >
         </section>
     )
 }
 
-export const Header = Template.bind({})
+export const SectionHeader = Template.bind({})

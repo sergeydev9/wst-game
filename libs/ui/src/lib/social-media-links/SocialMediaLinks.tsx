@@ -13,7 +13,7 @@ export interface ISocialLinksProps {
 const links: React.FC<ISocialLinksProps> = ({ fbook, insta, twitch, twitter }) => {
 
     return (
-        <section className="flex flex-col items-center sm:flex-row gap-2">
+        <section className="flex flex-col items-center sm:flex-row sm:gap-6 gap-2">
             <h5 className="font-semibold text-sm">Follow Us</h5>
             <div className="flex flex-row gap-4 text-iris-dark justify-between text-xl">
                 <a href={fbook} target="_blank" rel="noreferrer" className="cursor-pointer"><FaFacebook /></a>

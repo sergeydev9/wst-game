@@ -2,7 +2,7 @@ import Link from "./BlueLink";
 
 export default {
     component: Link,
-    title: "Link"
+    title: "Blue Link"
 }
 
 const Template = () => {

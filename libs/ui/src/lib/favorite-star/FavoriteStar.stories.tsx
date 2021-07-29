@@ -19,8 +19,8 @@ const Template: Story<StarProps> = (args) => {
     )
 }
 
-export const Star = Template.bind({});
+export const FavoriteStar = Template.bind({});
 
-Star.args = {
+FavoriteStar.args = {
     favorite: true
 }

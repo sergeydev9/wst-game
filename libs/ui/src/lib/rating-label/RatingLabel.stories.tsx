@@ -2,7 +2,7 @@ import Label from "./RatingLabel";
 
 export default {
     component: Label,
-    title: "Card Rating Label"
+    title: "Rating Label"
 }
 
 const Template = () => {

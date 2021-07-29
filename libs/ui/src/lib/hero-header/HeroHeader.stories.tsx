@@ -1,16 +1,16 @@
-import HeroHeader from './HeroHeader';
+import Header from './HeroHeader';
 
 export default {
-    component: HeroHeader,
+    component: Header,
     title: "Hero Header"
 }
 
 const Template = () => {
     return (
         <section className="w-sceen text-center">
-            <HeroHeader>Can you guess how many of your friends...</HeroHeader >
+            <Header>Can you guess how many of your friends...</Header >
         </section>
     )
 }
 
-export const Header = Template.bind({})
+export const HeroHeader = Template.bind({})

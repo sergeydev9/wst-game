@@ -1,10 +1,10 @@
-import BoxedSpan, { BoxProps } from './BoxedSpan';
+import Boxed, { BoxProps } from './BoxedSpan';
 import SectionHeader from '../section-header/SectionHeader';
 import { Story, Meta } from '@storybook/react';
 
 
 export default {
-    component: BoxedSpan,
+    component: Boxed,
     title: "Boxed Span",
     argTypes: {
         light: {
@@ -16,14 +16,14 @@ export default {
 
 const Template: Story<BoxProps> = (args) => {
     return (
-        <BoxedSpan {...args}>
+        <Boxed {...args}>
             <SectionHeader>Binge watched an entire season of a show in a weekend?</SectionHeader>
-        </BoxedSpan >
+        </Boxed >
     )
 }
 
-export const Boxed = Template.bind({});
+export const BoxedSpan = Template.bind({});
 
-Boxed.args = {
+BoxedSpan.args = {
     light: false
 }
