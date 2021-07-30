@@ -25,13 +25,11 @@ const GuardedRoute: React.FC<GuardedRouteProps> = ({
 }) => {
   const loggedIn = useAppSelector(selectAuthStatus);
   return (
-    <>
-      {loggedIn === "loggedIn" ? (
-        <Route component={component} path={path} exact={exact} />
-      ) : (
-        <Redirect to="/login" />
-      )}
-    </>
+    loggedIn === "loggedIn" ? (
+      <Route component={component} path={path} exact={exact} />
+    ) : (
+      <Redirect to="/login" />
+    )
   );
 };
 export default GuardedRoute;

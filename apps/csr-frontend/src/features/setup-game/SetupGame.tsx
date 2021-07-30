@@ -1,4 +1,4 @@
-import { SectionHeader, TextInput, BlueSolidButton } from '@whosaidtrue/ui';
+import { SectionHeader, BlueSolidButton } from '@whosaidtrue/ui';
 import React from 'react';
 
 const SetUpGame: React.FC = () => {

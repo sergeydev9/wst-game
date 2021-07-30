@@ -9,8 +9,16 @@ export default {
             type: 'boolean',
             default: false
         }
+    },
+    parameters: {
+        docs: {
+            source: {
+                type: 'code'
+            }
+        }
     }
 } as Meta;
+
 
 const Template: Story<SolidButtonProps> = (args) => {
     return (

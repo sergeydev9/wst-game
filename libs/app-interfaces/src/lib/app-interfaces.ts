@@ -15,3 +15,22 @@ export class HttpException extends Error {
 export interface UserStory {
   lines: string[];
 }
+
+/**
+ * This type is a union of the names of the theme colors. Used to type variables that must
+ * be one of the theme's color options
+ */
+export type ThemeColor = "primary" | "subtle-stroke" | "subtle-primary" | "black" | "white-ish" | "true-white";
+
+/**
+ * Type function for creating subtypes of union types.
+ *
+ * @example
+ *
+ * type ButtonColor = Extends<ThemeColor, "primary" | "subtle-stroke">;
+ *
+ * //This example creates a type ButtonColor and makes it clear that button color must have
+ * //a value that is either "primary" or "subtle-stroke", while also
+ * //making it clear that these options are a subset of ThemeColor.
+ */
+export type Extends<T, U extends T> = U;
