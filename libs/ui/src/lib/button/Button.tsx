@@ -21,7 +21,6 @@ const colorHelper = (color: ButtonColor, border: boolean | undefined): string =>
     }
 }
 
-
 export default tw.button<ButtonProps>`
     box-content
     ${(p) => p.boxShadow ? p.boxShadow : ""}
