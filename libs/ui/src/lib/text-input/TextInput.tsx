@@ -5,7 +5,7 @@ export interface ITextInputProps {
 }
 
 export default tw.input<ITextInputProps>`
-    ${(p) => p.light ? "border-gray-600 bg-gray-200" : "border-gray-300"}
+    ${(p) => p.light ? "border-gray-600 bg-white" : "border-gray-300"}
     w-full 
     h-10 
     px-4

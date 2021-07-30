@@ -12,4 +12,6 @@ export default tw.footer`
     sm:flex-row-reverse
     sm:justify-between
     px-8
+    absolute
+    bottom-0
 `

@@ -1,11 +1,16 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { NavLogo } from '@whosaidtrue/ui';
+import { Hamburger, NavLogo } from '@whosaidtrue/ui';
+import LargeNav from '../large-nav/LargeNav';
 
 const NavBar: React.FC = () => {
     return (
-        <nav className="w-screen flex flex-row justify-between h-32">
+        <nav className="w-full flex flex-row justify-between items-center h-22 py-4 px-6">
             <NavLink to="/"><NavLogo /></NavLink>
+            <LargeNav />
+            <nav className="md:hidden">
+                <Hamburger />
+            </nav>
         </nav>
     )
 }
