@@ -12,10 +12,5 @@ export default {
     }
 } as Meta;
 
-const Template = () => {
-    return (
-        <Input type="text" placeholder="4 letter game code" />
-    )
-}
 
-export const TextInput = Template.bind({})
+export const TextInput = () => <Input type="text" placeholder="4 letter game code" />

@@ -7,7 +7,7 @@ export interface StarProps {
 }
 
 const favStar: React.FC<StarProps> = ({ favorite }) => {
-    return favorite ? <BsStarFill className="text-black" /> : <BsStar className="text-black" />
+    return favorite ? <BsStarFill className="text-basic-black" /> : <BsStar className="text-black" />
 }
 
 export default favStar

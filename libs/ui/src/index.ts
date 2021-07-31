@@ -10,3 +10,7 @@ export { default as Textinput } from './lib/text-input/TextInput';
 export { default as UserStoryCarousel } from './lib/user-story-carousel/UserStoryCarousel';
 export { default as Hamburger } from './lib/hamburger/Hamburger';
 export { LargeTitle, Title1, Title2, Title3, BodyLarge, BodyMedium, BodySmall, Headline, LabelBig, LabelSmall } from './lib/typography/typography';
+export { default as InputLabel } from './lib/input-label/InputLabel';
+export { default as TextArea } from './lib/text-area/TextArea';
+export { default as Button } from './lib/button/Button';
+export * from './lib/typography/typography';
