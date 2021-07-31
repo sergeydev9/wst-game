@@ -15,6 +15,7 @@ module.exports = {
                 'red-base': "#8F3D3D",
                 'red-subtle-stroke': "#F0DBDB",
                 'red-subtle': "#FCF8F8",
+                'red-light': "#A70B00"
             }
         },
         fontSize: {

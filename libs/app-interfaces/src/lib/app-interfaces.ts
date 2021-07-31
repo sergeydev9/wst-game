@@ -32,7 +32,8 @@ export type ThemeColor = "primary"
   | "green-subtle"
   | "red-base"
   | "red-subtle-stroke"
-  | "red-subtle";
+  | "red-subtle"
+  | "red-light";
 
 /**
  * Type function for creating subtypes of union types.

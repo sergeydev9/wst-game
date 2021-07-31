@@ -4,7 +4,7 @@ import { Story, Meta } from '@storybook/react';
 
 export default {
     component: Button,
-    title: "Button",
+    title: "Buttons",
     argTypes: {
         color: {
             type: 'select',

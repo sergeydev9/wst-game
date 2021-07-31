@@ -5,25 +5,15 @@ import { Story, Meta } from '@storybook/react';
 
 export default {
     component: Boxed,
-    title: "Boxed Span",
-    argTypes: {
-        light: {
-            type: 'boolean',
-            default: false
-        }
-    }
+    title: "Boxed Span"
 } as Meta;
 
-const Template: Story<BoxProps> = (args) => {
+const Template: Story<BoxProps> = () => {
     return (
-        <Boxed {...args}>
+        <Boxed >
             <LargeTitle>Binge watched an entire season of a show in a weekend?</LargeTitle>
         </Boxed >
     )
 }
 
 export const BoxedSpan = Template.bind({});
-
-BoxedSpan.args = {
-    light: false
-}

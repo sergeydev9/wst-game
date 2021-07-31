@@ -20,7 +20,8 @@ export const THEME_COLORS: ThemeColor[] = [
   "green-subtle-stroke",
   "red-base",
   "red-subtle-stroke",
-  "red-subtle"
+  "red-subtle",
+  "red-light"
 ]
 
 /**
@@ -57,6 +58,8 @@ export const genTextColor = (color: ThemeColor) => {
       return "text-red-subtle-stroke"
     case "red-subtle":
       return "text-red-subtle"
+    case "red-light":
+      return "text-red-light"
     default:
       return "text-primary"
   }
@@ -96,6 +99,8 @@ export const genBgColor = (color: ThemeColor) => {
       return "bg-red-subtle-stroke"
     case "red-subtle":
       return "bg-red-subtle"
+    case "red-light":
+      return "bg-red-light"
     default:
       return "bg-primary"
   }
@@ -129,6 +134,8 @@ export const genBorderColor = (color: ThemeColor) => {
       return "border-red-subtle-stroke"
     case "red-subtle":
       return "border-red-subtle"
+    case "red-light":
+      return "border-red-light"
     default:
       return "border-primary"
   }

@@ -1,4 +1,4 @@
-import Input, { ITextInputProps } from "./TextInput";
+import Input from "./TextInput";
 import { Story, Meta } from "@storybook/react";
 
 export default {
@@ -12,14 +12,10 @@ export default {
     }
 } as Meta;
 
-const Template: Story<ITextInputProps> = (args) => {
+const Template = () => {
     return (
-        <Input {...args} type="text" placeholder="4 letter game code" />
+        <Input type="text" placeholder="4 letter game code" />
     )
 }
 
 export const TextInput = Template.bind({})
-
-TextInput.args = {
-    light: false
-}
