@@ -40,7 +40,8 @@ export const BodyMedium = tw.span`
     text-body-medium
     font-normal
 `
-
+// The SelectDropdown component uses this same style.
+// Should keep these in sync.
 export const BodySmall = tw.span`
     text-body-small
     font-semibold

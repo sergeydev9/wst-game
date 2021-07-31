@@ -7,7 +7,7 @@ export interface ButtonProps {
     $border?: boolean;
     $small?: boolean;
     $pill?: boolean;
-    boxShadow?: 'shadow-sm' | 'shadow' | 'shadow-md' | 'shadow-lg' | 'shadow-xl' | 'shadow-2xl'
+    boxshadow?: 'shadow-sm' | 'shadow' | 'shadow-md' | 'shadow-lg' | 'shadow-xl' | 'shadow-2xl'
 }
 
 const colorHelper = (color: ThemeColor, border: boolean | undefined): string => {
@@ -17,7 +17,7 @@ const colorHelper = (color: ThemeColor, border: boolean | undefined): string => 
 
 export default tw.button<ButtonProps>`
     box-content
-    ${(p) => p.boxShadow ? p.boxShadow : ""}
+    ${(p) => p.boxshadow ? p.boxshadow : ""}
     ${(p) => p.$small ? "py-1 px-2 text-sm" : "py-4 px-8"}
     ${(p) => colorHelper(p.color, p.$border)}
     ${(p) => p.$pill ? "rounded-full" : "rounded-lg"}

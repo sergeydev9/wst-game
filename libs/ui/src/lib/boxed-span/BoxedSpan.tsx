@@ -9,7 +9,7 @@ export default tw.span<BoxProps>`
     flex
     flex-col
     rounded-3xl
-    border-2
+    border
     border-subtle-stroke
     shadow-md
     items-center

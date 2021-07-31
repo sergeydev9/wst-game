@@ -2,10 +2,8 @@ import tw from "tailwind-styled-components";
 
 export default tw.input`
         w-full
-        h-10
-        px-4
-        py-6
-        border-2
+        px-3
+        py-3
         border-subtle-stroke
         bg-subtle-primary
         max-w-xs

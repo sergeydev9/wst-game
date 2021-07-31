@@ -8,7 +8,7 @@ export default {
     argTypes: {
         color: {
             type: 'select',
-            options: THEME_COLORS,
+            options: THEME_COLORS, // imports from util lib
             default: 'primary'
         },
         $small: {
@@ -23,23 +23,35 @@ export default {
             type: 'boolean',
             default: false
         },
-        $boxShadow: {
+        boxshadow: {
             type: 'select',
             options: ['shadow-sm', 'shadow', 'shadow-md', 'shadow-lg', 'shadow-xl', 'shadow-2xl']
         }
 
+    },
+    parameters: {
+        docs: {
+            source: {
+                type: 'code'
+            }
+        }
     }
+
 
 } as Meta;
 
-const Template: Story<ButtonProps> = (args) => <Button {...args}>Button Component</Button>
+const Template: Story<ButtonProps> = ({ color, $small, $border, $pill, boxshadow }) => (
+    <Button color={color} $small={$small} $pill={$pill} $border={$border} boxshadow={boxshadow}>Button Component</Button>
+)
 
 export const ButtonComponent = Template.bind({});
 ButtonComponent.args = {
     color: "primary",
+    boxshadow: undefined,
     $small: false,
     $border: false,
-    $pill: false
+    $pill: false,
+
 }
 
 export const SolidSubtleStroke = () => <Button color="subtle-stroke">Subtle Stroke</Button>
@@ -64,7 +76,7 @@ export const BoxShadowPrimary = () => {
     // ignore containing div
     return (
         <div className="bg-blue-200 py-8 flex justify-center flex-row">
-            <Button color="primary" boxShadow="shadow-lg" $pill $border>Large pill with box shadow</Button>
+            <Button color="primary" boxshadow="shadow-lg" $pill $border>Large pill with box shadow</Button>
         </div>
     )
 }
