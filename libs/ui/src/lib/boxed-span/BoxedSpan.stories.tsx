@@ -1,5 +1,5 @@
 import Boxed, { BoxProps } from './BoxedSpan';
-import SectionHeader from '../section-header/SectionHeader';
+import { LargeTitle } from '../typography/typography';
 import { Story, Meta } from '@storybook/react';
 
 
@@ -17,7 +17,7 @@ export default {
 const Template: Story<BoxProps> = (args) => {
     return (
         <Boxed {...args}>
-            <SectionHeader>Binge watched an entire season of a show in a weekend?</SectionHeader>
+            <LargeTitle>Binge watched an entire season of a show in a weekend?</LargeTitle>
         </Boxed >
     )
 }

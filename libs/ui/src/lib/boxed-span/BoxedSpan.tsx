@@ -5,12 +5,10 @@ export interface BoxProps {
 }
 
 export default tw.span<BoxProps>`
-    ${(p) => p.light ? "bg-light-grey" : "bg-dark-grey"}
+    bg-subtle-primary
     flex
     flex-col
     items-center
-    border-2
-    border-black
     py-4
     px-7
 `

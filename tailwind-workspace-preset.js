@@ -17,10 +17,24 @@ module.exports = {
                 'red-subtle': "#FCF8F8",
             }
         },
+        fontSize: {
+            'large-title': ['42px', { letterSpacing: '-0.02em', lineHeight: '48px' }],
+            'title-1': ['32px', { letterSpacing: '-0.02em', lineHeight: '40px' }],
+            'title-2': ['26px', { letterSpacing: '-0.02em', lineHeight: '35px' }],
+            'title-3': ['20px', { letterSpacing: '-0.02em', lineHeight: '26px' }],
+            'body-large': ['32px', { letterSpacing: '-0.02em', lineHeight: '42px' }],
+            'body-medium': ['24px', { letterSpacing: '-0.02em', lineHeight: '33px' }],
+            'body-small': ['16px', { letterSpacing: '-0.1px', lineHeight: '20px' }],
+            'headline': ['16px', { letterSpacing: '-0.02em', lineHeight: '22px' }],
+            'label-big': ['16px', { letterSpacing: '0.05em', lineHeight: '24px' }],
+            'label-small': ['13px', { letterSpacing: '1.1px', lineHeight: '16px' }]
+        },
         fontFamily: {
             'sans': ['Nunito'],
             'roboto': ['Roboto']
-        }
+        },
+
+
     },
     variants: {
         extend: {},

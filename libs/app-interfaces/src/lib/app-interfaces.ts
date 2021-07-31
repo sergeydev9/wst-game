@@ -20,7 +20,19 @@ export interface UserStory {
  * This type is a union of the names of the theme colors. Used to type variables that must
  * be one of the theme's color options
  */
-export type ThemeColor = "primary" | "subtle-stroke" | "subtle-primary" | "black" | "white-ish" | "true-white";
+export type ThemeColor = "primary"
+  | "subtle-stroke"
+  | "subtle-primary"
+  | "subtle-bg"
+  | "basic-black"
+  | "white-ish"
+  | "true-white"
+  | "green-base"
+  | "green-subtle-stroke"
+  | "green-subtle"
+  | "red-base"
+  | "red-subtle-stroke"
+  | "red-subtle";
 
 /**
  * Type function for creating subtypes of union types.

@@ -1,4 +1,3 @@
-import BlueLink from "../blue-link/BlueLink";
 import FLinks from "./FooterLinks";
 
 export default {
@@ -9,9 +8,9 @@ export default {
 const Template = () => {
     return (
         <FLinks>
-            <BlueLink>Who Said True For Schools</BlueLink>
-            <BlueLink>Privacy Policy</BlueLink>
-            <BlueLink>Terms &amp; Conditions</BlueLink>
+            <a>Who Said True For Schools</a>
+            <a>Privacy Policy</a>
+            <a>Terms &amp; Conditions</a>
         </FLinks>
     )
 }

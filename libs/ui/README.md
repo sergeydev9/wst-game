@@ -1,6 +1,6 @@
 # ui
 
-Reusable UI components built with "tailwind-styled-compoents". Components should only contain styling.
+Reusable UI components built with "tailwind-styled-compoents". Components should only contain styling related logic.
 
 ## Storybook
 

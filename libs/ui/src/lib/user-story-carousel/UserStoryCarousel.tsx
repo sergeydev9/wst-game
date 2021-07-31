@@ -6,8 +6,7 @@ import { Carousel } from 'react-responsive-carousel';
 
 import { UserStory } from '@whosaidtrue/app-interfaces';
 import BoxedSpan from '../boxed-span/BoxedSpan';
-import SectionHeader from '../section-header/SectionHeader';
-import SectionSubheader from '../section-subheader/SectionSubheader';
+import { Title3 } from '../typography/typography';
 
 
 export interface IUserStoryCarousel {
@@ -45,8 +44,7 @@ const storyCarousel: React.FC<IUserStoryCarousel> = ({ stories }) => {
 
     return (
         <BoxedSpan>
-            <SectionHeader>Overheard</SectionHeader>
-            <SectionSubheader>on Who Said True?</SectionSubheader>
+            <Title3>Overheard on Who Said True?</Title3>
             <Carousel
                 className="font-light mt-4 leading-8 pb-4 border-black"
                 showStatus={false}

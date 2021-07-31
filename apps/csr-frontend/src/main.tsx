@@ -9,8 +9,11 @@ import App from "./app/app";
 import { history } from "./app/hooks";
 import { store } from "./app/store";
 import "./styles.css";
-import '@fontsource/nunito';
-import '@fontsource/roboto';
+import '@fontsource/nunito/400.css';
+import '@fontsource/nunito/600.css';
+import '@fontsource/nunito/700.css';
+import '@fontsource/nunito/800.css';
+import '@fontsource/roboto/500.css';
 
 
 // TODO: Add a root SEO component with React Helmet
