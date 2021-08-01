@@ -2,7 +2,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                'primary': "#5D5FEF",
+                'primary': "#5D5FEF", // toggle component needs to be manually kept in sync with this value since it has to use css classes
                 'subtle-primary': "#F2F2FB",
                 'subtle-stroke': "#D7D8F3",
                 'subtle-bg': "#FBFBFE",
@@ -41,6 +41,8 @@ module.exports = {
         extend: {},
     },
     plugins: [
-        require('@tailwindcss/forms'),
+        require('@tailwindcss/forms')({
+            strategy: 'class'
+        }),
     ],
 };

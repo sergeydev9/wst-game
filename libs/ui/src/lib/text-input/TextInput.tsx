@@ -1,6 +1,7 @@
 import tw from "tailwind-styled-components";
 
 export default tw.input`
+        form-input
         w-full
         px-3
         py-3
