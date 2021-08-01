@@ -46,7 +46,7 @@ const storyCarousel: React.FC<IUserStoryCarousel> = ({ stories }) => {
         <BoxedSpan>
             <Title3>Overheard on Who Said True?</Title3>
             <Carousel
-                className="font-light mt-4 leading-8 pb-4 border-black"
+                className="font-body-large mt-4 leading-8 pb-4"
                 showStatus={false}
                 showIndicators={false}
                 showThumbs={false}

@@ -34,16 +34,3 @@ export type ThemeColor = "primary"
   | "red-subtle-stroke"
   | "red-subtle"
   | "red-light";
-
-/**
- * Type function for creating subtypes of union types.
- *
- * @example
- *
- * type ButtonColor = Extends<ThemeColor, "primary" | "subtle-stroke">;
- *
- * //This example creates a type ButtonColor and makes it clear that button color must have
- * //a value that is either "primary" or "subtle-stroke", while also
- * //making it clear that these options are a subset of ThemeColor.
- */
-export type Extends<T, U extends T> = U;
