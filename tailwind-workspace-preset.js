@@ -16,6 +16,9 @@ module.exports = {
                 'red-subtle-stroke': "#F0DBDB",
                 'red-subtle': "#FCF8F8",
                 'red-light': "#A70B00"
+            },
+            dropShadow: {
+                'subtle-stroke': ' 0 0 0.45rem #D7D8F3'
             }
         },
         fontSize: {

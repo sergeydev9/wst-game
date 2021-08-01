@@ -48,7 +48,7 @@ const colorHelper = (color: ThemeColor | undefined, border: BorderThickness): st
 export default tw.button<ButtonProps>`
     ${(p) => fontSizeHelper(p.fontSize)}
     ${(p) => p.boxshadow ? p.boxshadow : ""}
-    ${(p) => p.$small ? "py-1 px-2 text-sm" : "py-4 px-8"}
+    ${(p) => p.$small ? "py-1 px-2" : "py-4 px-8"}
     ${(p) => colorHelper(p.color, p.border)}
     ${(p) => p.$pill ? "rounded-full" : "rounded-lg"}
 
