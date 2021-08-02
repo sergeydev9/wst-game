@@ -4,7 +4,7 @@ import { Story, Meta } from '@storybook/react';
 
 export default {
     component: Button,
-    title: "Buttons",
+    title: "Buttons/Default Button",
     argTypes: {
         color: {
             name: 'color',
@@ -73,9 +73,9 @@ export default {
             control: {
                 type: 'select',
             },
-            options: ['shadow-sm', 'shadow', 'shadow-md', 'shadow-lg', 'shadow-xl', 'shadow-2xl', undefined],
+            options: ['shadow-sm', 'shadow', 'shadow-md', 'shadow-lg', 'shadow-xl', 'shadow-2xl', "shadow-gameplay", undefined],
             table: {
-                type: { summary: 'Box-Shadow Preset', detail: '"shadow-sm" | "shadow" | "shadow-md" | "shadow-lg" | "shadow-xl" | "shadow-2xl" | undefined' },
+                type: { summary: 'Box-Shadow Preset', detail: '"shadow-sm" | "shadow" | "shadow-md" | "shadow-lg" | "shadow-xl" | "shadow-2xl" | "shadow-gameplay" | undefined' },
                 defaultValue: { summary: 'undefined' }
             }
         }

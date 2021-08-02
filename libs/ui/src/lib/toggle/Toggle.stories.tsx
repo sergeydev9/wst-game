@@ -2,7 +2,7 @@ import ToggleInput from './Toggle';
 
 export default {
     component: ToggleInput,
-    title: 'Toggle'
+    title: 'Inputs/Toggle'
 }
 
 export const Toggle = () => <ToggleInput></ToggleInput>

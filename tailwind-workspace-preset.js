@@ -18,7 +18,10 @@ module.exports = {
                 'red-light': "#A70B00"
             },
             dropShadow: {
-                'subtle-stroke': ' 0 0 0.45rem #D7D8F3'
+                'subtle-stroke': '0 0 0.45rem #D7D8F3'
+            },
+            boxShadow: {
+                'gameplay': '0px 4px 0px #1012A2'
             }
         },
         fontSize: {

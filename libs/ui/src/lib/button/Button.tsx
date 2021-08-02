@@ -11,7 +11,7 @@ export interface ButtonProps {
     border?: BorderThickness;
     $small?: boolean;
     $pill?: boolean;
-    boxshadow?: 'shadow-sm' | 'shadow' | 'shadow-md' | 'shadow-lg' | 'shadow-xl' | 'shadow-2xl'
+    boxshadow?: 'shadow-sm' | 'shadow' | 'shadow-md' | 'shadow-lg' | 'shadow-xl' | 'shadow-2xl' | 'shadow-gameplay' // use shadow-gameplay for filled gameplay button
 }
 
 const borderHelper = (border: "thin" | "medium" | "thick"): string => {

@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react";
 
 export default {
     component: Input,
-    title: "Text Input",
+    title: "Inputs/Text Input",
     argTypes: {
         light: {
             type: 'boolean',

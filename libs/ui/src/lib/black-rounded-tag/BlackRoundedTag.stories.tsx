@@ -5,7 +5,7 @@ import { Story, Meta } from '@storybook/react';
 
 export default {
     component: Tg,
-    title: "Black Rounded Tag",
+    title: "Inputs/Black Rounded Tag",
     argTypes: {
         selected: {
             type: 'boolean',

@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react";
 
 export default {
     component: DropShadowButtonComponent,
-    title: "Drop Shadow Button",
+    title: "Buttons/Drop Shadow Button",
     default: "border-light",
     argTypes: {
         buttonstyle: {

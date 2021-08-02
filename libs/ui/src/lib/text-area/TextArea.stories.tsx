@@ -2,7 +2,7 @@ import TextAreaInput from './TextArea';
 
 export default {
     component: TextAreaInput,
-    title: 'Text Area'
+    title: 'Inputs/Text Area'
 }
 
 export const TextArea = () => <TextAreaInput />
