@@ -7,7 +7,7 @@ export { default as FooterLinks } from './lib/footer-links/FooterLinks';
 export { default as RatingLabel } from './lib/rating-label/RatingLabel';
 export { default as SocialMediaLinks } from './lib/social-media-links/SocialMediaLinks';
 export { default as Textinput } from './lib/text-input/TextInput';
-export { default as UserStoryCarousel } from './lib/user-story-carousel/UserStoryCarousel';
+export { default as UserStoryCarousel } from './lib/carousel/Carousel';
 export { default as Hamburger } from './lib/hamburger/Hamburger';
 export { LargeTitle, Title1, Title2, Title3, BodyLarge, BodyMedium, BodySmall, Headline, LabelBig, LabelSmall } from './lib/typography/typography';
 export { default as InputLabel } from './lib/input-label/InputLabel';

@@ -1,6 +1,7 @@
 module.exports = {
     theme: {
         extend: {
+            // keep this list matched with ThemeColor type in /app-interfaces and /util/colors
             colors: {
                 'primary': "#5D5FEF", // toggle component needs to be manually kept in sync with this value since it has to use css classes
                 'subtle-primary': "#F2F2FB",
