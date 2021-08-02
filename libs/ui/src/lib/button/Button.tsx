@@ -14,6 +14,12 @@ export interface ButtonProps {
     boxshadow?: 'shadow-sm' | 'shadow' | 'shadow-md' | 'shadow-lg' | 'shadow-xl' | 'shadow-2xl' | 'shadow-gameplay' // use shadow-gameplay for filled gameplay button
 }
 
+/**
+ * Generate a border thickness tailwind class based on input prop
+ *
+ * @param {("thin" | "medium" | "thick")} border
+ * @return {*}  {string}
+ */
 const borderHelper = (border: "thin" | "medium" | "thick"): string => {
     switch (border) {
         case "thin":
@@ -25,16 +31,22 @@ const borderHelper = (border: "thin" | "medium" | "thick"): string => {
     }
 }
 
+/**
+ * Generate font size tailwind classes based on input props. Defaults to "text-headline"
+ *
+ * @param {(FontSize | undefined)} size
+ * @return {*}  {string}
+ */
 const fontSizeHelper = (size: FontSize | undefined): string => {
     switch (size) {
         case "label-big":
-            return "text-label-big"
+            return "text-label-big font-roboto font-medium"
         case "label-small":
-            return "text-label-small"
+            return "text-label-small font-roboto font-medium"
         case "headline":
-            return "text-headline"
+            return "text-headline font-bold"
         default:
-            return "text-headline"
+            return "text-headline font-bold"
     }
 }
 
@@ -48,7 +60,7 @@ const colorHelper = (color: ThemeColor | undefined, border: BorderThickness): st
 export default tw.button<ButtonProps>`
     ${(p) => fontSizeHelper(p.fontSize)}
     ${(p) => p.boxshadow ? p.boxshadow : ""}
-    ${(p) => p.$small ? "py-1 px-2" : "py-4 px-8"}
+    ${(p) => p.$small ? "py-1 px-3" : "py-4 px-8"}
     ${(p) => colorHelper(p.color, p.border)}
     ${(p) => p.$pill ? "rounded-full" : "rounded-lg"}
 

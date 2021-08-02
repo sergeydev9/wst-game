@@ -22,6 +22,9 @@ module.exports = {
             },
             boxShadow: {
                 'gameplay': '0px 4px 0px #1012A2'
+            },
+            ringColor: {
+                'primary': '#5D5FEF'
             }
         },
         fontSize: {
@@ -44,7 +47,17 @@ module.exports = {
 
     },
     variants: {
-        extend: {},
+        extend: {
+            backgroundColor: ['checked'],
+            borderColor: ['checked'],
+            backgroundImage: ['checked'],
+            backgroundClip: ['checked'],
+            ringWidth: ['checked'],
+            ringColor: ['checked'],
+            ringOpacity: ['checked'],
+            padding: ['checked']
+        }
+
     },
     plugins: [
         require('@tailwindcss/forms')({

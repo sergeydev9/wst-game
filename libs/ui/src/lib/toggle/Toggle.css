@@ -1,11 +1,15 @@
 .toggle-slider {
     -webkit-transition: .4s;
     transition: .4s;
-    background-color: #ccc;
+    background-color: #F2F2FB;
   }
 
   .toggle-off {
-      color: #ccc;
+      color: white;
+  }
+
+  .toggle-on {
+    color: #5D5FEF;
   }
 
   .toggle-slider:before {
@@ -15,7 +19,7 @@
     width: 2rem;
     right: 4px;
     bottom: 4px;
-    background-color: white;
+    background-color: #5D5FEF;
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -32,6 +36,10 @@
   input:checked + .toggle-slider + .toggle-on {
       color: #5D5FEF;
   }
+
+  input:checked + .toggle-slider:before {
+    background-color: white;
+}
 
   input:checked + .toggle-slider + .toggle-on + .toggle-off {
     color: white;

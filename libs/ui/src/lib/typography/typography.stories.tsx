@@ -2,7 +2,7 @@ import { LargeTitle, Title1, Title2, Title3, BodyLarge, BodyMedium, BodySmall, H
 
 export default {
     component: LargeTitle,
-    title: 'Typography'
+    title: 'Typography/Typography'
 
 }
 

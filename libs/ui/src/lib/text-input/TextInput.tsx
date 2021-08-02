@@ -5,6 +5,7 @@ export default tw.input`
         w-full
         px-3
         py-3
+        placeholder-gray-400
         border-subtle-stroke
         bg-subtle-primary
         max-w-xs
