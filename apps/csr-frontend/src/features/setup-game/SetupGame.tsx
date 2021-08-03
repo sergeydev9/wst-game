@@ -1,12 +1,12 @@
-import { SectionHeader, BlueSolidButton } from '@whosaidtrue/ui';
+import { Title1, Button } from '@whosaidtrue/ui';
 import React from 'react';
 
 const SetUpGame: React.FC = () => {
     return (
         <section className="flex flex-col gap-4 items-center">
-            <SectionHeader>Set Up a Game</SectionHeader>
+            <Title1>Set Up a Game</Title1>
             <p>Create a new game for your group</p>
-            <BlueSolidButton>Create Game</BlueSolidButton>
+            <Button>Create Game</Button>
         </section>
     )
 }

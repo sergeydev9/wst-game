@@ -20,12 +20,12 @@ const styleHelper = (style: DSButtonStyle) => {
 }
 
 export default tw.button<IDSButtonProps>`
-    text-headline
-    font-semibold
+    text-body-small
+    font-bold
     filter
     rounded-full
     drop-shadow-subtle-stroke
-    py-2
-    px-3
+    py-3
+    px-4
     ${(p) => styleHelper(p.buttonstyle)}
 `

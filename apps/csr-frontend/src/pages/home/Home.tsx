@@ -1,8 +1,12 @@
 import React from "react";
-import { HeroHeader, BoxedSpan, SectionHeader, UserStoryCarousel } from "@whosaidtrue/ui";
+import { LargeTitle, Box, Title1, Title3, Carousel } from "@whosaidtrue/ui";
 import JoinGame from "../../features/join-game/join-game";
 import SetUpGame from "../../features/setup-game/SetupGame";
 
+// TODO: Delete this and the dummy data when it's not needed anymore
+type UserStory = {
+  lines: string[]
+}
 const Home: React.FC = () => {
 
   const tempStories = [
@@ -13,19 +17,29 @@ const Home: React.FC = () => {
       lines: ["\"True or False, this is a test story?\"", "\"True...very true\""]
     }
   ]
+  const helper = (stories: UserStory[]) => stories.map((story, i) => {
+    return (
+      <div key={i}>
+        {story.lines.map((line, j) => <p key={j}>{line}</p>)}
+      </div>
+    )
+  })
+  const title = <Title3>Placeholder</Title3>
   return (
     <div className="flex flex-col items-center mt-12 gap-12">
-      <HeroHeader>Can you guess how many of your friends...</HeroHeader>
-      <BoxedSpan><SectionHeader>binge watched an entire season of a show in a weekend?</SectionHeader></BoxedSpan>
+      <LargeTitle>Can you guess how many of your friends...</LargeTitle>
+      <Box><Title1>binge watched an entire season of a show in a weekend?</Title1></Box>
       <div className="flex flex-row gap-8">
-        <BoxedSpan>
+        <Box>
           <JoinGame />
-        </BoxedSpan>
-        <BoxedSpan>
+        </Box>
+        <Box>
           <SetUpGame />
-        </BoxedSpan>
+        </Box>
       </div>
-      <UserStoryCarousel stories={tempStories} />
+      <Carousel title={title}>
+        {helper(tempStories)}
+      </Carousel>
     </div>
 
 

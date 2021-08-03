@@ -1,16 +1,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { Button } from '@whosaidtrue/ui';
+import { DropShadowButton } from '@whosaidtrue/ui';
 
 const LargeNav: React.FC = () => {
-    const linkClass = "mx-12 text-primary"
+    const linkClass = "text-primary"
     return (
-        <nav className="hidden md:flex md:flex-row md:justify-end md:gap-4 h-full items-center">
+        <nav className="hidden md:flex md:flex-row font-bold text-body-small md:justify-end gap-8 h-full items-center">
             <NavLink to="/who-said-true-school" className={linkClass}>Who Said true For Schools</NavLink>
             <NavLink to="/how-to-play" className={linkClass}>How to Play</NavLink>
-            <Button>Log in or Sign Up</Button>
-            <Button>Contact Us</Button>
+            <NavLink to="/contact-us" className={linkClass}>Contact Us</NavLink>
+            <DropShadowButton buttonstyle="solid">Login</DropShadowButton>
+            <DropShadowButton buttonstyle="border-light">Create Account</DropShadowButton>
         </nav>
     )
 }
