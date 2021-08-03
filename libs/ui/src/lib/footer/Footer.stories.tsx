@@ -5,7 +5,7 @@ import { BodySmall } from "../typography/typography";
 
 export default {
     component: Foot,
-    title: "Footer"
+    title: "Page Sections/Footer"
 }
 
 

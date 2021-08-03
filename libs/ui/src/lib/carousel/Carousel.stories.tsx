@@ -1,8 +1,10 @@
-import StoryCarousel from './UserStoryCarousel';
+import { UserStory } from '@whosaidtrue/app-interfaces';
+import { Title3 } from '../typography/typography';
+import StoryCarousel from './Carousel';
 
 export default {
     component: StoryCarousel,
-    title: "User Story Carousel"
+    title: "Page Sections/Carousel"
 }
 
 
@@ -16,8 +18,18 @@ const Template = () => {
         }
     ]
 
+    const helper = (stories: UserStory[]) => stories.map((story, i) => {
+        return (
+            <div key={i}>
+                {story.lines.map((line, j) => <p key={j}>{line}</p>)}
+            </div>
+        )
+    })
 
-    return <StoryCarousel stories={stories} />
+
+    const title = <Title3>Overheard on Who Said True?</Title3>
+
+    return <StoryCarousel title={title}>{helper(stories)}</StoryCarousel>
 }
 
-export const UserStoryCarousel = Template.bind({})
+export const Carousel = Template.bind({})

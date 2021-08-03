@@ -5,7 +5,7 @@ import { Story, Meta } from '@storybook/react';
 
 export default {
     component: Boxed,
-    title: "Boxed Span"
+    title: "Page Sections/Boxed Span"
 } as Meta;
 
 const Template: Story<BoxProps> = () => {

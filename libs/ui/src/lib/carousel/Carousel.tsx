@@ -4,20 +4,17 @@ import { BsCaretRightFill } from '@react-icons/all-files/bs/BsCaretRightFill';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 
-import { UserStory } from '@whosaidtrue/app-interfaces';
 import BoxedSpan from '../boxed-span/BoxedSpan';
-import { Title3 } from '../typography/typography';
-
 
 export interface IUserStoryCarousel {
-    stories: UserStory[];
+    title: React.ReactElement;
 }
 
 interface IRenderArrow {
     (clickHandler: () => void, hasNext: boolean, label: string): React.ReactNode
 }
 
-const storyCarousel: React.FC<IUserStoryCarousel> = ({ stories }) => {
+const storyCarousel: React.FC<IUserStoryCarousel> = ({ title, children }) => {
 
     // use inline css for more fine grained control than tailwind provides.
     const arrowStyles: CSSProperties = {
@@ -28,13 +25,7 @@ const storyCarousel: React.FC<IUserStoryCarousel> = ({ stories }) => {
     // Tailwind class applied to arrow icons
     const arrowClass = "absolute top-0 cursor-pointer text-gray-400 hover:bg-gray-400 hover:text-gray-200 h-full w-full"
 
-    const helper = stories.map((story, i) => {
-        return (
-            <div key={i}>
-                {story.lines.map((line, j) => <p key={j}>{line}</p>)}
-            </div>
-        )
-    })
+
     const prev: IRenderArrow = (clickHandler, hasPrev, label) => hasPrev && (
         <BsCaretLeftFill style={{ ...arrowStyles, left: 15 }} onClick={clickHandler} title={label} className={arrowClass} />
     )
@@ -44,7 +35,7 @@ const storyCarousel: React.FC<IUserStoryCarousel> = ({ stories }) => {
 
     return (
         <BoxedSpan>
-            <Title3>Overheard on Who Said True?</Title3>
+            {title}
             <Carousel
                 className="font-body-large mt-4 leading-8 pb-4"
                 showStatus={false}
@@ -53,7 +44,7 @@ const storyCarousel: React.FC<IUserStoryCarousel> = ({ stories }) => {
                 renderArrowPrev={prev}
                 renderArrowNext={next}
             >
-                {helper}
+                {children as React.ReactChild[]}
             </Carousel>
 
         </BoxedSpan>
