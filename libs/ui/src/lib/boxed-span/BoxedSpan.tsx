@@ -1,17 +1,16 @@
 import tw from "tailwind-styled-components"
 
 export interface BoxProps {
-    light?: boolean
+    $light?: boolean
 }
 
 export default tw.span<BoxProps>`
-    bg-subtle-primary
+    ${(p) => p.$light ? "bg-white-ish border-0" : "bg-subtle-primary border-2 border-subtle-stroke"}
+    filter
     flex
     flex-col
     rounded-3xl
-    border
-    border-subtle-stroke
-    shadow-md
+    drop-shadow-light
     items-center
     py-4
     px-7
