@@ -4,7 +4,7 @@ import { BsCaretRightFill } from '@react-icons/all-files/bs/BsCaretRightFill';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 
-import BoxedSpan from '../boxed-span/BoxedSpan';
+import BoxedSpan from '../box/Box';
 
 export interface IUserStoryCarousel {
     title: React.ReactElement;
