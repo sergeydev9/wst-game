@@ -1,14 +1,15 @@
 import tw from "tailwind-styled-components"
 
 export interface BoxProps {
-    $light?: boolean
+    $light?: boolean,
+    $horizontal?: boolean
 }
 
 export default tw.div<BoxProps>`
     ${(p) => p.$light ? "bg-white-ish border-0" : "bg-subtle-primary border-2 border-subtle-stroke"}
+    ${(p) => p.$horizontal ? "flex-row" : "flex-col"}
     filter
     flex
-    flex-col
     rounded-3xl
     drop-shadow-light
     items-center
