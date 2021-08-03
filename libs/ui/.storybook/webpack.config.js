@@ -63,6 +63,7 @@ module.exports = async ({ config, mode }) => {
                 svgo: false,
                 titleProp: true,
                 ref: true,
+                icon: true,
               },
             },
             {

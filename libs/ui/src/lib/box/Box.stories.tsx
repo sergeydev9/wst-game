@@ -31,7 +31,7 @@ export default {
     }
 } as Meta;
 
-const Template: Story<BoxProps> = (args) => {
+const VerticalTemplate: Story<BoxProps> = (args) => {
     return (
         <BoxComponent className="gap-6" {...args} >
             <LargeTitle>Binge watched an entire season of a show in a weekend?</LargeTitle>
@@ -40,14 +40,23 @@ const Template: Story<BoxProps> = (args) => {
     )
 }
 
-export const VerticalBox = Template.bind({});
+export const VerticalBox = VerticalTemplate.bind({});
 
 VerticalBox.args = {
     $light: false,
     $horizontal: false
 }
 
-export const HorizontalBox = Template.bind({})
+const HorizontalTemplate: Story<BoxProps> = (args) => {
+    return (
+        <BoxComponent className="gap-6" {...args} >
+            <LargeTitle>Binge watched an entire season of a show in a weekend?</LargeTitle>
+            <Button>Press me!</Button>
+        </BoxComponent >
+    )
+}
+
+export const HorizontalBox = HorizontalTemplate.bind({})
 
 HorizontalBox.args = {
     $light: false,
