@@ -4,7 +4,7 @@ export interface BoxProps {
     $light?: boolean
 }
 
-export default tw.span<BoxProps>`
+export default tw.div<BoxProps>`
     ${(p) => p.$light ? "bg-white-ish border-0" : "bg-subtle-primary border-2 border-subtle-stroke"}
     filter
     flex
@@ -12,6 +12,7 @@ export default tw.span<BoxProps>`
     rounded-3xl
     drop-shadow-light
     items-center
-    py-4
-    px-7
+    py-8
+    px-8
+    w-max
 `

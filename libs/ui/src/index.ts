@@ -1,12 +1,11 @@
 export { default as TextInput } from "./lib/text-input/TextInput";
 export { default as BlackRoundedTag } from './lib/black-rounded-tag/BlackRoundedTag';
-export { default as BoxedSpan } from './lib/boxed-span/BoxedSpan';
+export { default as Box } from './lib/box/Box';
 export { default as FavoriteStar } from './lib/favorite-star/FavoriteStar';
 export { default as Footer } from './lib/footer/Footer';
 export { default as FooterLinks } from './lib/footer-links/FooterLinks';
 export { default as RatingLabel } from './lib/rating-label/RatingLabel';
 export { default as SocialMediaLinks } from './lib/social-media-links/SocialMediaLinks';
-export { default as Textinput } from './lib/text-input/TextInput';
 export { default as UserStoryCarousel } from './lib/carousel/Carousel';
 export { default as Hamburger } from './lib/hamburger/Hamburger';
 export { LargeTitle, Title1, Title2, Title3, BodyLarge, BodyMedium, BodySmall, Headline, LabelBig, LabelSmall } from './lib/typography/typography';

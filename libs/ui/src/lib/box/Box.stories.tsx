@@ -1,11 +1,11 @@
-import Boxed, { BoxProps } from './BoxedSpan';
+import BoxComponent, { BoxProps } from './Box';
 import { LargeTitle } from '../typography/typography';
 import { Story, Meta } from '@storybook/react';
 
 
 export default {
-    component: Boxed,
-    title: "Page Sections/Boxed Span",
+    component: BoxComponent,
+    title: "Page Sections/Box",
     argTypes: {
         $light: {
             name: '$light',
@@ -22,14 +22,14 @@ export default {
 
 const Template: Story<BoxProps> = (args) => {
     return (
-        <Boxed {...args} >
+        <BoxComponent {...args} >
             <LargeTitle>Binge watched an entire season of a show in a weekend?</LargeTitle>
-        </Boxed >
+        </BoxComponent >
     )
 }
 
-export const BoxedSpan = Template.bind({});
+export const Box = Template.bind({});
 
-BoxedSpan.args = {
+Box.args = {
     $light: false
 }
