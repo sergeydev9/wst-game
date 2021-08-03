@@ -2,7 +2,7 @@ import React, { CSSProperties } from 'react';
 import { BsCaretLeftFill } from '@react-icons/all-files/bs/BsCaretLeftFill';
 import { BsCaretRightFill } from '@react-icons/all-files/bs/BsCaretRightFill';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from "react-responsive-carousel"
+import { Carousel as Crsl } from "react-responsive-carousel"
 
 import Box from '../box/Box';
 
@@ -14,7 +14,7 @@ interface IRenderArrow {
     (clickHandler: () => void, hasNext: boolean, label: string): React.ReactNode
 }
 
-const storyCarousel: React.FC<CarouselProps> = ({ title, children }) => {
+const Carousel: React.FC<CarouselProps> = ({ title, children }) => {
 
     // use inline css for more fine grained control than tailwind provides.
     const arrowStyles: CSSProperties = {
@@ -36,7 +36,7 @@ const storyCarousel: React.FC<CarouselProps> = ({ title, children }) => {
     return (
         <Box>
             {title}
-            <Carousel
+            <Crsl
                 className="font-body-large mt-4 leading-8"
                 showStatus={false}
                 showIndicators={false}
@@ -45,10 +45,10 @@ const storyCarousel: React.FC<CarouselProps> = ({ title, children }) => {
                 renderArrowNext={next}
             >
                 {children as React.ReactChild[]}
-            </Carousel>
+            </Crsl>
 
         </Box>
     )
 }
 
-export default storyCarousel;
+export default Carousel;

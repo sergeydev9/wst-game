@@ -3,14 +3,14 @@ import { FaFacebook } from '@react-icons/all-files/fa/FaFacebook';
 import { FaTwitter } from '@react-icons/all-files/fa/FaTwitter';
 import { FaInstagram } from '@react-icons/all-files/fa/FaInstagram';
 
-import { BodySmall } from '../typography/typography';
+import { BodySmall } from '../typography/Typography';
 
 export interface ISocialLinksProps {
     fbook: string;
     insta: string;
     twitter: string;
 }
-const links: React.FC<ISocialLinksProps> = ({ fbook, insta, twitter }) => {
+const SocialMediaLinks: React.FC<ISocialLinksProps> = ({ fbook, insta, twitter }) => {
 
     return (
         <section className="flex flex-col items-center text-primary sm:flex-row sm:gap-6 gap-2">
@@ -24,4 +24,4 @@ const links: React.FC<ISocialLinksProps> = ({ fbook, insta, twitter }) => {
     )
 }
 
-export default links;
+export default SocialMediaLinks;

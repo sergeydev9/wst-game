@@ -6,8 +6,8 @@ export interface StarProps {
     favorite: boolean
 }
 
-const favStar: React.FC<StarProps> = ({ favorite }) => {
+const FavoriteStar: React.FC<StarProps> = ({ favorite }) => {
     return favorite ? <BsStarFill className="text-basic-black" /> : <BsStar className="text-black" />
 }
 
-export default favStar
+export default FavoriteStar

@@ -1,5 +1,5 @@
 import Form from './FormContainer';
-import { Title1 } from '../typography/typography';
+import { Title1 } from '../typography/Typography';
 import Box from '../box/Box';
 import InputLabel from '../input-label/InputLabel';
 import TextInput from '../text-input/TextInput';

@@ -1,5 +1,5 @@
 import BoxComponent, { BoxProps } from './Box';
-import { LargeTitle } from '../typography/typography';
+import { LargeTitle } from '../typography/Typography';
 import Button from '../button/Button';
 import { Story, Meta } from '@storybook/react';
 

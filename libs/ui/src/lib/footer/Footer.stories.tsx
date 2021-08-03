@@ -1,7 +1,7 @@
 import FooterLinks from "../footer-links/FooterLinks";
 import Foot from "./Footer";
 import Socials from "../social-media-links/SocialMediaLinks";
-import { BodySmall } from "../typography/typography";
+import { BodySmall } from "../typography/Typography";
 
 export default {
     component: Foot,

@@ -1,4 +1,4 @@
-import { LargeTitle, Title1, Title2, Title3, BodyLarge, BodyMedium, BodySmall, Headline, LabelBig, LabelSmall } from './typography';
+import { LargeTitle, Title1, Title2, Title3, BodyLarge, BodyMedium, BodySmall, Headline, LabelBig, LabelSmall } from './Typography';
 
 export default {
     component: LargeTitle,

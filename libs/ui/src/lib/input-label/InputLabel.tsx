@@ -1,5 +1,5 @@
 import tw from "tailwind-styled-components";
-import { LabelBig } from '../typography/typography';
+import { LabelBig } from '../typography/Typography';
 
 export default tw(LabelBig)`
     block
