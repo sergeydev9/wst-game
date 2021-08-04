@@ -1,10 +1,13 @@
 import tw from "tailwind-styled-components";
 
 export default tw.input`
-    w-full 
-    h-10 
-    px-4 
-    rounded 
-    border-2 
-    border-gray-300
+        form-input
+        w-full
+        px-3
+        py-4
+        placeholder-gray-400
+        border-subtle-stroke
+        bg-subtle-primary
+        text-sm
+        rounded-xl
     `;

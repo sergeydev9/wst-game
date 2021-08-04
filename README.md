@@ -6,6 +6,10 @@ This project was generated using [Nx](https://nx.dev).
 
 <p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
 
+## Initial Installation
+
+This project requires the `nx` cli to be instlaled globally. This can be done by running `yarn global add @nrwl/cli`
+
 
 ## Applications
 Each component is split into its own application. Applications are located in the `/apps` directory.

@@ -35,6 +35,9 @@
       ],
       "@whosaidtrue/ui": [
         "libs/ui/src/index.ts"
+      ],
+      "@whosaidtrue/util": [
+        "libs/util/src/index.ts"
       ]
     }
   },

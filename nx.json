@@ -47,7 +47,9 @@
     },
     "csr-frontend-e2e": {
       "tags": [],
-      "implicitDependencies": ["csr-frontend"]
+      "implicitDependencies": [
+        "csr-frontend"
+      ]
     },
     "data": {
       "tags": []
@@ -59,17 +61,28 @@
       "tags": []
     },
     "socket-server": {
-      "tags": ["socket.io server"]
+      "tags": [
+        "socket.io server"
+      ]
     },
     "static-frontend": {
-      "tags": ["static"]
+      "tags": [
+        "static"
+      ]
     },
     "static-frontend-e2e": {
       "tags": [],
-      "implicitDependencies": ["static-frontend"]
+      "implicitDependencies": [
+        "static-frontend"
+      ]
     },
     "ui": {
-      "tags": ["ui"]
+      "tags": [
+        "ui"
+      ]
+    },
+    "util": {
+      "tags": []
     }
   }
 }

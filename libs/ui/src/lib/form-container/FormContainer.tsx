@@ -1,8 +1,10 @@
 import tw from "tailwind-styled-components";
 
-export default tw.section`
-    container
-    max-w-md
-    mx-auto 
-    p-4
-    `;
+export default tw.form`
+    flex
+    flex-col
+    text-center
+    justify-center
+    gap-6
+    w-96
+`
