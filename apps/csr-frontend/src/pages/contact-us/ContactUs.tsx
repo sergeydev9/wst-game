@@ -25,7 +25,7 @@ const ContactUs: React.FC = () => {
 
                 {/* name */}
                 <FormGroup>
-                    <InputLabel htmlFor="email">Name</InputLabel>
+                    <InputLabel htmlFor="name">Name</InputLabel>
                     <TextInput name="name" type="text" />
                 </FormGroup>
 
