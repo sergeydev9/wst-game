@@ -6,8 +6,10 @@ module.exports = {
   addons: [
     '@storybook/addon-essentials',
     "@storybook/addon-events",
+    "@storybook/addon-actions",
     'storybook-axios/register',
     'storybook-formik/register',
+    'addon-redux',
     {
       name: '@storybook/addon-postcss',
       options: {
