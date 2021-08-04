@@ -44,7 +44,7 @@ export interface ReducerConfig {
  * @returns {Store} a configured redux store object with storybook added enhancer
  */
 export const createStore = (configs: ReducerConfig[]) => {
-    const reducerObj = {}
+    const reducerObj = {} as any;
     configs.forEach(({ reducer, key }) => reducerObj[key] = reducer)
     return configureStore({
         reducer: reducerObj,

@@ -6,6 +6,7 @@ import { GuardedRoute } from "../features";
 
 // TODO: make a suspense fallback so these can be lazy loaded.
 import Home from "../pages/home/Home";
+import ContactUs from "../pages/contact-us/ContactUs";
 // import Login from "../pages/login/Login";
 // import Register from "../pages/register/Register";
 
@@ -14,6 +15,7 @@ const App: React.FC = () => {
     <Layout>
       <Switch>
         <Route exact path="/" component={Home} />
+        <Route exact path={ROUTES.contactUs} component={ContactUs} />
         {/* <GuardedRoute component={Home} exact={true} path={ROUTES.home} /> */}
         {/* <Route exact path={ROUTES.login} component={Login} />
         <Route exact path={ROUTES.register} component={Register} /> */}
