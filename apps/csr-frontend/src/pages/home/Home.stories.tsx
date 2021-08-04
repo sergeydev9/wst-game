@@ -1,10 +1,10 @@
-import Hme from './Home';
+import HomePage from './Home';
 
 export default {
-    component: Hme,
+    component: HomePage,
     title: 'Pages/Home'
 }
 
-const Template = () => <Hme />
+const Template = () => <HomePage />
 
 export const Home = Template.bind({})

@@ -6,10 +6,9 @@ export default tw.select`
     form-select
     w-full
     px-3
-    py-3
+    py-4
     border-subtle-stroke
     bg-subtle-primary
-    max-w-xs
     rounded-xl
     text-body-small
     font-semibold

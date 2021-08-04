@@ -5,6 +5,7 @@ export const ROUTES = {
     logout: "/logout",
     login: "/login",
     register: "/register",
+    contactUs: "/contact-us",
     home: "/home",
     root: "/",
 };

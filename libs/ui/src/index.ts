@@ -12,7 +12,7 @@ export { default as InputLabel } from './lib/input-label/InputLabel';
 export { default as TextArea } from './lib/text-area/TextArea';
 export { default as Button } from './lib/button/Button';
 export { default as DropShadowButton } from './lib/drop-shadow-button/DropShadowButton';
-export { default as FormContainer } from './lib/form-container/FormContainer';
+export { default as Form } from './lib/form/Form';
 export { default as FormGroup } from './lib/form-group/FormGroup';
 export { default as RadioInput } from './lib/radio-input/RadioInput';
 export { default as SecurityCodeDigit } from './lib/security-code-digit/SecurityCodeDigit';
