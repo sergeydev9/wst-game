@@ -2,7 +2,7 @@ import Hme from './Home';
 
 export default {
     component: Hme,
-    title: 'Home'
+    title: 'Pages/Home'
 }
 
 const Template = () => <Hme />

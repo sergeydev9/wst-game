@@ -18,4 +18,5 @@ export { default as RadioInput } from './lib/radio-input/RadioInput';
 export { default as SecurityCodeDigit } from './lib/security-code-digit/SecurityCodeDigit';
 export { default as SelectDropdown } from './lib/select-dropdown/SelectDropdown';
 export { default as Toggle } from './lib/toggle/Toggle';
+export { default as NavLogo } from './lib/nav-logo/NavLogo';
 export * from './lib/typography/Typography';
