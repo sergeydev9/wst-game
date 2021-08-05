@@ -1,33 +1,34 @@
-/* The slider itself */
-.sl-input-slider { /* don't ever change this to .slider. If you do, there will be a name colision */
--webkit-appearance: none;
-appearance: none;
-width: 100%;
-height: 25px;
-background: #d3d3d3;
-outline: none;
-opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
--webkit-transition: .2s;
-transition: opacity .2s;
+/* WIP
+.sl-input-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
 }
 
-/* Mouse-over effects */
+
 .sl-input-slider:hover {
-opacity: 1; /* Fully shown on mouse-over */
+    opacity: 1;
 }
 
 .sl-input-slider::-webkit-slider-thumb {
--webkit-appearance: none; /* Override default look */
-appearance: none;
-width: 25px;
-height: 25px;
-background: #04AA6D;
-cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #04AA6D;
+    cursor: pointer;
 }
 
-.sl-input-slider::-moz-range-thumb {
-width: 25px;
-height: 25px;
-background: #04AA6D;
-cursor: pointer;
+    .sl-input-slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #04AA6D;
+    cursor: pointer;
 }
+*/

@@ -1,9 +1,11 @@
 /**
  * In order to effectively purge styles, tailwind needs
- * full class names to be in the code. This makes constructing
+ * full class names to be in the code (i.e. no string concatenation). This makes constructing
  * styles from variables awkward, since long case statments need to be used
  * instead of template strings. The functions in this module
  * help generate full classnames.
+ *
+ * See the first section in https://tailwindcss.com/docs/optimizing-for-production
  */
 import { ThemeColor } from '@whosaidtrue/app-interfaces';
 
