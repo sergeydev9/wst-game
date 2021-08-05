@@ -13,7 +13,7 @@ const styleHelper = (style: DSButtonStyle) => {
         case "border-light":
             return "bg-white border border-subtle-stroke text-primary"
         case "border-thick":
-            return "bg-white border-4 border-primary text-primary"
+            return "bg-white border-2 border-primary text-primary"
         default:
             return "bg-primary text-white"
     }
@@ -25,7 +25,7 @@ export default tw.button<IDSButtonProps>`
     filter
     rounded-full
     drop-shadow-subtle-stroke
-    py-3
+    py-2
     px-4
     ${(p) => styleHelper(p.buttonstyle)}
 `
