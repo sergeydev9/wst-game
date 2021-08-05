@@ -7,31 +7,49 @@ class WebsocketService {
   public readonly clients: { [key: string]: WebsocketClient } = {};
   private readonly gameService: GameService;
 
-  public constructor (gameService: GameService) {
+  public constructor(gameService: GameService) {
     this.gameService = gameService;
   }
 
-  public handle (ws: WebSocket, gameCode: string, playerId: string)
-  {
-    // TODO: switch to gameService.findGame()
-    const game = this.gameService.devOnlyFindOrCreateGame(gameCode);
+  public handle(ws: WebSocket, gameCode: string, playerId: string) {
+    try {
 
-    if (!game) {
-      console.warn('invalid game code ', gameCode, playerId);
-      ws.send(JSON.stringify({ event: 'ConnectGame', success: false, message: 'Invalid game pin.' }));
-      ws.close();
-      return;
+      // TODO: switch to gameService.findGame()
+      const game = this.gameService.devOnlyFindOrCreateGame(gameCode);
+
+      if (!game) {
+        throw Error('Invalid game pin.');
+      }
+
+      const player = this.gameService.createPlayer(playerId, game);
+      const client = new WebsocketClient(ws, player, this.gameService);
+
+      client.on('close', () => this.onDisconnected(client));
+
+      this.onConnected(client);
+
+      ws.send(JSON.stringify({
+        event: 'GameConnected',
+        success: true,
+        message: 'Welcome! Please pick a name.',
+        data: {gameCode: player.game.code, playerId: playerId}
+      }));
+    } catch (e) {
+      console.error(e);
+      ws.send(JSON.stringify({
+        event: 'GameConnected',
+        success: false,
+        message: e.message,
+        data: {gameCode: gameCode, playerId: playerId}
+      }));
+      ws.terminate();
+
+      // handle error at websocket level and propagate to caller to handle rest
+      throw e;
     }
-
-    const player = this.gameService.createPlayer(playerId, game);
-    const client = new WebsocketClient(ws, player, this.gameService);
-
-    client.on('close', () => this.onDisconnected(client));
-
-    this.onConnected(client);
   };
 
-  private onConnected (client: WebsocketClient) {
+  private onConnected(client: WebsocketClient) {
 
     if (this.clients[client.clientId]) {
       throw new Error(`client ${client.clientId} already exists`);
@@ -40,7 +58,7 @@ class WebsocketService {
     this.clients[client.clientId] = client;
   }
 
-  private onDisconnected (client: WebsocketClient) {
+  private onDisconnected(client: WebsocketClient) {
     if (this.clients[client.clientId]) {
       delete this.clients[client.clientId];
     }

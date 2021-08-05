@@ -3,7 +3,6 @@ import { Router } from 'express';
 import GameController from '../controllers/game.controller';
 
 class GameRoute {
-  public path = '/game';
   public router = Router();
   public gameController = new GameController();
 
@@ -13,12 +12,12 @@ class GameRoute {
 
   private initializeRoutes() {
     // @ts-ignore
-    this.router.ws(`${this.path}/echo`, this.gameController.echo);
+    this.router.ws('/game/echo', this.gameController.echo);
 
     // @ts-ignore
-    this.router.ws(`${this.path}/:pin`, this.gameController.connectGameWs);
+    this.router.ws('/game/:code/player/:guid', this.gameController.connectGameWs);
 
-    this.router.post(`${this.path}/:pin`, this.gameController.createGame);
+    this.router.post('/game/:code', this.gameController.createGame);
   }
 }
 

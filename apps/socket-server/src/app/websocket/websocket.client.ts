@@ -55,8 +55,6 @@ class WebsocketClient extends EventEmitter {
     ws.on('pong', data => {
       console.debug('ws pong', data);
     });
-
-    this.sendMessage({event: 'GameConnected', success: true, message: 'Welcome! Please pick a name.'});
   }
 
   private sendMessage = (message: WebsocketMessage) => {
