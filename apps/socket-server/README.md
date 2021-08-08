@@ -3,105 +3,65 @@
 The Socket Server is responsible for real-time communication between the players and 
 the game server over Websockets.
 
-## Development server
+## Development Server
 
-Run `nx serve nx serve socket-server`
+Run `nx serve socket-server`
 
 Connect to `ws://127.0.0.1:4001/game/:code/player/:guid`
 
-## Websocket messages
+## Websocket Messages
 
-The websocket messages have the following structure
+The websocket message types are defined in libs/api-interfaces/src/lib/ws-interfaces.ts
 
-```json
+The top-level message structure is
+````json
 {
 	"event": "string",
-	"success": "boolean",
-	"message": "string",
-	"data" : {
-		"//any" : "//any"
+	"status": "string",
+	"debut": "string",
+	"payload" : {
+		"string" : "//any"
 	}
 }
-```
+````
 
+### Server Messages
 
-
-### Server messages
-
-Message events sent by the server.  
+Messages sent by the server to the players. 
 
 On successful connection the first message sent by the server will be `GameConnected`.
 
+*Server Messages*
 - GameConnected
-- PlayerLeft
+- HostJoinedGame
 - PlayerJoinedGame
-- ReadQuestion
-- ListenQuestion
-- AnswerQuestion
-- QuestionAnswered
+- PlayerLeftGame
+- QuestionPart1
+- QuestionPart2
+- PlayerAnswered
 - QuestionResults
-- PlayerScores
+- QuestionScores
 - FinalScores
 
-For the full message examples see *Debugging* section. In the future this will be updated with complete examples.
 
+### Client Messages
 
-### Client messages
+Messages sent by the players to the server.
 
-Message examples the client (player) can send
+On successful connection the first message should be `PlayerJoinGame` or `HostJoinGame`.
 
-```json
-{
-  "event": "HostJoinGame",
-  "data": {
-    "playerName": "Alice"
-  }
-}
-```
+*Player messages*
+- PlayerJoinGame
+- AnswerPart1
+- AnswerPart2
 
-```json
-{
-  "event": "PlayerJoinGame",
-  "data": {
-    "playerName": "Bob"
-  }
-}
-```
+*Host only messages*
+- HostJoinGame
+- NextQuestion
+- ShowResults
+- ShowScores
+- ShowFinalScores
 
-```json
-{
-  "event": "ShowQuestion"
-}
-```
-
-```json
-{
-  "event": "QuestionRead"
-}
-```
-
-```json
-{
-  "event": "PlayerAnswer",
-  "data": {
-    "questionNumber": 1,
-    "answer": true,
-    "guess": 0.5
-  }
-}
-```
-
-```json
-{
-  "event": "ShowPlayerScores"
-}
-```
-
-```json
-{
-  "event": "ForceShowResults"
-}
-```
 
 ## Debugging
 

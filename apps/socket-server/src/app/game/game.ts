@@ -1,19 +1,28 @@
 import {EventEmitter} from "events";
 import Player from "./player";
 
-type Question = {
+// TODO: temp type defs, will probably replace with db models
+type GameQuestion = {
   text: string;
+  followUp: string;
   type: string;
-  answers?: {
+  reader?: Player;
+  players: Player[];
+  answers: {
     player: Player;
-    answer: boolean;
-    guess: number;
+    answer?: 'true' | 'false' | 'pass';
+    guess?: number;
   }[];
 };
 
+type DeckQuestion = {
+  text: string;
+  type: string;
+}
+
 type Deck = {
   name: string;
-  questions: Question[];
+  questions: DeckQuestion[];
 };
 
 
@@ -28,8 +37,7 @@ class Game extends EventEmitter {
   public host: Player;
 
   public questionNumber = 0;
-  public readonly questions: Question[] = [];
-  public readonly questionsLength: number;
+  public readonly questions: GameQuestion[] = [];
 
   public reader: Player;
   public readonly readerOrder: Player[] = [];
@@ -39,11 +47,17 @@ class Game extends EventEmitter {
     this.code = code;
     this.deck = deck;
 
-    deck.questions.forEach(q => {
-      q.answers = [];
-      this.questions.push(q);
+    deck.questions.forEach(deckQuestion => {
+      const gameQuestion: GameQuestion = {
+        text: deckQuestion.text,
+        followUp: 'What was the show?', // TODO
+        type: deckQuestion.type,
+        reader: null,
+        players: [],
+        answers: []
+      };
+      this.questions.push(gameQuestion);
     });
-    this.questionsLength = this.questions.length;
   }
 
   public notifyAll(message: any) {
@@ -102,23 +116,15 @@ class Game extends EventEmitter {
   }
 
   public getQuestion(question: number) {
-    if (question < 1 || question > this.questionsLength) {
-      throw new Error(`Invalid question ${question}, valid: 1-${this.questionsLength}`);
+    if (question < 1 || question > this.questions.length) {
+      throw new Error(`Invalid question ${question}, valid: 1-${this.questions.length}`);
     }
 
     return this.questions[question - 1];
   }
 
-  public currentQuestion(): Question {
-    if (this.questionNumber < 1 || this.questionNumber > this.questionsLength) {
-      return null;
-    }
-
-    return this.questions[this.questionNumber - 1];
-  }
-
   public nextQuestion() {
-    if (this.questionNumber >= this.questionsLength) {
+    if (this.questionNumber >= this.questions.length) {
       return null;
     }
 
@@ -127,35 +133,35 @@ class Game extends EventEmitter {
     this.waiting.splice(0, this.waiting.length);
 
     this.questionNumber++;
-    this.reader = this.readerForQuestion(this.questionNumber);
-    return this.currentQuestion();
+    const nextQuestion = this.getQuestion(this.questionNumber);
+    nextQuestion.reader = this.readerForQuestion(this.questionNumber);
+    nextQuestion.players =  [...this.active];
+
+    return nextQuestion;
   }
 
   public isFinalQuestion() {
-    return this.questionNumber == this.questionsLength;
-  }
-
-  public currentResults() {
-    return this.questionResults(this.questionNumber);
+    return this.questionNumber == this.questions.length;
   }
 
   public questionResults(question: number) {
-    if (question < 1 || question > this.questionsLength) {
-      throw new Error(`Invalid question ${question}, valid: 1-${this.questionsLength}`);
+    if (question < 1 || question > this.questions.length) {
+      throw new Error(`Invalid question ${question}, valid: 1-${this.questions.length}`);
     }
 
     const q = this.questions[question - 1];
+    const groupTrueCount = q.answers.filter(a => a.answer === 'true').length;
 
     return {
-      groupTotalCount: q.answers.length,
-      groupTrueCount: q.answers.filter(a => a.answer).length,
-      followUp: 'What was the show?', // TODO
-      groupPercent: 1, // TODO
-      everyonePercent: 0.5, // TODO
+      followUp: q.followUp,
+      playersCount: q.players.length,
+      groupTrueCount: groupTrueCount,
+      groupPercent: groupTrueCount / q.players.length,
+      globalPercent: 0.5, // TODO: global stats from db
     };
   }
 
-  public currentScores() {
+  public currentScore() {
     // TODO: implement scores
     return [
       {

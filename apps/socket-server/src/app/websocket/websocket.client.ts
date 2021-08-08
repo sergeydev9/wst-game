@@ -2,10 +2,9 @@ import {EventEmitter} from "events";
 import * as WebSocket from 'ws';
 import * as uuid from 'uuid';
 import GameService from "../services/game.service";
-import WebsocketMessage from "./websocket.message";
+import {AnswerPart1, HostJoinGame, PlayerJoinGame, WebsocketError, WebsocketMessage} from '@whosaidtrue/api-interfaces'
 import Game from "../game/game";
 import Player from "../game/player";
-
 
 class WebsocketClient extends EventEmitter {
 
@@ -68,45 +67,57 @@ class WebsocketClient extends EventEmitter {
       message = JSON.parse(data);
     } catch (e) {
       console.error(e);
-      this.sendMessage({event: 'JsonParse', success: false, message: e.message});
+      const msg: WebsocketError = {event: 'WebsocketError', status: 'fail', payload: {errorMessage: e.message}};
+      this.sendMessage(msg);
       return;
     }
 
     try {
       const game = this.player.game;
-      
+
       switch (message.event) {
-        case 'HostJoinGame':
-          this.player.game.host = this.player;
-          this.gameService.joinWaitingRoom(this.player.game, this.player, message.data.playerName);
+        case 'HostJoinGame': // -> HostJoinedGame
+
+          this.gameService.hostJoinGame(game, this.player, (message as HostJoinGame).payload.playerName);
           break;
 
-        case 'PlayerJoinGame': // -> this.playerJoinedGame
-          this.gameService.joinWaitingRoom(game, this.player, message.data.playerName);
+        case 'PlayerJoinGame': // -> PlayerJoinedGame
+
+          this.gameService.playerJoinGame(game, this.player, (message as PlayerJoinGame).payload.playerName);
           break;
 
-        case 'ShowQuestion': // -> ReadQuestion | ListenQuestion, FinalScores
-          if(this.player.game.isFinalQuestion()) {
+        case 'NextQuestion': // -> QuestionPart1 | FinalScores
+
+          if (this.player.game.isFinalQuestion()) {
             this.gameService.showFinalScores(game, this.player);
           } else {
             this.gameService.nextQuestion(game, this.player);
           }
           break;
 
-        case 'QuestionRead': // -> AnswerQuestion
-          this.gameService.answerQuestion(game, this.player);
+        case 'AnswerPart1': // -> QuestionPart2
+
+          this.gameService.playerAnswerPart1(game, this.player, message.payload);
           break;
 
-        case 'PlayerAnswer': // -> QuestionAnswered, QuestionResults
-          this.gameService.playerAnswer(game, this.player, message.data);
+        case 'AnswerPart2': // -> PlayerAnswered, QuestionResults
+
+          this.gameService.playerAnswerPart2(game, this.player, message.payload);
           break;
 
-        case 'ForceShowResults': // -> QuestionResults
+        case 'ShowResults': // -> QuestionResults
+
           this.gameService.forceShowResults(game, this.player);
           break;
 
-        case 'ShowPlayerScores': // -> this.playerScores
+        case 'ShowScores': // -> QuestionScores
+
           this.gameService.showScores(game, this.player);
+          break;
+
+        case 'ShowFinalScores': // -> FinalScores
+
+          this.gameService.showFinalScores(game, this.player);
           break;
 
         default:
@@ -115,13 +126,11 @@ class WebsocketClient extends EventEmitter {
 
       // TODO: message ids for ack?
       // ack
-      this.sendMessage({event: message.event, success: true, message: 'Ok'});
-
-      // response
-      // TODO
+      this.sendMessage({event: message.event, status: 'ok'});
     } catch (e) {
       console.error(e);
-      this.sendMessage({event: message.event, success: false, message: e.message});
+      const msg: WebsocketError = {event: message.event, status: 'fail', payload: {errorMessage: e.message}};
+      this.sendMessage(msg);
     }
   };
 

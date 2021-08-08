@@ -1,5 +1,16 @@
 import Game from "../game/game";
 import Player from "../game/player";
+import {
+  FinalScores,
+  HostJoinedGame,
+  PlayerAnswered,
+  PlayerJoinedGame,
+  PlayerLeftGame,
+  QuestionPart1,
+  QuestionPart2,
+  QuestionResults,
+  QuestionScores
+} from "@whosaidtrue/api-interfaces";
 
 class GameService {
   private games = {};
@@ -10,7 +21,7 @@ class GameService {
   }
 
   public findGame(code: string) {
-      return this.games[code];
+    return this.games[code];
   }
 
   public createGame(code: string): Game {
@@ -19,16 +30,16 @@ class GameService {
     const game = new Game(code, {
       name: 'Fake Deck',
       questions: [
-        { text: 'Question 1', type: 'Entertainment' },
-        { text: 'Question 2', type: 'Entertainment' },
-        { text: 'Question 3', type: 'Entertainment' },
-        { text: 'Question 4', type: 'Entertainment' },
-        { text: 'Question 5', type: 'Entertainment' },
-        { text: 'Question 6', type: 'Entertainment' },
-        { text: 'Question 7', type: 'Entertainment' },
-        { text: 'Question 8', type: 'Entertainment' },
-        { text: 'Question 9', type: 'Entertainment' },
-        { text: 'Question 10', type: 'Entertainment' },
+        {text: 'GameQuestion 1', type: 'Entertainment'},
+        {text: 'GameQuestion 2', type: 'Entertainment'},
+        {text: 'GameQuestion 3', type: 'Entertainment'},
+        {text: 'GameQuestion 4', type: 'Entertainment'},
+        {text: 'GameQuestion 5', type: 'Entertainment'},
+        {text: 'GameQuestion 6', type: 'Entertainment'},
+        {text: 'GameQuestion 7', type: 'Entertainment'},
+        {text: 'GameQuestion 8', type: 'Entertainment'},
+        {text: 'GameQuestion 9', type: 'Entertainment'},
+        {text: 'GameQuestion 10', type: 'Entertainment'},
       ],
     });
 
@@ -56,14 +67,16 @@ class GameService {
       game.disconnected.push(player);
       player.emit("disconnected");
       game.emit('disconnected', player);
-      game.notifyAll({
-        event: 'PlayerLeft',
-        success: true,
-        message: `Player ${player.name} has left the game.`,
-        data: {
+
+      const msg: PlayerLeftGame = {
+        event: 'PlayerLeftGame',
+        status: 'ok',
+        debug: `Player ${player.name} has left the game.`,
+        payload: {
           playerName: player.name,
         },
-      });
+      };
+      game.notifyAll(msg);
     }
 
     index = game.waiting.indexOf(player);
@@ -76,13 +89,13 @@ class GameService {
       game.active.splice(index, 1);
     }
 
-    if (game.host == player) {
+    if (game.host?.playerId == player.playerId) {
       game.host = null;
       // TODO: handle host gone
     }
   }
 
-  public joinWaitingRoom(game: Game, player: Player, playerName: string) {
+  public playerJoinGame(game: Game, player: Player, playerName: string) {
     if (!game.checkName(playerName)) {
       throw new Error(`Sorry! The name '${playerName}' is already taken, game: ${game.code}`);
     }
@@ -90,20 +103,41 @@ class GameService {
     player.name = playerName;
     game.joinWaitingRoom(player);
 
-    game.notifyAll({
+    const msg: PlayerJoinedGame = {
       event: 'PlayerJoinedGame',
-      success: true,
-      message: `New player '${player.name}' joined the waiting room.`,
-      data: {
-        gameHost: game.host?.name,
+      status: "ok",
+      debug: `New player '${player.name}' joined the game`,
+      payload: {
         newPlayer: player.name,
         currentPlayers: game.waiting.map(p => p.name),
       },
-    });
+    };
+    game.notifyAll(msg);
+  }
+
+  public hostJoinGame(game: Game, player: Player, playerName: string) {
+    if (!game.checkName(playerName)) {
+      throw new Error(`Sorry! The name '${playerName}' is already taken, game: ${game.code}`);
+    }
+
+    player.name = playerName;
+    game.host = player;
+    game.joinWaitingRoom(player);
+
+    const msg: HostJoinedGame = {
+      event: 'HostJoinedGame',
+      status: "ok",
+      debug: `The host '${player.name}' joined the game`,
+      payload: {
+        newPlayer: player.name,
+        currentPlayers: game.waiting.map(p => p.name),
+      },
+    };
+    game.notifyAll(msg);
   }
 
   public nextQuestion(game: Game, player: Player) {
-    if (game.host != player) {
+    if (game.host?.playerId != player.playerId) {
       throw new Error('Only the host can advance to next question.');
     }
 
@@ -112,97 +146,105 @@ class GameService {
       throw new Error('No more questions game over.');
     }
 
-    // reader gets the question
-    game.reader.notify({
-      event: 'ReadQuestion',
-      success: true,
-      message: 'Please read the question to the group.',
-      data: {
+    const msg: QuestionPart1 = {
+      event: 'QuestionPart1',
+      status: 'ok',
+      payload: {
+        readerId: q.reader.playerId,
+        readerName: q.reader.name,
         questionNumber: game.questionNumber,
-        questionTotal: game.questionsLength,
+        questionTotal: game.questions.length,
         questionText: q.text,
-        questionType: q.type,
       },
-    });
-
-    // everyone else listens
-    game.active
-      .filter(p => p != game.reader)
-      .forEach(p =>
-        p.notify({
-          event: 'ListenQuestion',
-          success: true,
-          message: 'Listen closely to the reader.',
-          data: {
-            readerName: game.reader.name,
-            questionNumber: game.questionNumber,
-            questionTotal: game.questionsLength,
-            questionType: q.type,
-          },
-        }),
-      );
+    };
+    game.notifyActive(msg);
   }
 
-  public answerQuestion(game: Game, player: Player) {
-    if (game.reader != player) {
-      throw new Error('Only the reader can advance to question input.');
+  public playerAnswerPart1(game: Game, player: Player, data: any) {
+    if (game.questionNumber < 1) {
+      throw new Error(`Game ${game.code} hasn't started yet!`);
     }
 
-    const q = game.currentQuestion();
-    if (q == null) {
-      throw new Error('No more questions to answer.');
-    }
-
-    game.notifyActive({
-      event: 'AnswerQuestion',
-      success: true,
-      message: 'Please answer the question.',
-      data: {
-        questionNumber: game.questionNumber,
-        questionTotal: game.questionsLength,
-        questionText: q.text,
-        questionType: q.type,
-        groupCount: game.active.length,
-        hint1: 'Answer whether the question is True or False for YOU. All answers are anonymous.',
-        hist2: 'Guess how many of the players (including yourself) answered "True", for that same question',
-      },
-    });
-  }
-
-  public playerAnswer(game: Game, player: Player, data: any) {
     if (game.questionNumber != data.questionNumber) {
       throw new Error(`Expecting answer for question ${game.questionNumber} but got ${data.questionNumber}`);
     }
 
     const q = game.getQuestion(data.questionNumber);
 
-    if (q.answers.map(a => a.player).includes(player)) {
-      throw Error(`Already answered question ${data.questionNumber} with ${data.answer}`);
+    let answer = q.answers.find(a => a.player.playerId == player.playerId);
+
+    // prevent player from answering multiple times
+    if (answer?.answer !== undefined) {
+      throw Error(`Already answered question ${data.questionNumber} with ${answer.answer}`);
+    }
+
+    if (!answer) {
+      answer = {player: player};
+      q.answers.push(answer);
+    }
+
+    // record part 1
+    answer.answer = data.answer;
+
+    // send part 2
+    const msg: QuestionPart2 = {
+      event: 'QuestionPart2',
+      status: 'ok',
+      payload: {
+        playersCount: q.players.length,
+        questionNumber: game.questionNumber,
+        questionTotal: game.questions.length,
+        questionText: 'How many players answered true for ' + q.text,
+
+      },
+    };
+    player.notify(msg);
+  }
+
+  public playerAnswerPart2(game: Game, player: Player, data: any) {
+    if (game.questionNumber < 1) {
+      throw new Error(`Game ${game.code} hasn't started yet!`);
+    }
+
+    if (game.questionNumber != data.questionNumber) {
+      throw new Error(`Expecting answer for question ${game.questionNumber} but got ${data.questionNumber}`);
+    }
+
+    const q = game.getQuestion(data.questionNumber);
+
+    const answer = q.answers.find(a => a.player.playerId == player.playerId);
+
+    if (!answer) {
+      throw Error(`Must answer question ${data.questionNumber} before guessing.`);
+    }
+
+    // prevent player from guessing multiple times
+    if (answer.guess !== undefined) {
+      throw Error(`Already guessed question ${data.questionNumber} with ${answer.guess}%`);
     }
 
     if (data.guess < 0.0 || data.guess > 1.0) {
       throw Error(`Invalid guess, should be a percentage between 0 and 1.`);
     }
 
-    q.answers.push({
-      player: player,
-      answer: data.answer,
-      guess: data.guess,
-    });
+    // record part 2
+    answer.guess = data.guess;
 
-    const playersCount = game.active.length;
-    const answersCount = q.answers.length;
+    const playersCount = q.players.length;
+    const answersCount = q.answers.filter(a => a.answer !== undefined && a.guess !== undefined).length;
 
-    game.notifyActive({
-      event: 'QuestionAnswered',
-      success: true,
-      message: `Player ${player.name} answered question ${data.questionNumber}`,
-      data: {
+    const msg: PlayerAnswered = {
+      event: 'PlayerAnswered',
+      status: 'ok',
+      debug: `Player ${player.name} answered question ${data.questionNumber}`,
+      payload: {
         playerName: player.name,
+        playersAnswered: q.answers.map(a => a.player.name),
         playersCount: playersCount,
         answersCount: answersCount,
       },
-    });
+    };
+    game.notifyActive(msg);
 
     // auto-advance to results
     if (answersCount >= playersCount) {
@@ -211,7 +253,7 @@ class GameService {
   }
 
   public forceShowResults(game: Game, player: Player) {
-    if (game.host != player) {
+    if (game.host?.playerId != player.playerId) {
       throw new Error('Only the host can advance to results before all players have answered.');
     }
 
@@ -219,36 +261,40 @@ class GameService {
   }
 
   public showResults(game: Game) {
-    game.notifyActive({
+    const msg: QuestionResults = {
       event: 'QuestionResults',
-      success: true,
-      message: `Results for question ${game.questionNumber}`,
-      data: {
-        results: game.currentResults(),
+      status: 'ok',
+      debug: `Results for question ${game.questionNumber}`,
+      payload: {
+        questionNumber: game.questionNumber,
+        results: game.questionResults(game.questionNumber)
       },
-    });
+    };
+    game.notifyActive(msg);
   }
 
   public showScores(game: Game, player: Player) {
-    if (game.host != player) {
+    if (game.host?.playerId != player.playerId) {
       throw new Error('Only the host can advance to scores.');
     }
 
-    const scores = game.currentScores();
-    const header = {
-      event: 'PlayerScores',
-      success: true,
-      message: `Scores for question ${game.questionNumber}`,
+    const gameScore = game.currentScore();
+    const header: QuestionScores = {
+      event: 'QuestionScores',
+      status: 'ok',
+      debug: `Scores for question ${game.questionNumber}`,
     };
 
     game.active.forEach(player => {
-      player.notify({
+      const msg: QuestionScores = {
         ...header,
-        data: {
-          scores: scores,
-          myScore: player.currentScore(),
+        payload: {
+          questionNumber: game.questionNumber,
+          gameScore: gameScore,
+          playerScore: player.currentScore(),
         },
-      });
+      };
+      player.notify(msg);
     });
   }
 
@@ -257,23 +303,24 @@ class GameService {
       throw new Error('Only the host can advance to final scores.');
     }
 
-    const scores = game.currentScores();
-    const header = {
+    const gameScore = game.currentScore();
+    const header: FinalScores = {
       event: 'FinalScores',
-      success: true,
-      message: `Final scores for game: ${game.code}`,
+      status: 'ok',
+      debug: `Final scores for game: ${game.code}`,
     };
 
     game.active.forEach(player => {
-      player.notify({
+      const msg: FinalScores = {
         ...header,
-        data: {
-          scores: scores,
-          myScore: player.currentScore(),
+        payload: {
+          gameScore: gameScore,
+          playerScore: player.currentScore(),
           funFacts: this.funFacts(game, player),
           deckName: game.deck.name,
         },
-      });
+      };
+      player.notify(msg);
     });
   }
 
@@ -304,7 +351,6 @@ class GameService {
       },
     ];
   }
-
 }
 
 export default GameService;
