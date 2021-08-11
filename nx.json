@@ -54,6 +54,9 @@
     "data": {
       "tags": []
     },
+    "database": {
+      "tags": []
+    },
     "logger": {
       "tags": []
     },

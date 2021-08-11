@@ -43,11 +43,26 @@ The api reads from the following env variables:
 - DB_POOL_MAX=5
 - NODE_ENV=development
 - PORT=3000
-
+- DATABASE_URL=postgres://postgres:password@localhost:5432/whosaidtrue-dev
 
 These can be changed for local dev in `.local.env`
 
 **warning** Values in `.local.env` must match values in `docker-compose.yml`
+
+## Database Migrations and seeds
+
+Database migrations are managed via `node-pg-migrate`.
+
+See https://salsita.github.io/node-pg-migrate/#/
+
+To send a command to `node-pg-migrate`, run `yarn run database:migrate <YOUR_COMMAND>`. This will pass the
+command along to the `node-pg-migrate` binary, and will execute the command using `./migrations` as the migrations directory.
+
+There is also a `database:seed` script. This is used to execute commands using `./seeds` as the migrations directory. Use this
+for migrations that generate development seed data. So, for example, to run `yarn run database:seed up` to execute the migrations in
+the `./seed` directory.
+
+This library uses the `DATABASE_URL` environment variable to connect to the database.
 
 ## Generate an application
 

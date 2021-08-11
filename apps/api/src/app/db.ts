@@ -1,5 +1,16 @@
 import { Sequelize } from 'sequelize';
-import { userFactory, deckFactory, userDeckFactory, answerFactory, deckQuestionFactory, gameFactory, gamePlayerFactory, gameQuestionFactory, playerNameFactory, questionFactory } from '@whosaidtrue/data';
+import {
+    userFactory,
+    deckFactory,
+    userDeckFactory,
+    answerFactory,
+    deckQuestionFactory,
+    gameFactory,
+    gamePlayerFactory,
+    gameQuestionFactory,
+    playerNameFactory,
+    questionFactory
+} from '@whosaidtrue/data';
 import { logger } from '@whosaidtrue/logger';
 
 
