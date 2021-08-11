@@ -7,17 +7,26 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     // users
     pgm.createTable('users', {
         id: 'id',
-        email: { type: 'string', notNull: true, unique: true },
-        password: { type: 'string', notNull: true },
-        status: { type: 'string', notNull: true, default: 'good' },
-        accountType: { type: 'string', notNull: true },
-        screenName: { type: 'string', notNull: false },
-        firstName: { type: 'string', notNull: true },
-        lastName: { type: 'string', notNull: true },
-        activationCode: { type: 'string', notNull: false, unique: true },
-        activated: { type: 'boolean', default: false },
-        dob: { type: 'date', notNull: true },
-        ipAddress: { type: 'cidr', notNull: false }
+        email: { type: 'varchar(1000)', notNull: true, unique: true },
+        password: { type: 'varchar(1000)', notNull: true },
+        roles: { type: 'varchar(200)[]' },
+        questionDeckCredits: { type: 'smallint', notNull: true, default: 0 },
+        testAccount: { type: 'boolean', notNull: true, default: false },
+        notifications: { type: 'boolean', notNull: true, default: false },
+        language: { type: 'varchar(10)', notNull: false, default: 'us-en' },
+        gender: { type: 'char(1)', notNull: false }, // TODO: create custom type?
+        ageRange: { type: 'varchar(20)', notNull: false }, // TODO: create custom type?
+        appDownloaded: { type: 'boolean', notNull: false, default: false },
+        createdAt: {
+            type: 'timestamp',
+            notNull: true,
+            default: pgm.func('current_timestamp'),
+        },
+        updatedAt: {
+            type: 'timestamp',
+            notNull: true,
+            default: pgm.func('current_timestamp'),
+        }
     })
 
     // decks
@@ -28,21 +37,136 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         clean: { type: 'string', notNull: true },
         ageRating: { type: 'string', notNull: true },
         movieRating: { type: 'string', notNull: true },
-        SFW: { type: 'string', notNull: true },
-        status: { type: 'string', notNull: true },
+        SFW: { type: 'boolean', notNull: true },
+        status: { type: 'string', notNull: true }, // TODO: Create custom type
         description: { type: 'string', notNull: true },
-        currentPrice: { type: 'money', notNull: true },
-        originalPrice: { type: 'money', notNull: true },
-        type: { type: 'string', notNull: true }
+        purchasePrice: { type: 'money', notNull: true },
+    })
+
+    // games
+    pgm.createTable('games', {
+        id: 'id',
+        accessCode: { type: 'varchar(20)', notNull: false },
+        hostId: {
+            type: 'integer',
+            references: '"gamePlayers"',
+            notNull: false,
+            onDelete: 'SET NULL'
+        },
+        status: { type: 'varchar(100)', notNull: true }, // TODO: create custom type? what are the possible values?
+        startDate: { type: 'timestamp', notNull: false },
+        endDate: { type: 'timestamp', notNull: false }
+    })
+
+    // questions
+    pgm.createTable('questions', {
+        text: { type: 'text', notNull: true },
+        textForGuess: { type: 'text', notNull: true },
+        followUp: { type: 'text', notNull: true },
+        deckId: { type: 'integer', notNull: true, references: '"decks"' },
+        ageRating: { type: 'smallint', notNull: true },
+        status: { type: 'varchar(20)', notNull: true } // TODO: create custom type
+    })
+
+    // gamePlayers
+    pgm.createTable('gamePlayers', {
+        id: 'id',
+        gameId: {
+            type: 'integer',
+            references: '"games',
+            notNull: true,
+            onDelete: 'CASCADE'
+        },
+        playerName: { type: 'varchar(200)', notNull: true }
+    })
+
+    // gameUsers
+    pgm.createTable('gameUsers', {
+        id: 'id',
+        gameId: {
+            type: 'integer',
+            references: '"games',
+            notNull: true,
+            onDelete: 'CASCADE'
+        },
+        userId: {
+            type: 'integer',
+            references: '"users',
+            notNull: true,
+            onDelete: 'CASCADE'
+        },
+    })
+
+    // gameQuestions
+    pgm.createTable('gameQuestions', {
+        id: 'id',
+        questionId: {
+            type: 'integer',
+            references: '"questions',
+            notNull: false,
+            onDelete: 'SET NULL'
+        },
+        questionSequenceIndex: { type: 'smallint', notNull: false },
+        gameId: {
+            type: 'integer',
+            references: '"games',
+            notNull: true,
+            onDelete: 'CASCADE'
+        },
+        readerId: {
+            type: 'integer',
+            references: '"gamePlayers',
+            notNull: false,
+            onDelete: 'SET NULL'
+        },
+    })
+
+    // generatedNames
+    pgm.createTable('generatedNames', {
+        id: 'id',
+        name: { type: 'varchar(200)', notNull: true },
+        clean: { type: 'boolean', notNull: true },
+        timesDisplayed: { type: 'integer', notNull: true, default: 0 }
+    })
+
+    // gameAnswers
+    pgm.createTable('gameAnswers', {
+        id: 'id',
+        gameQuestionId: {
+            type: 'integer',
+            references: '"gameQuestions"',
+            notNull: true,
+            onDelete: 'CASCADE'
+        },
+        gameId: {
+            type: 'integer',
+            references: '"games"',
+            notNull: true,
+            onDelete: 'CASCADE',
+        },
+        gamePlayerId: {
+            type: 'integer',
+            references: '"gamePlayers"',
+            notNull: true,
+            onDelete: 'CASCADE',
+        },
+        value: { type: 'varchar(5)', notNull: true },
+        numberTrueGuess: { type: 'integer', notNull: true },
+        score: { type: 'smallint', notNull: false }
     })
 
     // userDecks
     pgm.createTable('userDecks', {
         id: 'id',
         userId: { type: 'serial', notNull: true, references: 'users' },
-        deckId: { type: 'serial', notNull: true, references: 'decks' },
-        isFavorite: { type: 'boolean', default: false },
-        isSubscribed: { type: 'boolean', default: false }
+        deckId: { type: 'serial', notNull: true, references: 'decks' }
+    })
+
+    // userSessions
+    pgm.createTable('userSessions', {
+        id: 'id',
+        userId: { type: 'serial', notNull: true, references: 'users' },
+
     })
 
 }
