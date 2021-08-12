@@ -11,7 +11,7 @@
     "e2e": "nx e2e",
     "migrate-dev:up": "node-pg-migrate up --tsconfig ./apps/database/tsconfig.app.json --envPath ./.local.env --migrations-dir ./apps/database/migrations/development",
     "migrate-dev:down": "node-pg-migrate down --tsconfig ./apps/database/tsconfig.app.json --envPath ./.local.env --migrations-dir ./apps/database/migrations/development",
-    "database:seed": "node-pg-migrate up --tsconfig ./tsconfig.base.json --migrations-dir ./seeds",
+    "migrate-dev:seed": "node-pg-migrate up --tsconfig ./tsconfig.base.json --migrations-dir ./seeds",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",
     "affected:build": "nx affected:build",

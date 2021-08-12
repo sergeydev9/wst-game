@@ -29,11 +29,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         roles: { type: 'user_role[]', notNull: true }, // custom type
         question_deck_credits: { type: 'smallint', notNull: true, default: 0 },
         test_account: { type: 'boolean', notNull: true, default: false },
-        notifications: { type: 'boolean', notNull: true, default: false },
-        language: { type: 'varchar(50)', notNull: true, default: 'en-US' }, // rules for language tags defined in https://datatracker.ietf.org/doc/html/rfc4647 and https://datatracker.ietf.org/doc/html/rfc5646
-        gender: { type: 'char(10)', notNull: false }, // TODO: create custom type?
-        age_range: { type: 'varchar(20)', notNull: true }, // TODO: create custom type? Maybe split into 2 integer fields?
-        app_downloaded: { type: 'boolean', notNull: true, default: false },
         created_at: {
             type: 'timestamp',
             notNull: true,
@@ -76,7 +71,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createTable('games', {
         id: 'id',
         access_code: { type: 'varchar(200)', notNull: false, unique: true },
-
         status: { type: 'varchar(100)', notNull: true }, // TODO: create custom type? what are the possible values?
         start_date: { type: 'timestamp', notNull: false },
         end_date: { type: 'timestamp', notNull: false },
@@ -138,7 +132,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     })
 
     // hosts
-    pgm.createTable('hosts', {
+    pgm.createTable('game_hosts', {
         id: 'id',
         game_id: {
             type: 'integer',
@@ -162,14 +156,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: true,
             default: pgm.func('current_timestamp'),
         }
-    })
-
-    // user_deck_rating
-    pgm.createTable('user_deck_rating', {
-        id: 'id',
-        deck_id: { type: 'integer', notNull: true, references: 'decks', onDelete: 'CASCADE' },
-        user_id: { type: 'integer', notNull: false, references: 'users', onDelete: 'SET NULL' },
-        rating: { type: 'user_rating', notNull: true }
     })
 
     // user_question_rating
@@ -352,10 +338,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         status: { type: 'varchar(100)', notNull: true },
         user_id: { type: 'integer', notNull: true, references: 'users', onDelete: 'NO ACTION' },
         deck_id: { type: 'integer', notNull: true, references: 'decks', onDelete: 'NO ACTION' },
-        original_price: { type: 'money', notNull: true },
-        total_taxes: { type: 'money', notNull: true, default: 0 },
-        total_fees: { type: 'money', notNull: true, default: 0 },
-        total_discounts: { type: 'money', notNull: true, default: 0 },
         purchase_price: { type: 'money', notNull: true },
         fulfilled_on: { type: 'timestamp', notNull: false },
         created_at: {
@@ -368,44 +350,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: true,
             default: pgm.func('current_timestamp'),
         }
-    })
-
-    // sales
-    pgm.createTable('sales', {
-        id: 'id',
-        discount_percent: { type: 'decimal', notNull: false, default: null, check: 'discount_flat = NULL' },
-        discount_flat: { type: 'money', notNull: false, default: null, check: 'discount_percent = NULL' },
-        start_date: { type: 'timestamp', notNull: true, default: '-infinity' },
-        end_date: { type: 'timestamp', notNull: true, default: 'infinity' },
-        created_at: {
-            type: 'timestamp',
-            notNull: true,
-            default: pgm.func('current_timestamp'),
-        },
-        updated_at: {
-            type: 'timestamp',
-            notNull: true,
-            default: pgm.func('current_timestamp'),
-        }
-    })
-
-    // order_sale
-    pgm.createTable('order_sales', {
-        id: 'id',
-        sale_id: { type: 'integer', notNull: true, references: 'sales', onDelete: 'NO ACTION' },
-        order_id: { type: 'integer', notNull: true, references: 'orders', onDelete: 'CASCADE' },
-        created_at: {
-            type: 'timestamp',
-            notNull: true,
-            default: pgm.func('current_timestamp'),
-        },
-        updated_at: {
-            type: 'timestamp',
-            notNull: true,
-            default: pgm.func('current_timestamp'),
-        }
-    })
-
+    });
 
     /**
     * ======================================
@@ -555,6 +500,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createIndex('game_questions', ['game_id', 'question_sequence_index'], { unique: true });
     pgm.createIndex('game_players', ['player_name', 'game_id'], { unique: true });
     pgm.createIndex('game_answers', ['game_question_id', 'game_player_id'], { unique: true });
+    pgm.createIndex('questions', 'deck_id')
     pgm.createIndex('hosts', 'game_id');
     pgm.createIndex('user_decks', 'user_id');
 

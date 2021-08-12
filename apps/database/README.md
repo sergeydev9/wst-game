@@ -78,13 +78,13 @@ There, enter the credentials listed in `docker-compose.yml`:
 - **email**: address@email.com
 - **password**: secret
 
-![login-screen](./docs/login.png)
+![login-screen](docs/login.PNG)
 
 Once you get in, click on `Object > Create > Server`.
 
 Here, you can create a connection to the Postgres container. In the `General` tab, give the server a name.
 
-![server-name](./docs/name.png)
+![server-name](docs/name.PNG)
 
 Then, in the `Connection` tab, enter the information for the database you are working on. For development, make sure these match the values in the `docker-compose.yml` file.
 
@@ -93,7 +93,7 @@ Then, in the `Connection` tab, enter the information for the database you are wo
 - **Username**: postgres
 - **Password**: password
 
-![connection-tab](./docs/connection.png)
+![connection-tab](docs/connection.PNG)
 
 Here you can see everything that is going on in the database.
 
@@ -115,22 +115,17 @@ password | varchar(1000) | no | no
 roles | user_role[] | no | no |
 question_deck_credits | smallint | no | no | 0
 test_account | boolean | no | no | false
-notifications | boolean | no | no | false
-language | varchar(50) | no | no | "en-US"
-gender | varchar(50) | yes | no
-age_range | varchar(20) | no | no
-app_downloaded | boolean | no | no | false
 created_at | timestamp | no | no | now()
 updated_at | timestamp | no | no | now()
 
 <br />
 
-### **hosts**
+### **game_hosts**
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-game_id | no | no | | games | CASCADE
-player_id | no | no | | game_players | CASCADE
+game_id | no | no | | | games | CASCADE
+player_id | no | no | || game_players | CASCADE
 created_at | timestamp | no | no | now()
 updated_at | timestamp | no | no | now()
 
@@ -283,51 +278,8 @@ updated_at | timestamp | no | no | now()
 id | integer | no | yes
 user_id | integer | yes | no | | users | SET NULL
 deck_id | integer | yes | no | | decks | SET NULL
-original_price | money | no | no
-total_taxes | money | no | no | 0
-total_fees | money | no | no | 0
-total_discounts | money | no | no | 0
 purchase_price | money | no | no
 fulfilled_on | timestamp | yes | no
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
-
-<br />
-
-### **sales**
-
-| Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
----| --- | --- | --- | --- | --- | ---
-id | integer | no | yes
-discount_percent | decimal | yes (must be null if discount_flat isn't) | no | null
-discount_flat | decimal | yes (must be null if discount_percent isn't) | no | null
-start_date | timestamp | no | no | -infinity
-end_date | timestamp | no | no | infinity
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
-
-<br />
-
-### **order_sales**
-
-| Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
----| --- | --- | --- | --- | --- | ---
-id | integer | no | yes
-sale_id | integer | yes | no | | sales | SET NULL
-order_id | integer | no | no | | orders | CASCADE
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
-
-<br />
-
-### **user_deck_rating**
-
-| Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
----| --- | --- | --- | --- | --- | ---
-id | integer | no | yes
-deck_id | integer | no | no | | decks | CASCADE
-user_id | integer | yes | no | | orders | SET NULL
-rating | user_rating | no | no
 created_at | timestamp | no | no | now()
 updated_at | timestamp | no | no | now()
 
@@ -375,10 +327,10 @@ This function is run by update triggers on each table. It updates the updated_at
 
 ### number_true_answers
 
-- *parameters:* gameQuestionId
+- *parameters:* game_question_id
 - *returns:* integer
 
-Returns the number of "true" answers for a given gameQuestionId
+Returns the number of "true" answers for a given game_question_id
 
 ```sql
 SELECT number_true_answers(GAME_ID) # returns the calculated value as an integer
@@ -410,11 +362,12 @@ The following is a comprehensive list of the current database indexes:
 
 table | columns | unique
 |---|---|---
-| game_questions | gameId, questionSequenceIndex | yes
-| game_players | playerName, gameId | yes
-| game_answers | gameQuestionId, gamePlayerId | yes
-| user_decks | userId | no
-| hosts | gameId | no
+| game_questions | gameId, question_sequence_index | yes
+| game_players | player_name, game_id | yes
+| game_answers | game_question_id, game_player_id | yes
+| user_decks | user_id | no
+| hosts | game_id | no
+| questions | deck_id | no
 
 <br/>
 
