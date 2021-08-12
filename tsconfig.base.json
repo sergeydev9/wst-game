@@ -10,40 +10,19 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@whosaidtrue/api-interfaces": [
-        "libs/api-interfaces/src/index.ts"
-      ],
-      "@whosaidtrue/app-interfaces": [
-        "libs/app-interfaces/src/index.ts"
-      ],
-      "@whosaidtrue/data": [
-        "libs/data/src/index.ts"
-      ],
-      "@whosaidtrue/logger": [
-        "libs/logger/src/index.ts"
-      ],
-      "@whosaidtrue/middleware": [
-        "libs/middleware/src/index.ts"
-      ],
-      "@whosaidtrue/ui": [
-        "libs/ui/src/index.ts"
-      ],
-      "@whosaidtrue/util": [
-        "libs/util/src/index.ts"
-      ]
+      "@whosaidtrue/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+      "@whosaidtrue/app-interfaces": ["libs/app-interfaces/src/index.ts"],
+      "@whosaidtrue/data": ["libs/data/src/index.ts"],
+      "@whosaidtrue/logger": ["libs/logger/src/index.ts"],
+      "@whosaidtrue/middleware": ["libs/middleware/src/index.ts"],
+      "@whosaidtrue/ui": ["libs/ui/src/index.ts"],
+      "@whosaidtrue/util": ["libs/util/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp",
-    "logs"
-  ]
+  "exclude": ["node_modules", "tmp", "logs"]
 }
