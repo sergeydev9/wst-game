@@ -115,8 +115,8 @@ password | varchar(1000) | no | no
 roles | user_role[] | no | no |
 question_deck_credits | smallint | no | no | 0
 test_account | boolean | no | no | false
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -126,8 +126,8 @@ updated_at | timestamp | no | no | now()
 id | integer | no | yes
 game_id | no | no | | | games | CASCADE
 player_id | no | no | || game_players | CASCADE
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 ### **decks**
 
@@ -145,8 +145,8 @@ description | text | no | no
 purchase_price | money | no | no
 example_question | text | no | no
 thumbnail_url | varchar(1000) | no | no
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -157,10 +157,10 @@ updated_at | timestamp | no | no | now()
 id | integer | no | yes
 access_code | varchar(200) | yes | yes
 status | varchar(100) | no | no
-start_date | timestamp | no | no
-end_date | timestamp | no | no
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+start_date | timestamptz | no | no
+end_date | timestamptz | no | no
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -175,8 +175,8 @@ follow_up | text | no | no
 deck_id | integer | no | no | | decks | CASCADE
 age_rating | smallint | no | no
 status | question_status | no | no
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -187,8 +187,8 @@ updated_at | timestamp | no | no | now()
 id | integer | no | yes
 player_name | varchar(200) | no | no
 game_id | integer | no | no | | games | CASCADE
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -199,8 +199,8 @@ updated_at | timestamp | no | no | now()
 id | integer | no | yes
 user_id | integer | no | no | | users | CASCADE
 game_id | integer | no | no | | games | CASCADE
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -213,8 +213,8 @@ question_sequence_index | smallint | no | no
 question_id | integer | yes | no | | questions | SET_NULL
 reader_id | integer | yes | no | | game_players | SET_NULL
 game_id | integer | no | no | | games | CASCADE
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -226,8 +226,8 @@ id | integer | no | yes
 name | varchar(200) | no | yes
 clean | boolean | no | no
 times_displayed | integer | no | no | 0
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -242,8 +242,8 @@ game_player_id | integer | no | no | | game_players | CASCADE
 value | answer | no | no
 number_true_guess | smallint | yes | no
 score | smallint | yes | no
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -254,8 +254,8 @@ updated_at | timestamp | no | no | now()
 id | integer | no | yes
 user_id | integer | no | no | | users | CASCADE
 deck_id | integer | no | no | | decks | CASCADE
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -266,8 +266,8 @@ updated_at | timestamp | no | no | now()
 id | integer | no | yes
 user_id | integer | yes | no | | users | SET NULL
 ip_address | cidr | no | no
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -279,9 +279,9 @@ id | integer | no | yes
 user_id | integer | yes | no | | users | SET NULL
 deck_id | integer | yes | no | | decks | SET NULL
 purchase_price | money | no | no
-fulfilled_on | timestamp | yes | no
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+fulfilled_on | timestamptz | yes | no
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 
@@ -293,8 +293,8 @@ id | integer | no | yes
 question_id | integer | no | no | | decks | CASCADE
 user_id | integer | yes | no | | orders | SET NULL
 rating | user_rating | no | no
-created_at | timestamp | no | no | now()
-updated_at | timestamp | no | no | now()
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
 
 <br />
 

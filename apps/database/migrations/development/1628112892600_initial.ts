@@ -30,14 +30,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         question_deck_credits: { type: 'smallint', notNull: true, default: 0 },
         test_account: { type: 'boolean', notNull: true, default: false },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -56,14 +56,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         example_question: { type: 'text', notNull: false },
         thumbnail_url: { type: 'varchar(1000)', notNull: false },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -72,17 +72,17 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         id: 'id',
         access_code: { type: 'varchar(200)', notNull: false, unique: true },
         status: { type: 'varchar(100)', notNull: true }, // TODO: create custom type? what are the possible values?
-        start_date: { type: 'timestamp', notNull: false },
-        end_date: { type: 'timestamp', notNull: false },
+        start_date: { type: 'timestamptz', notNull: false },
+        end_date: { type: 'timestamptz', notNull: false },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -96,14 +96,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         age_rating: { type: 'smallint', notNull: true },
         status: { type: 'question_status', notNull: true }, // custom type
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -120,14 +120,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
         player_name: { type: 'varchar(200)', notNull: true },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -147,14 +147,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             onDelete: 'CASCADE'
         },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -183,14 +183,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             onDelete: 'CASCADE'
         },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -217,14 +217,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             onDelete: 'SET NULL'
         },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -235,14 +235,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         clean: { type: 'boolean', notNull: true },
         times_displayed: { type: 'integer', notNull: true, default: 0 },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -271,14 +271,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         number_true_guess: { type: 'smallint', notNull: true },
         score: { type: 'smallint', notNull: false },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -299,14 +299,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             onDelete: 'CASCADE'
         },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -321,14 +321,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
         ip_address: { type: 'cidr', notNull: true },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     })
 
@@ -339,16 +339,16 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         user_id: { type: 'integer', notNull: true, references: 'users', onDelete: 'NO ACTION' },
         deck_id: { type: 'integer', notNull: true, references: 'decks', onDelete: 'NO ACTION' },
         purchase_price: { type: 'money', notNull: true },
-        fulfilled_on: { type: 'timestamp', notNull: false },
+        fulfilled_on: { type: 'timestamptz', notNull: false },
         created_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         },
         updated_at: {
-            type: 'timestamp',
+            type: 'timestamptz',
             notNull: true,
-            default: pgm.func('current_timestamp'),
+            default: pgm.func('now()'),
         }
     });
 
@@ -503,7 +503,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createIndex('questions', 'deck_id')
     pgm.createIndex('hosts', 'game_id');
     pgm.createIndex('user_decks', 'user_id');
-
 
     /**
     * ======================================
