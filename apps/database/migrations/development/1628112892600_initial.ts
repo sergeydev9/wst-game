@@ -92,7 +92,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         text: { type: 'text', notNull: true },
         text_for_guess: { type: 'text', notNull: true },
         follow_up: { type: 'text', notNull: true },
-        deck_id: { type: 'integer', notNull: true, references: '"decks"', onDelete: 'CASCADE' },
+        deck_id: { type: 'integer', notNull: true, references: 'decks', onDelete: 'CASCADE' },
         age_rating: { type: 'smallint', notNull: true },
         status: { type: 'question_status', notNull: true }, // custom type
         created_at: {
