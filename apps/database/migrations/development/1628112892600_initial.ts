@@ -453,7 +453,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         function: 'update_updated_at_column'
     })
 
-    pgm.createTrigger('hosts', 'update_updated_at_trigger', {
+    pgm.createTrigger('game_hosts', 'update_updated_at_trigger', {
         when: 'BEFORE',
         operation: 'UPDATE',
         level: 'ROW',
@@ -473,22 +473,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         level: 'ROW',
         function: 'update_updated_at_column'
     })
-
-    pgm.createTrigger('sales', 'update_updated_at_trigger', {
-        when: 'BEFORE',
-        operation: 'UPDATE',
-        level: 'ROW',
-        function: 'update_updated_at_column'
-    })
-
-    pgm.createTrigger('order_sales', 'update_updated_at_trigger', {
-        when: 'BEFORE',
-        operation: 'UPDATE',
-        level: 'ROW',
-        function: 'update_updated_at_column'
-    })
-
-
     /* other triggers */
 
 
@@ -501,7 +485,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createIndex('game_players', ['player_name', 'game_id'], { unique: true });
     pgm.createIndex('game_answers', ['game_question_id', 'game_player_id'], { unique: true });
     pgm.createIndex('questions', 'deck_id')
-    pgm.createIndex('hosts', 'game_id');
+    pgm.createIndex('game_hosts', 'game_id');
     pgm.createIndex('user_decks', 'user_id');
 
     /**
