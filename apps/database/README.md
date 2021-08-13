@@ -157,8 +157,8 @@ updated_at | timestamptz | no | no | now()
 id | integer | no | yes
 access_code | varchar(200) | yes | yes
 status | varchar(100) | no | no
-start_date | timestamptz | no | no
-end_date | timestamptz | no | no
+start_date | timestamptz | yes | no
+end_date | timestamptz | yes | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
