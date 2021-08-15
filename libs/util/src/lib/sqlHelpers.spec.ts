@@ -19,12 +19,12 @@ describe('updateQueryBuilder', () => {
         expect(actual).toEqual('SET attribute = null')
     })
 
-    it('should correctly cast decimal numbers', () => {
+    it('should correctly cast numbers', () => {
         const update = {
-            attribute: 1.00
+            attribute: 1
         }
 
         const actual = updateQueryBuilder(update);
-        expect(actual).toEqual('SET attribute = 1.00')
+        expect(actual).toEqual('SET attribute = 1')
     })
 })
