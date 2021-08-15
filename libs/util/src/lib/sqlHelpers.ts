@@ -10,7 +10,9 @@
  *
  * const query = updateQueryBuilder(nameUpdate);
  *
- * console.log(query) // 'SET name = "New Name"'
+ * WARNING: DO NOT USE FOR MONEY VALUES WITHOUT CONVERTING MONEY VALUES TO STRING FIRST.
+ *
+ * console.log(query) // "SET name = 'New Name'"
  *
  * @param {Record<string, unknown} updateObject an object containing the values for the update
  * @returns {string} A SQL query that sets the values specified in the update Object
@@ -22,9 +24,9 @@ export const updateQueryBuilder = (updateObject: Record<string, unknown>): strin
     Object.keys(updateObject).forEach(key => {
         let val = updateObject[key];
 
-        // add double quotes around string values
-        if (typeof val === "string") {
-            val = `"${val}"`;
+        // add single quotes around string values
+        if (typeof val === 'string') {
+            val = `'${val}'`;
         }
 
         // set undefined to null (postgres doesn't know what undefined is)
