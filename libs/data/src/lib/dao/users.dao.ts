@@ -1,4 +1,5 @@
 import Dao from './base.dao';
+import { updateQueryBuilder, UpdateObject } from '@whosaidtrue/util';
 
 class Users extends Dao {
     getById = async (id: string) => {
@@ -6,8 +7,10 @@ class Users extends Dao {
         return rows[0];
     }
 
-    setPassword = async (id: string, newPassword: string) => {
-        const { rows } = await this.pool.query(`UPDATE`)
+    updateById = async (id: string, updateObject: UpdateObject) => {
+        const updateString = updateQueryBuilder(updateObject);
+        const { rows } = await this.pool.query(`UPDATE users ${updateString} WHERE id = ${id}`);
+        return rows[0];
     }
 }
 

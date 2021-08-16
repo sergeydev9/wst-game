@@ -17,6 +17,11 @@ export interface UserStory {
 }
 
 /**
+ * Type used to define the movie rating column on decks
+ */
+export type MovieRating = "G" | "PG" | "PG-13" | "R" | "NC-17" | "X"
+
+/**
  * This type is a union of the names of the theme colors. Used to type variables that must
  * be one of the theme's color options
  */

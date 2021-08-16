@@ -1,4 +1,9 @@
 /**
+ * Generic object type used to create update queries via the updateQueryBuilder in @whosaidtrue/util
+ */
+export type UpdateObject = Record<string, unknown>;
+
+/**
  * Create a SQL update query from an object.
  * The keys of the object will be used as the column names.
  * The values of those keys will be used to set the new value of the column.
@@ -17,7 +22,7 @@
  * @param {Record<string, unknown} updateObject an object containing the values for the update
  * @returns {string} A SQL query that sets the values specified in the update Object
  */
-export const updateQueryBuilder = (updateObject: Record<string, unknown>): string => {
+export const updateQueryBuilder = (updateObject: UpdateObject): string => {
     let queryString = "SET ";
 
     // loop through keys
