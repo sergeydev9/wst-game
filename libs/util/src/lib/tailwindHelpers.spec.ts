@@ -1,4 +1,5 @@
-import { genTextColor, THEME_COLORS, genBgColor, genBorderColor } from './tailwindHelpers';
+import { genTextColor, genBgColor, genBorderColor } from './tailwindHelpers';
+import { THEME_COLORS } from './colors';
 
 describe('genTextColor', () => {
   it('should return the input with "text-" added to the start', () => {

@@ -1,20 +1,15 @@
-export class HttpException extends Error {
-    public status: number;
-    public message: string;
-
-    constructor(status: number, message: string) {
-        super(message);
-        this.status = status;
-        this.message = message;
-    }
-}
-
 /**
  * Home page slider box. An array of strings representing a conversation.
  */
 export interface UserStory {
     lines: string[];
 }
+
+export type QuestionStatus = "active" | "inactive" | "poll";
+export type UserRating = "great" | "bad";
+export type DeckStatus = "active" | "inactive" | "pending";
+export type AnswerValue = "true" | "false" | "pass";
+export type UserRole = "user" | "admin";
 
 /**
  * Type used to define the movie rating column on decks

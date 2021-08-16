@@ -1,10 +1,6 @@
-import { Provider } from "react-redux";
 import { createBrowserHistory } from 'history';
 import { Router } from 'react-router-dom';
 import { Story as StoryType } from "@storybook/react";
-import { configureStore, Reducer, Store } from '@reduxjs/toolkit';
-import { enhancer } from 'addon-redux';
-
 
 /**
  * Elements that contain router links need to be wrapped in a router provider.

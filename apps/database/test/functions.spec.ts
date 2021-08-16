@@ -32,7 +32,7 @@ describe('database custom functions', () => {
         it('should change the value of updated_at after an update', async () => {
             const query = `SELECT updated_at FROM game_answers WHERE game_answers.id = 1`
             const old = await client.query(query);
-            const update = await client.query('UPDATE game_answers SET "numberTrueGuess" = 50 WHERE game_answers.id = 1 RETURNING updated_at')
+            const update = await client.query('UPDATE game_answers SET "number_true_guess" = 50 WHERE game_answers.id = 1 RETURNING updated_at')
             return expect(update.rows[0].updated_at).not.toEqual(old.rows[0].updated_at)
         })
     })

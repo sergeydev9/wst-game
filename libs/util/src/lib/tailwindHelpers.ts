@@ -9,8 +9,6 @@
  */
 import { ThemeColor } from '@whosaidtrue/app-interfaces';
 
-
-
 /**
  * Create a text color className based on a theme color input.
  *
