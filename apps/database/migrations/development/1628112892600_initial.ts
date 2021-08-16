@@ -29,6 +29,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         roles: { type: 'user_role[]', notNull: true }, // custom type
         question_deck_credits: { type: 'smallint', notNull: true, default: 0 },
         test_account: { type: 'boolean', notNull: true, default: false },
+        notifications: { type: 'boolean', notNull: true, default: false },
         created_at: {
             type: 'timestamptz',
             notNull: true,

@@ -129,6 +129,7 @@ password | varchar(1000) | no | no
 roles | user_role[] | no | no |
 question_deck_credits | smallint | no | no | 0
 test_account | boolean | no | no | false
+notifiactions | boolean | no | no | false
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
