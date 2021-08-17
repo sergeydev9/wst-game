@@ -1,4 +1,4 @@
-import { MovieRating } from '@whosaidtrue/app-interfaces';
+import { DeckStatus, MovieRating, QuestionStatus } from '@whosaidtrue/app-interfaces';
 /**
  * Iterator that yields a given number of strings 'Player Name {INDEX}'.
  *
@@ -43,9 +43,9 @@ export function* testDecks(num: number, extra: string) {
             age_rating: 13,
             movie_rating: 'PG-13' as MovieRating,
             sfw: true,
-            status: 'active',
+            status: 'active' as DeckStatus,
             description: 'A deck for testing',
-            purchase_price: 1.00,
+            purchase_price: '1.00',
             example_question: 'An example question',
             thumbnail_url: './placeholder.svg'
         }
@@ -74,6 +74,25 @@ export function* testGames(num: number, extra: string, deckId: number) {
             access_code: `${extra}${count + 1}`,
             deck_id: deckId,
             status: 'in-progress'
+        }
+        count += 1;
+    }
+}
+
+export function* testQuestions(num: number, deckId: number) {
+    if (num <= 0) {
+        throw new Error("num must be above 0")
+    }
+    let count = 0;
+
+    while (count < num) {
+        yield {
+            text: `Primary question text for ${count + 1}`,
+            deck_id: deckId,
+            text_for_guess: 'Text for guess',
+            status: 'active' as QuestionStatus,
+            age_rating: 13,
+            follow_up: 'Follow up'
         }
         count += 1;
     }

@@ -1,4 +1,5 @@
-const decks = [
+import { Deck } from "@whosaidtrue/app-interfaces";
+const decks: Deck[] = [
     {
         id: 1,
         name: 'Test Deck 1',
@@ -9,7 +10,7 @@ const decks = [
         sfw: true,
         status: 'active',
         description: 'A deck for testing',
-        purchase_price: 1.00,
+        purchase_price: '1.00',
         example_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     },
@@ -23,7 +24,7 @@ const decks = [
         sfw: true,
         status: 'active',
         description: 'A deck for testing',
-        purchase_price: 1.00,
+        purchase_price: '1.00',
         example_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     },
@@ -37,7 +38,7 @@ const decks = [
         sfw: true,
         status: 'active',
         description: 'A deck for testing',
-        purchase_price: 1.00,
+        purchase_price: '1.00',
         example_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     },
@@ -51,7 +52,7 @@ const decks = [
         sfw: true,
         status: 'active',
         description: 'A deck for testing',
-        purchase_price: 1.00,
+        purchase_price: '1.00',
         example_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     },
@@ -65,7 +66,7 @@ const decks = [
         sfw: true,
         status: 'active',
         description: 'A deck for testing',
-        purchase_price: 1.00,
+        purchase_price: '1.00',
         example_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     }

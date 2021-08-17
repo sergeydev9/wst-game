@@ -1,7 +1,8 @@
 import { Pool, DatabaseError } from 'pg';
-import { TEST_DB_CONNECTION, cleanDb } from '@whosaidtrue/util';
+import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 import { UserRole } from '@whosaidtrue/app-interfaces';
-import Users from './users.dao';
+import { cleanDb } from '../util/cleanDb';
+import Users from './Users.dao';
 
 
 describe('Users dao', () => {

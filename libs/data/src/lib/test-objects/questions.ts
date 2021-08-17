@@ -1,4 +1,5 @@
-export const questions = [
+import { Question } from "@whosaidtrue/app-interfaces";
+const questions: Question[] = [
     {
         id: 1,
         text: 'Is this the primary text for question 1?',
@@ -45,3 +46,5 @@ export const questions = [
         status: 'active'
     }
 ];
+
+export default questions;

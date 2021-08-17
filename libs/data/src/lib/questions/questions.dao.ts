@@ -1,22 +1,15 @@
-import { QuestionStatus } from '@whosaidtrue/app-interfaces';
+import { IInsertQuestion } from '@whosaidtrue/app-interfaces';
 import { Pool } from 'pg';
 import Dao from '../base.dao';
 
-export interface QuestionInsert {
-    text: string;
-    text_for_guess: string;
-    follow_up: string;
-    deck_id: number;
-    age_rating: number;
-    status: QuestionStatus
-}
+
 
 class Question extends Dao {
     constructor(pool: Pool) {
         super(pool, 'questions');
     }
 
-    public async insertOne(question: QuestionInsert) {
+    public async insertOne(question: IInsertQuestion) {
         const {
             text,
             text_for_guess,

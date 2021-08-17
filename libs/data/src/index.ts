@@ -1,1 +1,1 @@
-export { default as UserDao } from './lib/dao/users.dao';
+export { default as UserDao } from './lib/users/Users.dao';

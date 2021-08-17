@@ -2,9 +2,9 @@ import { Pool } from 'pg';
 import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 import { cleanDb } from '../util/cleanDb';
 import { testDecks } from '../util/testEntityGenerators';
-import Games from './games.dao';
-import Questions from '../questions/questions.dao';
-import Decks from '../decks/decks.dao';
+import Games from './Games.dao';
+import Questions from '../questions/Questions.dao';
+import Decks from '../decks/Decks.dao';
 
 describe('Games dao', () => {
     let pool: Pool;
@@ -39,7 +39,7 @@ describe('Games dao', () => {
         gameId = rows[0].id;
     })
 
-    afterAll(async () => {
+    afterAll(() => {
         pool.end()
     })
 
@@ -92,4 +92,8 @@ describe('Games dao', () => {
     // describe('setStatus')
 
     // describe('getScoreboard')
+
+    // describe('getHost')
+
+    // describe('getPlayers')
 })

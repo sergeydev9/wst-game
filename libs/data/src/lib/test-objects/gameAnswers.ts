@@ -1,5 +1,4 @@
-// all answers are for game 1, 3 for each user, 3 users total.
-export const gameAnswers = [
+const gameAnswers = [
     {
         id: 1,
         game_question_id: 1,
@@ -82,3 +81,5 @@ export const gameAnswers = [
         score: 0
     }
 ]
+
+export default gameAnswers;

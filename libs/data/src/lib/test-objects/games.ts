@@ -1,38 +1,39 @@
-const games = [
+import { Game } from "@whosaidtrue/app-interfaces";
+const games: Game[] = [
     {
         id: 1,
         access_code: 'ABCDEA',
         status: 'in-progress',
-        start_date: '2020-01-08 04:05:06',
-        end_date: '2022-01-08 04:05:06'
+        deck_id: 1,
+        start_date: new Date(),
     },
     {
         id: 2,
         access_code: 'ABCDEB',
         status: 'in-progress',
-        start_date: '2020-01-08 04:05:06',
-        end_date: '2022-01-08 04:05:06'
+        deck_id: 1,
+        start_date: new Date(),
     },
     {
         id: 3,
         access_code: 'ABCDEC',
         status: 'in-progress',
-        start_date: '2020-01-08 04:05:06',
-        end_date: '2022-01-08 04:05:06'
+        deck_id: 1,
+        start_date: new Date(),
     },
     {
         id: 4,
         access_code: 'ABCDED',
         status: 'in-progress',
-        start_date: '2020-01-08 04:05:06',
-        end_date: '2022-01-08 04:05:06'
+        deck_id: 1,
+        start_date: new Date(),
     },
     {
         id: 5,
         access_code: 'ABCDEE',
         status: 'in-progress',
-        start_date: '2020-01-08 04:05:06',
-        end_date: '2022-01-08 04:05:06'
+        deck_id: 1,
+        start_date: new Date(),
     }
 ];
 

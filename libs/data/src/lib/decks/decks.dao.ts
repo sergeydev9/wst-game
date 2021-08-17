@@ -1,20 +1,7 @@
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
-import { MovieRating } from '@whosaidtrue/app-interfaces';
+import { MovieRating, IInsertDeck } from '@whosaidtrue/app-interfaces';
 
-export interface DeckInsert {
-    name: string;
-    sort_order: number;
-    clean: boolean;
-    status: string;
-    age_rating: number;
-    movie_rating: MovieRating;
-    sfw: boolean;
-    description: string;
-    purchase_price: number;
-    example_question: string;
-    thumbnail_url: string;
-}
 
 class Decks extends Dao {
 
@@ -22,7 +9,7 @@ class Decks extends Dao {
         super(pool, 'decks')
     }
 
-    public async insertOne(deck: DeckInsert): Promise<QueryResult> {
+    public async insertOne(deck: IInsertDeck): Promise<QueryResult> {
         const {
             name,
             sort_order,
@@ -147,6 +134,15 @@ class Decks extends Dao {
         }
         return this.pool.query(query);
     }
+
+    public async getQuestions(deckId: number): Promise<QueryResult> {
+        const query = {
+            text: 'SELECT * from active_questions AS questions WHERE questions.deck_id = $1',
+            values: [deckId]
+        }
+        return this.pool.query(query);
+    }
+
 
 }
 

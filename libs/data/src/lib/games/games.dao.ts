@@ -1,5 +1,5 @@
 import { Pool, QueryResult } from 'pg';
-import { Game } from '../interfaces'
+import { IInsertGame } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
 class Games extends Dao {
@@ -7,11 +7,19 @@ class Games extends Dao {
         super(pool, 'games');
     }
 
-    // public async create(): Promise<QueryResult> {
-    //     const query = {
+    public async insertOne(game: IInsertGame): Promise<QueryResult> {
+        const { deck_id, status, access_code } = game;
+        const query = {
+            text: `INSERT INTO games (
+                deck_id,
+                status,
+                access_code
+            ) VALUES ($1, $2, $3) RETURNING id`,
+            values: [deck_id, status, access_code]
+        }
 
-    //     }
-    // }
+        return this.pool.query(query);
+    }
 
     public async getByAccessCode(code: string): Promise<QueryResult> {
         const query = {
@@ -43,6 +51,13 @@ class Games extends Dao {
         }
         return this.pool.query(query)
     }
+
+    // public async setStartDate(): Promise<QueryResult> {}
+
+    // public async setEndDate(): Promise<QueryResult> {}
+
+    // public async create(): Promise<QueryResult> {}
+
     // public async gameStateById(gameId: number): Promise<QueryResult> {}
 
     // public async gameStateByAccessCode(code: string): Promise<QueryResult> {}

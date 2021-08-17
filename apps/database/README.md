@@ -136,16 +136,6 @@ password_reset_code | varchar(4) | yes | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
-### **game_hosts**
-
-| Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
----| --- | --- | --- | --- | --- | ---
-id | integer | no | yes
-game_id | no | no | | | games | CASCADE
-player_id | no | no | || game_players | CASCADE
-created_at | timestamptz | no | no | now()
-updated_at | timestamptz | no | no | now()
-
 ### **decks**
 
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
@@ -198,6 +188,7 @@ updated_at | timestamptz | no | no | now()
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
 player_name | varchar(200) | no | no
+is_host | boolean | no | no | false
 game_id | integer | no | no | | games | CASCADE
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
@@ -224,6 +215,16 @@ game_id | integer | no | no | | games | CASCADE
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
+### **game_hosts**
+
+| Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
+---| --- | --- | --- | --- | --- | ---
+id | integer | no | yes
+game_id | integer | no | yes | | games | CASCADE
+player_id | integer | no | no || game_players | CASCADE
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
+
 ### **generated_names**
 
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
@@ -244,6 +245,7 @@ id | integer | no | yes
 game_question_id | integer | no | no | | game_questions | CASCADE
 game_id | integer | no | no | | games | CASCADE
 game_player_id | integer | no | no | | game_players | CASCADE
+question_id | integer | yes | no | | questions | SET NULL
 value | answer | no | no
 number_true_guess | smallint | yes | no
 score | smallint | yes | no
@@ -352,6 +354,10 @@ Returns all decks that the specified user does NOT own.
 SELECT * FROM user_owned_decks(USER_ID)
 ```
 
+### delete_host_for_game
+
+Deletes any existing game_host rows with the same game_id as the row being inserted.
+
 ## Triggers
 
 ----
@@ -363,6 +369,13 @@ SELECT * FROM user_owned_decks(USER_ID)
 Sets the updated_at column of modified rows to the current time if and only if the row was modified.
 
 Every table has a copy of this trigger. It runs after every update operation.
+
+### **delete_host**
+
+- *function:* delete_host_for_game
+
+When a new host is added to the game_hosts table, any existing hosts with the same game_id are deleted.
+This ensures a game only ever has 1 host.
 
 ## Indexes
 
@@ -377,13 +390,11 @@ The following is a comprehensive list of the current database indexes:
 
 table | columns | unique
 |---|---|---
-| game_questions | gameId, question_sequence_index | yes
-| game_players | player_name, game_id | yes
-| game_answers | game_question_id, game_player_id | yes
-| game_answers | question_id
-| user_decks | user_id | no
-| hosts | game_id | no
+| game_questions | game_id, question_sequence_index | yes
+| game_players | game_id | no
+| game_answers | question_id | no
 | questions | deck_id | no
+| user_decks | user_id | no
 
 ## Extensions
 
