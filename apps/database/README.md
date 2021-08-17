@@ -187,7 +187,7 @@ updated_at | timestamptz | no | no | now()
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-player_name | varchar(200) | no | no
+player_name | citext | no | no
 is_host | boolean | no | no | false
 game_id | integer | no | no | | games | CASCADE
 created_at | timestamptz | no | no | now()
@@ -391,7 +391,7 @@ The following is a comprehensive list of the current database indexes:
 table | columns | unique
 |---|---|---
 | game_questions | game_id, question_sequence_index | yes
-| game_players | game_id | no
+| game_players | game_id, player_name | yes
 | game_answers | question_id | no
 | questions | deck_id | no
 | user_decks | user_id | no

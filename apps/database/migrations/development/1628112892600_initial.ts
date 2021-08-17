@@ -120,7 +120,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: true,
             onDelete: 'CASCADE'
         },
-        player_name: { type: 'varchar(200)', notNull: true },
+        player_name: { type: 'citext', notNull: true },
         is_host: { type: 'boolean', notNull: true, default: false },
         created_at: {
             type: 'timestamptz',
@@ -502,7 +502,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     * ======================================
     */
     pgm.createIndex('game_questions', ['game_id', 'question_sequence_index'], { unique: true });
-    pgm.createIndex('game_players', 'game_id');
+    pgm.createIndex('game_players', ['game_id', 'player_name'], { unique: true });
     pgm.createIndex('game_answers', 'question_id');
     pgm.createIndex('questions', 'deck_id');
     pgm.createIndex('user_decks', 'user_id');
