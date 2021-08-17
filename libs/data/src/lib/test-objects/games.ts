@@ -1,4 +1,4 @@
-export const games = [
+const games = [
     {
         id: 1,
         access_code: 'ABCDEA',
@@ -35,3 +35,5 @@ export const games = [
         end_date: '2022-01-08 04:05:06'
     }
 ];
+
+export default games;

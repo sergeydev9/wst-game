@@ -1,6 +1,7 @@
-import { MovieRating } from '@whosaidtrue/app-interfaces';
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
+import { MovieRating } from '@whosaidtrue/app-interfaces';
+
 
 class Decks extends Dao {
 

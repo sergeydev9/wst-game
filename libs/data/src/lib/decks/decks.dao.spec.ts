@@ -72,7 +72,7 @@ describe('Decks dao', () => {
 
         beforeEach(async () => {
             // Save a user and get their id before each test
-            const { rows } = await users.insertOne({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
+            const { rows } = await users.register({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
             userId = rows[0].id;
 
             // insert 5 test decks into DB before each test
@@ -101,7 +101,7 @@ describe('Decks dao', () => {
             resolved.forEach(res => deckIds.push(res.rows[0].id))
 
             // create a user_deck record for the first 3 decks that were saved.
-            // this simulates the user owning the deck.
+            // this simulates the user owning the decks.
             const idSlice = deckIds.slice(0, 3);
             const userDeckPromises = idSlice.map(id => {
                 const query = {
@@ -127,7 +127,7 @@ describe('Decks dao', () => {
     })
 
     it("should return an empty array if user doesn't own any decks", async () => {
-        const { rows } = await users.insertOne({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
+        const { rows } = await users.register({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
         const userId = rows[0].id;
 
         const actual = await decks.getUserDecks(userId);

@@ -66,7 +66,7 @@ An npm script has been added to make it easy to run all migrations in developmen
 
 ----
 
-An npm script has been added to reveres all migrations. Run `yarn migrate-dev:down` to reverse all the migrations located in the `./migrations` directory.
+An npm script has been added to reveres **the last** migration applied. Run `yarn migrate-dev:down` to reverse the most recent migration in the `./migrations` directory. Running the command again will delete the migration after that, progressing in reverse chronological order.
 
 ## Migrations and the environment
 
@@ -399,6 +399,8 @@ table | columns | unique
 Enabled extensions:
 
 - pg_stat_statements [(documentation)](https://www.postgresql.org/docs/current/pgstatstatements.html)
+
+- pgcrypto: used to encrypt and verify passwords
 
 ## Running a SQL file
 

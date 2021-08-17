@@ -496,6 +496,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     * ======================================
     */
     pgm.createExtension('pg_stat_statements');
+    pgm.createExtension('pgcrypto');
 }
 
 // export async function down(pgm: MigrationBuilder): Promise<void> {

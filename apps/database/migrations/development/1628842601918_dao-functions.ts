@@ -3,9 +3,7 @@ import { MigrationBuilder, ColumnDefinitions } from 'node-pg-migrate';
 export const shorthands: ColumnDefinitions | undefined = undefined;
 
 export async function up(pgm: MigrationBuilder): Promise<void> {
-    /**
-    * Return decks with status = "active"
-    */
+
     pgm.createFunction('active_decks', [], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, purchase_price money, example_question text, thumbnail_url varchar(1000), created_at timestamptz, updated_at timestamptz)', onNull: true, language: 'plpgsql' }, `
     BEGIN
         RETURN QUERY
