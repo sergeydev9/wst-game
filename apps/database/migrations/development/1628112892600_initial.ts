@@ -6,6 +6,16 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
 
     /**
     * ======================================
+    * EXTENSIONS
+    * ======================================
+    */
+    pgm.createExtension('pg_stat_statements');
+    pgm.createExtension('pgcrypto');
+    pgm.createExtension('citext');
+
+
+    /**
+    * ======================================
     * TYPES
     * ======================================
     */
@@ -507,13 +517,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createIndex('questions', 'deck_id');
     pgm.createIndex('user_decks', 'user_id');
 
-    /**
-    * ======================================
-    * EXTENSIONS
-    * ======================================
-    */
-    pgm.createExtension('pg_stat_statements');
-    pgm.createExtension('pgcrypto');
+
 }
 
 // export async function down(pgm: MigrationBuilder): Promise<void> {
