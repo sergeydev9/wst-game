@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
-import { User } from '../../interfaces';
+import { User } from '../interfaces';
 
 class Users extends Dao {
     constructor(pool: Pool) {
@@ -115,7 +115,7 @@ class Users extends Dao {
      */
     public async getDetails(userId: number): Promise<QueryResult> {
         const query = {
-            text: 'SELECT (email, question_deck_credits, notifications) FROM users WHERE id = $1',
+            text: 'SELECT email, question_deck_credits, notifications FROM users WHERE id = $1',
             values: [userId]
         };
         return this._pool.query(query)

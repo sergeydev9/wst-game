@@ -21,7 +21,7 @@ export interface Deck {
     clean: boolean;
     age_rating: number;
     movie_rating: MovieRating;
-    SFW: boolean;
+    sfw: boolean;
     status: DeckStatus;
     description: string;
     purchase_price: string; // needs to be a string with decimals. Postgres will convert to higher precision number in the DB.

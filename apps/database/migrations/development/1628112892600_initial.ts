@@ -30,6 +30,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         question_deck_credits: { type: 'smallint', notNull: true, default: 0 },
         test_account: { type: 'boolean', notNull: true, default: false },
         notifications: { type: 'boolean', notNull: true, default: false },
+        password_reset_code: { type: 'string', notNull: false },
         created_at: {
             type: 'timestamptz',
             notNull: true,
@@ -51,9 +52,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         clean: { type: 'boolean', notNull: true },
         age_rating: { type: 'smallint', notNull: true },
         movie_rating: { type: 'varchar(50)', notNull: true },
-        SFW: { type: 'boolean', notNull: true },
+        sfw: { type: 'boolean', notNull: true },
         status: { type: 'deck_status', notNull: true }, // custom type
-        description: { type: 'text', notNull: true }, purchasePrice: { type: 'money', notNull: true },
+        description: { type: 'text', notNull: true },
+        purchase_price: { type: 'money', notNull: true },
         example_question: { type: 'text', notNull: false },
         thumbnail_url: { type: 'varchar(1000)', notNull: false },
         created_at: {
@@ -484,9 +486,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     */
     pgm.createIndex('game_questions', ['game_id', 'question_sequence_index'], { unique: true });
     pgm.createIndex('game_players', ['player_name', 'game_id'], { unique: true });
-    pgm.createIndex('game_answers', ['game_question_id', 'game_player_id'], { unique: true });
+    pgm.createIndex('game_answers', ['game_question_id', 'game_player_id'], { unique: true }); // always query in this order
     pgm.createIndex('questions', 'deck_id')
-    pgm.createIndex('game_hosts', 'game_id');
     pgm.createIndex('user_decks', 'user_id');
 
     /**

@@ -130,6 +130,7 @@ roles | user_role[] | no | no |
 question_deck_credits | smallint | no | no | 0
 test_account | boolean | no | no | false
 notifiactions | boolean | no | no | false
+password_reset_code | varchar(4) | yes | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
@@ -153,7 +154,7 @@ sort_order | smallint | no | no
 clean | boolean | no | no
 age_rating | smallint | no | no
 movie_rating | varchar(50) | no | no
-SFW | boolean | no | no
+sfw | boolean | no | no
 status | deck_status | no | no
 description | text | no | no
 purchase_price | money | no | no
@@ -319,10 +320,43 @@ This function is run by update triggers on each table. It updates the updated_at
 - *parameters:* game_question_id
 - *returns:* integer
 
-Returns the number of "true" answers for a given game_question_id
+Returns the number of "true" answers for a given game_question_id.
 
 ```sql
 SELECT number_true_answers(GAME_ID) # returns the calculated value as an integer
+```
+
+### user_owned_decks
+
+- *parameters:* user_id
+- *returns:* List of Decks.
+
+Returns all decks that the specified user owns.
+
+```sql
+SELECT * FROM user_owned_decks(USER_ID)
+```
+
+### user_not_owned_decks
+
+- *parameters:* user_id
+- *returns:* List of Decks.
+
+Returns all decks that the specified user does NOT own.
+
+```sql
+SELECT * FROM user_owned_decks(USER_ID)
+```
+
+### active_decks
+
+- *parameters:* non
+- *returns:* List of Decks.
+
+Returns all decks that have status 'active'.
+
+```sql
+SELECT * FROM active_decks()
 ```
 
 ## Triggers
@@ -353,6 +387,7 @@ table | columns | unique
 | game_questions | gameId, question_sequence_index | yes
 | game_players | player_name, game_id | yes
 | game_answers | game_question_id, game_player_id | yes
+| game_answers | question_id
 | user_decks | user_id | no
 | hosts | game_id | no
 | questions | deck_id | no

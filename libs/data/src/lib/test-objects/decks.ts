@@ -1,4 +1,4 @@
-export const decks = [
+const decks = [
     {
         id: 1,
         name: 'Test Deck 1',
@@ -6,7 +6,7 @@ export const decks = [
         clean: true,
         age_rating: 13,
         movie_rating: 'PG-13',
-        SFW: true,
+        sfw: true,
         status: 'active',
         description: 'A deck for testing',
         purchase_price: 1.00,
@@ -20,7 +20,7 @@ export const decks = [
         clean: true,
         age_rating: 13,
         movie_rating: 'PG-13',
-        SFW: true,
+        sfw: true,
         status: 'active',
         description: 'A deck for testing',
         purchase_price: 1.00,
@@ -34,7 +34,7 @@ export const decks = [
         clean: true,
         age_rating: 13,
         movie_rating: 'PG-13',
-        SFW: true,
+        sfw: true,
         status: 'active',
         description: 'A deck for testing',
         purchase_price: 1.00,
@@ -48,7 +48,7 @@ export const decks = [
         clean: true,
         age_rating: 13,
         movie_rating: 'PG-13',
-        SFW: true,
+        sfw: true,
         status: 'active',
         description: 'A deck for testing',
         purchase_price: 1.00,
@@ -62,7 +62,7 @@ export const decks = [
         clean: true,
         age_rating: 13,
         movie_rating: 'PG-13',
-        SFW: true,
+        sfw: true,
         status: 'active',
         description: 'A deck for testing',
         purchase_price: 1.00,
@@ -70,3 +70,5 @@ export const decks = [
         thumbnail_url: './placeholder.svg'
     }
 ]
+
+export default decks;
