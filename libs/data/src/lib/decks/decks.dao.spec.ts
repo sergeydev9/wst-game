@@ -122,6 +122,16 @@ describe('Decks dao', () => {
             const { rows } = await decks.getNotOwned(userId);
             expect(rows.length).toEqual(2)
         })
+
+
+    })
+
+    it("should return an empty array if user doesn't own any decks", async () => {
+        const { rows } = await users.insertOne({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
+        const userId = rows[0].id;
+
+        const actual = await decks.getUserDecks(userId);
+        expect(actual.rows.length).toEqual(0)
     })
 
 })
