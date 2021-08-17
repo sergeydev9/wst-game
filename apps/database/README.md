@@ -34,6 +34,8 @@ This directory contains the migrations and seeds, both for production and develo
 
 - [Extensions](#extenstions)
 
+- [Views](#views)
+
 - [Running a .sql file](#running-a-sql-file)
 
 ## node-pg-migrate
@@ -170,6 +172,7 @@ updated_at | timestamptz | no | no | now()
 id | integer | no | yes
 access_code | varchar(200) | yes | yes
 status | varchar(100) | no | no
+deck_id | integer | no | no | | decks | SET NULL
 start_date | timestamptz | yes | no
 end_date | timestamptz | yes | no
 created_at | timestamptz | no | no | now()
@@ -229,6 +232,7 @@ id | integer | no | yes
 name | varchar(200) | no | yes
 clean | boolean | no | no
 times_displayed | integer | no | no | 0
+times_chosen | integer | no | no | 0
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
@@ -348,17 +352,6 @@ Returns all decks that the specified user does NOT own.
 SELECT * FROM user_owned_decks(USER_ID)
 ```
 
-### active_decks
-
-- *parameters:* non
-- *returns:* List of Decks.
-
-Returns all decks that have status 'active'.
-
-```sql
-SELECT * FROM active_decks()
-```
-
 ## Triggers
 
 ----
@@ -401,6 +394,19 @@ Enabled extensions:
 - pg_stat_statements [(documentation)](https://www.postgresql.org/docs/current/pgstatstatements.html)
 
 - pgcrypto: used to encrypt and verify passwords
+
+## Views
+
+----
+
+### active_decks
+
+Returns all decks that have the value `active` in the `status` column. Returns all columns.
+
+### active_questions
+
+Returns all decks that have the value `active` in the `status` column. Returns all columns.
+
 
 ## Running a SQL file
 

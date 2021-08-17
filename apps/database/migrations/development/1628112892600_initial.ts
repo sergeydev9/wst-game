@@ -75,6 +75,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         id: 'id',
         access_code: { type: 'varchar(200)', notNull: false, unique: true },
         status: { type: 'varchar(100)', notNull: true }, // TODO: create custom type? what are the possible values?
+        deck_id: { type: 'integer', notNull: false, references: 'decks', onDelete: 'SET NULL' },
         start_date: { type: 'timestamptz', notNull: false },
         end_date: { type: 'timestamptz', notNull: false },
         created_at: {
@@ -237,6 +238,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         name: { type: 'varchar(200)', notNull: true },
         clean: { type: 'boolean', notNull: true },
         times_displayed: { type: 'integer', notNull: true, default: 0 },
+        times_chosen: { type: 'integer', notNull: true, default: 0 },
         created_at: {
             type: 'timestamptz',
             notNull: true,

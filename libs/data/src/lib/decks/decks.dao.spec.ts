@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
+import { cleanDb } from '../util/cleanDb';
 import Decks from './decks.dao';
 import Users from '../users/users.dao';
 import TEST_DECKS from '../test-objects/decks';
@@ -12,25 +13,31 @@ describe('Decks dao', () => {
 
     beforeAll(async () => {
         pool = new Pool(TEST_DB_CONNECTION);
-
         decks = new Decks(pool);
         users = new Users(pool);
     })
 
     beforeEach(async () => {
-        // clean DB
-        await pool.query(`DELETE FROM decks WHERE id > 0`);
-        await pool.query(`DELETE FROM users WHERE id > 0`);
-        await pool.query(`DELETE FROM user_decks WHERE id > 0`);
+        await cleanDb(pool);
     })
 
     afterAll(async () => {
         pool.end()
     })
 
+    it("should return an empty array if user doesn't own any decks", async () => {
+        const { rows } = await users.register({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
+        const userId = rows[0].id;
+
+        const actual = await decks.getUserDecks(userId);
+        expect(actual.rows.length).toEqual(0)
+    })
+
     describe('rating filters', () => {
 
         beforeEach(async () => {
+            await cleanDb(pool);
+
             // Save decks. First deck has age rating 13 and movie rating "PG-13".
             // All other decks have age rating 17 and movie rating "R"
             const results = TEST_DECKS.map((deck, i) => {
@@ -71,6 +78,8 @@ describe('Decks dao', () => {
         let userId: number;
 
         beforeEach(async () => {
+            await cleanDb(pool);
+
             // Save a user and get their id before each test
             const { rows } = await users.register({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
             userId = rows[0].id;
@@ -122,16 +131,5 @@ describe('Decks dao', () => {
             const { rows } = await decks.getNotOwned(userId);
             expect(rows.length).toEqual(2)
         })
-
-
     })
-
-    it("should return an empty array if user doesn't own any decks", async () => {
-        const { rows } = await users.register({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
-        const userId = rows[0].id;
-
-        const actual = await decks.getUserDecks(userId);
-        expect(actual.rows.length).toEqual(0)
-    })
-
 })

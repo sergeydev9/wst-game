@@ -2,11 +2,70 @@ import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
 import { MovieRating } from '@whosaidtrue/app-interfaces';
 
+export interface DeckInsert {
+    name: string;
+    sort_order: number;
+    clean: boolean;
+    status: string;
+    age_rating: number;
+    movie_rating: MovieRating;
+    sfw: boolean;
+    description: string;
+    purchase_price: number;
+    example_question: string;
+    thumbnail_url: string;
+}
 
 class Decks extends Dao {
 
     constructor(pool: Pool) {
         super(pool, 'decks')
+    }
+
+    public async insertOne(deck: DeckInsert): Promise<QueryResult> {
+        const {
+            name,
+            sort_order,
+            sfw,
+            age_rating,
+            movie_rating,
+            purchase_price,
+            status,
+            description,
+            clean,
+            example_question,
+            thumbnail_url,
+        } = deck;
+        const query = {
+            text: `INSERT INTO decks (
+                name,
+                sort_order,
+                sfw,
+                age_rating,
+                movie_rating,
+                purchase_price,
+                status,
+                description,
+                clean,
+                example_question,
+                thumbnail_url
+                )
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+            values: [
+                name,
+                sort_order,
+                sfw,
+                age_rating,
+                movie_rating,
+                purchase_price,
+                status,
+                description,
+                clean,
+                example_question,
+                thumbnail_url,
+            ]
+        }
+        return this.pool.query(query);
     }
 
     /**
@@ -31,7 +90,7 @@ class Decks extends Dao {
                 example_question,
                 thumbnail_url
                 )
-                FROM active_decks() AS decks
+                FROM active_decks AS decks
                 WHERE decks.movie_rating = $1;`,
             values: [movieRating]
         }
@@ -59,7 +118,7 @@ class Decks extends Dao {
                 example_question,
                 thumbnail_url
                 )
-                FROM active_decks() AS decks
+                FROM active_decks AS decks
                 WHERE decks.age_rating < $1;`,
             values: [ageRating]
         }

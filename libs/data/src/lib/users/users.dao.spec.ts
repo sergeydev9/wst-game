@@ -1,5 +1,5 @@
 import { Pool, DatabaseError } from 'pg';
-import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
+import { TEST_DB_CONNECTION, cleanDb } from '@whosaidtrue/util';
 import { UserRole } from '@whosaidtrue/app-interfaces';
 import Users from './users.dao';
 
@@ -10,13 +10,11 @@ describe('Users dao', () => {
 
     beforeAll(async () => {
         pool = new Pool(TEST_DB_CONNECTION);
-
-        await pool.query(`DELETE FROM users WHERE id > 0`);
         users = new Users(pool);
     })
 
     beforeEach(async () => {
-        await pool.query(`DELETE FROM users WHERE id > 0`);
+        await cleanDb(pool);
     })
 
     afterAll(async () => {
@@ -24,30 +22,26 @@ describe('Users dao', () => {
     })
 
     describe('register', () => {
+        const userEmail = 'test_register@test.com'; // use name specific to this test to avoid conflicts with other tests
         it('should register user', async () => {
-            const { rows } = await users.register({ email: 'test@test.com', password: 'password', roles: ["user"] });
+            const { rows } = await users.register({ email: userEmail, password: 'password', roles: ["user"] });
             expect(rows.length).toEqual(1);
         })
 
         it('should encrypt the password', async () => {
-            await users.register({ email: 'test@test.com', password: 'password', roles: ["user"] });
-
-            const { rows } = await users.pool.query({ text: 'SELECT * FROM users WHERE email = $1', values: ['test@test.com'] });
+            await users.register({ email: userEmail, password: 'password', roles: ["user"] });
+            const { rows } = await users.pool.query({ text: 'SELECT * FROM users WHERE email = $1', values: [userEmail] });
             expect(rows[0].password).not.toEqual('password')
-
         })
 
         it('should throw an exception if roles is not a value defined in the type', async () => {
             try {
-                await users.register({ email: 'test@test.com', password: 'password', roles: ["gibberish" as UserRole] })
-
+                await users.register({ email: userEmail, password: 'password', roles: ["gibberish" as UserRole] })
             } catch (e) {
                 const expected = new DatabaseError("invalid input value for enum user_role: \"gibberish\"", 1, "error")
                 expect(e.message).toEqual(expected.message);
             }
         })
-
-
     })
 
     describe('login', () => {

@@ -4,13 +4,20 @@ export const shorthands: ColumnDefinitions | undefined = undefined;
 
 export async function up(pgm: MigrationBuilder): Promise<void> {
 
-    pgm.createFunction('active_decks', [], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, purchase_price money, example_question text, thumbnail_url varchar(1000), created_at timestamptz, updated_at timestamptz)', onNull: true, language: 'plpgsql' }, `
-    BEGIN
-        RETURN QUERY
-        SELECT * FROM decks
-        WHERE decks.status = 'active';
-    END
+    pgm.createView('active_decks', {}, `
+    SELECT * FROM decks
+    WHERE decks.status = 'active'
     `)
+
+    pgm.createView('active_questions', {}, `
+    SELECT * FROM questions
+    WHERE questions.status = 'active'
+    `)
+
+    // pgm.createView('question_results', {}, `
+
+    // `)
+
 
     /**
      * Return decks owned by the user.
@@ -29,7 +36,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             decks.description,
             decks.example_question,
             decks.thumbnail_url
-        FROM active_decks() AS decks
+        FROM active_decks AS decks
         LEFT JOIN user_decks ON user_decks.deck_id = decks.id
         WHERE user_decks.user_id = input_id;
     END
@@ -53,7 +60,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             decks.example_question,
             decks.purchase_price,
             decks.thumbnail_url
-        FROM active_decks() AS decks
+        FROM active_decks AS decks
         WHERE NOT EXISTS ( SELECT * FROM user_decks WHERE user_decks.user_id = input_id AND user_decks.deck_id = decks.id );
     END
     `)

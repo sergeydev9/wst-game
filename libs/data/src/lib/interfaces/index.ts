@@ -34,6 +34,7 @@ export interface Game {
     id: number;
     access_code: string;
     status: string;
+    deck_id: number;
     start_date?: Date;
     end_date?: Date;
     created_at: Date;
