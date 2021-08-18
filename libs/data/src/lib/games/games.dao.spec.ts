@@ -81,6 +81,24 @@ describe('Games dao', () => {
         })
     })
 
+    describe('getHost', () => {
+
+        it('should retrieve correct host', async () => {
+            // insert host
+            const { rows } = await games.setHost(game_id, player_id);
+            const hostId = rows[0].id;
+
+            // get host
+            const actual = await games.getHost(game_id);
+            const host = actual.rows[0];
+
+            // data from get host should match
+            expect(host.id).toEqual(hostId);
+            expect(host.player_name).toBeDefined();
+        })
+
+    })
+
     describe('getQuestions', () => {
 
         // beforeEach(async () => {

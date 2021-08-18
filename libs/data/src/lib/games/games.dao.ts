@@ -46,7 +46,7 @@ class Games extends Dao {
      */
     public async getQuestions(gameId: number): Promise<QueryResult> {
         const query = {
-            text: 'SELECT * from game_questions WHERE game_questions.game_id = $1 ORDER BY game_questions.question_sequence_index',
+            text: 'SELECT * from get_game_questions($1)',
             values: [gameId]
         }
         return this.pool.query(query)
@@ -71,6 +71,23 @@ class Games extends Dao {
         }
 
         return this.pool.query(query);
+    }
+
+
+    /**
+     * Get host for game id. Returns the id and player name of matching host.
+     *
+     * @param {number} game_id
+     * @return {{id: number, player_name: string}}  {Promise<QueryResult>}
+     * @memberof Games
+     */
+    public async getHost(game_id: number): Promise<QueryResult> {
+        const query = {
+            text: 'SELECT * from get_game_host($1)',
+            values: [game_id]
+        }
+
+        return this.pool.query(query)
     }
 
     // public async getHost(game_id:number): Promise<QueryResult> { }

@@ -23,6 +23,20 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         RETURN NEW;
     END`)
 
+    // get host for game
+    pgm.createFunction('get_game_host', [{ mode: 'IN', type: 'integer', name: 'input_game_id' }], { returns: 'table(id integer, player_name text)', language: 'plpgsql' }, `
+    BEGIN
+        RETURN QUERY SELECT
+            game_players.id,
+            game_players.player_name::text
+        FROM game_players
+        LEFT JOIN game_hosts ON game_hosts.game_player_id = game_players.id
+        WHERE game_hosts.game_id = input_game_id;
+    END`)
+
+    // get questions for game
+    // pgm.createFunction('get_game_questions', [], { returns: '', language: 'plpgsql' }, ``)
+
     // get number of users that answered 'true' on a given game_question.id
     pgm.createFunction('number_true_answers', [{ mode: 'IN', type: 'integer', name: 'gqId' }], { returns: 'smallint', onNull: true, language: 'plpgsql' }, `
     BEGIN
