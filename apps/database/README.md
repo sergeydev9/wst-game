@@ -353,9 +353,21 @@ Returns all decks that the specified user does NOT own.
 SELECT * FROM user_owned_decks(USER_ID)
 ```
 
+### get_game_host
+
+- *parameters:* game_id
+- *returns:* id, player_name
+
+Get player info for game host.
+
+```sql
+SELECT * FROM get_game_host(GAME_ID)
+```
+
 ### delete_host_for_game
 
 Deletes any existing game_host rows with the same game_id as the row being inserted.
+Cannot be called directly. Only returns a trigger function.
 
 ## Triggers
 

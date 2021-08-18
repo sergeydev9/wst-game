@@ -10,10 +10,10 @@ import { Pool } from 'pg';
 abstract class Dao {
     constructor(protected readonly _pool: Pool, private readonly tableName: string) { }
 
-    public async getById(id: string) {
+    public async getById(id: number) {
         const query = {
-            text: `SELECT * FROM ${this.tableName} WHERE id = $1`,
-            values: [id]
+            text: `SELECT * FROM $2 WHERE id = $1`,
+            values: [id, this.tableName]
         }
         return this._pool.query(query);
     }

@@ -90,19 +90,53 @@ class Games extends Dao {
         return this.pool.query(query)
     }
 
-    // public async getHost(game_id:number): Promise<QueryResult> { }
+    /**
+     * Set start_date for game.
+     *
+     * Returns id and start_date of game.
+     *
+     * Return value of start_date is a date, not a string.
+     *
+     * @param {number} game_id
+     * @param {Date} date
+     * @return {{id: number, start_date: Date}}  {Promise<QueryResult>}
+     * @memberof Games
+     */
+    public async setStartDate(game_id: number, date: Date): Promise<QueryResult> {
+        const query = {
+            text: 'UPDATE games SET start_date = $1 WHERE id = $2 RETURNING id, start_date',
+            values: [date.toISOString(), game_id]
+        }
 
-    // public async setStartDate(): Promise<QueryResult> {}
+        return this.pool.query(query);
+    }
 
-    // public async setEndDate(): Promise<QueryResult> {}
+    /**
+     * Set start_date for game.
+     *
+     * Returns id and start_date of game.
+     *
+     * Return value of end_date is a date, not a string.
+     *
+     * @param {number} game_id
+     * @param {Date} date
+     * @return {{id: number, start_date: Date}}  {Promise<QueryResult>}
+     * @memberof Games
+     */
+    public async setEndDate(game_id: number, date: Date): Promise<QueryResult> {
+        const query = {
+            text: 'UPDATE games SET end_date = $1 WHERE id = $2 RETURNING id, end_date',
+            values: [date.toISOString(), game_id]
+        }
+
+        return this.pool.query(query);
+    }
 
     // public async create(): Promise<QueryResult> {}
 
     // public async gameStateById(gameId: number): Promise<QueryResult> {}
 
     // public async gameStateByAccessCode(code: string): Promise<QueryResult> {}
-
-    // public async gameStateByPlayerId(playerId: number): Promise<QueryResult> {}
 
     // public async getScoreboard(gameId: number) { }
 }

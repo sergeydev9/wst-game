@@ -99,21 +99,43 @@ describe('Games dao', () => {
 
     })
 
-    describe('getQuestions', () => {
+    describe('setStartDate', () => {
 
-        // beforeEach(async () => {
-        //     // insert 3 game questions and add them to the game
-        //     const questions = {
-        //         text: 'INSERT INTO questions (text, text_for_guess'
-        //     }
-        // })
+        it('should set the end date of a game', async () => {
+            const date = new Date();
+            const { rows } = await games.setStartDate(game_id, date);
 
-        // it('should return 3 game questions', async () => {
-        //     const { rows } = await games.getQuestions(gameId);
-        //     expect(rows.length).toEqual(3);
-        // })
-
+            // game should have start_date equal to input
+            expect(rows[0].start_date).toEqual(date);
+        })
     })
+
+    describe('setEndDate', () => {
+
+        it('should set the end date of a game', async () => {
+            const date = new Date();
+            const { rows } = await games.setEndDate(game_id, date);
+
+            // game should have end_date equal to input
+            expect(rows[0].end_date).toEqual(date);
+        })
+    })
+
+    // describe('getQuestions', () => {
+
+    // beforeEach(async () => {
+    //     // insert 3 game questions and add them to the game
+    //     const questions = {
+    //         text: 'INSERT INTO questions (text, text_for_guess'
+    //     }
+    // })
+
+    // it('should return 3 game questions', async () => {
+    //     const { rows } = await games.getQuestions(gameId);
+    //     expect(rows.length).toEqual(3);
+    // })
+
+    // })
 
     // describe('create', () => {
 
