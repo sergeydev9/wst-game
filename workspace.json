@@ -229,6 +229,49 @@
         }
       }
     },
+    "database": {
+      "root": "apps/database",
+      "sourceRoot": "apps/database/src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/database",
+            "main": "apps/database/src/main.ts",
+            "tsConfig": "apps/database/tsconfig.app.json"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "database:build"
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/database/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/database"],
+          "options": {
+            "jestConfig": "apps/database/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "logger": {
       "root": "libs/logger",
       "sourceRoot": "libs/logger/src",

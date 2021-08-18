@@ -43,11 +43,15 @@ The api reads from the following env variables:
 - DB_POOL_MAX=5
 - NODE_ENV=development
 - PORT=3000
-
+- DATABASE_URL=postgres://postgres:password@localhost:5432/whosaidtrue-dev
 
 These can be changed for local dev in `.local.env`
 
 **warning** Values in `.local.env` must match values in `docker-compose.yml`
+
+## Database
+
+Documentation for the database can be found [here](apps/database/README.md)
 
 ## Generate an application
 

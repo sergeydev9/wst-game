@@ -22,7 +22,7 @@ export interface GameState {
     deck: DecksAttributes | Record<string, unknown>;
 }
 
-export const gameSlice = createSlice({
-    name: "game",
+// export const gameSlice = createSlice({
 
-})
+
+// })

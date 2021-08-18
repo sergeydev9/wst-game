@@ -7,7 +7,12 @@ import validateEnv from './app/utils/validateEnv';
 
 validateEnv();
 
-const app = new App([new IndexRoute().router, new UsersRoute().router, new AuthRoute().router, new DecksRoute().router]);
+const app = new App([
+  new IndexRoute().router,
+  new UsersRoute().router,
+  new AuthRoute().router,
+  new DecksRoute().router]
+);
 
 app.listen();
 
