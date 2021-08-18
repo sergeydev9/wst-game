@@ -28,8 +28,6 @@ class GamePlayers extends Dao {
 
         return this.pool.query(query);
     }
-
-    // public async setHost(playerId: numnber): Promis<QueryResult> {}
 }
 
 export default GamePlayers

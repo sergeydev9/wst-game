@@ -161,11 +161,12 @@ export interface UserQuestionRating {
     id: number;
     user_id: number;
     question_id: number;
-    rating: UserQuestionRating;
+    rating: UserRating;
     created_at?: Date;
     updated_at?: Date;
 }
 
+export type IInsertUserQuestionRating = Insert<UserQuestionRating>;
 export type IInsertQuestionRating = Insert<UserQuestionRating>;
 export type IInsertOrder = Insert<Order>;
 export type IInsertGamePlayer = Insert<GamePlayer>;

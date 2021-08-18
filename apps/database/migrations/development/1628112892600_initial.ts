@@ -145,7 +145,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     })
 
     // user_question_rating
-    pgm.createTable('user_question_rating', {
+    pgm.createTable('user_question_ratings', {
         id: 'id',
         question_id: { type: 'integer', notNull: true, references: 'questions', onDelete: 'CASCADE' },
         user_id: { type: 'integer', notNull: false, references: 'users', onDelete: 'SET NULL' },

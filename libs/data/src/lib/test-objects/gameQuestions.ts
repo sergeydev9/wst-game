@@ -1,4 +1,4 @@
-export const gameQuestions = [
+const gameQuestions = [
     {
         id: 1,
         question_sequence_index: 1,
@@ -35,3 +35,5 @@ export const gameQuestions = [
         game_id: 1
     }
 ]
+
+export default gameQuestions;

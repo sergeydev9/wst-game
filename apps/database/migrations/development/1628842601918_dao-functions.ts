@@ -14,10 +14,15 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     WHERE questions.status = 'active'
     `)
 
-    // pgm.createView('question_results', {}, `
-
+    // TODO: finish if desired.
+    // pgm.createFunction('generate_game_questions', [{ type: 'integer', mode: 'IN', name: 'game_id' }, { type: 'integer', mode: 'IN', name: 'q_number' }], { returns: 'table (id integer, text text, text_for_guess text, follow_up text, deck_name text, question_sequence_index integer, question_total integer, question_id integer)', language: 'plpgsql' }, `
+    // DECLARE
+    //     question_total int8 := 0;
+    // BEGIN
+    //     FOR deck_question IN
+    //         SELECT id AS question_id
+    // END
     // `)
-
 
     /**
      * Return decks owned by the user.

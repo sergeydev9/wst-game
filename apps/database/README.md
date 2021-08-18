@@ -284,7 +284,7 @@ fulfilled_on | timestamptz | yes | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
-### **user_question_rating**
+### **user_question_ratings**
 
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
@@ -405,6 +405,8 @@ Enabled extensions:
 - pg_stat_statements [(documentation)](https://www.postgresql.org/docs/current/pgstatstatements.html)
 
 - pgcrypto: used to encrypt and verify passwords
+
+- citext: allows case insensitive text searching and indexing.
 
 ## Views
 
