@@ -32,7 +32,7 @@ export async function setupDeck(pool: Pool) {
  *
  * @export
  * @param {Pool} pool
- * @return {*}
+ * @return {[number, number]} game id, deck id
  */
 export async function setupGame(pool: Pool) {
     const games = new Games(pool)
