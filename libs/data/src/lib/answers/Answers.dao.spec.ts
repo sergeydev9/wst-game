@@ -1,10 +1,10 @@
 import { Pool } from 'pg';
-import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
+import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { cleanDb } from '../util/cleanDb';
 import { testDecks, testQuestions } from '../util/testEntityGenerators';
 import Answers from './Answers.dao';
 
-describe('Answers dao', () => {
+describe('Answers', () => {
     let pool: Pool;
     let answers: Answers;
     let game

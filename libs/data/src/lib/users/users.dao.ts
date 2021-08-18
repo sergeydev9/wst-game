@@ -10,6 +10,9 @@ class Users extends Dao {
     /**
      * Insert a new user.
      *
+     * WARNING: ENCRYPTION HAPPENS IN THE DATABASE. DO NOT ENCRYPT PASSWORD BEFORE
+     * CALLING THIS METHOD. IF YOU DO, THE PASSWORD WILL NOT BE VERIFYABLE.
+     *
      * If request successful, results object will have a 'rows' array length 1,
      * containing an object with the id, email and roles of the inserted user.
      *

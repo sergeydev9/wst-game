@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
+import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { cleanDb } from '../util/cleanDb';
 import { setupGame, setupGamePlayer, setupQuestion } from '../util/testDependencySetup';
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
@@ -7,7 +7,7 @@ import Games from './Games.dao';
 import Questions from '../questions/Questions.dao';
 import GamePlayers from '../game-players/GamePlayers';
 
-describe('Games dao', () => {
+describe('Games', () => {
     let pool: Pool;
     let games: Games;
     let players: GamePlayers;
@@ -58,26 +58,33 @@ describe('Games dao', () => {
         })
 
         it('should delete the old host when a new one is created', async () => {
-            // set initial player as host
-            await games.setHost(game_id, player_id);
-
-            // assign second player to same game
-            const secondPlayer = await players.insertOne({ ...TEST_GAME_PLAYERS[1], game_id });
-
-            // set second player as host
-            const { rows } = await games.setHost(game_id, secondPlayer.rows[0].id);
-
-            // set host should contain second player's id
-            expect(rows[0].id).toEqual(secondPlayer.rows[0].id)
-
-            // game_hosts should only have 1 row for game_id
+            // get host for game query
             const query = {
-                text: 'SELECT count(*)::int FROM game_hosts WHERE game_id = $1',
+                text: 'SELECT * FROM game_hosts WHERE game_id = $1',
                 values: [game_id]
             }
-            const actual = await games.pool.query(query);
 
-            expect(actual.rows[0].count).toEqual(1);
+            // set initial player as host
+            await games.setHost(game_id, player_id);
+            const result1 = await pool.query(query);
+
+            // initial player is only host
+            expect(result1.rows.length).toEqual(1);
+            expect(result1.rows[0].game_player_id).toEqual(player_id)
+
+            // create second player and assign to same game
+            const { rows } = await players.insertOne({ ...TEST_GAME_PLAYERS[1], game_id });
+            const secondPlayer = rows[0]
+
+            // set second player as host
+            await games.setHost(game_id, secondPlayer.id);
+
+            // get host for game
+            const actual = await pool.query(query);
+
+            // there is only 1 host, and it's the second player.
+            expect(actual.rows.length).toEqual(1);
+            expect(actual.rows[0].game_player_id).toEqual(secondPlayer.id)
         })
     })
 
@@ -93,7 +100,7 @@ describe('Games dao', () => {
             const host = actual.rows[0];
 
             // data from get host should match
-            expect(host.id).toEqual(hostId);
+            expect(host.id).toEqual(player_id);
             expect(host.player_name).toBeDefined();
         })
 
@@ -121,19 +128,18 @@ describe('Games dao', () => {
         })
     })
 
+    // TODO: finish implementation in DB
     // describe('getQuestions', () => {
 
-    // beforeEach(async () => {
-    //     // insert 3 game questions and add them to the game
-    //     const questions = {
-    //         text: 'INSERT INTO questions (text, text_for_guess'
-    //     }
-    // })
+    //     beforeEach(async () => {
+    //         // insert 5 game questions and add them to the game
+    //         await setupQuestion(pool, 5, deck_id);
+    //     })
 
-    // it('should return 3 game questions', async () => {
-    //     const { rows } = await games.getQuestions(gameId);
-    //     expect(rows.length).toEqual(3);
-    // })
+    //     it('should return 5 game questions', async () => {
+    //         const { rows } = await games.getQuestions(game_id);
+    //         expect(rows.length).toEqual(5);
+    //     })
 
     // })
 

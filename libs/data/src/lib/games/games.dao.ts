@@ -37,6 +37,7 @@ class Games extends Dao {
         return this.pool.query(query)
     }
 
+    // TODO: finish implementation in DB
     /**
      * Get all the game_questions for the game.
      *
@@ -44,13 +45,13 @@ class Games extends Dao {
      * @return {Promise<QueryResult>}
      * @memberof Games
      */
-    public async getQuestions(gameId: number): Promise<QueryResult> {
-        const query = {
-            text: 'SELECT * from get_game_questions($1)',
-            values: [gameId]
-        }
-        return this.pool.query(query)
-    }
+    // public async getQuestions(gameId: number): Promise<QueryResult> {
+    //     const query = {
+    //         text: 'SELECT * from get_game_questions($1)',
+    //         values: [gameId]
+    //     }
+    //     return this.pool.query(query)
+    // }
 
     /**
      * Create a game_hosts record with game_id, player_id.
@@ -58,10 +59,11 @@ class Games extends Dao {
      * If a record already exists with that game_id, the existing record will
      * be deleted.
      *
+     * returns id of host record
      *
      * @param {number} game_id
      * @param {number} player_id
-     * @return {{id}}  {Promise<QueryResult>}
+     * @return {{id: number}}  {Promise<QueryResult>}
      * @memberof Games
      */
     public async setHost(game_id: number, player_id: number): Promise<QueryResult> {
@@ -75,7 +77,7 @@ class Games extends Dao {
 
 
     /**
-     * Get host for game id. Returns the id and player name of matching host.
+     * Get host for game id. Returns the player_id and player name of matching host.
      *
      * @param {number} game_id
      * @return {{id: number, player_name: string}}  {Promise<QueryResult>}

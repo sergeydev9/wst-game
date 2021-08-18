@@ -1,5 +1,5 @@
 import { Pool, DatabaseError } from 'pg';
-import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
+import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { UserRole } from '@whosaidtrue/app-interfaces';
 import { cleanDb } from '../util/cleanDb';
 import Users from './Users.dao';

@@ -1,5 +1,5 @@
 import { Pool, DatabaseError } from 'pg';
-import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
+import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { setupGame } from '../util/testDependencySetup';
 import { cleanDb } from '../util/cleanDb';
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
@@ -7,7 +7,7 @@ import TEST_GAMES from '../test-objects/games';
 import GamePlayers from './GamePlayers';
 import Games from '../games/Games.dao';
 
-describe('GamePlayers dao', () => {
+describe('GamePlayers', () => {
     let pool: Pool;
     let players: GamePlayers;
     let game_id: number;

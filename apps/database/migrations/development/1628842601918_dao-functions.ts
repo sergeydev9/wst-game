@@ -35,7 +35,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     END`)
 
     // get questions for game
-    // pgm.createFunction('get_game_questions', [], { returns: '', language: 'plpgsql' }, ``)
+    // TODO: finish
+    // pgm.createFunction('get_game_questions', [], { returns: '', language: 'plpgsql' }, `
+
+    // `)
 
     // get number of users that answered 'true' on a given game_question.id
     pgm.createFunction('number_true_answers', [{ mode: 'IN', type: 'integer', name: 'gqId' }], { returns: 'smallint', onNull: true, language: 'plpgsql' }, `

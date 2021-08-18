@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
+import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { cleanDb } from '../util/cleanDb';
 import { testDecks, testQuestions } from '../util/testEntityGenerators';
 import Decks from './Decks.dao';
@@ -8,7 +8,7 @@ import Questions from '../questions/Questions.dao';
 import TEST_DECKS from '../test-objects/decks';
 
 
-describe('Decks dao', () => {
+describe('Decks', () => {
     let pool: Pool;
     let decks: Decks;
     let users: Users;
