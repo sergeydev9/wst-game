@@ -4,7 +4,7 @@ import { setupGame } from '../util/testDependencySetup';
 import { cleanDb } from '../util/cleanDb';
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
 import TEST_GAMES from '../test-objects/games';
-import GamePlayers from './GamePlayers';
+import GamePlayers from './GamePlayers.dao';
 import Games from '../games/Games.dao';
 
 describe('GamePlayers', () => {

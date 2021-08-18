@@ -5,7 +5,7 @@ import { setupGame, setupGamePlayer, setupQuestion } from '../util/testDependenc
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
 import Games from './Games.dao';
 import Questions from '../questions/Questions.dao';
-import GamePlayers from '../game-players/GamePlayers';
+import GamePlayers from '../game-players/GamePlayers.dao';
 
 describe('Games', () => {
     let pool: Pool;

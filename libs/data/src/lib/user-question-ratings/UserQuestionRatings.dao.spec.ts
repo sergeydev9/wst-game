@@ -2,7 +2,7 @@ import { Pool } from 'pg';
 import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { cleanDb } from '../util/cleanDb';
 import Users from '../users/Users.dao';
-import UserQuestionRatings from './UserQuestionRatings';
+import UserQuestionRatings from './UserQuestionRatings.dao';
 import { setupQuestion } from '../util/testDependencySetup';
 
 describe('UserQuestionRating', () => {

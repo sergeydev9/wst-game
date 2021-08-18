@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { cleanDb } from '../util/cleanDb';
-import GeneratedNames from './GeneratedNames';
+import GeneratedNames from './GeneratedNames.dao';
 
 describe('GeneratedNames', () => {
     let pool: Pool;

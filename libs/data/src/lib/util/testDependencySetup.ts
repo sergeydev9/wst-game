@@ -11,7 +11,7 @@ import TEST_QUESTIONS from '../test-objects/questions';
 import { testQuestions } from "./testEntityGenerators";
 import Games from '../games/Games.dao';
 import TEST_GAMES from '../test-objects/games';
-import GamePlayers from "../game-players/GamePlayers";
+import GamePlayers from "../game-players/GamePlayers.dao";
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
 
 const random = () => (Math.random() + 1).toString(36).substring(7); // prevent name collisions
