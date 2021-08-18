@@ -188,7 +188,6 @@ updated_at | timestamptz | no | no | now()
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
 player_name | citext | no | no
-is_host | boolean | no | no | false
 game_id | integer | no | no | | games | CASCADE
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()

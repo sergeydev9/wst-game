@@ -1,42 +1,30 @@
 import { Pool } from 'pg';
 import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 import { cleanDb } from '../util/cleanDb';
-import { testDecks } from '../util/testEntityGenerators';
+import { setupGame, setupGamePlayer, setupQuestion } from '../util/testDependencySetup';
+import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
 import Games from './Games.dao';
 import Questions from '../questions/Questions.dao';
-import Decks from '../decks/Decks.dao';
+import GamePlayers from '../game-players/GamePlayers';
 
 describe('Games dao', () => {
     let pool: Pool;
     let games: Games;
-    let questions: Questions;
-    let decks: Decks;
-    let gameId: number;
-    let deckId: number;
-    const accessCode = 'ABCDE'
+    let players: GamePlayers;
+    let game_id: number;
+    let deck_id: number;
+    let player_id: number;
+    const access_code = 'ABCDE'
 
     beforeAll(async () => {
         pool = new Pool(TEST_DB_CONNECTION);
         games = new Games(pool);
-        questions = new Questions(pool);
-        decks = new Decks(pool);
+        players = new GamePlayers(pool);
     })
 
     beforeEach(async () => {
         await cleanDb(pool);
-
-        for (const testDeck of testDecks(1, 'games')) {
-            const deckResp = await decks.insertOne(testDeck);
-            deckId = deckResp.rows[0].id;
-        }
-
-        // Insert initial game
-        const query = {
-            text: 'INSERT INTO games (access_code, status, deck_id) VALUES ($1, $2, $3) RETURNING id',
-            values: [accessCode, 'initialized', deckId]
-        }
-        const { rows } = await games.pool.query(query);
-        gameId = rows[0].id;
+        [player_id, game_id, deck_id] = await setupGamePlayer(pool);
     })
 
     afterAll(() => {
@@ -47,14 +35,49 @@ describe('Games dao', () => {
 
     describe('getByAccessCode', () => {
 
+        beforeEach(async () => {
+            await setupGame(pool, access_code);
+        })
+
         it('should return a game  object if game exists', async () => {
-            const { rows } = await games.getByAccessCode(accessCode)
+            const { rows } = await games.getByAccessCode(access_code)
             expect(rows.length).toEqual(1)
         })
 
         it("should return an empty array if game doesn't exist", async () => {
             const { rows } = await games.getByAccessCode('wrong');
             expect(rows.length).toEqual(0)
+        })
+    })
+
+    describe('setHost', () => {
+
+        it('should insert a new game_host record', async () => {
+            const { rows } = await games.setHost(game_id, player_id);
+            expect(rows[0].id).toBeDefined();
+        })
+
+        it('should delete the old host when a new one is created', async () => {
+            // set initial player as host
+            await games.setHost(game_id, player_id);
+
+            // assign second player to same game
+            const secondPlayer = await players.insertOne({ ...TEST_GAME_PLAYERS[1], game_id });
+
+            // set second player as host
+            const { rows } = await games.setHost(game_id, secondPlayer.rows[0].id);
+
+            // set host should contain second player's id
+            expect(rows[0].id).toEqual(secondPlayer.rows[0].id)
+
+            // game_hosts should only have 1 row for game_id
+            const query = {
+                text: 'SELECT count(*)::int FROM game_hosts WHERE game_id = $1',
+                values: [game_id]
+            }
+            const actual = await games.pool.query(query);
+
+            expect(actual.rows[0].count).toEqual(1);
         })
     })
 

@@ -52,6 +52,29 @@ class Games extends Dao {
         return this.pool.query(query)
     }
 
+    /**
+     * Create a game_hosts record with game_id, player_id.
+     *
+     * If a record already exists with that game_id, the existing record will
+     * be deleted.
+     *
+     *
+     * @param {number} game_id
+     * @param {number} player_id
+     * @return {{id}}  {Promise<QueryResult>}
+     * @memberof Games
+     */
+    public async setHost(game_id: number, player_id: number): Promise<QueryResult> {
+        const query = {
+            text: 'INSERT INTO game_hosts (game_id, game_player_id) VALUES ($1, $2) RETURNING id',
+            values: [game_id, player_id]
+        }
+
+        return this.pool.query(query);
+    }
+
+    // public async getHost(game_id:number): Promise<QueryResult> { }
+
     // public async setStartDate(): Promise<QueryResult> {}
 
     // public async setEndDate(): Promise<QueryResult> {}

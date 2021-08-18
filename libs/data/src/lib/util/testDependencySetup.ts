@@ -11,7 +11,10 @@ import TEST_QUESTIONS from '../test-objects/questions';
 import { testQuestions } from "./testEntityGenerators";
 import Games from '../games/Games.dao';
 import TEST_GAMES from '../test-objects/games';
+import GamePlayers from "../game-players/GamePlayers";
+import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
 
+const random = () => (Math.random() + 1).toString(36).substring(7); // prevent name collisions
 /**
  * Insert a deck
  *
@@ -22,8 +25,10 @@ import TEST_GAMES from '../test-objects/games';
 export async function setupDeck(pool: Pool) {
     const decks = new Decks(pool)
 
+    const name = `${TEST_DECKS[0].name} - ${random()}`
+
     // insert deck
-    const deckResult = await decks.insertOne({ ...TEST_DECKS[0] })
+    const deckResult = await decks.insertOne({ ...TEST_DECKS[0], name })
     return deckResult.rows[0].id
 }
 
@@ -32,15 +37,18 @@ export async function setupDeck(pool: Pool) {
  *
  * @export
  * @param {Pool} pool
+ * @param {string} accessCode set game access_code column. If undefined, will be random
  * @return {[number, number]} game id, deck id
  */
-export async function setupGame(pool: Pool) {
+export async function setupGame(pool: Pool, accessCode?: string) {
     const games = new Games(pool)
-
     const deck_id = await setupDeck(pool)
 
+    // if access code defined, use that, else generate random code
+    const access_code = accessCode ? accessCode : random();
+
     // insert game
-    const gameResult = await games.insertOne({ ...TEST_GAMES[0], deck_id })
+    const gameResult = await games.insertOne({ ...TEST_GAMES[0], deck_id, access_code })
     const game_id = gameResult.rows[0].id
 
     return [game_id, deck_id]
@@ -52,9 +60,9 @@ export async function setupGame(pool: Pool) {
  * @export
  * @param {Pool} pool
  * @param {number} [numQuestions=1]
- * @return {*}
+ * @return {{deck_id: number, question_ids: number[]}}
  */
-export async function setupQuestion(pool: Pool, numQuestions = 1) {
+export async function setupQuestion(pool: Pool, numQuestions = 1): Promise<{ deck_id: number, question_ids: number[] }> {
     const questions = new Questions(pool)
 
     const question_ids = []
@@ -71,6 +79,20 @@ export async function setupQuestion(pool: Pool, numQuestions = 1) {
     }
 
     return { deck_id, question_ids }
+}
+
+export async function setupGamePlayer(pool: Pool): Promise<[number, number, number]> {
+    const players = new GamePlayers(pool);
+    // create a game
+    const [game_id, deck_id] = await setupGame(pool);
+
+    // create a game player associated with game.
+    const player_name = `${TEST_GAME_PLAYERS[0].player_name} - ${random()}`
+    const { rows } = await players.insertOne({ ...TEST_GAME_PLAYERS[0], game_id, player_name });
+    const player_id = rows[0].id;
+
+    // return player id, game id, and deck id.
+    return [player_id, game_id, deck_id];
 }
 
 //TODO: Finish or delete?

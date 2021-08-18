@@ -4,15 +4,31 @@ export const shorthands: ColumnDefinitions | undefined = undefined;
 
 export async function up(pgm: MigrationBuilder): Promise<void> {
 
+    // all decks with status 'active'
     pgm.createView('active_decks', {}, `
     SELECT * FROM decks
     WHERE decks.status = 'active'
     `)
 
+    // all questions with status 'active'
     pgm.createView('active_questions', {}, `
     SELECT * FROM questions
     WHERE questions.status = 'active'
     `)
+
+    // delete existing host for game
+    pgm.createFunction('delete_host_for_game', [], { returns: 'trigger', language: 'plpgsql' }, `
+    BEGIN
+        DELETE FROM game_hosts WHERE game_hosts.game_id = NEW.game_id;
+        RETURN NEW;
+    END`)
+
+    // get number of users that answered 'true' on a given game_question.id
+    pgm.createFunction('number_true_answers', [{ mode: 'IN', type: 'integer', name: 'gqId' }], { returns: 'smallint', onNull: true, language: 'plpgsql' }, `
+    BEGIN
+        RETURN(SELECT Count(*) FROM "game_answers" AS answers WHERE answers."game_question_id" = "gqId" AND answers."value" = 'true');
+    END`)
+
 
     // TODO: finish if desired.
     // pgm.createFunction('generate_game_questions', [{ type: 'integer', mode: 'IN', name: 'game_id' }, { type: 'integer', mode: 'IN', name: 'q_number' }], { returns: 'table (id integer, text text, text_for_guess text, follow_up text, deck_name text, question_sequence_index integer, question_total integer, question_id integer)', language: 'plpgsql' }, `
@@ -69,6 +85,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         WHERE NOT EXISTS ( SELECT * FROM user_decks WHERE user_decks.user_id = input_id AND user_decks.deck_id = decks.id );
     END
     `)
+
+    // delete existing host for game before inserting new one
+    pgm.createTrigger('game_hosts', 'delete_host', {
+        when: 'BEFORE',
+        operation: 'INSERT',
+        level: 'ROW',
+        function: 'delete_host_for_game',
+    })
 
 
 }

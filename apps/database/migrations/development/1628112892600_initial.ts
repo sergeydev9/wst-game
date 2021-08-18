@@ -131,7 +131,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             onDelete: 'CASCADE'
         },
         player_name: { type: 'citext', notNull: true },
-        is_host: { type: 'boolean', notNull: true, default: false },
         created_at: {
             type: 'timestamptz',
             notNull: true,
@@ -273,8 +272,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createTable('user_decks', {
         id: 'id',
         user_id: {
-            type:
-                'integer',
+            type: 'integer',
             notNull: true,
             references: 'users',
             onDelete: 'CASCADE'
@@ -384,17 +382,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         END IF;
     END;`)
 
-    // delete existing host for game
-    pgm.createFunction('delete_host_for_game', [], { returns: 'trigger', language: 'plpgsql' }, `
-    BEGIN
-       DELETE FROM game_hosts WHERE game_hosts.game_id = NEW.game_id;
-    END`)
-
-    // get number of users that answered 'true' on a given game_question.id
-    pgm.createFunction('number_true_answers', [{ mode: 'IN', type: 'integer', name: 'gqId' }], { returns: 'smallint', onNull: true, language: 'plpgsql' }, `
-    BEGIN
-	    RETURN(SELECT Count(*) FROM "game_answers" AS answers WHERE answers."game_question_id" = "gqId" AND answers."value" = 'true');
-    END`)
 
     /**
     * ======================================
@@ -498,14 +485,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
      * Other triggers
      */
 
-    // delete existing host for game before inserting new one
-
-    pgm.createTrigger('game_hosts', 'delete_host', {
-        when: 'BEFORE',
-        operation: 'INSERT',
-        level: 'ROW',
-        function: 'delete_host_for_game',
-    })
     /**
     * ======================================
     * INDEXES
