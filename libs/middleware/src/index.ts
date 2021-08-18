@@ -1,4 +1,4 @@
-// export * from './lib/auth/auth';
-export * from './lib/errorHandler/errorHandler';
-export * from './lib/validation/validation';
-export * from './lib/dtos';
+export * from './lib/validation/auth';
+export * from './lib/validation/createGame';
+export * from './lib/validation/getDeckDetails';
+export * from './lib/validation/joinGame';
