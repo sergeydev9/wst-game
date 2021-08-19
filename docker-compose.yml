@@ -6,10 +6,8 @@ services:
   postgres:
     image: postgres:11
     container_name: postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: whosaidtrue-dev
+    env_file:
+      - .local.env
     restart: 'always'
     ports:
       - '5432:5432'

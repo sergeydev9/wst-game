@@ -32,17 +32,17 @@ The api app requires a running database. Start up postgres by running `docker-co
 
 The api reads from the following env variables:
 
-- POSTGRES_DB=whosaidtrue-dev
-- POSTGRES_HOST=localhost
-- POSTGRES_USER=root
-- POSTGRES_PASSWORD=password
-- JWT_SECRET=mySecret
-- NODE_ENV=development
-- PORT=3000
+- POSTGRES_DB
+- POSTGRES_HOST
+- POSTGRES_USER
+- POSTGRES_PASSWORD
+- JWT_SECRET
+- NODE_ENV
+- PORT
 - DOMAIN
-- DATABASE_URL=postgres://postgres:password@localhost:5432/whosaidtrue-dev
-- NX_API_BASEURL=http://localhost:3000
-- SG_API_KEY=SG.FAKE-KEY
+- DATABASE_URL
+- NX_API_BASEURL
+- SG_API_KEY
 
 These can be changed for local dev in `.local.env`
 
