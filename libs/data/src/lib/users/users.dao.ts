@@ -1,4 +1,3 @@
-import { UserRole } from '@whosaidtrue/app-interfaces';
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
 
@@ -6,7 +5,6 @@ class Users extends Dao {
     constructor(pool: Pool) {
         super(pool, 'users');
     }
-
     /**
      * Insert a new user.
      *
@@ -18,7 +16,6 @@ class Users extends Dao {
      *
      * @throws {DatabaseError}
      * Will throw exception if a user already exists with provided email,
-     * or if a value in roles array is invalid (i.e. not a member of the defined type)
      *
      * @example
      * const result = await users.register({email: test@example.com, password: 'password', roles: ['user']});
@@ -28,11 +25,10 @@ class Users extends Dao {
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public async register(user: { email: string, password: string, roles: UserRole[] }): Promise<QueryResult> {
-        const { email, password, roles } = user;
+    public async register(email: string, password: string): Promise<QueryResult> {
         const query = {
             text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, roles",
-            values: [email, password, roles]
+            values: [email, password, ["user"]]
         }
         return this._pool.query(query);
     }

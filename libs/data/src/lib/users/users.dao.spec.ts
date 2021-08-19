@@ -25,23 +25,14 @@ describe('Users dao', () => {
     describe('register', () => {
         const userEmail = 'test_register@test.com'; // use name specific to this test to avoid conflicts with other tests
         it('should register user', async () => {
-            const { rows } = await users.register({ email: userEmail, password: 'password', roles: ["user"] });
+            const { rows } = await users.register(userEmail, 'password');
             expect(rows.length).toEqual(1);
         })
 
         it('should encrypt the password', async () => {
-            await users.register({ email: userEmail, password: 'password', roles: ["user"] });
+            await users.register(userEmail, 'password');
             const { rows } = await users.pool.query({ text: 'SELECT * FROM users WHERE email = $1', values: [userEmail] });
             expect(rows[0].password).not.toEqual('password')
-        })
-
-        it('should throw an exception if roles is not a value defined in the type', async () => {
-            try {
-                await users.register({ email: userEmail, password: 'password', roles: ["gibberish" as UserRole] })
-            } catch (e) {
-                const expected = new DatabaseError("invalid input value for enum user_role: \"gibberish\"", 1, "error")
-                expect(e.message).toEqual(expected.message);
-            }
         })
     })
 
@@ -49,7 +40,7 @@ describe('Users dao', () => {
         const password = 'password';
         const email = 'test@test.com';
         beforeEach(async () => {
-            await users.register({ email: email, password: password, roles: ["user"] });
+            await users.register(email, password);
         })
 
         it('should return user data if password is correct', async () => {
@@ -70,13 +61,13 @@ describe('Users dao', () => {
 
         beforeEach(async () => {
             // save user and store id
-            const { rows } = await users.register({ email: 'test@test.com', password: 'password', roles: ["user"] });
+            const { rows } = await users.register('test@test.com', 'password');
             userId = rows[0].id;
         })
         it('should throw error if email is duplicate', async () => {
             try {
                 // attempt duplicate
-                await users.register({ email: 'test@test.com', password: 'passwordx', roles: ["user"] })
+                await users.register('test@test.com', 'passwordx')
             } catch (e) {
                 const expected = new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error")
                 expect(e.message).toEqual(expected.message)

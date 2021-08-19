@@ -1,5 +1,3 @@
-
-
 # Whosaidtrue
 
 This project was generated using [Nx](https://nx.dev).
@@ -10,10 +8,9 @@ This project was generated using [Nx](https://nx.dev).
 
 This project requires the `nx` cli to be instlaled globally. This can be done by running `yarn global add @nrwl/cli`
 
-
 ## Applications
-Each component is split into its own application. Applications are located in the `/apps` directory.
 
+Each component is split into its own application. Applications are located in the `/apps` directory.
 
 ## Libraries
 
@@ -29,20 +26,20 @@ Run `nx build my-app` to build the project. The build artifacts will be stored i
 
 ## api
 
-The api app requires a running database. Start up postgres by running `docker-compose up`. Once the database is up and running, start the api server by running `nx serve api`. 
+The api app requires a running database. Start up postgres by running `docker-compose up`. Once the database is up and running, start the api server by running `nx serve api`.
 
 ### Envirnment Variables
 
 The api reads from the following env variables:
-- POSTGRES_DB=sequelize
+
+- POSTGRES_DB=whosaidtrue-dev
 - POSTGRES_HOST=localhost
 - POSTGRES_USER=root
 - POSTGRES_PASSWORD=password
 - JWT_SECRET=mySecret
-- DB_POOL_MIN=1
-- DB_POOL_MAX=5
 - NODE_ENV=development
 - PORT=3000
+- DOMAIN
 - DATABASE_URL=postgres://postgres:password@localhost:5432/whosaidtrue-dev
 
 These can be changed for local dev in `.local.env`
