@@ -21,7 +21,7 @@ describe('UserQuestionRating', () => {
     beforeEach(async () => {
         await cleanDb(pool);
         // insert user
-        const { rows } = await users.register({ email: 'test-question-rating@test.com', password: 'password', roles: ["user"] });
+        const { rows } = await users.register('test-question-rating@test.com', 'password');
         userId = rows[0].id
 
         // insert questions

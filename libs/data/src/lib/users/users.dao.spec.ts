@@ -1,11 +1,10 @@
 import { Pool, DatabaseError } from 'pg';
 import { TEST_DB_CONNECTION } from '../util/testDbConnection';
-import { UserRole } from '@whosaidtrue/app-interfaces';
 import { cleanDb } from '../util/cleanDb';
 import Users from './Users.dao';
 
 
-describe('Users dao', () => {
+describe('Users', () => {
     let pool: Pool;
     let users: Users
 
@@ -23,10 +22,15 @@ describe('Users dao', () => {
     })
 
     describe('register', () => {
-        const userEmail = 'test_register@test.com'; // use name specific to this test to avoid conflicts with other tests
+        const userEmail = 'test_register@test.com';
         it('should register user', async () => {
             const { rows } = await users.register(userEmail, 'password');
             expect(rows.length).toEqual(1);
+            expect(rows[0].id).toBeDefined();
+            expect(rows[0].email).toBeDefined();
+            expect(rows[0].notifications).toBeDefined();
+
+
         })
 
         it('should encrypt the password', async () => {
@@ -47,6 +51,8 @@ describe('Users dao', () => {
             const { rows } = await users.login(email, password);
             expect(rows[0].email).toEqual(email);
             expect(rows[0].roles[0]).toEqual("user")
+            expect(rows[0].notifications).toEqual(false)
+
         })
 
         it('should return empty rows if password is incorrect', async () => {

@@ -27,7 +27,7 @@ describe('Decks', () => {
     })
 
     it("should return an empty array if user doesn't own any decks", async () => {
-        const { rows } = await users.register({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
+        const { rows } = await users.register('test_decks@test.com', 'password');
         const userId = rows[0].id;
 
         const actual = await decks.getUserDecks(userId);
@@ -121,7 +121,7 @@ describe('Decks', () => {
         beforeEach(async () => {
             await cleanDb(pool);
             // Save a user and get their id before each test
-            const { rows } = await users.register({ email: 'test_decks@test.com', password: 'password', roles: ['user'] });
+            const { rows } = await users.register('test_decks@test.com', 'password');
             userId = rows[0].id;
 
             // insert 5 test decks into DB before each test

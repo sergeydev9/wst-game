@@ -19,7 +19,7 @@ class Users extends Dao {
      *
      * @example
      * const result = await users.register({email: test@example.com, password: 'password', roles: ['user']});
-     * // result.rows = [{id: 1, email: 'test@example.com', roles: ['user']}]
+     * // result.rows = [{id: 1, email: 'test@example.com', roles: ['user'], notifications: false}]
      *
      * @param {Partial<User>} user
      * @return {Promise<QueryResult>}
@@ -27,7 +27,7 @@ class Users extends Dao {
      */
     public async register(email: string, password: string): Promise<QueryResult> {
         const query = {
-            text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, roles",
+            text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, roles, notifications",
             values: [email, password, ["user"]]
         }
         return this._pool.query(query);
@@ -125,12 +125,12 @@ class Users extends Dao {
      *
      * @param {string} email
      * @param {string} password
-     * @return  {Promise<QueryResult>} {id, email, roles[]}
+     * @return  {Promise<QueryResult>} {id, email, roles[], notifications}
      * @memberof Users
      */
     public async login(email: string, password: string): Promise<QueryResult> {
         const query = {
-            text: 'SELECT id, email, array_to_json(roles) AS roles FROM users WHERE email = $1 AND password = crypt($2, password)',
+            text: 'SELECT id, email, array_to_json(roles) AS roles, notifications FROM users WHERE email = $1 AND password = crypt($2, password)',
             values: [email, password]
         }
         return this._pool.query(query)
