@@ -1,13 +1,16 @@
-import { Router, Request, Response, response } from 'express';
+import { Router, Request, Response } from 'express';
 import { validateAuth, validateReset, passport } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, signUserPayload } from '@whosaidtrue/util';
+import { logger } from '@whosaidtrue/logger';
 import { users } from '../../db';
 import { TokenPayload } from '@whosaidtrue/api-interfaces';
 
 const router = Router();
 
 /**
- * User log in route.
+ * User log in.
+ *
+ * Returns a JWT token with type TokenPayload
  */
 router.post('/login', [...validateAuth], async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -28,7 +31,7 @@ router.post('/login', [...validateAuth], async (req: Request, res: Response) => 
             res.status(201).json({ token });
         }
     } catch (e) {
-        console.error(e)
+        logger.error(e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 
@@ -53,7 +56,7 @@ router.post('/register', [...validateAuth], async (req: Request, res: Response) 
         if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
             res.status(422).send("A user already exists with that email")
         } else {
-            console.error(e)
+            logger.error(e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
@@ -92,11 +95,11 @@ router.delete('/delete', passport.authenticate('jwt', { session: false }), async
             res.status(204).send();
         } else {
             // This shouldn't be possible, but just in case...
-            console.error(`a deleteById request for user with id ${id} returned count ${rows[0].count}. This shouldn't happen.`)
+            logger.error(`a deleteById request for user with id ${id} returned count ${rows[0].count}. This shouldn't happen.`)
             res.status(500).send("Unable to delete account")
         }
     } catch (e) {
-        console.error(e)
+        logger.error(e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })

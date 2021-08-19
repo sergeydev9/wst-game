@@ -6,6 +6,7 @@ import hpp from 'hpp';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { user, healthcheck } from './routes';
+import { logger } from '@whosaidtrue/logger';
 
 class App {
     public readonly app = express();
@@ -19,10 +20,10 @@ class App {
 
     public listen() {
         this.app.listen(this.port, () => {
-            console.info(`=================================`);
-            console.info(`======= ENV: ${process.env.NODE_ENV} =======`);
-            console.info(`🚀 App listening on the port ${this.port}`);
-            console.info(`=================================`);
+            logger.info(`=================================`);
+            logger.info(`======= ENV: ${process.env.NODE_ENV} =======`);
+            logger.info(`🚀 App listening on the port ${this.port}`);
+            logger.info(`=================================`);
         });
     }
 
