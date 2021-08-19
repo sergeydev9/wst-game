@@ -18,7 +18,7 @@ class Users extends Dao {
      * Will throw exception if a user already exists with provided email,
      *
      * @example
-     * const result = await users.register({email: test@example.com, password: 'password', roles: ['user']});
+     * const result = await users.register('test@example.com','password');
      * // result.rows = [{id: 1, email: 'test@example.com', roles: ['user'], notifications: false}]
      *
      * @param {Partial<User>} user

@@ -3,8 +3,9 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "esnext",
+    "jsx": "react-jsx",
     "allowJs": true,
     "types": ["jest", "node"],
   },
-  "include": ["**/*.spec.ts", "**/*.d.ts"]
+  "include": ["**/*.spec.ts", "**/*.d.ts", "**/*.spec.tsx"]
 }

@@ -37,7 +37,7 @@ class App {
 
     private initializeRoutes() {
         this.app.use('/healthz', healthcheck)
-        this.app.use('/', user) // keep user routes at root
+        this.app.use('/user', user) // keep user routes at root
     }
 
     private initializeSwagger() {

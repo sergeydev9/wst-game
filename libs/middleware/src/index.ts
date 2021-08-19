@@ -1,4 +1,5 @@
 export * from './lib/validation/validateAuth';
+export * from './lib/validation/validateReset';
 export * from './lib/validation/createGame';
 export * from './lib/validation/getDeckDetails';
 export * from './lib/validation/joinGame';
