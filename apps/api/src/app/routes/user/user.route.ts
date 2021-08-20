@@ -66,7 +66,7 @@ router.post('/register', [...validateAuth], async (req: Request, res: Response) 
 /**
  * Update user profile
  */
-// router.patch('/set-notifications', passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
+// router.patch('/update', passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
 
 // })
 

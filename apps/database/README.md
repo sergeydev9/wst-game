@@ -38,6 +38,8 @@ This directory contains the migrations and seeds, both for production and develo
 
 - [Running a .sql file](#running-a-sql-file)
 
+- [Seeding data in development](#seeding-data-in-development)
+
 ## node-pg-migrate
 
 ----
@@ -431,7 +433,6 @@ Returns all decks that have the value `active` in the `status` column. Returns a
 
 Returns all decks that have the value `active` in the `status` column. Returns all columns.
 
-
 ## Running a SQL file
 
 ----
@@ -440,3 +441,11 @@ The `./dev` directory is mounted into the Postgres container at the container pa
 any `.sql` file located in the `./dev` directory.
 
 To do so, simply start a shell in the postgres container, log in to pgsql and connect to your development database (should be whosaidtrue-dev) and run `\i /usr/local/dev/{SQL_FILE_NAME}`
+
+## Seeding data in development
+
+The `./seeds` directory contains a script that inserts seed data into the database. It uses the credentials found in `../../.local.env` to connect to the database.
+
+Before the seeds can be run, the application must be built by webpack. To do this, run `nx build database`.
+
+Once the application has been built and the database is up and running, you can insert the seed data using the "seed-dev" npm script defined in the root `package.json`. To do this, run `yarn seed-dev`.
