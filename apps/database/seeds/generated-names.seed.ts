@@ -846,7 +846,7 @@ export const pickName = () => {
  * @param {Pool} pool
  * @param {number} num
  */
-export const insertNames = async (pool: Pool, num: number) => {
+const insertNames = async (pool: Pool, num: number) => {
     const names = []
     let count = 0
 
@@ -861,3 +861,5 @@ export const insertNames = async (pool: Pool, num: number) => {
 
     return pool.query(query);
 }
+
+export default insertNames;
