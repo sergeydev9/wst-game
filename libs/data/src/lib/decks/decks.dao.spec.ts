@@ -34,6 +34,53 @@ describe('Decks', () => {
         expect(actual.rows.length).toEqual(0)
     })
 
+    describe('getDetails', () => {
+        let deckId: number;
+
+        beforeEach(async () => {
+            await cleanDb(pool);
+            // create 2 decks and push ids to array
+            for (const deck of testDecks(1)) {
+                const { rows } = await decks.insertOne({ ...deck })
+                deckId = rows[0].id
+            }
+        })
+
+        it('should return the expected columns', async () => {
+
+            // get the details
+            const { rows } = await decks.getDetails(deckId)
+            const {
+                id,
+                name,
+                sort_order,
+                clean,
+                age_rating,
+                movie_rating,
+                sfw,
+                status,
+                description,
+                purchase_price,
+                example_question,
+                thumbnail_url
+            } = rows[0];
+
+            // check response for each attribute
+            expect(id).toBeDefined()
+            expect(name).toBeDefined()
+            expect(sort_order).toBeDefined()
+            expect(clean).toBeDefined()
+            expect(age_rating).toBeDefined()
+            expect(movie_rating).toBeDefined()
+            expect(sfw).toBeDefined()
+            expect(status).toBeDefined()
+            expect(description).toBeDefined()
+            expect(purchase_price).toBeDefined()
+            expect(example_question).toBeDefined()
+            expect(thumbnail_url).toBeDefined()
+        })
+    })
+
     describe('getQuestions', () => {
         const deckIds: number[] = [];
 

@@ -4,7 +4,6 @@ export interface TokenPayload {
   id: number;
   email: string;
   roles: string[];
-  notifications: boolean;
 }
 
 export interface AuthenticationResponse {
@@ -16,7 +15,19 @@ export interface AuthenticationRequest {
   password: string;
 }
 
-export interface GetDecksResponse {
+export interface AccountDetailsResponse {
+  id: number;
+  email: string;
+  roles: string[];
+  notifications: boolean;
+  question_deck_credits: number
+}
+
+export interface UpdateAccountRequest {
+  notifications: boolean
+}
+
+export interface CreateGameDecksResponse {
   ownedDecks: Partial<Deck>[];
   unownedDecks: Partial<Deck>[];
 }

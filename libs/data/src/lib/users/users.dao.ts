@@ -27,7 +27,7 @@ class Users extends Dao {
      */
     public async register(email: string, password: string): Promise<QueryResult> {
         const query = {
-            text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, roles, notifications",
+            text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, roles",
             values: [email, password, ["user"]]
         }
         return this._pool.query(query);
@@ -114,7 +114,7 @@ class Users extends Dao {
      */
     public async getDetails(userId: number): Promise<QueryResult> {
         const query = {
-            text: 'SELECT email, question_deck_credits, notifications FROM users WHERE id = $1',
+            text: 'SELECT id, email, array_to_json(roles) AS roles, question_deck_credits, notifications FROM users WHERE id = $1',
             values: [userId]
         };
         return this._pool.query(query)
@@ -130,7 +130,7 @@ class Users extends Dao {
      */
     public async login(email: string, password: string): Promise<QueryResult> {
         const query = {
-            text: 'SELECT id, email, array_to_json(roles) AS roles, notifications FROM users WHERE email = $1 AND password = crypt($2, password)',
+            text: 'SELECT id, email, array_to_json(roles) AS roles FROM users WHERE email = $1 AND password = crypt($2, password)',
             values: [email, password]
         }
         return this._pool.query(query)

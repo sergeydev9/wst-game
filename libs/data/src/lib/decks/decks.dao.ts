@@ -10,16 +10,16 @@ class Decks extends Dao {
     }
 
     /**
-     * Override base getById method to avoid returning inactive decks.
+     * Get deck details. Returns all columns of active deck except create_at and updated_at.
      *
      * @param {number} id
      * @return {*}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async getById(id: number): Promise<QueryResult> {
+    public async getDetails(id: number): Promise<QueryResult> {
         const query = {
-            text: 'SELECT * from active_decks WHERE id = $1',
-            valeus: [id]
+            text: 'SELECT id, name, sort_order, clean, age_rating, movie_rating, sfw, status, description, purchase_price, example_question, thumbnail_url FROM active_decks WHERE id = $1',
+            values: [id]
         }
         return this.pool.query(query);
     }

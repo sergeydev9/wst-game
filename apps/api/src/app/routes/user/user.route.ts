@@ -4,7 +4,7 @@ import { passport } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, signUserPayload } from '@whosaidtrue/util';
 import { logger } from '@whosaidtrue/logger';
 import { users } from '../../db';
-import { TokenPayload } from '@whosaidtrue/api-interfaces';
+import { AccountDetailsResponse, TokenPayload } from '@whosaidtrue/api-interfaces';
 
 const router = Router();
 
@@ -25,8 +25,8 @@ router.post('/login', [...validateAuth], async (req: Request, res: Response) => 
 
         } else {
             // send token if success
-            const { id, email, roles, notifications } = rows[0]
-            const token = signUserPayload({ id, email, roles, notifications })
+            const { id, email, roles } = rows[0]
+            const token = signUserPayload({ id, email, roles })
 
             res.status(201).json({ token });
         }
@@ -48,8 +48,8 @@ router.post('/register', [...validateAuth], async (req: Request, res: Response) 
         const { rows } = await users.register(email, password);
 
         // send token if success
-        const { id, roles, notifications } = rows[0]
-        const token = signUserPayload({ email: rows[0].email, id, roles, notifications })
+        const { id, roles } = rows[0]
+        const token = signUserPayload({ email: rows[0].email, id, roles })
         res.status(201).json({ token })
 
     } catch (e) {
@@ -61,6 +61,31 @@ router.post('/register', [...validateAuth], async (req: Request, res: Response) 
         }
     }
 })
+
+/**
+ * Get full account details
+ */
+router.get('/details', passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
+    const { id } = req.user as TokenPayload;
+
+    try {
+        const { rows } = await users.getDetails(id);
+
+        // If a user deletes their account, but still manages
+        // to send a request to this endpoint with a valid token.
+        // This can happen if there is an error deleting the token
+        // from the user's browser when they delete their account.
+        if (!rows[0]) {
+            res.status(404).send('Could not find information for that account')
+        } else {
+            res.status(200).json(rows[0] as AccountDetailsResponse)
+        }
+    } catch (e) {
+        logger.error(e)
+        res.status(500).send(ERROR_MESSAGES.unexpected)
+    }
+})
+
 
 // TODO: sort out what the user can update on their profile.
 /**

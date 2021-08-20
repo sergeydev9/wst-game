@@ -28,9 +28,6 @@ describe('Users', () => {
             expect(rows.length).toEqual(1);
             expect(rows[0].id).toBeDefined();
             expect(rows[0].email).toBeDefined();
-            expect(rows[0].notifications).toBeDefined();
-
-
         })
 
         it('should encrypt the password', async () => {
@@ -38,6 +35,30 @@ describe('Users', () => {
             const { rows } = await users.pool.query({ text: 'SELECT * FROM users WHERE email = $1', values: [userEmail] });
             expect(rows[0].password).not.toEqual('password')
         })
+    })
+
+    describe('getDetails', () => {
+        const password = 'password';
+        const email = 'test@test.com';
+        let userId: number;
+
+        beforeEach(async () => {
+            const { rows } = await users.register(email, password);
+            userId = rows[0].id;
+        })
+
+        it('should return expected columns', async () => {
+            const { rows } = await users.getDetails(userId);
+            const { id, email, roles, notifications, question_deck_credits } = rows[0]
+
+            expect(id).toBeDefined();
+            expect(email).toEqual(email);
+            expect(notifications).toBeDefined();
+            expect(roles.length).toBeGreaterThan(0);
+            expect(question_deck_credits).toBeDefined();
+            expect(rows[0].password).not.toBeDefined();
+        })
+
     })
 
     describe('login', () => {
@@ -49,10 +70,9 @@ describe('Users', () => {
 
         it('should return user data if password is correct', async () => {
             const { rows } = await users.login(email, password);
+            expect(rows[0].id).toBeDefined();
             expect(rows[0].email).toEqual(email);
-            expect(rows[0].roles[0]).toEqual("user")
-            expect(rows[0].notifications).toEqual(false)
-
+            expect(rows[0].roles.length).toBeGreaterThan(0)
         })
 
         it('should return empty rows if password is incorrect', async () => {
