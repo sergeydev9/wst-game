@@ -1,5 +1,5 @@
-export * from './lib/validateAuth';
-export * from './lib/validateReset';
+export * from './lib/auth';
+export * from './lib/passwordReset';
 export * from './lib/createGame';
 export * from './lib/getDeckDetails';
 export * from './lib/joinGame';

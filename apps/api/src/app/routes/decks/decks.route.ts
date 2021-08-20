@@ -6,7 +6,6 @@ import { decks } from '../../db';
 
 const router = Router();
 
-
 /**
  * Get a complete deck row by id
  */
@@ -15,15 +14,14 @@ router.get('/', [...idQuery], async (req: Request, res: Response) => {
     const { id } = req.query;
     const idNum = parseInt(id as string) // validation middleware guarantees this conversion works
     try {
-
         // send request to db
         const { rows } = await decks.getById(idNum);
 
-        // if not found
+        // if not found, 404
         if (!rows.length) {
             res.status(404).send("Could not find deck");
         } else {
-            // if found, send
+            // if found, send result
             res.status(200).json(rows[0])
         }
     } catch (e) {

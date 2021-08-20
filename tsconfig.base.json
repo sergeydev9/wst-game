@@ -3,6 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "sourceMap": true,
+    "jsx": "react-jsx",
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,

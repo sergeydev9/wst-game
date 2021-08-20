@@ -1,2 +1,2 @@
-import { param } from 'express-validator';
-export const joinGame = [param('access_code').isString().isLength({ min: 7 })]
+import { query } from 'express-validator';
+export const joinGame = [query('access_code').isString().isLength({ min: 7 })]
