@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { validateAuth, validateReset, passport } from '@whosaidtrue/middleware';
+import { validateAuth, validateReset } from '@whosaidtrue/validation';
+import { passport } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, signUserPayload } from '@whosaidtrue/util';
 import { logger } from '@whosaidtrue/logger';
 import { users } from '../../db';
@@ -27,7 +28,6 @@ router.post('/login', [...validateAuth], async (req: Request, res: Response) => 
             const { id, email, roles, notifications } = rows[0]
             const token = signUserPayload({ id, email, roles, notifications })
 
-            // TODO: Create a session record here
             res.status(201).json({ token });
         }
     } catch (e) {

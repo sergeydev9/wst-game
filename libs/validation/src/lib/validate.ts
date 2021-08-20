@@ -16,7 +16,7 @@ const validate = (req: Request, res: Response, next: NextFunction) => {
         next();
     } catch (err) {
         // send error report and 422 status
-        const report = err.array().map((error: ValidationError) => ({ msg: error.msg, param: error.param })); // never return value here. Could leak sensitive info on password errors.
+        const report = err.array().map((error: ValidationError) => ({ msg: error.msg, param: error.param })); // never return 'value' here. Could leak sensitive info on password errors.
         res.status(422).json(report)
     }
 

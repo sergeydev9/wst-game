@@ -9,6 +9,21 @@ class Decks extends Dao {
         super(pool, 'decks')
     }
 
+    /**
+     * Override base getById method to avoid returning inactive decks.
+     *
+     * @param {number} id
+     * @return {*}  {Promise<QueryResult>}
+     * @memberof Decks
+     */
+    public async getById(id: number): Promise<QueryResult> {
+        const query = {
+            text: 'SELECT * from active_decks WHERE id = $1',
+            valeus: [id]
+        }
+        return this.pool.query(query);
+    }
+
     public async insertOne(deck: IInsertDeck): Promise<QueryResult> {
         const {
             name,

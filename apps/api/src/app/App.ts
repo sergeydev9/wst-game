@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { user, healthcheck } from './routes';
+import { user, healthcheck, decks } from './routes';
 import { logger } from '@whosaidtrue/logger';
 
 class App {
@@ -38,7 +38,8 @@ class App {
 
     private initializeRoutes() {
         this.app.use('/healthz', healthcheck)
-        this.app.use('/user', user) // keep user routes at root
+        this.app.use('/user', user)
+        this.app.use('/decks', decks)
     }
 
     private initializeSwagger() {

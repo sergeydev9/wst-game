@@ -7,7 +7,7 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "esModuleInterop":true,
+    "esModuleInterop": true,
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
@@ -22,7 +22,8 @@
       "@whosaidtrue/logger": ["libs/logger/src/index.ts"],
       "@whosaidtrue/middleware": ["libs/middleware/src/index.ts"],
       "@whosaidtrue/ui": ["libs/ui/src/index.ts"],
-      "@whosaidtrue/util": ["libs/util/src/index.ts"]
+      "@whosaidtrue/util": ["libs/util/src/index.ts"],
+      "@whosaidtrue/validation": ["libs/validation/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "logs"]
