@@ -1,7 +1,7 @@
 import FormGroupComponent from './FormGroup';
 import InputLabel from '../input-label/InputLabel';
 import TextInput from '../text-input/TextInput';
-import FormContainer from '../form-container/FormContainer';
+import Form from '../form/Form';
 
 export default {
     component: FormGroupComponent,
@@ -10,12 +10,11 @@ export default {
 
 export const FormGroup = () => {
     return (
-        <FormContainer>
+        <Form>
             <FormGroupComponent>
                 <InputLabel>Email</InputLabel>
                 <TextInput />
             </FormGroupComponent>
-        </FormContainer>
-
+        </Form>
     )
 }

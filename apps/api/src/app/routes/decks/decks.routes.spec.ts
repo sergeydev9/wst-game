@@ -12,7 +12,6 @@ import { signUserPayload } from '@whosaidtrue/middleware';
 const mockedDecks = mocked(decks, true)
 jest.mock('../../db')
 
-
 describe('/decks routes', () => {
     let app: Application;
 
@@ -28,6 +27,11 @@ describe('/decks routes', () => {
 
     })
 
+    /** DEV_NOTE
+     * These tests are fairly specific to the implementation.
+     * Should maybe replace these with a broader integration test
+     * at some point in the future when it makes sense to do so.
+     */
     describe('[GET] /selection', () => {
 
         it('should get user decks if there is a valid token in header', async () => {
@@ -54,7 +58,6 @@ describe('/decks routes', () => {
                 .expect('Content-Type', /json/)
                 .expect(200)
 
-
             expect(mockedDecks.getUserDecks).not.toBeCalled();
             expect(mockedDecks.deckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
         })
@@ -68,7 +71,6 @@ describe('/decks routes', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .expect('Content-Type', /json/)
                 .expect(200)
-
 
             expect(mockedDecks.getUserDecks).not.toBeCalled();
             expect(mockedDecks.deckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })

@@ -9,25 +9,26 @@ import { TokenPayload } from '@whosaidtrue/api-interfaces';
 
 const router = Router();
 
-// TODO implement pagination and filtering
+// TODO implement pagination and age rating filtering
 router.get('/selection', async (req: Request, res: Response) => {
     try {
         // Check header for token
         const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
 
         let id;
-        // if there is a token, verify it
+        // if there is a token, verify it and extract user id
         if (token) {
             try {
-                const { user } = jwt.verify(token, process.env.JWT_SECRET) as { user: TokenPayload } | undefined
+                const { user } = jwt.verify(token, process.env.JWT_SECRET) as { user: TokenPayload }
                 id = user.id;
-            } catch { }  // fail silently
+            } catch { }  // fail silently if token invalid
         }
 
-        // if id found, send user selection
+        // if id found, send user 2 sets of decks.
+        // One set is an array of all the decks they own,
+        // the other is an array of decks they don't own.
         if (id) {
-            const userDecks = await decks.getUserDecks(id);
-            const notOwned = await decks.userDeckSelection({ pageNumber: 0, pageSize: 100, userId: id });
+            const [userDecks, notOwned] = await Promise.all([decks.getUserDecks(id), decks.userDeckSelection({ pageNumber: 0, pageSize: 100, userId: id })])
 
             res.status(200).json({
                 owned: userDecks.rows,
@@ -38,7 +39,6 @@ router.get('/selection', async (req: Request, res: Response) => {
             const selection = await decks.deckSelection({ pageNumber: 0, pageSize: 100 })
             res.status(200).json(selection.rows)
         }
-
     } catch (e) {
         logger.error(e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
