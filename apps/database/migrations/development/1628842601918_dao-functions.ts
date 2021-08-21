@@ -111,6 +111,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         function: 'delete_host_for_game',
     })
 
+    // get specied number of generated names. Names are selected randomly.
+
 
 }
 // export async function down(pgm: MigrationBuilder): Promise<void> {

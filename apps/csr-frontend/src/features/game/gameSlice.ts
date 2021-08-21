@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { DecksAttributes } from '@whosaidtrue/data';
+import { Deck } from '@whosaidtrue/app-interfaces';
 
 // local imports
 import { history } from "../../app/hooks";
@@ -19,7 +19,7 @@ export interface GameState {
     status: GameStatus;
     gameId: string;
     host: boolean;
-    deck: DecksAttributes | Record<string, unknown>;
+    deck: Omit<Deck, 'created_at' | 'updated_at'>;
 }
 
 // export const gameSlice = createSlice({

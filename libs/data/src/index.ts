@@ -12,3 +12,4 @@ export { default as UserQuestionRating } from './lib/user-question-ratings/UserQ
 
 /* Utils */
 export * from './lib/util/testEntityGenerators'
+export { default as generateName } from './lib/util/generateName';

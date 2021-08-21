@@ -446,6 +446,6 @@ To do so, simply start a shell in the postgres container, log in to pgsql and co
 
 The `./seeds` directory contains a script that inserts seed data into the database. It uses the credentials found in `../../.local.env` to connect to the database.
 
-Before the seeds can be run, the application must be built by webpack. To do this, run `nx build database`.
+Before the seeds can be run, the application must be built by webpack. To do this, run `nx build database`. This need to be done **every time** there are changes to the seed scripts.
 
 Once the application has been built and the database is up and running, you can insert the seed data using the "seed-dev" npm script defined in the root `package.json`. To do this, run `yarn seed-dev`.
