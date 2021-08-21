@@ -1,4 +1,3 @@
-export { default as signUserPayload } from './lib/signUserPayload'
 export * from './lib/functions';
 export * from './lib/tailwindHelpers';
 export * from './lib/colors';
