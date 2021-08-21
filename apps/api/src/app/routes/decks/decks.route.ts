@@ -10,10 +10,11 @@ const router = Router();
  * Get a complete deck row by id
  */
 router.get('/', [...idQuery], async (req: Request, res: Response) => {
-    // get id from query and cast it to integer
-    const { id } = req.query;
-    const idNum = parseInt(id as string) // validation middleware guarantees this conversion works
     try {
+        // get id from query and cast it to integer
+        const { id } = req.query;
+        const idNum = parseInt(id as string) // validation middleware guarantees this conversion works
+
         // send request to db
         const { rows } = await decks.getById(idNum);
 

@@ -371,9 +371,25 @@ SELECT * FROM get_game_host(GAME_ID)
 Deletes any existing game_host rows with the same game_id as the row being inserted.
 Cannot be called directly. Only returns a trigger function.
 
+### get_name_choices
+
+- *parameters:* num_names integer, clean boolean
+- *returns:* id, name
+
+Returns the specified number of names. If clean is `true`, only returns names with `clean` true. Else can return either.
+
+```sql
+SELECT * FROM get_name_choices(NUMBER_OF_NAMES, true)
+```
+
 ## Triggers
 
 ----
+
+### **update_name_count**
+
+Triggers an update to the generated_name_count materialized view every time a row is inserted intom or
+deleted from the generated names table.
 
 ### **update_updated_at_trigger**
 
@@ -432,6 +448,16 @@ Returns all decks that have the value `active` in the `status` column. Returns a
 ### active_questions
 
 Returns all decks that have the value `active` in the `status` column. Returns all columns.
+
+## Materialized views
+
+----
+
+### generated_name_count
+
+To generate a selection of random names, the total number of names needs to be known.
+This matrialized view stores that value so it doesn't have to be recalculated every time
+someone tries to join a game.
 
 ## Running a SQL file
 

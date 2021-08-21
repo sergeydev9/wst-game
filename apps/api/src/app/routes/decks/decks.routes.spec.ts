@@ -6,7 +6,7 @@ import { mocked } from 'ts-jest/utils';
 // local
 import App from '../../App';
 import { decks } from '../../db';
-import { signUserPayload } from '@whosaidtrue/util';
+import { signUserPayload } from '@whosaidtrue/middleware';
 
 const mockedDecks = mocked(decks, true)
 jest.mock('../../db')

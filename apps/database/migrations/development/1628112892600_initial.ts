@@ -215,7 +215,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     // generatedNames
     pgm.createTable('generated_names', {
         id: 'id',
-        name: { type: 'varchar(200)', notNull: true },
+        name: { type: 'citext', notNull: true, unique: true },
         clean: { type: 'boolean', notNull: true },
         times_displayed: { type: 'integer', notNull: true, default: 0 },
         times_chosen: { type: 'integer', notNull: true, default: 0 },

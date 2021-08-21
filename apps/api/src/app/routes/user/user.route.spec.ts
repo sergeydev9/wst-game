@@ -8,7 +8,7 @@ import validator from 'validator';
 // local
 import App from '../../App';
 import { users } from '../../db';
-import { signUserPayload } from '@whosaidtrue/util';
+import { signUserPayload } from '@whosaidtrue/middleware';
 
 const mockedUsers = mocked(users, true)
 jest.mock('../../db')

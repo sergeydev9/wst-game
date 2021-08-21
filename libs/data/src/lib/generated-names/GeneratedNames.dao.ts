@@ -26,14 +26,17 @@ class GeneratedNames extends Dao {
      *
      * This method calls a function defined in the DB itself.
      *
+     * If clean is set to 'true' returns only 'clean' names. Otherwise,
+     * chooses either clean or not clean names.
+     *
      * @param {number} num
      * @return {*}  {Promise<QueryResult>}
      * @memberof GeneratedNames
      */
-    public async getChoices(num: number): Promise<QueryResult> {
+    public async getChoices(num: number, clean = false): Promise<QueryResult> {
         const query = {
-            text: 'SELECT * FROM get_random_names($1)',
-            values: [num]
+            text: 'SELECT * FROM get_name_choices($1, $2)',
+            values: [num, clean]
         }
 
         return this.pool.query(query);

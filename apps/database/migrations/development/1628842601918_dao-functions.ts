@@ -17,14 +17,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     `)
 
     // delete existing host for game
-    pgm.createFunction('delete_host_for_game', [], { returns: 'trigger', language: 'plpgsql' }, `
+    pgm.createFunction('delete_host_for_game', [], { returns: 'trigger', language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
         DELETE FROM game_hosts WHERE game_hosts.game_id = NEW.game_id;
         RETURN NEW;
     END`)
 
     // get host for game
-    pgm.createFunction('get_game_host', [{ mode: 'IN', type: 'integer', name: 'input_game_id' }], { returns: 'table(id integer, player_name text)', language: 'plpgsql' }, `
+    pgm.createFunction('get_game_host', [{ mode: 'IN', type: 'integer', name: 'input_game_id' }], { returns: 'table(id integer, player_name text)', language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
         RETURN QUERY SELECT
             game_players.id,
@@ -41,7 +41,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     // `)
 
     // get number of users that answered 'true' on a given game_question.id
-    pgm.createFunction('number_true_answers', [{ mode: 'IN', type: 'integer', name: 'gqId' }], { returns: 'smallint', onNull: true, language: 'plpgsql' }, `
+    pgm.createFunction('number_true_answers', [{ mode: 'IN', type: 'integer', name: 'gqId' }], { returns: 'smallint', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
         RETURN(SELECT Count(*) FROM "game_answers" AS answers WHERE answers."game_question_id" = "gqId" AND answers."value" = 'true');
     END`)
@@ -60,7 +60,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     /**
      * Return decks owned by the user.
      */
-    pgm.createFunction('user_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql' }, `
+    pgm.createFunction('user_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
         RETURN QUERY SELECT
             decks.id,
@@ -83,7 +83,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     /**
      * Return decks NOT owned by the user.
      */
-    pgm.createFunction('user_not_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, purchase_price money, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql' }, `
+    pgm.createFunction('user_not_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, purchase_price money, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
         RETURN QUERY SELECT
             decks.id,
@@ -111,7 +111,41 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         function: 'delete_host_for_game',
     })
 
-    // get specied number of generated names. Names are selected randomly.
+    // store the current total number of generated names.
+    // This number is needed every time someone tries to join a game.
+    // Instead of recalculating it every time, this matrialized view stores it
+    pgm.createMaterializedView('generated_name_count', {}, `SELECT count(*) AS count FROM generated_names`);
+
+    // update generated_name_count materialized view after every insert or delete.
+    pgm.createTrigger('generated_names', 'update_name_count', { returns: 'trigger', when: 'AFTER', operation: ['INSERT', 'DELETE'], language: 'plpgsql' }, `
+    BEGIN
+        REFRESH MATERIALIZED VIEW generated_name_count;
+        RETURN NULL;
+    END;
+    `)
+
+
+    // get specified number of generated names. Names are selected randomly.
+    pgm.createFunction('get_name_choices', [{ mode: 'IN', type: 'smallint', name: 'num_names' }, { mode: 'IN', type: 'boolean', name: 'is_clean' }], { returns: 'table(id integer, name citext)', language: 'plpgsql', parallel: 'SAFE' }, `
+    BEGIN
+        IF is_clean = true THEN
+            RETURN QUERY SELECT
+                id,
+                name
+            FROM generated_names
+            WHERE generated_names.clean = true
+            OFFSET floor(random() * (SELECT count FROM generated_name_count))
+            LIMIT num_names;
+        ELSE
+            RETURN QUERY SELECT
+                id,
+                name
+            FROM generated_names
+            OFFSET floor(random() * (SELECT count FROM generated_name_count))
+            LIMIT num_names;
+        END IF;
+    END
+    `)
 
 
 }
