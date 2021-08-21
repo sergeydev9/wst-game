@@ -1,6 +1,11 @@
+/**
+ * Insert names into the generated names table. These names
+ * are test samples taken from https://github.com/docker/engine/blob/master/pkg/namesgenerator/names-generator.go
+ *
+ */
 import { capitalizeFirstLetter } from '@whosaidtrue/util';
 
-const left = [
+export const left = [
     "admiring",
     "adoring",
     "affectionate",
@@ -112,7 +117,7 @@ const left = [
 ]
 
 
-const right = [
+export const right = [
     // Maria Gaetana Agnesi - Italian mathematician, philosopher, theologian and humanitarian. She was the first woman to write a mathematics handbook and the first woman appointed as a Mathematics Professor at a University. https://en.wikipedia.org/wiki/Maria_Gaetana_Agnesi
     "agnesi",
 

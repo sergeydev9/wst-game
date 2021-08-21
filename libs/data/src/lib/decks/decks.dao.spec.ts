@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import format from 'pg-format'
 import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { cleanDb } from '../util/cleanDb';
 import { testDecks, testQuestions } from '../util/testEntityGenerators';
@@ -217,6 +218,56 @@ describe('Decks', () => {
         it('should retrieve the 2 decks NOT owned by the user', async () => {
             const { rows } = await decks.getNotOwned(userId);
             expect(rows.length).toEqual(2)
+        })
+    })
+
+    describe('selectionWithOwned', () => {
+
+        let userId: number;
+        let deckIds: number[];
+
+        beforeEach(async () => {
+            await cleanDb(pool);
+            // Save a user and get their id before each test
+            const { rows } = await users.register('test_decks@test.com', 'password');
+            userId = rows[0].id;
+
+            // save 50 decks in DB
+            const decks = []
+            let count = 0
+            for (const deck of testDecks(50)) {
+                let { age_rating } = deck;
+                const { name, sort_order, sfw, movie_rating, purchase_price, status, description, clean } = deck;
+
+                // set 10 decks to have age rating 21 to test filtering
+                while (count < 10) {
+                    age_rating = 21;
+                    count++
+                }
+
+                decks.push([name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean]);
+            }
+
+            const deckQuery = {
+                text: format('INSERT INTO decks (name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean ) VALUES %L RETURNING id'),
+                values: decks
+            }
+
+            // store ids of saved decks
+            const result = await pool.query(deckQuery);
+            result.rows.forEach(row => deckIds.push(row.id))
+
+            // user owns 15 decks
+            const userDecks = []
+            deckIds.slice(0, 15).forEach(id => {
+                userDecks.push([id, userId])
+
+            })
+            const userDeckQuery = {
+                text: format('INSERT INTO user_decks (deck_id, user_id) VALUES %L'),
+                values: userDecks
+            }
+            await pool.query(userDeckQuery)
         })
     })
 })

@@ -8,11 +8,12 @@ import Decks from '../decks/Decks.dao';
 import TEST_DECKS from '../test-objects/decks';
 import Questions from '../questions/Questions.dao';
 import TEST_QUESTIONS from '../test-objects/questions';
-import { testQuestions } from "./testEntityGenerators";
+import { testQuestions, testDecks } from "./testEntityGenerators";
 import Games from '../games/Games.dao';
 import TEST_GAMES from '../test-objects/games';
 import GamePlayers from "../game-players/GamePlayers.dao";
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
+import Users from '../users/users.dao';
 
 const random = () => (Math.random() + 1).toString(36).substring(7); // prevent name collisions
 /**
@@ -97,6 +98,10 @@ export async function setupGamePlayer(pool: Pool): Promise<[number, number, numb
 
     // return player id, game id, and deck id.
     return [player_id, game_id, deck_id];
+}
+
+export async function setupUserDecks(totalDecks: number, ownedDecks: number, { ageRating, numRating }) {
+
 }
 
 //TODO: Finish

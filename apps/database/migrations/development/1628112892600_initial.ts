@@ -13,7 +13,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createExtension('pgcrypto');
     pgm.createExtension('citext');
 
-
     /**
     * ======================================
     * TYPES

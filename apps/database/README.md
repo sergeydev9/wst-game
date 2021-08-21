@@ -231,7 +231,7 @@ updated_at | timestamptz | no | no | now()
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-name | varchar(200) | no | yes
+name | citext | no | yes
 clean | boolean | no | no
 times_displayed | integer | no | no | 0
 times_chosen | integer | no | no | 0
@@ -386,11 +386,6 @@ SELECT * FROM get_name_choices(NUMBER_OF_NAMES, true)
 
 ----
 
-### **update_name_count**
-
-Triggers an update to the generated_name_count materialized view every time a row is inserted intom or
-deleted from the generated names table.
-
 ### **update_updated_at_trigger**
 
 - *function:* update_updated_at_column
@@ -448,16 +443,6 @@ Returns all decks that have the value `active` in the `status` column. Returns a
 ### active_questions
 
 Returns all decks that have the value `active` in the `status` column. Returns all columns.
-
-## Materialized views
-
-----
-
-### generated_name_count
-
-To generate a selection of random names, the total number of names needs to be known.
-This matrialized view stores that value so it doesn't have to be recalculated every time
-someone tries to join a game.
 
 ## Running a SQL file
 

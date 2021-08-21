@@ -142,6 +142,19 @@ class Decks extends Dao {
         return this.pool.query(query);
     }
 
+    /**
+     * Gets all decks not owned by a user.
+     *
+     * Be careful when using this directly as it will return all decks.
+     * This here to provide access to the function in the DB
+     * just in case, and for testing.
+     *
+     * For use in the api, use the methods with pagination.
+     *
+     * @param {number} userId
+     * @return {*}  {Promise<QueryResult>}
+     * @memberof Decks
+     */
     public async getNotOwned(userId: number): Promise<QueryResult> {
         const query = {
             text: 'SELECT * from user_not_owned_decks($1)',
@@ -149,6 +162,57 @@ class Decks extends Dao {
         }
         return this.pool.query(query);
     }
+
+
+    /**
+     * Returns 2 sets of decks - owned decks, and not owned decks.
+     *
+     * The set of owned decks is comprehensive. It's every deck the
+     * specified user owns.
+     *
+     * The not owned decks are a paginated subset of all decks, with the
+     * option to filter by age rating.
+     *
+     * This method should be triggered when a logged in user first attempts
+     * to create a game and their owned decks haven't been fetched yet.
+     *
+     * If they already have their owned decks in client memory, or they are
+     * createing a game as a guest user. call the "deckSelectionWithoutOwned" method instead.
+     *
+     *  @param {number} userId
+     * @param {number} [pageSize=30]
+     * @param {number} [page=0]
+     * @param {number} [age_rating=1000]
+     * @return {{owned: Deck[], not_owned: Deck[]}}  {Promise<QueryResult>}
+     * @memberof Decks
+     */
+    public async selectionWithOwned(userId: number, pageSize = 30, page = 0, age_rating: number): Promise<QueryResult> {
+        const query = {
+            text: 'SELECT * from selection_with_owned($1, $2, $3, $4)',
+            values: [userId, pageSize, page, age_rating]
+        }
+        return this.pool.query(query)
+    }
+
+    /**
+     *
+     *
+     * @param {number} [pageSize=30]
+     * @param {number} [page=0]
+     * @param {number} age_rating
+     * @return {{not_owned: Deck[]}}  {Promise<QueryResult>}
+     * @memberof Decks
+     */
+    public async selectionWithoutOwned(pageSize = 30, page = 0, age_rating: number): Promise<QueryResult> {
+        const query = {
+            text: 'SELECT * from selection_without_owned($1, $2, $3)',
+            values: [pageSize, page, age_rating]
+        }
+
+        return this.pool.query(query)
+    }
+
+    // public async deckSelectionWithoutOnwed(userId: number): Promise<QueryResult>{}
 
     public async getQuestions(deckId: number): Promise<QueryResult> {
         const query = {
@@ -158,6 +222,21 @@ class Decks extends Dao {
         return this.pool.query(query);
     }
 
+    /** TODO: replace this with real implementation.
+     * Create an order record for a deck/user.
+     *
+     * THIS IS A TEMPORARY FAKE IMPLEMENTATION.
+     */
+    public async purchase(deckId: number, userId: number, purchase_price: string): Promise<QueryResult> {
+
+        const query = {
+            text: 'INSERT INTO orders (deck_id, user_id, fulfilled_on, purchase_price) VALUES ($1, $2, $3, $4) returning id',
+            values: [deckId, userId, new Date().toISOString(), purchase_price]
+        }
+        return this.pool.query(query)
+    }
+    // TODO: need this?
+    // public async checkIfUserOwns(deckId: number): Promise<QueryResult> {}
 
 }
 

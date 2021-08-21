@@ -34,12 +34,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         WHERE game_hosts.game_id = input_game_id;
     END`)
 
-    // get questions for game
-    // TODO: finish
-    // pgm.createFunction('get_game_questions', [], { returns: '', language: 'plpgsql' }, `
-
-    // `)
-
     // get number of users that answered 'true' on a given game_question.id
     pgm.createFunction('number_true_answers', [{ mode: 'IN', type: 'integer', name: 'gqId' }], { returns: 'smallint', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
@@ -111,42 +105,54 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         function: 'delete_host_for_game',
     })
 
-    // store the current total number of generated names.
-    // This number is needed every time someone tries to join a game.
-    // Instead of recalculating it every time, this matrialized view stores it
-    pgm.createMaterializedView('generated_name_count', {}, `SELECT count(*) AS count FROM generated_names`);
-
-    // update generated_name_count materialized view after every insert or delete.
-    pgm.createTrigger('generated_names', 'update_name_count', { returns: 'trigger', when: 'AFTER', operation: ['INSERT', 'DELETE'], language: 'plpgsql' }, `
-    BEGIN
-        REFRESH MATERIALIZED VIEW generated_name_count;
-        RETURN NULL;
-    END;
-    `)
-
-
-    // get specified number of generated names. Names are selected randomly.
-    pgm.createFunction('get_name_choices', [{ mode: 'IN', type: 'smallint', name: 'num_names' }, { mode: 'IN', type: 'boolean', name: 'is_clean' }], { returns: 'table(id integer, name citext)', language: 'plpgsql', parallel: 'SAFE' }, `
+    // Get specified number of generated names. Names are selected randomly.
+    // This method gets slower as the table grows. If the number of name
+    // rows gets into the hundreds of thousands, or reaches a point where it
+    // exceeds memory capacity (unlikely), consider replacing this.
+    pgm.createFunction('get_name_choices', [{ mode: 'IN', type: 'smallint', name: 'num_names' }, { mode: 'IN', type: 'boolean', name: 'is_clean' }], { returns: 'table(id integer, name citext, clean boolean)', language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
         IF is_clean = true THEN
             RETURN QUERY SELECT
-                id,
-                name
+                generated_names.id,
+                generated_names.name,
+                generated_names.clean
             FROM generated_names
             WHERE generated_names.clean = true
-            OFFSET floor(random() * (SELECT count FROM generated_name_count))
+            ORDER BY random()
             LIMIT num_names;
         ELSE
             RETURN QUERY SELECT
-                id,
-                name
+                generated_names.id,
+                generated_names.name,
+                generated_names.clean
             FROM generated_names
-            OFFSET floor(random() * (SELECT count FROM generated_name_count))
+            ORDER BY random()
             LIMIT num_names;
         END IF;
     END
     `)
 
+    // get two sets of decks - owned and not owned - with pagination and optional age_rating filtering.
+    pgm.createFunction('selection_with_owned', [
+        { mode: 'IN', type: 'integer', name: 'u_id' },
+        { type: 'smallint', mode: 'IN', name: 'p_num' },
+        { type: 'smallint', mode: 'IN', name: 'p_size' },
+        { type: 'smallint', mode: 'IN', name: 'rating' }
+    ], { parallel: 'SAFE', language: 'plpgsql', returns: 'table(j json)' }, `
+    BEGIN
+        IF rating IS NOT NULL THEN
+            RETURN QUERY
+            WITH owned AS ( SELECT * FROM user_owned_decks(u_id) AS  u_decks WHERE u_decks.age_rating < rating),
+            not_owned AS ( SELECT * FROM user_not_owned_decks(u_id) AS u_decks WHERE u_decks.age_rating < rating OFFSET p_num LIMIT p_size)
+            SELECT to_json(to_json(owned), to_json(not_owned));
+        ELSE
+            RETURN QUERY
+            WITH owned AS ( SELECT * FROM user_owned_decks(u_id) AS  u_decks),
+            not_owned AS ( SELECT * FROM user_not_owned_decks(u_id) AS u_decks OFFSET p_num LIMIT p_size)
+            SELECT to_json(to_json(owned), to_json(not_owned));
+        END IF;
+    END
+    `)
 
 }
 // export async function down(pgm: MigrationBuilder): Promise<void> {
