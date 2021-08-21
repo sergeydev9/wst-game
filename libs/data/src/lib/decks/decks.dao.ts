@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
-import { MovieRating, IInsertDeck } from '@whosaidtrue/app-interfaces';
+import { MovieRating, IInsertDeck, DeckSelectionOptions, UserDeckSelectionOptions } from '@whosaidtrue/app-interfaces';
 
 
 class Decks extends Dao {
@@ -152,7 +152,7 @@ class Decks extends Dao {
      * For use in the api, use the methods with pagination.
      *
      * @param {number} userId
-     * @return {*}  {Promise<QueryResult>}
+     * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
     public async getNotOwned(userId: number): Promise<QueryResult> {
@@ -165,55 +165,87 @@ class Decks extends Dao {
 
 
     /**
-     * Returns 2 sets of decks - owned decks, and not owned decks.
+     * Call this method when someone that does have an account
+     * needs to be shown some decks that they don't own.
      *
-     * The set of owned decks is comprehensive. It's every deck the
-     * specified user owns.
+     * options:
+     *  - pageNumber: sets the number of decks to skip
      *
-     * The not owned decks are a paginated subset of all decks, with the
-     * option to filter by age rating.
+     *  - pageSize: sets the number per page
      *
-     * This method should be triggered when a logged in user first attempts
-     * to create a game and their owned decks haven't been fetched yet.
+     *  - ageRating: if present, only decks with rating lower
+     *    than this value will be returned
      *
-     * If they already have their owned decks in client memory, or they are
-     * createing a game as a guest user. call the "deckSelectionWithoutOwned" method instead.
-     *
-     *  @param {number} userId
-     * @param {number} [pageSize=30]
-     * @param {number} [page=0]
-     * @param {number} [age_rating=1000]
-     * @return {{owned: Deck[], not_owned: Deck[]}}  {Promise<QueryResult>}
+     * @param {DeckSelectionOptions} options
+     * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async selectionWithOwned(userId: number, pageSize = 30, page = 0, age_rating: number): Promise<QueryResult> {
+    public async userDeckSelection(options: UserDeckSelectionOptions): Promise<QueryResult> {
+        const { userId, pageNumber, pageSize, ageRating } = options;
+
+        let queryString: string;
+        let valuesArray: number[];
+
+        if (!ageRating) {
+            queryString = 'SELECT * FROM user_not_owned_decks($1) ORDER BY id OFFSET $2 LIMIT $3';
+            valuesArray = [userId, pageNumber * pageSize, pageSize]
+        } else {
+            queryString = 'SELECT * FROM user_not_owned_decks($1) AS u_o WHERE u_o.age_rating < $4 ORDER BY id OFFSET $2 LIMIT $3';
+            valuesArray = [userId, pageNumber * pageSize, pageSize, ageRating]
+        }
+
         const query = {
-            text: 'SELECT * from selection_with_owned($1, $2, $3, $4)',
-            values: [userId, pageSize, page, age_rating]
+            text: queryString,
+            values: valuesArray
         }
         return this.pool.query(query)
     }
 
     /**
+     * Call this method when someone that doesn't have an account
+     * needs to be shown some decks.
      *
+     * options:
+     *  - pageNumber: sets the number of decks to skip
      *
-     * @param {number} [pageSize=30]
-     * @param {number} [page=0]
-     * @param {number} age_rating
-     * @return {{not_owned: Deck[]}}  {Promise<QueryResult>}
+     *  - pageSize: sets the number per page
+     *
+     *  - ageRating: if present, only decks with rating lower
+     *    than this value will be returned
+     *
+     * @param {DeckSelectionOptions} options
+     * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async selectionWithoutOwned(pageSize = 30, page = 0, age_rating: number): Promise<QueryResult> {
+    public async deckSelection(options: DeckSelectionOptions): Promise<QueryResult> {
+        const { pageNumber, pageSize, ageRating } = options;
+
+        let queryString: string;
+        let valueArray: number[];
+        if (!ageRating) {
+            queryString = `SELECT * from active_decks ORDER BY id OFFSET $1 LIMIT $2`
+            valueArray = [pageNumber * pageSize, pageSize]
+        } else {
+            queryString = `SELECT * from active_decks WHERE active_decks.age_rating < $3 ORDER BY id OFFSET $1 LIMIT $2`
+            valueArray = [pageNumber * pageSize, pageSize, ageRating]
+        }
+
         const query = {
-            text: 'SELECT * from selection_without_owned($1, $2, $3)',
-            values: [pageSize, page, age_rating]
+            text: queryString,
+            values: valueArray
         }
 
         return this.pool.query(query)
     }
 
-    // public async deckSelectionWithoutOnwed(userId: number): Promise<QueryResult>{}
 
+    /**
+     * Get all active questions for specified deck.
+     *
+     * @param {number} deckId
+     * @return {Question[]}  {Promise<QueryResult>}
+     * @memberof Decks
+     */
     public async getQuestions(deckId: number): Promise<QueryResult> {
         const query = {
             text: 'SELECT * from active_questions AS questions WHERE questions.deck_id = $1',

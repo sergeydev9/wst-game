@@ -418,7 +418,7 @@ table | columns | unique
 | game_players | game_id, player_name | yes
 | game_answers | question_id | no
 | questions | deck_id | no
-| user_decks | user_id | no
+| user_decks | user_id deck_id | yes
 
 ## Extensions
 

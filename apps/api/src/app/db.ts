@@ -1,5 +1,5 @@
 import { Pool } from 'pg'
-import { Users, Decks, Games } from '@whosaidtrue/data';
+import { Users, Decks, Games, GeneratedNames } from '@whosaidtrue/data';
 
 let pool: Pool;
 
@@ -22,5 +22,6 @@ if (!pool) throw new Error('Postgres connection pool unavailable')
 const users = new Users(pool);
 const games = new Games(pool);
 const decks = new Decks(pool);
+const names = new GeneratedNames(pool);
 
-export { users, games, decks, pool };
+export { users, games, decks, names, pool };

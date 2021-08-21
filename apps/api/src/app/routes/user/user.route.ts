@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { validateAuth, validateReset } from '@whosaidtrue/validation';
 import { passport } from '@whosaidtrue/middleware';
-import { ERROR_MESSAGES, signUserPayload } from '@whosaidtrue/util';
+import { ERROR_MESSAGES, } from '@whosaidtrue/util';
+import { signUserPayload } from '@whosaidtrue/middleware';
 import { logger } from '@whosaidtrue/logger';
 import { users } from '../../db';
 import { AccountDetailsResponse, TokenPayload } from '@whosaidtrue/api-interfaces';

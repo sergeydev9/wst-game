@@ -10,6 +10,7 @@ import { Pool } from 'pg';
  * @param {Pool} pool
  */
 export function cleanDb(pool: Pool) {
+
     const promises = [
         pool.query(`DELETE FROM decks WHERE id > 0`),
         pool.query(`DELETE FROM users WHERE id > 0`),

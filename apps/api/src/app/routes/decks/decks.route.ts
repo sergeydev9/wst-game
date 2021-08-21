@@ -1,10 +1,49 @@
 import { Request, Response, Router } from 'express';
 import { idQuery } from '@whosaidtrue/validation';
 import { logger } from '@whosaidtrue/logger';
+import jwt from 'jsonwebtoken';
+import { ExtractJwt } from 'passport-jwt';
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
 import { decks } from '../../db';
+import { TokenPayload } from '@whosaidtrue/api-interfaces';
 
 const router = Router();
+
+// TODO implement pagination and filtering
+router.get('/selection', async (req: Request, res: Response) => {
+    try {
+        // Check header for token
+        const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+
+        let id;
+        // if there is a token, verify it
+        if (token) {
+            try {
+                const { user } = jwt.verify(token, process.env.JWT_SECRET) as { user: TokenPayload } | undefined
+                id = user.id;
+            } catch { }  // fail silently
+        }
+
+        // if id found, send user selection
+        if (id) {
+            const userDecks = await decks.getUserDecks(id);
+            const notOwned = await decks.userDeckSelection({ pageNumber: 0, pageSize: 100, userId: id });
+
+            res.status(200).json({
+                owned: userDecks.rows,
+                not_owned: notOwned.rows
+            })
+        } else {
+            // no valid id, send guest selection
+            const selection = await decks.deckSelection({ pageNumber: 0, pageSize: 100 })
+            res.status(200).json(selection.rows)
+        }
+
+    } catch (e) {
+        logger.error(e)
+        res.status(500).send(ERROR_MESSAGES.unexpected)
+    }
+})
 
 /**
  * Get a complete deck row by id

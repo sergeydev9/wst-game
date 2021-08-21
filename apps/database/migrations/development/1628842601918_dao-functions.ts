@@ -54,7 +54,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     /**
      * Return decks owned by the user.
      */
-    pgm.createFunction('user_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
+    pgm.createFunction('user_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, purchase_price money, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
         RETURN QUERY SELECT
             decks.id,
@@ -67,6 +67,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             decks.status,
             decks.description,
             decks.example_question,
+            decks.purchase_price,
             decks.thumbnail_url
         FROM active_decks AS decks
         LEFT JOIN user_decks ON user_decks.deck_id = decks.id
@@ -132,27 +133,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     END
     `)
 
-    // get two sets of decks - owned and not owned - with pagination and optional age_rating filtering.
-    pgm.createFunction('selection_with_owned', [
-        { mode: 'IN', type: 'integer', name: 'u_id' },
-        { type: 'smallint', mode: 'IN', name: 'p_num' },
-        { type: 'smallint', mode: 'IN', name: 'p_size' },
-        { type: 'smallint', mode: 'IN', name: 'rating' }
-    ], { parallel: 'SAFE', language: 'plpgsql', returns: 'table(j json)' }, `
-    BEGIN
-        IF rating IS NOT NULL THEN
-            RETURN QUERY
-            WITH owned AS ( SELECT * FROM user_owned_decks(u_id) AS  u_decks WHERE u_decks.age_rating < rating),
-            not_owned AS ( SELECT * FROM user_not_owned_decks(u_id) AS u_decks WHERE u_decks.age_rating < rating OFFSET p_num LIMIT p_size)
-            SELECT to_json(to_json(owned), to_json(not_owned));
-        ELSE
-            RETURN QUERY
-            WITH owned AS ( SELECT * FROM user_owned_decks(u_id) AS  u_decks),
-            not_owned AS ( SELECT * FROM user_not_owned_decks(u_id) AS u_decks OFFSET p_num LIMIT p_size)
-            SELECT to_json(to_json(owned), to_json(not_owned));
-        END IF;
-    END
-    `)
+
 
 }
 // export async function down(pgm: MigrationBuilder): Promise<void> {

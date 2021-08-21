@@ -35,7 +35,7 @@ class Users extends Dao {
 
     public async updatePassword(id: number, password: string): Promise<QueryResult> {
         const query = {
-            text: `UPDATE users SET password = $1 WHERE id = $2`,
+            text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8) WHERE id = $2`,
             values: [password, id]
         }
         return this._pool.query(query)
@@ -84,7 +84,7 @@ class Users extends Dao {
     }
 
     /**
-     * Set user's notifications to true if false, and vice versa for the specified user.
+     * Set user's notifications to the specified value
      *
      * Returns an object with the new value of "notifications"
      *
@@ -92,16 +92,16 @@ class Users extends Dao {
      * @example
      * // initial_user_value = {id: 5, ..., notifications: false}
      *
-     * const result = await users.reduceCredits(5);
+     * const result = await users.toggleNotifications(5, true);
      * result.rows[0] // {notifications: true}
      *
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public async toggleNotifications(userId: number): Promise<QueryResult> {
+    public async toggleNotifications(userId: number, value: boolean): Promise<QueryResult> {
         const query = {
-            text: 'UPDATE users SET notifications = NOT notifications WHERE id = $1 RETURNING notifications',
-            values: [userId]
+            text: 'UPDATE users SET notifications = $1 WHERE id = $2 RETURNING notifications',
+            values: [value, userId]
         };
         return this._pool.query(query)
     }

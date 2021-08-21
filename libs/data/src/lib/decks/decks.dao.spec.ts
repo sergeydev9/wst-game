@@ -1,8 +1,8 @@
 import { Pool } from 'pg';
-import format from 'pg-format'
 import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { cleanDb } from '../util/cleanDb';
 import { testDecks, testQuestions } from '../util/testEntityGenerators';
+import { setupUserDecks, setupDecks } from '../util/testDependencySetup';
 import Decks from './Decks.dao';
 import Users from '../users/Users.dao';
 import Questions from '../questions/Questions.dao';
@@ -168,46 +168,10 @@ describe('Decks', () => {
 
         beforeEach(async () => {
             await cleanDb(pool);
-            // Save a user and get their id before each test
-            const { rows } = await users.register('test_decks@test.com', 'password');
-            userId = rows[0].id;
-
-            // insert 5 test decks into DB before each test
-            const results = TEST_DECKS.map(deck => {
-                const {
-                    name,
-                    sort_order,
-                    sfw,
-                    age_rating,
-                    movie_rating,
-                    purchase_price,
-                    status,
-                    description,
-                    clean
-                } = deck;
-                const query = {
-                    text: `INSERT INTO decks (name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
-                    values: [name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean]
-                }
-                return pool.query(query)
-            });
-
-            // resolve all the queries and push results into array
-            const resolved = await Promise.all(results);
-            const deckIds = [];
-            resolved.forEach(res => deckIds.push(res.rows[0].id))
-
-            // create a user_deck record for the first 3 decks that were saved.
-            // this simulates the user owning the decks.
-            const idSlice = deckIds.slice(0, 3);
-            const userDeckPromises = idSlice.map(id => {
-                const query = {
-                    text: 'INSERT INTO user_decks (deck_id, user_id) VALUES ($1, $2)',
-                    values: [id, userId]
-                }
-                return pool.query(query)
-            })
-            await Promise.all(userDeckPromises)
+            // save a user and 5 decks.
+            // user owns 3 out of the 5 decks.
+            const setup = await setupUserDecks(pool, 5, 3)
+            userId = setup.userId
         })
 
         it('should retrieve the 3 decks owned by the user', async () => {
@@ -221,53 +185,66 @@ describe('Decks', () => {
         })
     })
 
-    describe('selectionWithOwned', () => {
-
-        let userId: number;
-        let deckIds: number[];
+    describe('deckSelection', () => {
 
         beforeEach(async () => {
             await cleanDb(pool);
-            // Save a user and get their id before each test
-            const { rows } = await users.register('test_decks@test.com', 'password');
-            userId = rows[0].id;
-
-            // save 50 decks in DB
-            const decks = []
-            let count = 0
-            for (const deck of testDecks(50)) {
-                let { age_rating } = deck;
-                const { name, sort_order, sfw, movie_rating, purchase_price, status, description, clean } = deck;
-
-                // set 10 decks to have age rating 21 to test filtering
-                while (count < 10) {
-                    age_rating = 21;
-                    count++
-                }
-
-                decks.push([name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean]);
-            }
-
-            const deckQuery = {
-                text: format('INSERT INTO decks (name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean ) VALUES %L RETURNING id'),
-                values: decks
-            }
-
-            // store ids of saved decks
-            const result = await pool.query(deckQuery);
-            result.rows.forEach(row => deckIds.push(row.id))
-
-            // user owns 15 decks
-            const userDecks = []
-            deckIds.slice(0, 15).forEach(id => {
-                userDecks.push([id, userId])
-
-            })
-            const userDeckQuery = {
-                text: format('INSERT INTO user_decks (deck_id, user_id) VALUES %L'),
-                values: userDecks
-            }
-            await pool.query(userDeckQuery)
         })
+
+        it('should return the expected number of decks', async () => {
+            await setupDecks(pool, 50)
+            const { rows } = await decks.deckSelection({ pageNumber: 0, pageSize: 30 })
+            expect(rows.length).toEqual(30)
+        })
+
+        // TODO add test for age filter
+    })
+
+    describe('userDeckSelection', () => {
+
+        beforeEach(async () => {
+            await cleanDb(pool);
+        })
+
+        it('should return 25 decks (page size larger than remaining unowned decs)', async () => {
+            // save a user and 50 decks
+            // user owns 25 decks
+            // 10 decks have age rating 21, the rest 13
+            const setup = await setupUserDecks(pool, 50, 25);
+            const userId = setup.userId;
+            const { rows } = await decks.userDeckSelection({ userId, pageNumber: 0, pageSize: 30 });
+            expect(rows.length).toEqual(25)
+
+        })
+
+        it('should return different set of decks when page number is increased', async () => {
+            const setup = await setupUserDecks(pool, 90, 10);
+            const userId = setup.userId;
+            const firstResult = await decks.userDeckSelection({ userId: userId, pageNumber: 0, pageSize: 30 });
+            const secondResult = await decks.userDeckSelection({ userId: userId, pageNumber: 1, pageSize: 30 });
+
+            // make array of ids from first query
+            const firstIds = []
+            firstResult.rows.map(row => firstIds.push(row.id))
+
+            // make array of ids from second query
+            const secondIds = [];
+            secondResult.rows.map(row => secondIds.push(row.id))
+
+            // no ids in common
+            expect(firstIds.every(v => !secondIds.some(y => y === v))).toEqual(true)
+        })
+
+        it('should return empty array if offset exceeds number of rows', async () => {
+            const setup = await setupUserDecks(pool, 50, 10);
+            const userId = setup.userId;
+
+            // offset = 120, only 40 valid rows
+            const { rows } = await decks.userDeckSelection({ userId, pageNumber: 4, pageSize: 30 });
+            expect(rows.length).toEqual(0)
+        })
+
+        // TODO add test for age filter
+
     })
 })

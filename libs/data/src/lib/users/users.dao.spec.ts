@@ -33,7 +33,9 @@ describe('Users', () => {
         it('should encrypt the password', async () => {
             await users.register(userEmail, 'password');
             const { rows } = await users.pool.query({ text: 'SELECT * FROM users WHERE email = $1', values: [userEmail] });
-            expect(rows[0].password).not.toEqual('password')
+            const { password } = rows[0];
+
+            expect(password.startsWith('$2a$08$')).toEqual(true)
         })
     })
 
@@ -122,7 +124,7 @@ describe('Users', () => {
         })
 
         it('should set notifications to true', async () => {
-            const { rows } = await users.toggleNotifications(userId);
+            const { rows } = await users.toggleNotifications(userId, true);
             expect(rows[0].notifications).toEqual(true)
         })
     })

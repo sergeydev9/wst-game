@@ -493,7 +493,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createIndex('game_players', ['game_id', 'player_name'], { unique: true });
     pgm.createIndex('game_answers', 'question_id');
     pgm.createIndex('questions', 'deck_id');
-    pgm.createIndex('user_decks', 'user_id');
+    pgm.createIndex('user_decks', ['user_id', 'deck_id']);
 
 
 }
