@@ -11,6 +11,7 @@ export { default as Hamburger } from './lib/hamburger/Hamburger';
 export { default as InputLabel } from './lib/input-label/InputLabel';
 export { default as TextArea } from './lib/text-area/TextArea';
 export { default as Button } from './lib/button/Button';
+export { default as ButtonBgGradient } from './lib/button/Button';
 export { default as DropShadowButton } from './lib/drop-shadow-button/DropShadowButton';
 export { default as Form } from './lib/form/Form';
 export { default as FormGroup } from './lib/form-group/FormGroup';

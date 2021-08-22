@@ -11,7 +11,6 @@ export interface ButtonProps {
     border?: BorderThickness;
     $small?: boolean;
     $pill?: boolean;
-    boxshadow?: 'shadow-sm' | 'shadow' | 'shadow-md' | 'shadow-lg' | 'shadow-xl' | 'shadow-2xl' | 'shadow-gameplay' // use shadow-gameplay for filled gameplay button
 }
 
 /**
@@ -52,14 +51,13 @@ const fontSizeHelper = (size: FontSize | undefined): string => {
 
 const colorHelper = (color: ThemeColor | undefined, border: BorderThickness): string => {
     return (border ?
-        `bg-white ${borderHelper(border)} ${(color && genTextColor(color)) || "text-primary"} ${(color && genBorderColor(color)) || "border-primary"}` // if border is specified
-        : `${(color && genBgColor(color)) || "bg-primary"} text-white` // if no border specified, i.e. default
+        `bg-white ${borderHelper(border)} ${(color && genTextColor(color)) || "text-blue-base"} ${(color && genBorderColor(color)) || "border-blue-base"}` // if border is specified
+        : `${(color && genBgColor(color)) || "bg-blue-base"} text-white` // if no border specified, i.e. default
     )
 }
 
 export default tw.button<ButtonProps>`
     ${(p) => fontSizeHelper(p.fontSize)}
-    ${(p) => p.boxshadow ? p.boxshadow : ""}
     ${(p) => p.$small ? "py-1 px-3" : "py-4 px-8"}
     ${(p) => colorHelper(p.color, p.border)}
     ${(p) => p.$pill ? "rounded-full" : "rounded-lg"}

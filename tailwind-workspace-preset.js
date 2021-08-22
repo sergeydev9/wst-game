@@ -6,12 +6,15 @@ module.exports = {
                 'purple-light': '#8157DB',
                 'purple-base': '#6325AD',
                 'purple-dark': '#411872',
-                'purple-gradient': '#411872',
                 'purple-subtle-fill': '#F7F4FB',
                 'purple-subtle-stroke': '#E4DFEC',
                 'purple-card-bg': '#FCFBFE',
                 'yellow-base': '#F2AB3C',
                 'yellow-dark': '#3A2403',
+                'blue-gradient-from': '#7EADFC',   //
+                'blue-gradient-to': '#094BB9',     //   The border effect around the button elements is achieved
+                'yellow-gradient-from': 'rgba(245, 201, 131, 1)', //   through a background gradient. Though not part of the design
+                'yellow-gradient-to': 'rgba(191, 122, 13, 1)',   //   system, these colors are for those gradients
                 'blue-base': '#0F69FF',
                 'white-ish': '#FBFBFE',
                 'true-white': '#FFFFFF',
@@ -29,8 +32,9 @@ module.exports = {
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
                 'light': '0 0 0.6rem #EBEBF9'
             },
-            boxShadow: {
-                'gameplay': '0px 4px 0px #1012A2'
+            boxSadow: {
+                'yellow': '0px 2px 0px #C17C10',
+                'blue': '0px 2px 0px #084AB8'
             },
             ringColor: {
                 'primary': '#5D5FEF'
@@ -43,9 +47,9 @@ module.exports = {
             'title-3': ['20px', { letterSpacing: '-0.02em', lineHeight: '26px' }],
             'body-large': ['32px', { letterSpacing: '-0.02em', lineHeight: '42px' }],
             'body-medium': ['24px', { letterSpacing: '-0.02em', lineHeight: '33px' }],
-            'body-small': ['16px', { letterSpacing: '-0.1px', lineHeight: '20px' }],
+            'body-small': ['16px', { letterSpacing: '-0.1px', lineHeight: '28px' }],
             'headline': ['16px', { letterSpacing: '-0.02em', lineHeight: '22px' }],
-            'label-big': ['16px', { letterSpacing: '0.05em', lineHeight: '24px' }],
+            'label-big': ['16px', { letterSpacing: '0.5px', lineHeight: '24px' }],
             'label-small': ['13px', { letterSpacing: '1.1px', lineHeight: '16px' }]
         },
         fontFamily: {

@@ -4,7 +4,6 @@ export const THEME_COLORS: ThemeColor[] = [
     'purple-light',
     'purple-base',
     'purple-dark',
-    'purple-gradient',
     'purple-subtle-fill',
     'purple-subtle-stroke',
     'purple-card-bg',

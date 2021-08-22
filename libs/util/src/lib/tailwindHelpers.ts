@@ -23,8 +23,6 @@ export const genTextColor = (color: ThemeColor) => {
       return 'text-purple-base'
     case 'purple-dark':
       return 'text-purple-dark'
-    case 'purple-gradient':
-      return 'text-purple-gradient'
     case 'purple-subtle-fill':
       return 'text-purple-subtle-fill'
     case 'purple-subtle-stroke':
@@ -78,8 +76,6 @@ export const genBgColor = (color: ThemeColor) => {
       return 'bg-purple-base'
     case 'purple-dark':
       return 'bg-purple-dark'
-    case 'purple-gradient':
-      return 'bg-purple-gradient'
     case 'purple-subtle-fill':
       return 'bg-purple-subtle-fill'
     case 'purple-subtle-stroke':
@@ -127,8 +123,6 @@ export const genBorderColor = (color: ThemeColor) => {
       return 'border-purple-base'
     case 'purple-dark':
       return 'border-purple-dark'
-    case 'purple-gradient':
-      return 'border-purple-gradient'
     case 'purple-subtle-fill':
       return 'border-purple-subtle-fill'
     case 'purple-subtle-stroke':
