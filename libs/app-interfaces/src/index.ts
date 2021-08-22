@@ -27,20 +27,28 @@ export type MovieRating = 'G' | 'PG' | 'PG-13' | 'R' //TODO: check what actual p
  * This type is a union of the names of the theme colors. Used to type variables that must
  * be one of the theme's color options
  */
-export type ThemeColor = 'primary'
-    | 'subtle-stroke'
-    | 'subtle-primary'
-    | 'subtle-bg'
-    | 'basic-black'
+export type ThemeColor = 'purple-light'
+    | 'purple-base'
+    | 'purple-dark'
+    | 'purple-gradient'
+    | 'purple-subtle-fill'
+    | 'purple-subtle-stroke'
+    | 'purple-card-bg'
+    | 'yellow-base'
+    | 'yellow-dark'
+    | 'blue-base'
     | 'white-ish'
     | 'true-white'
+    | 'basic-black'
+    | 'basic-gray'
     | 'green-base'
     | 'green-subtle-stroke'
-    | 'green-subtle'
+    | 'green-subtle-fill'
     | 'red-base'
     | 'red-subtle-stroke'
-    | 'red-subtle'
-    | 'red-light';
+    | 'red-subtle-fill'
+    | 'red-light'
+
 
 export interface DeckSelectionOptions {
     pageSize: number;

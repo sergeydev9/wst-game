@@ -3,20 +3,27 @@ module.exports = {
         extend: {
             // keep this list matched with ThemeColor type in /app-interfaces and /util/colors
             colors: {
-                'primary': "#5D5FEF", // toggle component needs to be manually kept in sync with this value since it has to use css classes
-                'subtle-primary': "#F2F2FB",
-                'subtle-stroke': "#D7D8F3",
-                'subtle-bg': "#FBFBFE",
-                'white-ish': "#FBFBFE",
-                'true-white': "#FFFFFF",
-                'basic-black': "#0D020E",
-                'green-base': "#2E6B2E",
-                'green-subtle-stroke': "#DBF0DB",
-                'green-subtle': "#F8FCF8",
-                'red-base': "#8F3D3D",
-                'red-subtle-stroke': "#F0DBDB",
-                'red-subtle': "#FCF8F8",
-                'red-light': "#A70B00"
+                'purple-light': '#8157DB',
+                'purple-base': '#6325AD',
+                'purple-dark': '#411872',
+                'purple-gradient': '#411872',
+                'purple-subtle-fill': '#F7F4FB',
+                'purple-subtle-stroke': '#E4DFEC',
+                'purple-card-bg': '#FCFBFE',
+                'yellow-base': '#F2AB3C',
+                'yellow-dark': '#3A2403',
+                'blue-base': '#0F69FF',
+                'white-ish': '#FBFBFE',
+                'true-white': '#FFFFFF',
+                'basic-black': '#190136',
+                'basic-gray': '#827991',
+                'green-base': '#2E6B2E',
+                'green-subtle-stroke': '#DBF0DB',
+                'green-subtle-fill': '#F8FCF8',
+                'red-base': '#8F3D3D',
+                'red-subtle-stroke': '#F0DBDB',
+                'red-subtle-fill': '#FCF8F8',
+                'red-light': '#A70B00'
             },
             dropShadow: {
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
