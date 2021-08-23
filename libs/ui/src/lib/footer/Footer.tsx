@@ -6,6 +6,7 @@ export default tw.footer`
     drop-shadow-light
     w-full
     flex
+    bottom-0
     flex-col
     gap-6
     py-8

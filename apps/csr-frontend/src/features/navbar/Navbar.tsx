@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Hamburger, NavLogo } from '@whosaidtrue/ui';
 import LargeNav from './LargeNav';
 import { useAppSelector } from '../../app/hooks';
@@ -11,7 +11,7 @@ const NavBar: React.FC = () => {
 
     return (
         <nav className={`w-full flex flex-row justify-between mb-20 items-center ${gameStatus === "playing" ? "bg-subtle-primary" : "bg-purple-subtle-fill rounded-b-3xl"} overscroll-containh-20 px-5`}>
-            <NavLink to="/"><NavLogo /></NavLink>
+            <Link to="/"><NavLogo /></Link>
             {(gameStatus !== "playing") && <>
                 <LargeNav />
                 <nav className="md:hidden">

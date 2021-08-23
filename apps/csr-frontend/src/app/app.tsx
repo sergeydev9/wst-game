@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "./Layout";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { ROUTES } from "../util/constants";
 import { GuardedRoute } from "../features";
 
@@ -16,12 +16,6 @@ const App: React.FC = () => {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path={ROUTES.contactUs} component={ContactUs} />
-        {/* <GuardedRoute component={Home} exact={true} path={ROUTES.home} /> */}
-        {/* <Route exact path={ROUTES.login} component={Login} />
-        <Route exact path={ROUTES.register} component={Register} /> */}
-        {/* // <Route path="*">
-        //   <Redirect to={ROUTES.login} />
-        // </Route> */}
       </Switch>
     </Layout>
   );

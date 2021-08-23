@@ -22,7 +22,7 @@ const next: IRenderArrow = (clickHandler, hasNext, label) => hasNext && (
 
 const Faq: React.FC<FaqProps> = ({ question, answer }) => {
     return (
-        <Box boxstyle="white" className="text-basic-black py-6">
+        <Box boxstyle="white" className="text-basic-black py-6 px-4">
             <Carousel
                 className="leading-7 text-body-small font-semibold"
                 showStatus={false}
@@ -31,7 +31,7 @@ const Faq: React.FC<FaqProps> = ({ question, answer }) => {
                 renderArrowPrev={() => undefined}
                 renderArrowNext={next}
             >
-                {[<Title3 className="mr-4">{question}</Title3>, <Title3 className="mr-4">{answer}</Title3>]}
+                {[<Title3 className="mr-4" key={1}>{question}</Title3>, <Title3 className="mr-4" key={2}>{answer}</Title3>]}
             </Carousel>
 
         </Box>
