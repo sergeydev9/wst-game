@@ -1,32 +1,38 @@
-import { useState } from 'react'
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { useHistory } from "react-router-dom";
 
 import { Title1, TextInput, WrappedButton } from '@whosaidtrue/ui';
-import React from 'react';
-
-
+import { useAppDispatch } from '../../app/hooks';
+import { initialRequest } from '../game/gameSlice';
 
 const JoinGame: React.FC = () => {
     const history = useHistory();
+    const dispatch = useAppDispatch();
 
-    const [code, setCode] = useState('');
-
-    // TODO: finish
-    const joinGameHandler = () => {
-        // history.push(`/game/join?access_code=${code}`)
-    }
-
-    const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCode(e.target.value)
-    }
+    const formik = useFormik({
+        initialValues: {
+            accessCode: ''
+        },
+        // Codes should be validated here. hasn't been discussed yet though
+        // so i'm not going to implement it yet.
+        // validationSchema: Yup.object({
+        //     accessCode: Yup.string().length(6, 'Invalid game code')
+        // }),
+        onSubmit: values => {
+            dispatch(initialRequest(values.accessCode))
+            history.push(`/join?access_code=${values.accessCode}`)
+        }
+    })
 
     return (
         <section className="flex flex-col gap-4 items-center p-8">
             <Title1>Join a Game</Title1>
-            <div className="flex flex-row gap-6">
-                <TextInput $border placeholder="Enter Game Code" onChange={inputHandler} />
-                <WrappedButton type="button" color="blue" className="w-max" fontSize="label-big" onClick={joinGameHandler}>Join Game</WrappedButton>
-            </div>
+            <form onSubmit={formik.handleSubmit} className="flex flex-row gap-6">
+                <TextInput $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
+                <WrappedButton type="submit" color="blue" className="w-max" fontSize="label-big">Join Game</WrappedButton>
+            </form>
+            {formik.touched.accessCode && formik.errors.accessCode ? (<div className="text-red-light mt-2">{formik.errors.accessCode}</div>) : null}
         </section>
     )
 }

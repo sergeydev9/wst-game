@@ -27,6 +27,15 @@ export interface UpdateAccountRequest {
   notifications: boolean
 }
 
+export interface NameObject {
+  name: string;
+  id: number;
+  clean: boolean
+}
+export interface NameRequestResponse {
+  names: NameObject[];
+}
+
 export interface CreateGameDecksResponse {
   ownedDecks: Partial<Deck>[];
   unownedDecks: Partial<Deck>[];

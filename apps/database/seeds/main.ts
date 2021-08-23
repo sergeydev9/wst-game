@@ -14,7 +14,7 @@ import insertQuestions from './questions.seed';
 
     try {
         // seed names
-        const namesResult = await insertNames(pool, 2000)
+        const namesResult = await insertNames(pool, 500)
         console.log(`Inserted ${namesResult.rowCount} names into the generated_names table`)
 
         // seed decks

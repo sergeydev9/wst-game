@@ -5,7 +5,7 @@ import { Route, Switch, BrowserRouter } from "react-router-dom";
 import Home from "../pages/home/Home";
 import ContactUs from "../pages/contact-us/ContactUs";
 import CreateAccount from '../pages/create-account/CreateAccount';
-import ChooseName from "../pages/choose-name/ChooseName";
+import ChooseName from "../features/choose-name/ChooseName";
 import Login from '../pages/login/Login';
 // import Login from "../pages/login/Login";
 
@@ -24,7 +24,7 @@ const App: React.FC = () => {
           <Route exact path='/create-account' >
             <CreateAccount />
           </Route>
-          <Route path='/choose-name'>
+          <Route path='/join'>
             <ChooseName />
           </Route>
           <Route exact path='/login'>

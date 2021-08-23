@@ -1,10 +1,11 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { NameObject } from "@whosaidtrue/api-interfaces";
 
 export interface ChooseNameState {
-    remainingNameOptions: string[]; // remainining options
+    remainingNameOptions: NameObject[]; // remainining options
     rerolls: number;
-    currentNameOptions: string[]; // name options currently being shown. Max 3
+    currentNameOptions: NameObject[]; // name options currently being shown. Max 3
 }
 
 export const initialState: ChooseNameState = {
@@ -12,6 +13,8 @@ export const initialState: ChooseNameState = {
     rerolls: 0,
     currentNameOptions: [],
 }
+
+
 
 export const chooseNameSlice = createSlice({
     name: 'chooseName',
@@ -26,7 +29,7 @@ export const chooseNameSlice = createSlice({
         },
         setCurrentNameOptions: (state) => {
             const newCurrent = state.remainingNameOptions.slice(0, 3);
-            const newRemaining = state.remainingNameOptions.filter(el => newCurrent.every(item => item !== el)) // remove current options from set of remaining options.
+            const newRemaining = state.remainingNameOptions.filter(el => newCurrent.every(item => item.id !== el.id)) // remove current options from set of remaining options.
             state.currentNameOptions = newCurrent // First 3 remainingOptions are the new current options.
             state.remainingNameOptions = newRemaining;
             state.rerolls = Math.floor(newRemaining.length / 3);

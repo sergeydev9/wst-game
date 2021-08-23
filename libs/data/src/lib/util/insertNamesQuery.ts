@@ -11,7 +11,7 @@ import generateName from './generateName';
  *
  * @param {number} num
  */
-const insertNames = (num: number, numNotClean: number) => {
+const insertNames = (num: number, numNotClean?: number) => {
     let count = num;
 
     // prevent bad inputs

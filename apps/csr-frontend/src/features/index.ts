@@ -6,6 +6,20 @@ export {
   login,
   logout
 } from "./auth/authSlice";
-export { default as modalReducer, closeModals, openLogin, openCreateAcc, selectCreateAcc, selectLoginOpen } from './modal/modalSlice';
-export { default as gameReducer } from './game/gameSlice';
+export {
+  default as modalReducer,
+  closeModals,
+  openLogin,
+  openCreateAcc,
+  selectCreateAcc,
+  selectLoginOpen
+} from './modal/modalSlice';
+export {
+  default as gameReducer,
+  setAccessCode,
+  setPlayerName,
+  selectAccessCode,
+  selectGameStatus,
+  selectPlayerName
+} from './game/gameSlice';
 export * from './choose-name/chooseNameSlice';

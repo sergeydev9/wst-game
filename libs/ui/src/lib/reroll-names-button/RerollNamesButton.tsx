@@ -3,7 +3,7 @@ import WrappedButton from '../button/WrappedButton';
 import { ImSpinner11 } from '@react-icons/all-files/im/ImSpinner11';
 
 
-export interface RerollButtonProps {
+export interface RerollButtonProps extends React.HtmlHTMLAttributes<HTMLButtonElement> {
     rerolls: number,
     onClick: (e: React.MouseEvent) => void
 }
