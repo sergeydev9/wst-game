@@ -45,7 +45,8 @@ module.exports = {
             dropShadow: {
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
                 'light': '0 0 0.6rem #EBEBF9',
-                'mid': '0 0 0.6rem #ACADEB'
+                'mid': '0 0 0.6rem #ACADEB',
+                'card': '0 0 32px #893FE2'
             },
             boxSadow: {
                 'yellow': '0px 2px 0px #C17C10',

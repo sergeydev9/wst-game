@@ -16,7 +16,7 @@ export default {
     }
 }
 
-const Template: Story<RerollButtonProps> = (args) => <RerollButtonComponent {...args} />
+const Template: Story<RerollButtonProps> = (args) => <div className="w-max"><RerollButtonComponent {...args} /></div>
 
 export const HasRerolls = Template.bind({});
 

@@ -5,7 +5,10 @@ export default tw.span`
     rounded-full
     py-2
     px-4
-    bg-primary
+    bg-purple-base
     text-xs
     font-semibold
+    absolute
+    left-4
+    top-4
     `
