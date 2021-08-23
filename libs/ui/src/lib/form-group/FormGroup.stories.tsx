@@ -5,7 +5,7 @@ import Form from '../form/Form';
 
 export default {
     component: FormGroupComponent,
-    title: 'Layouts/Form Group'
+    title: 'Page Sections/Form Group'
 }
 
 export const FormGroup = () => {

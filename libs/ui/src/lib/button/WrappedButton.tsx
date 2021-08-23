@@ -1,14 +1,18 @@
 import Button from './Button';
 import ButtonBackgroundGradient from './ButtonBackgroundGradient';
-import { ButtonProps } from './Button';
+import { ButtonProps, FontSize, BorderThickness } from './Button';
 
 export type wrappedBtnColor = 'blue' | 'yellow';
 
-export interface btnColorProp {
-    color: wrappedBtnColor
-}
 
-export type WrappedButtonProps = Omit<ButtonProps, 'color' | '$pill'> & btnColorProp;
+export interface WrappedButtonProps extends React.HtmlHTMLAttributes<HTMLButtonElement> {
+    color: wrappedBtnColor;
+    disabled?: boolean;
+    fontSize?: FontSize;
+    border?: BorderThickness;
+    $small?: boolean;
+    $pill?: boolean;
+}
 
 const colorHelper = (color: wrappedBtnColor) => color === 'yellow' ? 'yellow-base' : 'blue-base';
 

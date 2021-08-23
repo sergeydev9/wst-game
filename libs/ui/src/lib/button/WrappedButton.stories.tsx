@@ -9,7 +9,7 @@ export const Yellow = () => {
     return (
         <div className="w-96">
             <WrappedButton color="yellow" >
-                Blue Wrapped Button
+                Yellow Wrapped Button
             </WrappedButton>
         </div>
     )

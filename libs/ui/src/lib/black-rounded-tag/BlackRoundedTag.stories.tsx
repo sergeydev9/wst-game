@@ -1,11 +1,11 @@
-import Tg from "./BlackRoundedTag";
+import BlackRoundedTag from "./BlackRoundedTag";
 import { TagProps } from './BlackRoundedTag';
 import { Story, Meta } from '@storybook/react';
 
 
 export default {
-    component: Tg,
-    title: "Inputs/Black Rounded Tag",
+    component: BlackRoundedTag,
+    title: "Tags/Black Rounded",
     argTypes: {
         selected: {
             type: 'boolean',
@@ -16,12 +16,12 @@ export default {
 
 const Template: Story<TagProps> = (args) => {
     return (
-        <Tg {...args}>Work Friendly</Tg>
+        <BlackRoundedTag {...args}>Work Friendly</BlackRoundedTag>
     )
 }
 
-export const BlackRoundedTag = Template.bind({});
+export const BlackRounded = Template.bind({});
 
-BlackRoundedTag.args = {
+BlackRounded.args = {
     selected: true
 }

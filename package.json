@@ -97,6 +97,7 @@
     "react-responsive-carousel": "^3.2.20",
     "react-router-dom": "^5.2.0",
     "regenerator-runtime": "0.13.7",
+    "rxjs": "^7.3.0",
     "sequelize": "^6.6.5",
     "stream": "^0.0.2",
     "stream-browserify": "^3.0.0",

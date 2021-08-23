@@ -1,13 +1,14 @@
 import tw from "tailwind-styled-components";
 
-export default tw.input`
+export type TextInputProps = { $border?: boolean }
+export default tw.input<TextInputProps>`
+        ${(p) => p.$border ? 'border-purple-base' : 'border-0'}
         form-input
         w-full
         px-3
         py-4
-        placeholder-gray-400
-        border-subtle-stroke
-        bg-subtle-primary
+        placeholder-basic-gray
+        bg-purple-subtle-fill
         text-sm
         rounded-xl
     `;

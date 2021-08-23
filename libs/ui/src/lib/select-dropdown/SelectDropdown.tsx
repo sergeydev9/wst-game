@@ -5,10 +5,10 @@ import tw from "tailwind-styled-components";
 export default tw.select`
     form-select
     w-full
-    px-3
+    px-4
     py-4
-    border-subtle-stroke
-    bg-subtle-primary
+    border-purple-subtle-stroke
+    bg-purple-subtle-fill
     rounded-xl
     text-body-small
     font-semibold

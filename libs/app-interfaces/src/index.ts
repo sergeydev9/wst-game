@@ -41,6 +41,7 @@ export type ThemeColor = 'purple-light'
     | 'true-white'
     | 'basic-black'
     | 'basic-gray'
+    | 'light-gray'
     | 'green-base'
     | 'green-subtle-stroke'
     | 'green-subtle-fill'
@@ -49,6 +50,9 @@ export type ThemeColor = 'purple-light'
     | 'red-subtle-fill'
     | 'red-light'
 
+export interface IRenderArrow {
+    (clickHandler: () => void, hasNext: boolean, label: string): React.ReactNode
+}
 
 export interface DeckSelectionOptions {
     pageSize: number;

@@ -12,7 +12,6 @@ export { default as InputLabel } from './lib/input-label/InputLabel';
 export { default as TextArea } from './lib/text-area/TextArea';
 export { default as Button } from './lib/button/Button';
 export { default as ButtonBgGradient } from './lib/button/Button';
-export { default as DropShadowButton } from './lib/drop-shadow-button/DropShadowButton';
 export { default as Form } from './lib/form/Form';
 export { default as FormGroup } from './lib/form-group/FormGroup';
 export { default as RadioInput } from './lib/radio-input/RadioInput';
@@ -20,4 +19,10 @@ export { default as SecurityCodeDigit } from './lib/security-code-digit/Security
 export { default as SelectDropdown } from './lib/select-dropdown/SelectDropdown';
 export { default as Toggle } from './lib/toggle/Toggle';
 export { default as NavLogo } from './lib/nav-logo/NavLogo';
+export { default as RerollNamesButton } from './lib/reroll-names-button/RerollNamesButton'
+export { default as OptionsWheel } from './lib/options-wheel/OptionsWheel';
+export { default as ThumbsUp } from './lib/thumbs-up/ThumbsUp';
+export { default as ThumbsDown } from './lib/thumbs-down/ThumbsDown';
+export { default as ReaderAnnouncement } from './lib/reader-announcement/ReaderAnnouncement';
+export { default as QuestionCategoryTag } from './lib/question-category-tag/QuestionCategoryTag';
 export * from './lib/typography/Typography';

@@ -11,6 +11,7 @@ module.exports = {
                 'purple-card-bg': '#FCFBFE',
                 'yellow-base': '#F2AB3C',
                 'yellow-dark': '#3A2403',
+                'yellow-text': '#674106',
                 'blue-gradient-from': '#7EADFC',   //
                 'blue-gradient-to': '#094BB9',     //   The border effect around the button elements is achieved
                 'yellow-gradient-from': 'rgba(245, 201, 131, 1)', //   through a background gradient. Though not part of the design
@@ -20,6 +21,7 @@ module.exports = {
                 'true-white': '#FFFFFF',
                 'basic-black': '#190136',
                 'basic-gray': '#827991',
+                'light-gray': '#F9F9F9',
                 'green-base': '#2E6B2E',
                 'green-subtle-stroke': '#DBF0DB',
                 'green-subtle-fill': '#F8FCF8',
@@ -30,7 +32,8 @@ module.exports = {
             },
             dropShadow: {
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
-                'light': '0 0 0.6rem #EBEBF9'
+                'light': '0 0 0.6rem #EBEBF9',
+                'mid': '0 0 0.6rem #ACADEB'
             },
             boxSadow: {
                 'yellow': '0px 2px 0px #C17C10',
@@ -56,8 +59,6 @@ module.exports = {
             'sans': ['Nunito'],
             'roboto': ['Roboto']
         },
-
-
     },
     variants: {
         extend: {

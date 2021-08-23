@@ -1,16 +1,22 @@
-import Input from "./TextInput";
-import { Meta } from "@storybook/react";
+import Input, { TextInputProps } from "./TextInput";
+import { Meta, Story } from "@storybook/react";
 
 export default {
     component: Input,
     title: "Inputs/Text Input",
     argTypes: {
-        light: {
+        $border: {
+            name: '$border',
             type: 'boolean',
-            default: false
+            default: true
+
         }
     }
 } as Meta;
 
 
-export const TextInput = () => <Input type="text" placeholder="4 letter game code" />
+export const TextInput: Story<TextInputProps> = (args) => <Input {...args} type="text" placeholder="4 letter game code" />
+
+TextInput.args = {
+    $border: true
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../app/hooks';
 import { selectAuthStatus } from '../auth/authSlice';
 
 import { DropShadowButton } from '@whosaidtrue/ui';
@@ -15,7 +15,7 @@ const unauthenticatedButtons = () => (
 
 const LargeNav: React.FC = () => {
 
-    const loggedIn = useSelector(selectAuthStatus);
+    const loggedIn = useAppSelector(selectAuthStatus);
 
     const linkClass = "text-primary"
     return (

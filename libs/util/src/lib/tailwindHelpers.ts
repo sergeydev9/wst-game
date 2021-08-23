@@ -43,6 +43,8 @@ export const genTextColor = (color: ThemeColor) => {
       return 'text-basic-black'
     case 'basic-gray':
       return 'text-basic-gray'
+    case 'light-gray':
+      return 'text-light-gray'
     case 'green-base':
       return 'text-green-base'
     case 'green-subtle-stroke':
@@ -96,6 +98,8 @@ export const genBgColor = (color: ThemeColor) => {
       return 'bg-basic-black'
     case 'basic-gray':
       return 'bg-basic-gray'
+    case 'light-gray':
+      return 'bg-light-gray'
     case 'green-base':
       return 'bg-green-base'
     case 'green-subtle-stroke':
@@ -143,6 +147,8 @@ export const genBorderColor = (color: ThemeColor) => {
       return 'border-basic-black'
     case 'basic-gray':
       return 'border-basic-gray'
+    case 'light-gray':
+      return 'border-light-gray'
     case 'green-base':
       return 'border-green-base'
     case 'green-subtle-stroke':

@@ -13,6 +13,8 @@ rootMain.addons.push(...[ "@storybook/addon-events",
 'addon-redux',
 ])
 
+rootMain.addons.push('addon-redux')
+
 rootMain.addons.push({
   name: '@storybook/addon-storysource',
   options: {

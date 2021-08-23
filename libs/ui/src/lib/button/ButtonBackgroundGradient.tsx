@@ -14,6 +14,7 @@ export default tw.div<BgProps>`
     justify-center
     content-center
     bg-clip-border
+    w-max
     bg-gradient-to-b
     shadow
     rounded-full

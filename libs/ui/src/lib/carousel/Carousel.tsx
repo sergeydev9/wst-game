@@ -5,14 +5,14 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel as Crsl } from "react-responsive-carousel"
 
 import Box from '../box/Box';
+import { Title3 } from '../typography/Typography';
+import { IRenderArrow } from '@whosaidtrue/app-interfaces';
 
 export interface CarouselProps {
-    title: React.ReactElement;
+    title: string;
 }
 
-interface IRenderArrow {
-    (clickHandler: () => void, hasNext: boolean, label: string): React.ReactNode
-}
+
 
 const Carousel: React.FC<CarouselProps> = ({ title, children }) => {
 
@@ -34,10 +34,10 @@ const Carousel: React.FC<CarouselProps> = ({ title, children }) => {
     )
 
     return (
-        <Box>
-            {title}
+        <Box boxStyle="white" $dropShadow className="text-basic-black py-6">
+            <Title3 className="mb-4">{title}</Title3>
             <Crsl
-                className="font-body-large mt-4 leading-8"
+                className="leading-7 text-body-small font-semibold"
                 showStatus={false}
                 showIndicators={false}
                 showThumbs={false}

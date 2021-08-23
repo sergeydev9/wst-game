@@ -2,10 +2,10 @@ import tw from "tailwind-styled-components";
 import { ThemeColor } from "@whosaidtrue/app-interfaces";
 import { genTextColor, genBorderColor, genBgColor } from "@whosaidtrue/util"
 
-type BorderThickness = "thin" | "medium" | "thick" | undefined;
-type FontSize = "label-big" | "label-small" | "headline"; // Font sizes corresponding to the names in the design language
+export type BorderThickness = "thin" | "medium" | "thick" | undefined;
+export type FontSize = "label-big" | "label-small" | "headline"; // Font sizes corresponding to the names in the design language
 
-export interface ButtonProps {
+export interface ButtonProps extends React.HtmlHTMLAttributes<HTMLButtonElement> {
     color?: ThemeColor;
     fontSize?: FontSize;
     border?: BorderThickness;
@@ -52,10 +52,21 @@ const fontSizeHelper = (size: FontSize | undefined): string => {
 const colorHelper = (color: ThemeColor | undefined, border: BorderThickness): string => {
     return (border ?
         `bg-white ${borderHelper(border)} ${(color && genTextColor(color)) || "text-blue-base"} ${(color && genBorderColor(color)) || "border-blue-base"}` // if border is specified
-        : `${(color && genBgColor(color)) || "bg-blue-base"} text-white` // if no border specified, i.e. default
+        : `${(color && genBgColor(color)) || "bg-blue-base"} ${color === 'yellow-base' ? 'text-yellow-text' : 'text-white'}` // if no border specified, i.e. default
     )
 }
 
+
+/**
+ * Default button component.
+ *
+ * If border is undefined, and color is 'yellow-base', text color
+ * will be yellow-dark, otherwise, text will be white.
+ *
+ * TODO: Maybe refactoring this. It's starting to get clumsy with the new design.
+ *
+ * Could just make a new component specifically for the yellow buttons, since they're the outliers.
+ */
 export default tw.button<ButtonProps>`
     ${(p) => fontSizeHelper(p.fontSize)}
     ${(p) => p.$small ? "py-1 px-3" : "py-4 px-8"}

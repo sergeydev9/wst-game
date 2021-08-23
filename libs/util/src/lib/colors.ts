@@ -14,6 +14,7 @@ export const THEME_COLORS: ThemeColor[] = [
     'true-white',
     'basic-black',
     'basic-gray',
+    'light-gray',
     'green-base',
     'green-subtle-stroke',
     'green-subtle-fill',

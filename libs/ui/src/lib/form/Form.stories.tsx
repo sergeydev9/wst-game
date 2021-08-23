@@ -7,17 +7,17 @@ import Button from '../button/Button';
 
 export default {
     component: FormComponent,
-    title: "Layouts/Form"
+    title: "Page Sections/Form"
 }
 
-export const FormContainer = () => {
+export const Form = () => {
     return (
-        <Box $light>
+        <Box boxStyle='light-gray'>
             <FormComponent>
                 <Title1>Play as Guest Host</Title1>
                 <div className="text-left">
                     <InputLabel>Email Address</InputLabel>
-                    <TextInput />
+                    <TextInput $border />
                 </div>
 
                 <Button fontSize="label-big">Continue</Button>
