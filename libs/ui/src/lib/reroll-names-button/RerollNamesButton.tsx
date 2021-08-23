@@ -17,8 +17,8 @@ export interface RerollButtonProps {
  */
 const RerollNamesButton: React.FC<RerollButtonProps> = ({ rerolls, onClick }) => {
     return rerolls > 0 ?
-        <WrappedButton $small className="w-40" color="yellow" onClick={onClick} ><ImSpinner11 className="inline-block mr-3 text-xs" />{`Reroll Names`}</WrappedButton> :
-        <WrappedButton $small className="w-40" color="yellow" disabled><span className="text-gray-400">No Rerolls Left!</span></WrappedButton>
+        <WrappedButton type="button" $small className="w-40" color="yellow" onClick={onClick} ><ImSpinner11 className="inline-block mr-3 text-xs" />{`Reroll Names`}</WrappedButton> :
+        <WrappedButton type="button" $small className="w-40" color="yellow" disabled><span className="text-gray-400">No Rerolls Left!</span></WrappedButton>
 }
 
 export default RerollNamesButton;

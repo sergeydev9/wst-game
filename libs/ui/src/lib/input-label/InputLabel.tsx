@@ -1,7 +1,8 @@
 import tw from "tailwind-styled-components";
-import { BodySmall } from '../typography/Typography';
 
-export default tw(BodySmall)`
+export default tw.label`
+    text-body-small
+    font-semibold
     block
     mb-2
     `

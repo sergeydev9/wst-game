@@ -1,7 +1,8 @@
 import React from "react";
-import { LargeTitle, Box, Title1, Title3, Carousel } from "@whosaidtrue/ui";
-import JoinGame from "../../features/join-game/join-game";
+import { LargeTitle, Box, Title1, FaqCarousel, Carousel } from "@whosaidtrue/ui";
+import JoinGame from "../../features/join-game/JoinGame";
 import SetUpGame from "../../features/setup-game/SetupGame";
+import { ReactComponent as LargeLogo } from '../../assets/large_logo.svg';
 
 // TODO: Delete this and the dummy data when it's not needed anymore
 type UserStory = {
@@ -24,22 +25,43 @@ const Home: React.FC = () => {
       </div>
     )
   })
-  const title = <Title3>Placeholder</Title3>
   return (
-    <div className="flex flex-col items-center mt-12 gap-12">
-      <LargeTitle>Can you guess how many of your friends...</LargeTitle>
-      <Box><Title1>binge watched an entire season of a show in a weekend?</Title1></Box>
-      <div className="flex flex-row gap-8">
-        <Box>
+    <div className="flex flex-col gap-16 items-center container mx-auto md:px-32">
+
+      {/* logo group */}
+      <div className="flex flex-row justify-center">
+        <LargeLogo style={{ maxHeight: '270px', maxWidth: '285px' }} className="m-8" />
+        <div className="flex flex-col gap-4 items-center justify-center text-center">
+          <LargeTitle className="text-true-white">Can you guess how many of your friends...</LargeTitle>
+          <Box boxstyle='white' className="py-6 px-12" $dropShadow><Title1 className="text-purple-base">binge watched an entire season of a show in a weekend?</Title1></Box>
+        </div>
+      </div>
+
+      {/* create/join game group */}
+      <div className="flex flex-row gap-8 px-18 justify-center w-full">
+        <Box boxstyle='white' className='w-1/2'>
           <JoinGame />
         </Box>
-        <Box>
+        <Box boxstyle='white' className='w-1/2'>
           <SetUpGame />
         </Box>
       </div>
-      <Carousel title={title}>
-        {helper(tempStories)}
-      </Carousel>
+
+      {/* overheard */}
+      <div className="w-max">
+        <Carousel title={'Overheard on Who said true?'}>
+          {helper(tempStories)}
+        </Carousel>
+      </div>
+
+      {/* faq */}
+      <div className="flex flex-col gap-6">
+        <LargeTitle className="text-true-white self-center">Frequently Asked Questions</LargeTitle>
+        <FaqCarousel question="How many questions are in a question deck?" answer="9" />
+        <FaqCarousel question="Is Who said true appropriate for all ages?" answer="no" />
+        <FaqCarousel question="How many licks does it take to get to the center of a tootsie pop?" answer="a lot..." />
+      </div>
+
     </div>
 
 

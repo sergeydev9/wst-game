@@ -12,6 +12,7 @@ export interface WrappedButtonProps extends React.HtmlHTMLAttributes<HTMLButtonE
     border?: BorderThickness;
     $small?: boolean;
     $pill?: boolean;
+    type: 'button' | 'submit' | 'reset' | undefined;
 }
 
 const colorHelper = (color: wrappedBtnColor) => color === 'yellow' ? 'yellow-base' : 'blue-base';
@@ -19,7 +20,7 @@ const colorHelper = (color: wrappedBtnColor) => color === 'yellow' ? 'yellow-bas
 const WrappedButton: React.FC<WrappedButtonProps> = ({ color, children, ...rest }) => {
 
     return (
-        <ButtonBackgroundGradient btnColor={color}>
+        <ButtonBackgroundGradient btncolor={color}>
             <Button color={colorHelper(color)} $pill {...rest}>{children}</Button>
         </ButtonBackgroundGradient>
     )

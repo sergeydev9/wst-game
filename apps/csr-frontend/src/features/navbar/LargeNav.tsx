@@ -2,28 +2,26 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
 import { selectAuthStatus } from '../auth/authSlice';
+import { WrappedButton } from '@whosaidtrue/ui';
 
-import { DropShadowButton } from '@whosaidtrue/ui';
-import { ROUTES } from "../../util/constants";
-
-const unauthenticatedButtons = () => (
-    <>
-        <DropShadowButton buttonstyle="solid">Login</DropShadowButton>
-        <DropShadowButton buttonstyle="border-light">Create Account</DropShadowButton>
-    </>
-)
+const loggedInButtons = () => {
+    return (
+        <>
+            <WrappedButton type="button" color='yellow' $small>Log In</WrappedButton>
+            <WrappedButton type="button" color="yellow" $small>Create Account</WrappedButton>
+        </>
+    )
+}
 
 const LargeNav: React.FC = () => {
 
     const loggedIn = useAppSelector(selectAuthStatus);
 
-    const linkClass = "text-primary"
     return (
-        <nav className="hidden md:flex md:flex-row font-bold text-body-small md:justify-end gap-8 h-full items-center">
-            <NavLink to="/who-said-true-school" className={linkClass}>Who Said true For Schools</NavLink>
-            <NavLink to="/how-to-play" className={linkClass}>How to Play</NavLink>
-            <NavLink to={ROUTES.contactUs} className={linkClass}>Contact Us</NavLink>
-            {loggedIn === "loggedIn" ? <DropShadowButton buttonstyle="border-thick">My Account</DropShadowButton> : unauthenticatedButtons()}
+        <nav className="hidden md:flex md:flex-row font-bold text-body-small md:justify-end gap-6 h-full items-center">
+            <NavLink to="/who-said-true-school" className="text-purple-base">Who Said true For Schools</NavLink>
+            {loggedIn === 'loggedIn' ?
+                <WrappedButton type="button" color='yellow' $small >My Account</WrappedButton> : loggedInButtons()}
         </nav>
     )
 }

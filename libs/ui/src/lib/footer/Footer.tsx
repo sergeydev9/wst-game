@@ -4,7 +4,7 @@ export default tw.footer`
     bg-white-ish
     filter
     drop-shadow-light
-    w-screen
+    w-full
     flex
     flex-col
     gap-6
@@ -14,6 +14,4 @@ export default tw.footer`
     sm:flex-row-reverse
     sm:justify-between
     px-8
-    absolute
-    bottom-0
 `

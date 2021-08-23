@@ -22,16 +22,16 @@ const next: IRenderArrow = (clickHandler, hasNext, label) => hasNext && (
 
 const Faq: React.FC<FaqProps> = ({ question, answer }) => {
     return (
-        <Box boxStyle="white" className="text-basic-black py-6">
+        <Box boxstyle="white" className="text-basic-black py-6">
             <Carousel
-                className="leading-7 text-body-small font-semibold px-32"
+                className="leading-7 text-body-small font-semibold"
                 showStatus={false}
                 showIndicators={false}
                 showThumbs={false}
                 renderArrowPrev={() => undefined}
                 renderArrowNext={next}
             >
-                {[<Title3 className="mr-1">{question}</Title3>, <Title3 className="mr-1">{answer}</Title3>]}
+                {[<Title3 className="mr-4">{question}</Title3>, <Title3 className="mr-4">{answer}</Title3>]}
             </Carousel>
 
         </Box>

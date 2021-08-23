@@ -3,7 +3,7 @@ import tw from "tailwind-styled-components"
 export type BoxStyle = 'white' | 'light-gray' | 'purple-subtle';
 
 export interface BoxProps {
-    boxStyle: BoxStyle;
+    boxstyle: BoxStyle;
     $horizontal?: boolean;
     $dropShadow?: boolean;
 }
@@ -22,11 +22,10 @@ const styleHelper = (style: BoxStyle) => {
 }
 
 export default tw.div<BoxProps>`
-    ${(p) => styleHelper(p.boxStyle)}
+    ${(p) => styleHelper(p.boxstyle)}
     ${(p) => p.$horizontal ? "flex-row" : "flex-col"}
     ${(p) => p.$dropShadow ? "filter drop-shadow-light" : ""}
     flex
     rounded-3xl
     items-center
-    w-max
 `

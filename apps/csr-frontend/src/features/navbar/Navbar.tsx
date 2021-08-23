@@ -10,7 +10,7 @@ const NavBar: React.FC = () => {
     const gameStatus = useAppSelector(selectGameStatus);
 
     return (
-        <nav className={`w-full flex flex-row justify-between items-center ${gameStatus === "playing" ? "bg-subtle-primary" : "bg-white-ish"} filter drop-shadow-light mb-12 h-24 px-6`}>
+        <nav className={`w-full flex flex-row justify-between mb-20 items-center ${gameStatus === "playing" ? "bg-subtle-primary" : "bg-purple-subtle-fill rounded-b-3xl"} overscroll-containh-20 px-5`}>
             <NavLink to="/"><NavLogo /></NavLink>
             {(gameStatus !== "playing") && <>
                 <LargeNav />

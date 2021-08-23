@@ -1,7 +1,7 @@
 import tw from "tailwind-styled-components";
 
 export interface BgProps {
-    btnColor: 'blue' | 'yellow';
+    btncolor: 'blue' | 'yellow';
     $pill?: boolean;
 }
 
@@ -14,9 +14,8 @@ export default tw.div<BgProps>`
     justify-center
     content-center
     bg-clip-border
-    w-max
     bg-gradient-to-b
     shadow
     rounded-full
-    ${(p) => p.btnColor === 'yellow' ? 'to-yellow-gradient-to from-yellow-gradient-from shadow-yellow' : 'to-blue-gradient-to from-blue-gradient-from shadow-blue'}
+    ${(p) => p.btncolor === 'yellow' ? 'to-yellow-gradient-to from-yellow-gradient-from shadow-yellow' : 'to-blue-gradient-to from-blue-gradient-from shadow-blue'}
 `

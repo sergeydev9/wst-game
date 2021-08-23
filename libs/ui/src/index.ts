@@ -20,9 +20,9 @@ export { default as SelectDropdown } from './lib/select-dropdown/SelectDropdown'
 export { default as Toggle } from './lib/toggle/Toggle';
 export { default as NavLogo } from './lib/nav-logo/NavLogo';
 export { default as RerollNamesButton } from './lib/reroll-names-button/RerollNamesButton'
-export { default as OptionsWheel } from './lib/options-wheel/OptionsWheel';
 export { default as ThumbsUp } from './lib/thumbs-up/ThumbsUp';
 export { default as ThumbsDown } from './lib/thumbs-down/ThumbsDown';
 export { default as ReaderAnnouncement } from './lib/reader-announcement/ReaderAnnouncement';
-export { default as QuestionCategoryTag } from './lib/question-category-tag/QuestionCategoryTag';
+export { default as WrappedButton } from './lib/button/WrappedButton';
+export { default as FaqCarousel } from './lib/faq/Faq';
 export * from './lib/typography/Typography';

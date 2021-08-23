@@ -8,7 +8,7 @@ import Box from '../box/Box';
 import { Title3 } from '../typography/Typography';
 import { IRenderArrow } from '@whosaidtrue/app-interfaces';
 
-export interface CarouselProps {
+export interface CarouselProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
     title: string;
 }
 
@@ -34,7 +34,7 @@ const Carousel: React.FC<CarouselProps> = ({ title, children }) => {
     )
 
     return (
-        <Box boxStyle="white" $dropShadow className="text-basic-black py-6">
+        <Box boxstyle="white" className="text-basic-black py-6">
             <Title3 className="mb-4">{title}</Title3>
             <Crsl
                 className="leading-7 text-body-small font-semibold"

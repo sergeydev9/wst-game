@@ -7,7 +7,8 @@ import {
     TextArea,
     Button,
     SelectDropdown,
-    InputLabel
+    InputLabel,
+    WrappedButton
 } from "@whosaidtrue/ui";
 
 // TODO: make this do something
@@ -26,13 +27,13 @@ const ContactUs: React.FC = () => {
                 {/* name */}
                 <FormGroup>
                     <InputLabel htmlFor="name">Name</InputLabel>
-                    <TextInput name="name" type="text" />
+                    <TextInput $border name="name" type="text" />
                 </FormGroup>
 
                 {/* email */}
                 <FormGroup>
                     <InputLabel htmlFor="email">Email</InputLabel>
-                    <TextInput name="email" type="email" />
+                    <TextInput $border name="email" type="email" />
                 </FormGroup>
 
                 {/* category */}
@@ -54,7 +55,7 @@ const ContactUs: React.FC = () => {
                 </FormGroup>
 
                 {/* submit */}
-                <Button type="submit" fontSize="label-big">Send</Button>
+                <WrappedButton color="blue" type="submit" fontSize="label-big" className="w-full">Send</WrappedButton>
             </Form>
         </div>
 

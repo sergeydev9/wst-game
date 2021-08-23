@@ -8,7 +8,7 @@ export default {
 export const Yellow = () => {
     return (
         <div className="w-96">
-            <WrappedButton color="yellow" >
+            <WrappedButton type="button" color="yellow" >
                 Yellow Wrapped Button
             </WrappedButton>
         </div>
@@ -18,7 +18,7 @@ export const Yellow = () => {
 export const Blue = () => {
     return (
         <div className="w-96">
-            <WrappedButton color="blue" >
+            <WrappedButton type="button" color="blue" >
                 Blue Wrapped Button
             </WrappedButton>
         </div>
@@ -28,7 +28,7 @@ export const Blue = () => {
 export const SmallYellow = () => {
     return (
         <div className="w-max">
-            <WrappedButton color="yellow" $small >
+            <WrappedButton type="button" color="yellow" $small >
                 Small Yellow Wrapped Button
             </WrappedButton>
         </div>
@@ -38,7 +38,7 @@ export const SmallYellow = () => {
 export const SmallBlue = () => {
     return (
         <div className="w-max">
-            <WrappedButton color="blue" $small >
+            <WrappedButton type="button" color="blue" $small >
                 Small Blue Wrapped Button
             </WrappedButton>
         </div>

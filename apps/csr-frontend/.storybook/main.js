@@ -10,7 +10,6 @@ rootMain.addons.push(...[ "@storybook/addon-events",
 "@storybook/addon-actions",
 'storybook-axios/register',
 'storybook-formik/register',
-'addon-redux',
 ])
 
 rootMain.addons.push('addon-redux')
