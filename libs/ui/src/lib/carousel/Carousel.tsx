@@ -18,7 +18,7 @@ const Carousel: React.FC<CarouselProps> = ({ title, children }) => {
 
     // use inline css for more fine grained control than tailwind provides.
     const arrowStyles: CSSProperties = {
-        zIndex: 2,
+        zIndex: 1,
         width: 30,
     };
 

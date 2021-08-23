@@ -1,6 +1,18 @@
 module.exports = {
     theme: {
         extend: {
+            fontSize: {
+                'large-title': ['42px', { letterSpacing: '-0.02em', lineHeight: '48px' }],
+                'title-1': ['32px', { letterSpacing: '-0.02em', lineHeight: '40px' }],
+                'title-2': ['26px', { letterSpacing: '-0.02em', lineHeight: '35px' }],
+                'title-3': ['20px', { letterSpacing: '-0.02em', lineHeight: '26px' }],
+                'body-large': ['32px', { letterSpacing: '-0.02em', lineHeight: '42px' }],
+                'body-medium': ['24px', { letterSpacing: '-0.02em', lineHeight: '33px' }],
+                'body-small': ['16px', { letterSpacing: '-0.1px', lineHeight: '28px' }],
+                'headline': ['16px', { letterSpacing: '-0.02em', lineHeight: '22px' }],
+                'label-big': ['16px', { letterSpacing: '0.5px', lineHeight: '24px' }],
+                'label-small': ['13px', { letterSpacing: '1.1px', lineHeight: '16px' }]
+            },
             // keep this list matched with ThemeColor type in /app-interfaces and /util/colors
             colors: {
                 'purple-light': '#8157DB',
@@ -42,18 +54,6 @@ module.exports = {
             ringColor: {
                 'primary': '#5D5FEF'
             }
-        },
-        fontSize: {
-            'large-title': ['42px', { letterSpacing: '-0.02em', lineHeight: '48px' }],
-            'title-1': ['32px', { letterSpacing: '-0.02em', lineHeight: '40px' }],
-            'title-2': ['26px', { letterSpacing: '-0.02em', lineHeight: '35px' }],
-            'title-3': ['20px', { letterSpacing: '-0.02em', lineHeight: '26px' }],
-            'body-large': ['32px', { letterSpacing: '-0.02em', lineHeight: '42px' }],
-            'body-medium': ['24px', { letterSpacing: '-0.02em', lineHeight: '33px' }],
-            'body-small': ['16px', { letterSpacing: '-0.1px', lineHeight: '28px' }],
-            'headline': ['16px', { letterSpacing: '-0.02em', lineHeight: '22px' }],
-            'label-big': ['16px', { letterSpacing: '0.5px', lineHeight: '24px' }],
-            'label-small': ['13px', { letterSpacing: '1.1px', lineHeight: '16px' }]
         },
         fontFamily: {
             'sans': ['Nunito'],

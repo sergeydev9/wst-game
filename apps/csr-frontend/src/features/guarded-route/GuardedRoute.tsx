@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Route, Redirect } from "react-router-dom";
-import { selectAuthStatus } from "../auth/authSlice";
+import { isLoggedIn } from "../auth/authSlice";
 import { useAppSelector } from "../../app/hooks";
 
 export interface GuardedRouteProps {
@@ -23,9 +23,9 @@ const GuardedRoute: React.FC<GuardedRouteProps> = ({
   path,
   exact,
 }) => {
-  const loggedIn = useAppSelector(selectAuthStatus);
+  const loggedIn = useAppSelector(isLoggedIn);
   return (
-    loggedIn === "loggedIn" ? (
+    loggedIn ? (
       <Route component={component} path={path} exact={exact} />
     ) : (
       <Redirect to="/login" />

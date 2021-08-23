@@ -2,8 +2,6 @@ import tw from "tailwind-styled-components";
 
 export default tw.footer`
     bg-white-ish
-    filter
-    drop-shadow-light
     w-full
     flex
     bottom-0

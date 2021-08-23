@@ -126,7 +126,7 @@
           "executor": "@nrwl/web:dev-server",
           "options": {
             "buildTarget": "csr-frontend:build",
-            "hmr": true
+            "hmr": false
           },
           "configurations": {
             "production": {

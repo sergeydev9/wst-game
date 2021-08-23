@@ -3,7 +3,10 @@ import { useState } from 'react';
 import * as Yup from 'yup';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-
+import { useAppDispatch } from '../../app/hooks';
+import { AuthenticationResponse } from '@whosaidtrue/api-interfaces';
+import { decodeUserToken } from '../../util/functions';
+import { login, closeModals } from '../../features'
 import {
     Form,
     LargeTitle,
@@ -19,11 +22,11 @@ import { api } from '../../api';
 // TODO: finish
 const CreateAccount: React.FC = () => {
     const history = useHistory();
+    const dispatch = useAppDispatch();
 
     // TODO: need to clarify how this error is reported
     const [inUseError, setInUseError] = useState(false);
     const [unexpectedError, setUnexpectedError] = useState(false);
-
 
     // Form
     const formik = useFormik({
@@ -33,24 +36,33 @@ const CreateAccount: React.FC = () => {
         },
         validationSchema: Yup.object({
             email: Yup.string().email('Invalid email address').required('Email is required'),
-            password: Yup.string().min(8, 'Password must be at least 8 characters long').matches(/\d/, 'Password must contain at least 1 number').required('Password is required')
+            password: Yup.string()
+                .min(8, 'Password must be at least 8 characters long')
+                .matches(/\d/, 'Password must contain at least 1 number')
+                .required('Password is required')
         }),
         onSubmit: async (values) => {
             const { email, password } = values
             try {
-                const result = await api.post('/user/register', { email, password })
-                // TODO: add token to auth state
+                const response = await api.post<AuthenticationResponse>('/user/register', { email, password })
+                const { token } = response.data
+                const decoded = decodeUserToken(token)
+                dispatch(login({ ...decoded, token }))
                 history.push('/')
             } catch (e) {
                 if (e.response && e.response.data === "A user already exists with that email") {
                     setInUseError(true)
                 } else {
+                    console.error(e)
                     setUnexpectedError(true);
                 }
             }
         },
     });
 
+    const close = () => {
+        dispatch(closeModals())
+    }
 
     // render
     return (
@@ -69,7 +81,7 @@ const CreateAccount: React.FC = () => {
                 <FormGroup>
                     <InputLabel htmlFor="email">Email</InputLabel>
                     <TextInput {...formik.getFieldProps('email')} id="email" $border name="email" type="email" />
-                    {formik.touched.email && formik.errors.email ? (<div>{formik.errors.email}</div>) : null}
+                    {formik.touched.email && formik.errors.email ? (<div className="text-red-light mt-2">{formik.errors.email}</div>) : null}
                 </FormGroup>
 
                 {/* password */}
@@ -77,7 +89,7 @@ const CreateAccount: React.FC = () => {
                     <InputLabel htmlFor="password">Password</InputLabel>
                     <TextInput {...formik.getFieldProps('password')} id="password" $border name="password" type="password" />
                     <Headline className="text-basic-gray my-3">8 character minimum length</Headline>
-                    {formik.touched.password && formik.errors.password ? (<div>{formik.errors.password}</div>) : null}
+                    {formik.touched.password && formik.errors.password ? (<div className="text-red-light mt-2">{formik.errors.password}</div>) : null}
                 </FormGroup>
 
                 {/* submit */}
@@ -85,7 +97,7 @@ const CreateAccount: React.FC = () => {
             </Form>
             <div className="text-center text-basic-black mt-8">
                 <Headline>Already have an account?</Headline>
-                <Link to="/login"><Headline className="underline">Log in</Headline></Link>
+                <Link onClick={close} to="/login"><Headline className="underline">Log in</Headline></Link>
             </div>
         </Box>
 

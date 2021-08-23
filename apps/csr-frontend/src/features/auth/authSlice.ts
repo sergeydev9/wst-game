@@ -1,17 +1,12 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
-// local imports
-import { history } from "../../app/hooks";
-import { ROUTES } from "../../util/constants";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import login, { LoginResponse } from "./authAPI";
 
 export interface AuthState {
-  status: "loggedOut" | "loggedIn" | "loading" | "failed";
+  loggedIn: boolean;
   token: string;
-  userId: string;
+  id: number;
   email: string;
-  errorMessage: string;
+  roles: string[];
 }
 
 export interface logInProps {
@@ -19,26 +14,20 @@ export interface logInProps {
   password: string;
 }
 
+export interface LoginActionPayload {
+  token: string,
+  id: number,
+  email: string,
+  roles: string[]
+}
+
 export const initialState: AuthState = {
-  status: "loggedOut",
+  loggedIn: false,
+  roles: [],
   token: "",
-  userId: "",
-  errorMessage: "",
+  id: 0,
   email: "",
 };
-
-export const logInThunk = createAsyncThunk<LoginResponse, logInProps, { rejectValue: string }>(
-  "auth/login",
-  async ({ email, password }, { rejectWithValue }) => {
-    try {
-      const response = await login(email, password);
-      return (await response.json()) as LoginResponse;
-    } catch (e) {
-      // TODO: Look over this logic. May want to display different messages for server error or authentication failure.
-      return rejectWithValue("login failed");
-    }
-  }
-);
 
 export const authSlice = createSlice({
   name: "auth",
@@ -47,36 +36,23 @@ export const authSlice = createSlice({
     logout: () => {
       return initialState;
     },
-  },
-  extraReducers: (builder) => {
-    // pending
-    builder.addCase(logInThunk.pending, (state: AuthState) => {
-      state.status = "loading";
-    });
+    login: (state, action: PayloadAction<LoginActionPayload>) => {
 
-    //fail
-    builder.addCase(logInThunk.rejected, (state: AuthState, action) => {
-      state.status = "failed";
-      state.errorMessage = action.payload as string;
-      state.token = "";
-      state.userId = "";
-    });
-    // success
-    builder.addCase(logInThunk.fulfilled, (state: AuthState, { payload }) => {
-      if (!payload) throw new Error("no payload received");
-      state.status = "loggedIn";
-      state.errorMessage = "";
-      state.email = payload.user.email;
-      state.userId = payload.user.id;
-      state.token = payload.token;
+      const { token, email, id, roles } = action.payload
 
-      // nav to home on login success
-      history.push(ROUTES.home);
-    });
+      state.token = token;
+      state.email = email;
+      state.id = id;
+      state.roles = roles;
+      state.loggedIn = true
+    }
   },
+
 });
 
+export const { login, logout } = authSlice.actions;
+
 export const selectAuthToken = (state: RootState) => state.auth.token;
-export const selectAuthStatus = (state: RootState) => state.auth.status;
+export const isLoggedIn = (state: RootState) => state.auth.loggedIn;
 
 export default authSlice.reducer;
