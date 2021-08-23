@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+// TODO: Add xsrf and get url from env
 export const api = axios.create({
-    baseURL: process.env.NX_API_BASEURL,
+    baseURL: 'http://localhost:3000',
     timeout: 1500,
     headers: { 'Authorization': `Bearer ${localStorage.getItem('JWT_TOKEN')}` }
 })

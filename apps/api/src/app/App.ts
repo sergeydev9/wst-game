@@ -8,6 +8,7 @@ import swaggerUi from 'swagger-ui-express';
 import { user, healthcheck, decks } from './routes';
 import { logger } from '@whosaidtrue/logger';
 
+// TODO: Make it crash if it can't connect to database
 class App {
     public readonly app = express();
     private readonly port = process.env.PORT || 4000;

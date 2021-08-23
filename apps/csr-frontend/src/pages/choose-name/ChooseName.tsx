@@ -1,13 +1,13 @@
 import React from 'react';
 import { useParams } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { selectCurrentOptions, selectRerolls, setCurrentOptions } from './chooseNameSlice';
+import { selectNameRerolls, setCurrentNameOptions, selectCurrentNameOptions } from '../../features';
 import { LargeTitle, Button, LabelBig, RerollNamesButton } from '@whosaidtrue/ui';
 
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
-    const names = useAppSelector(selectCurrentOptions);
-    const rerolls = useAppSelector(selectRerolls);
+    const names = useAppSelector(selectCurrentNameOptions);
+    const rerolls = useAppSelector(selectNameRerolls);
 
     const chooseName = (name: string) => {
         // TODO: find out what the interface with the socket server will be.
@@ -24,7 +24,7 @@ const ChooseName: React.FC = () => {
 
     const rerollHandler = (e: React.MouseEvent) => {
         e.preventDefault();
-        dispatch(setCurrentOptions());
+        dispatch(setCurrentNameOptions());
     }
 
     return (
