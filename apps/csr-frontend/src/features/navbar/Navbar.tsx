@@ -10,15 +10,15 @@ const NavBar: React.FC = () => {
     const gameStatus = useAppSelector(selectGameStatus);
 
     return (
-        <nav className={`w-full flex flex-row justify-between mb-20 items-center ${gameStatus === "playing" ? "bg-subtle-primary" : "bg-purple-subtle-fill rounded-b-3xl"} overscroll-containh-20 px-5`}>
+        <nav className="w-full flex flex-row justify-between mb-20 items-center bg-purple-subtle-fill rounded-b-3xl overscroll-contain h-20 px-5">
             <Link to="/"><NavLogo /></Link>
-            {(gameStatus !== "playing") && <>
+            {(gameStatus === "notInGame") && <>
                 <LargeNav />
                 <nav className="md:hidden">
                     <Hamburger />
                 </nav>
             </>}
-            {gameStatus === "playing" && <InGameNav />}
+            {gameStatus !== "notInGame" && <InGameNav />}
         </nav>
     )
 }

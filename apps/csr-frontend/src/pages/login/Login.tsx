@@ -93,7 +93,7 @@ const Login: React.FC = () => {
                 </FormGroup>
 
                 {/* submit */}
-                <WrappedButton color="blue" type="submit" fontSize="label-big" className="w-full">Create Account</WrappedButton>
+                <WrappedButton color="blue" type="submit" fontSize="label-big" className="w-full">Login</WrappedButton>
             </Form>
             <div className="text-center text-basic-black mt-8">
                 <Headline>Don't have an account?</Headline>

@@ -6,7 +6,7 @@ import { history } from "../../app/hooks";
 import { ROUTES } from "../../util/constants";
 import { RootState } from "../../app/store";
 
-type GameStatus = ''
+type GameStatus = 'notInGame'
     | "creating"
     | "connecting"
     | "removed"
@@ -35,7 +35,7 @@ export interface GameState {
 }
 
 export const initialState: GameState = {
-    status: '',
+    status: 'notInGame',
     gameId: '',
     isHost: false,
     accessCode: '',
@@ -57,23 +57,29 @@ export const gameSlice = createSlice({
             return initialState
         },
         setGameStatus: (state, action) => {
-            state.status = action.payload
+            state.status = action.payload;
         },
         setPlayerName: (state, action) => {
-            state.playerName = action.payload
+            state.playerName = action.payload;
         },
         setAccessCode: (state, action) => {
-            state.accessCode = action.payload
+            state.accessCode = action.payload;
         },
         initialRequest: (state, action) => {
-            state.accessCode = action.payload
-            state.joinRequestStatus = 'notSent'
-            state.status = 'choosingName'
+            state.accessCode = action.payload;
+            state.joinRequestStatus = 'notSent';
+            state.status = 'choosingName';
         }
     }
 })
 
-export const { setAccessCode, setPlayerName, initialRequest } = gameSlice.actions;
+export const {
+    setAccessCode,
+    setPlayerName,
+    initialRequest,
+    setGameStatus,
+    leaveGame
+} = gameSlice.actions;
 
 // selectors
 export const selectPlayerName = (state: RootState) => state.game.playerName;

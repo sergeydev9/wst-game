@@ -24,13 +24,13 @@ export default {
             default: "headline",
             description: "Selects a theme preset font-size for the button label",
             table: {
-                type: { summary: "Font Size", detail: '"headline" | "label-big" | "label-small"' },
+                type: { summary: "Font Size", detail: '"headline" | "label-big" | "label-small" | "jumbo"' },
                 defaultValue: { summary: "headline" }
             },
             control: {
                 type: 'select',
             },
-            options: ["headline", "label-big", "label-small"]
+            options: ["headline", "label-big", "label-small", "jumbo"]
         },
         border: {
             name: "border",

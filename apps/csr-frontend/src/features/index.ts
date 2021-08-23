@@ -16,8 +16,10 @@ export {
 } from './modal/modalSlice';
 export {
   default as gameReducer,
+  leaveGame,
   setAccessCode,
   setPlayerName,
+  setGameStatus,
   selectAccessCode,
   selectGameStatus,
   selectPlayerName
