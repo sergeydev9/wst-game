@@ -4,12 +4,11 @@ import tw from "tailwind-styled-components";
 const Styled = tw.input`
     form-input
     border-1
-    border-primary
+    border-purple-base
     rounded-xl
     h-24
     w-20
-    bg-subtle-bg
-    text-primary
+    bg-purple-subtle-fill
     text-title-1
     text-center
     cursor-pointer

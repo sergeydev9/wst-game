@@ -5,4 +5,4 @@ export default {
     title: 'Inputs/Text Area'
 }
 
-export const TextArea = () => <TextAreaInput />
+export const TextArea = () => <div className="w-64"><TextAreaInput /></div>

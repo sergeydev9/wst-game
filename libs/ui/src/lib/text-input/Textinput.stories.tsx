@@ -15,7 +15,7 @@ export default {
 } as Meta;
 
 
-export const TextInput: Story<TextInputProps> = (args) => <Input {...args} type="text" placeholder="4 letter game code" />
+export const TextInput: Story<TextInputProps> = (args) => <div className="w-56"><Input {...args} type="text" placeholder="4 letter game code" /></div>
 
 TextInput.args = {
     $border: true
