@@ -6,8 +6,8 @@ export default tw.span`
     py-2
     px-4
     bg-purple-base
-    text-xs
-    font-semibold
+    text-lg
+    font-bold
     absolute
     left-4
     top-4
