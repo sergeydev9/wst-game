@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "none",
   "scripts": {
-    "nx": "CHOKIDAR_USEPOLLING=true nx",
+    "nx": "nx",
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",

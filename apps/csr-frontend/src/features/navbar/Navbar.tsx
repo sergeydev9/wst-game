@@ -14,9 +14,6 @@ const NavBar: React.FC = () => {
             <Link to="/"><NavLogo /></Link>
             {(gameStatus === "notInGame") && <>
                 <LargeNav />
-                <nav className="md:hidden">
-                    <Hamburger />
-                </nav>
             </>}
             {gameStatus !== "notInGame" && <InGameNav />}
         </nav>

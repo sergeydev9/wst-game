@@ -15,7 +15,7 @@ const insertNames = (num: number, numNotClean?: number) => {
     let count = num;
 
     // prevent bad inputs
-    if (numNotClean > num) {
+    if (numNotClean && numNotClean > num) {
         throw new Error('numClean must be less than total')
     }
 
@@ -35,7 +35,7 @@ const insertNames = (num: number, numNotClean?: number) => {
     for (const name of names.values()) {
 
         let clean = true
-        if (dirtyCount < numNotClean) {
+        if (numNotClean && dirtyCount < numNotClean) {
             clean = false
             dirtyCount++
         }

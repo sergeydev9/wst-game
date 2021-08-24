@@ -24,4 +24,8 @@ export {
   selectGameStatus,
   selectPlayerName
 } from './game/gameSlice';
+export {
+  default as deckSelectionReducer,
+} from './deck-selection/deckSelectionSlice';
+
 export * from './choose-name/chooseNameSlice';

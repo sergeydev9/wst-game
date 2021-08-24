@@ -1,5 +1,4 @@
 export { default as TextInput } from "./lib/text-input/TextInput";
-export { default as BlackRoundedTag } from './lib/black-rounded-tag/BlackRoundedTag';
 export { default as Box } from './lib/box/Box';
 export { default as FavoriteStar } from './lib/favorite-star/FavoriteStar';
 export { default as Footer } from './lib/footer/Footer';
@@ -25,4 +24,6 @@ export { default as ReaderAnnouncement } from './lib/reader-announcement/ReaderA
 export { default as WrappedButton } from './lib/button/WrappedButton';
 export { default as FaqCarousel } from './lib/faq/Faq';
 export { default as DeckCard } from './lib/deck-card/DeckCard';
+export { default as DeckSet } from './lib/deck-set/DeckSet';
+export { default as Divider } from './lib/divider/Divider';
 export * from './lib/typography/Typography';

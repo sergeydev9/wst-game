@@ -10,7 +10,7 @@ const LargeNav: React.FC = () => {
     const loggedIn = useAppSelector(isLoggedIn);
 
     return (
-        <nav className="hidden md:flex md:flex-row font-bold text-body-small md:justify-end gap-6 h-full items-center">
+        <nav className="flex flex-row font-bold text-body-small justify-end gap-6 h-full items-center">
             <NavLink to="/who-said-true-school" className="text-purple-base">Who Said true For Schools</NavLink>
             {loggedIn ? <WrappedButton type="button" color='yellow' $small >My Account</WrappedButton> : <GuestButtons />}
         </nav>

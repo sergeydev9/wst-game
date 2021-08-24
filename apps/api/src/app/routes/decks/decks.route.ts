@@ -30,14 +30,18 @@ router.get('/selection', async (req: Request, res: Response) => {
         if (id) {
             const [userDecks, notOwned] = await Promise.all([decks.getUserDecks(id), decks.userDeckSelection({ pageNumber: 0, pageSize: 100, userId: id })])
 
+            // Should match type DeckSelectionResponse in @whosaidtrue/api-interfaces
             res.status(200).json({
                 owned: userDecks.rows,
-                not_owned: notOwned.rows
+                notOwned: notOwned.rows
             })
+
         } else {
             // no valid id, send guest selection
             const selection = await decks.deckSelection({ pageNumber: 0, pageSize: 100 })
-            res.status(200).json(selection.rows)
+
+            // Should match type DeckSelectionResponse in @whosaidtrue/api-interfaces
+            res.status(200).json({ notOwned: selection.rows, owned: [] })
         }
     } catch (e) {
         logger.error(e)

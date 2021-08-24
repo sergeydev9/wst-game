@@ -5,9 +5,8 @@ import { useHistory } from 'react-router-dom';
 const SetUpGame: React.FC = () => {
     const history = useHistory();
 
-    // TODO: finish
     const handler = () => {
-        // history.push('/game/choose-deck')
+        history.push('/decks')
     }
     return (
         <section className="flex flex-col gap-4 items-center p-8">

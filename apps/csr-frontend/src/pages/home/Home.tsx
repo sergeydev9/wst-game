@@ -2,7 +2,7 @@ import React from "react";
 import { LargeTitle, Box, Title1, FaqCarousel, Carousel } from "@whosaidtrue/ui";
 import JoinGame from "../../features/join-game/JoinGame";
 import SetUpGame from "../../features/setup-game/SetupGame";
-import { ReactComponent as LargeLogo } from '../../assets/large_logo.svg';
+import { ReactComponent as Logo } from '../../assets/logo.svg';
 
 // TODO: Delete this and the dummy data when it's not needed anymore
 type UserStory = {
@@ -29,9 +29,9 @@ const Home: React.FC = () => {
     <div className="flex flex-col gap-16 items-center container mx-auto md:px-32">
 
       {/* logo group */}
-      <div className="flex flex-row justify-center">
-        <LargeLogo style={{ maxHeight: '270px', maxWidth: '285px' }} className="m-8" />
-        <div className="flex flex-col gap-4 items-center justify-center text-center">
+      <div className="flex flex-row place-items-center">
+        <Logo className="flex-auto h-72 w-72" />
+        <div className="flex flex-col gap-4 md:place-items-center text-center flex-auto">
           <LargeTitle className="text-true-white">Can you guess how many of your friends...</LargeTitle>
           <Box boxstyle='white' className="py-6 px-12" $dropShadow><Title1 className="text-purple-base">binge watched an entire season of a show in a weekend?</Title1></Box>
         </div>

@@ -34,6 +34,36 @@ describe('/decks routes', () => {
      */
     describe('[GET] /selection', () => {
 
+        it('should have owned and notOwned attributes in successful response if logged in', async () => {
+            mockedDecks.getUserDecks.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.userDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+
+            // create valid token
+            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+            const result = await supertest(app)
+                .get('/decks/selection')
+                .set('Authorization', `Bearer ${token}`)
+                .expect('Content-Type', /json/)
+                .expect(200)
+
+            expect(result.body.owned).toBeDefined()
+            expect(result.body.notOwned).toBeDefined()
+
+        })
+
+        it('should have owned and notOwned attributes in successful response if not logged in', async () => {
+            mockedDecks.deckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+
+            const result = await supertest(app)
+                .get('/decks/selection')
+                .expect('Content-Type', /json/)
+                .expect(200)
+
+            expect(result.body.owned).toBeDefined()
+            expect(result.body.notOwned).toBeDefined()
+
+        })
+
         it('should get user decks if there is a valid token in header', async () => {
             mockedDecks.getUserDecks.mockResolvedValue({ rows: [] } as QueryResult)
             mockedDecks.userDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)

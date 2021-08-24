@@ -7,7 +7,7 @@ import ContactUs from "../pages/contact-us/ContactUs";
 import CreateAccount from '../pages/create-account/CreateAccount';
 import ChooseName from "../features/choose-name/ChooseName";
 import Login from '../pages/login/Login';
-// import Login from "../pages/login/Login";
+import DeckSelection from '../features/deck-selection/DeckSelection';
 
 const App: React.FC = () => {
   return (
@@ -29,6 +29,9 @@ const App: React.FC = () => {
           </Route>
           <Route exact path='/login'>
             <Login />
+          </Route>
+          <Route exact path='/decks'>
+            <DeckSelection />
           </Route>
         </Switch>
       </Layout>
