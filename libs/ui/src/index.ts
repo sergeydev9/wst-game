@@ -8,8 +8,6 @@ export { default as Carousel } from './lib/carousel/Carousel';
 export { default as Hamburger } from './lib/hamburger/Hamburger';
 export { default as InputLabel } from './lib/input-label/InputLabel';
 export { default as TextArea } from './lib/text-area/TextArea';
-export { default as Button } from './lib/button/Button';
-export { default as ButtonBgGradient } from './lib/button/Button';
 export { default as Form } from './lib/form/Form';
 export { default as FormGroup } from './lib/form-group/FormGroup';
 export { default as RadioInput } from './lib/radio-input/RadioInput';
@@ -21,10 +19,9 @@ export { default as RerollNamesButton } from './lib/reroll-names-button/RerollNa
 export { default as ThumbsUp } from './lib/thumbs-up/ThumbsUp';
 export { default as ThumbsDown } from './lib/thumbs-down/ThumbsDown';
 export { default as ReaderAnnouncement } from './lib/reader-announcement/ReaderAnnouncement';
-export { default as WrappedButton } from './lib/button/WrappedButton';
 export { default as FaqCarousel } from './lib/faq/Faq';
 export { default as DeckCard } from './lib/deck-card/DeckCard';
 export { default as DeckSet } from './lib/deck-set/DeckSet';
 export { default as Divider } from './lib/divider/Divider';
-
+export { default as Button } from './lib/button/Button';
 export * from './lib/typography/Typography';

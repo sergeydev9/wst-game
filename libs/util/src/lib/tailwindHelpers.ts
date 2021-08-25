@@ -33,8 +33,10 @@ export const genTextColor = (color: ThemeColor) => {
       return 'text-yellow-base'
     case 'yellow-dark':
       return 'text-yellow-dark'
+
     case 'blue-base':
       return 'text-blue-base'
+
     case 'white-ish':
       return 'text-white-ish'
     case 'true-white':

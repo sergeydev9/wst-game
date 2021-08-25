@@ -1,6 +1,9 @@
 module.exports = {
     theme: {
         extend: {
+            margin: {
+                'btn': '0.1rem'
+            },
             fontSize: {
                 'large-title': ['42px', { letterSpacing: '-0.02em', lineHeight: '48px' }],
                 'title-1': ['32px', { letterSpacing: '-0.02em', lineHeight: '40px' }],
@@ -29,6 +32,7 @@ module.exports = {
                 'yellow-gradient-to': 'rgba(191, 122, 13, 1)',   //   system, these colors are for those gradients
                 'blue-base': '#0F69FF',
                 'blue-light': '#4785EB',
+                'blue-subtle': '#EDF3FC',
                 'white-ish': '#FBFBFE',
                 'true-white': '#FFFFFF',
                 'basic-black': '#190136',
@@ -44,20 +48,9 @@ module.exports = {
             },
             dropShadow: {
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
-                'blue-base-b': '0 2px 0 #0F69FF',
-                'blue-t': 'inset 0 2px 0 #084AB8',
-                'blue-b': '0 2px 0 #084AB8',
-                'blue-y': '',
-                'yellow-t': 'inset 0 2px 0 #C17C10',
-                'yellow-b': '0 2px 0 #C17C10',
-                'yellow-y': '',
                 'light': '0 0 0.6rem #EBEBF9',
                 'mid': '0 0 0.6rem #ACADEB',
                 'card': '0 0 32px #893FE2'
-            },
-            boxSadow: {
-                'yellow': '0px 2px 0px #C17C10',
-                'blue': '0px 2px 0px #084AB8'
             },
             ringColor: {
                 'primary': '#5D5FEF'
@@ -67,12 +60,22 @@ module.exports = {
             'sans': ['Nunito'],
             'roboto': ['Roboto']
         },
+        boxShadow: {
+            'active-yellow': 'inset 0px 2px #C17C10',
+            'active-blue': 'inset 0px 2px #084AB8',
+            'yellow': '0px 2px 0px #C17C10',
+            'blue-base': '0px 2px 0px #0F69FF',
+            'blue': '0px 2px 0px #084AB8'
+        },
     },
     variants: {
         extend: {
-            backgroundColor: ['checked'],
-            borderColor: ['checked'],
-            backgroundImage: ['checked'],
+            boxShadow: ['active'],
+            margin: ['active'],
+            textColor:['active'],
+            backgroundColor: ['checked', 'active'],
+            borderColor: ['checked', 'active'],
+            backgroundImage: ['checked', 'active'],
             backgroundClip: ['checked'],
             ringWidth: ['checked'],
             ringColor: ['checked'],
