@@ -1,0 +1,7 @@
+node_modules/*
+apps/*
+libs/*
+tools/*
+.vscode/*
+.storybook/*
+.git/*

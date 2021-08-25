@@ -19,6 +19,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
+              "externalDependencies":"all",
               "inspect": false
             }
           }
