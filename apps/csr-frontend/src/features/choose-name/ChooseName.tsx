@@ -16,7 +16,8 @@ import {
     Headline,
     WrappedButton,
     Divider,
-    Title3
+    Title3,
+    Title1
 } from '@whosaidtrue/ui';
 import { NameObject, NameRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
@@ -71,7 +72,7 @@ const ChooseName: React.FC = () => {
 
     return (
         <Box boxstyle='white' className="w-max mx-auto px-8 py-10">
-            <LargeTitle>Choose Your Player Name</LargeTitle>
+            <Title1 className="text-basic-black mx-12">Choose Your Player Name</Title1>
             <div className="flex flex-col gap-3 w-96 mt-10 flex-shrink">
                 {namesHelper(names)}
                 <div className="flex items-center justify-center mt-4">
@@ -86,7 +87,7 @@ const ChooseName: React.FC = () => {
                 </div>
                 <div className="flex w-full gap-3">
                     <TextInput $border type="text" className="font-semibold text-xl inline w-1/3" placeholder="Create your own" />
-                    <Button className="w-2/3 inline" border="thick" $pill fontSize="jumbo">Submit</Button>
+                    <Button className="w-2/3 inline" border="medium" $pill fontSize="jumbo">Submit</Button>
                 </div>
             </div>
         </Box>

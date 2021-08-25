@@ -23,12 +23,12 @@ module.exports = {
                 'purple-card-bg': '#FCFBFE',
                 'yellow-base': '#F2AB3C',
                 'yellow-dark': '#3A2403',
-                'yellow-text': '#674106',
                 'blue-gradient-from': '#7EADFC',   //
                 'blue-gradient-to': '#094BB9',     //   The border effect around the button elements is achieved
                 'yellow-gradient-from': 'rgba(245, 201, 131, 1)', //   through a background gradient. Though not part of the design
                 'yellow-gradient-to': 'rgba(191, 122, 13, 1)',   //   system, these colors are for those gradients
                 'blue-base': '#0F69FF',
+                'blue-light': '#4785EB',
                 'white-ish': '#FBFBFE',
                 'true-white': '#FFFFFF',
                 'basic-black': '#190136',
@@ -44,6 +44,13 @@ module.exports = {
             },
             dropShadow: {
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
+                'blue-base-b': '0 2px 0 #0F69FF',
+                'blue-t': 'inset 0 2px 0 #084AB8',
+                'blue-b': '0 2px 0 #084AB8',
+                'blue-y': '',
+                'yellow-t': 'inset 0 2px 0 #C17C10',
+                'yellow-b': '0 2px 0 #C17C10',
+                'yellow-y': '',
                 'light': '0 0 0.6rem #EBEBF9',
                 'mid': '0 0 0.6rem #ACADEB',
                 'card': '0 0 32px #893FE2'

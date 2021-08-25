@@ -11,7 +11,7 @@ describe('tailwind helpers', () => {
   beforeAll(() => {
     // get color names from preset, excluding gradient colors.
     const { colors } = preset.theme.extend;
-    themeColors = Object.keys(colors).filter(color => ['blue-gradient-from', 'blue-gradient-to', 'yellow-gradient-from', 'yellow-gradient-to', 'yellow-text'].every(exclude => exclude !== color)) as ThemeColor[]
+    themeColors = Object.keys(colors).filter(color => ['blue-gradient-from', 'blue-gradient-to', 'yellow-gradient-from', 'yellow-gradient-to'].every(exclude => exclude !== color)) as ThemeColor[]
   })
   describe('genTextColor', () => {
     it('should return the input with "text-" added to the start', () => {

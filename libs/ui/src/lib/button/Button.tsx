@@ -39,7 +39,7 @@ const borderHelper = (border: BorderThickness): string => {
 const fontSizeHelper = (size: FontSize | undefined): string => {
     switch (size) {
         case 'jumbo':
-            return "font-bold text-2xl"
+            return "font-bold text-2xl filter drop-shadow-blue-base-b"
         case "label-big":
             return "text-label-big font-medium"
         case "label-small":
@@ -54,7 +54,7 @@ const fontSizeHelper = (size: FontSize | undefined): string => {
 const colorHelper = (color?: ThemeColor, border?: BorderThickness): string => {
     return (border ?
         `bg-white ${borderHelper(border)} ${(color && genTextColor(color)) || "text-blue-base"} ${(color && genBorderColor(color)) || "border-blue-base"}` // if border is specified
-        : `${(color && genBgColor(color)) || "bg-blue-base"} ${color === 'yellow-base' ? 'text-yellow-text' : 'text-white'}` // if no border specified, i.e. default
+        : `${(color && genBgColor(color)) || "bg-blue-base"} ${color === 'yellow-base' ? 'text-yellow-dark' : 'text-white'}` // if no border specified, i.e. default
     )
 }
 
@@ -71,7 +71,7 @@ const colorHelper = (color?: ThemeColor, border?: BorderThickness): string => {
  */
 export default tw.button<ButtonProps>`
     ${(p) => fontSizeHelper(p.fontSize)}
-    ${(p) => p.$small ? "py-1 px-3" : "py-3 px-6"}
+    ${(p) => p.$small ? "py-1 px-3" : "py-3 px-4"}
     ${(p) => colorHelper(p.color, p.border)}
     ${(p) => p.$pill ? "rounded-full" : "rounded-lg"}
 
