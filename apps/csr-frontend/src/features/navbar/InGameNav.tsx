@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppSelector } from '../../app/hooks';
 import { selectPlayerName, selectAccessCode } from '../game/gameSlice';
-import { WrappedButton } from '@whosaidtrue/ui';
+import { Button } from '@whosaidtrue/ui';
 
 // TODO: What does the game options button do?
 const InGameNav: React.FC = () => {
@@ -12,7 +12,7 @@ const InGameNav: React.FC = () => {
     return (
         <>
             <h2 className="text-basic-black font-extrabold relative mx-auto text-2xl leading-tight">{name ? name : `Game Code: ${accessCode}`}</h2>
-            <WrappedButton type="button" color='yellow' $small >Game Options</WrappedButton>
+            <Button type="button" buttonStyle='small' $secondary >Game Options</Button>
         </>
     )
 }

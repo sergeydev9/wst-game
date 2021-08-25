@@ -76,11 +76,12 @@ module.exports = {
             backgroundColor: ['checked', 'active'],
             borderColor: ['checked', 'active'],
             backgroundImage: ['checked', 'active'],
+            gradientColorStops:['active'],
             backgroundClip: ['checked'],
             ringWidth: ['checked'],
             ringColor: ['checked'],
             ringOpacity: ['checked'],
-            padding: ['checked']
+            padding: ['checked', 'active']
         }
 
     },

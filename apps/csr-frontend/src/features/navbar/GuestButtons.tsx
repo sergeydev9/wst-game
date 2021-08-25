@@ -1,6 +1,6 @@
 import Modal from 'react-modal';
 import { GrFormClose } from '@react-icons/all-files/gr/GrFormClose';
-import { WrappedButton } from '@whosaidtrue/ui';
+import { Button } from '@whosaidtrue/ui';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import Login from '../../pages/login/Login';
 import CreateAccount from '../../pages/create-account/CreateAccount';
@@ -44,8 +44,8 @@ const GuestButtons = () => {
 
     return (
         <>
-            <WrappedButton onClick={openLoginModal} type="button" color='yellow' $small>Log In</WrappedButton>
-            <WrappedButton onClick={openCreateAccModal} type="button" color="yellow" $small>Create Account</WrappedButton>
+            <Button onClick={openLoginModal} type="button" buttonStyle='small' $secondary>Log In</Button>
+            <Button onClick={openCreateAccModal} type="button" buttonStyle='small' $secondary>Create Account</Button>
             <Modal overlayClassName={overlayClassName} isOpen={isLoginOpen} style={modalStyles} onRequestClose={close}>
                 <GrFormClose className="absolute right-8 top-11 text-5xl font-black cursor-pointer" onClick={close} />
                 <Login />

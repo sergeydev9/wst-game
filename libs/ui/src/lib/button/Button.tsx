@@ -3,7 +3,7 @@ import tw from 'tailwind-styled-components';
 
 export type ButtonStyle = 'default' | 'big-text' | 'small' | 'inline'
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     buttonStyle?: ButtonStyle;
     $secondary?: boolean
 }
@@ -23,14 +23,12 @@ const Bg = tw.button<BgProps>`
     flex-col
     justify-center
     content-center
-    bg-clip-border
     bg-gradient-to-b
-    shadow
     w-max
     rounded-full
-    ${(p) => (p.btncolor === 'yellow' ? `to-yellow-gradient-to
+    ${(p) => (p.btncolor === 'yellow' ? `active: from-yellow-base active:to-yellow-base active:shadow-active-yellow to-yellow-gradient-to
                                          from-yellow-gradient-from
-                                         shadow-yellow` : `to-blue-gradient-to from-blue-gradient-from shadow-blue`
+                                         shadow-yellow` : `to-blue-gradient-to from-blue-gradient-from active:shadow-none active:to-blue-base active:from-blue-base active:shadow-active-blue`
     )}
 `
 
@@ -39,16 +37,13 @@ const DefaultButton = tw.button<ChildProps>`
     font-label-big
     font-bold
     m-btn
-    active:mx-0
-    active:-mb-1
-    active:mt-0
     py-3
     px-9
     rounded-full
     active:bg-blue-base
     ${(p) => (p.$secondary ?
         `border-2 border-blue-base text-blue-base bg-white hover:bg-blue-subtle active:text-white` :
-        `text-white bg-blue-base hover:bg-blue-light active:shadow-active-blue`
+        `text-white bg-blue-base hover:bg-blue-light`
     )}
 `;
 
@@ -57,16 +52,13 @@ const BigTextButton = tw.button<ChildProps>`
     text-2xl
     font-bold
     m-btn
-    active:mx-0
-    active:-mb-1
-    active:mt-0
     py-2
     px-9
     rounded-full
     active:bg-blue-base
     ${(p) => (p.$secondary ?
         `border-2 border-blue-base text-blue-base bg-white shadow-blue-base active:text-white` :
-        `text-white bg-blue-base hover:bg-blue-light active:shadow-active-blue`
+        `text-white bg-blue-base hover:bg-blue-light`
     )}
 `;
 
@@ -74,16 +66,13 @@ const BigTextButton = tw.button<ChildProps>`
 const SmallButton = tw.button<ChildProps>`
     text-headline
     font-bold
-    active:m-0
-    active:-mb-1
-    active:-mx-1
     py-1
     px-3
     rounded-full
     m-btn
     ${(p) => (p.$secondary ?
-        `text-yellow-dark bg-yellow-base hover:yellow-light active:shadow-active-yellow` :
-        `text-white bg-blue-base hover:bg-blue-light active:shadow-active-blue`
+        `text-yellow-dark bg-yellow-base hover:yellow-light` :
+        `text-white bg-blue-base hover:bg-blue-light`
     )}
 `;
 
@@ -96,7 +85,7 @@ const InlineButton = tw.button<ChildProps>`
     rounded-md
     ${(p) => (p.$secondary ?
         `border-2 border-blue-base text-blue-base bg-white active:bg-blue-base active:text-white` :
-        `text-white bg-blue-base hover:bg-blue-light active:shadow-active-blue`
+        `text-white bg-blue-base hover:bg-blue-light`
     )}
 `;
 

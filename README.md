@@ -41,8 +41,7 @@ The api reads from the following env variables:
 - PORT=3000
 - DOMAIN
 - DATABASE_URL=postgres://postgres:password@localhost:5432/whosaidtrue-dev
-- NX_API_BASEURL=http://localhost:4000
-
+- NX_API_BASEURL=http://localhost:3000
 
 These can be changed for local dev in `.local.env`
 
@@ -67,7 +66,6 @@ Run `nx g @nrwl/react:lib my-lib` to generate a library.
 > You can also use any of the plugins above to generate libraries as well.
 
 Libraries are shareable across libraries and applications. They can be imported from `@whosaidtrue/mylib`.
-
 
 ## Running unit tests
 

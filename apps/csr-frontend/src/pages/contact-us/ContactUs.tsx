@@ -7,7 +7,6 @@ import {
     Button,
     SelectDropdown,
     InputLabel,
-    WrappedButton,
     Box
 } from "@whosaidtrue/ui";
 
@@ -55,7 +54,7 @@ const ContactUs: React.FC = () => {
                 </FormGroup>
 
                 {/* submit */}
-                <WrappedButton color="blue" type="submit" fontSize="label-big" className="w-full">Send</WrappedButton>
+                <Button color="blue" type="submit" className="w-full">Send</Button>
             </Form>
         </Box>
 

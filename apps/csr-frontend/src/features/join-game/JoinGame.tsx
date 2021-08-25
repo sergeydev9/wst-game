@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useHistory } from "react-router-dom";
 
-import { Title1, TextInput, WrappedButton } from '@whosaidtrue/ui';
+import { Title1, TextInput, Button } from '@whosaidtrue/ui';
 import { useAppDispatch } from '../../app/hooks';
 import { initialRequest } from '../game/gameSlice';
 
@@ -29,7 +29,7 @@ const JoinGame: React.FC = () => {
             <Title1>Join a Game</Title1>
             <form onSubmit={formik.handleSubmit} className="flex flex-row gap-6">
                 <TextInput $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
-                <WrappedButton type="submit" color="blue" className="w-max" fontSize="label-big">Join Game!</WrappedButton>
+                <Button type="submit" className="w-max">Join Game!</Button>
             </form>
             {formik.touched.accessCode && formik.errors.accessCode ? (<div className="text-red-light mt-2">{formik.errors.accessCode}</div>) : null}
         </section>

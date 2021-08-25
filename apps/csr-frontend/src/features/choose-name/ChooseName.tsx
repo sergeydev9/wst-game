@@ -8,13 +8,10 @@ import {
     selectCurrentNameOptions
 } from '../../features';
 import {
-    LargeTitle,
     Button,
     RerollNamesButton,
     Box,
     TextInput,
-    Headline,
-    WrappedButton,
     Divider,
     Title3,
     Title1
@@ -58,7 +55,7 @@ const ChooseName: React.FC = () => {
 
     const namesHelper = (names: NameObject[]) => {
         return names.map((nameObj, i) => {
-            return <WrappedButton color="blue" key={i} fontSize="jumbo" onClick={chooseName(nameObj)} className="place-self-stretch" type="button">{nameObj.name}</WrappedButton>
+            return <Button key={i} buttonStyle="big-text" className="self-stretch w-full" onClick={chooseName(nameObj)} type="button">{nameObj.name}</Button>
         })
     }
 
@@ -73,9 +70,9 @@ const ChooseName: React.FC = () => {
     return (
         <Box boxstyle='white' className="w-max mx-auto px-8 py-10">
             <Title1 className="text-basic-black mx-12">Choose Your Player Name</Title1>
-            <div className="flex flex-col gap-3 w-96 mt-10 flex-shrink">
+            <div className="flex flex-col gap-3 w-96 mt-10 flex-grow items-center">
                 {namesHelper(names)}
-                <div className="flex items-center justify-center mt-4">
+                <div className="flex mt-4">
                     <RerollNamesButton onClick={rerollHandler} rerolls={rerolls} />
                 </div>
             </div>
@@ -87,7 +84,7 @@ const ChooseName: React.FC = () => {
                 </div>
                 <div className="flex w-full gap-3">
                     <TextInput $border type="text" className="font-semibold text-xl inline w-1/3" placeholder="Create your own" />
-                    <Button className="w-2/3 inline" border="medium" $pill fontSize="jumbo">Submit</Button>
+                    <Button className="w-2/3 inline" buttonStyle="big-text" $secondary>Submit</Button>
                 </div>
             </div>
         </Box>

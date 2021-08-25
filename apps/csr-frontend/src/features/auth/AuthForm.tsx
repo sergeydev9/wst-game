@@ -10,7 +10,7 @@ import {
     FormGroup,
     TextInput,
     InputLabel,
-    WrappedButton,
+    Button,
     Headline
 } from "@whosaidtrue/ui";
 import { api } from '../../api';
@@ -91,7 +91,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
             </FormGroup>
 
             {/* submit */}
-            <WrappedButton color="blue" type="submit" fontSize="label-big" className="w-full">{buttonlabel}</WrappedButton>
+            <Button color="blue" type="submit" className="w-full">{buttonlabel}</Button>
         </Form>
     )
 }

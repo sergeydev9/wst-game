@@ -20,7 +20,7 @@ export const store = configureStore({
 });
 
 // debounce saving to local storage
-let storeTimer: NodeJS.Timeout;
+let storeTimer: ReturnType<typeof setTimeout>;
 store.subscribe(() => {
     clearTimeout(storeTimer)
     const { auth, game } = store.getState();
