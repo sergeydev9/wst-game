@@ -1,0 +1,64 @@
+version: '3.7'
+
+services:
+
+  api:
+    image: node:14
+    working_dir: /app
+    command: "yarn start api --host=0.0.0.0"
+    volumes:
+      - ..:/app
+    container_name: api
+    restart: always
+    env_file:
+      - ../.local.env
+    environment:
+      - PORT=4200
+      - POSTGRES_HOST=postgres
+    ports:
+      - 4000:4000
+
+    depends_on:
+      - postgres
+
+  socket-server:
+    image: node:14
+    working_dir: /app
+    command: "yarn start socket-server --host=0.0.0.0"
+    volumes:
+      - ..:/app
+    container_name: socket-server
+    restart: always
+    env_file:
+      - ../.local.env
+    environment:
+      - PORT=4001
+      - POSTGRES_HOST=postgres
+    ports:
+      - 4001:4001
+
+    depends_on:
+      - postgres
+
+  web:
+    image: node:14
+    working_dir: /app
+    command: "yarn start csr-frontend --host=0.0.0.0"
+    volumes:
+      - ..:/app
+    container_name: web
+    restart: always
+    environment:
+      - PORT=4200
+    ports:
+      - 4200:4200
+
+    depends_on:
+      - api
+      - socket-server
+
+# link to network running postgres
+networks:
+  default:
+    external: true
+    name: whosaidtrue-mono_default
