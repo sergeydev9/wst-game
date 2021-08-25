@@ -20,12 +20,12 @@ export const store = configureStore({
 });
 
 // debounce saving to local storage
-let timer: NodeJS.Timeout;
+let storeTimer: NodeJS.Timeout;
 store.subscribe(() => {
-    clearTimeout(timer)
+    clearTimeout(storeTimer)
     const { auth, game } = store.getState();
 
-    timer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game })), 50)
+    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game })), 50)
 })
 
 export type AppDispatch = typeof store.dispatch;

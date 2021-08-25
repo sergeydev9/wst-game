@@ -9,6 +9,7 @@ export {
 export {
   default as modalReducer,
   closeModals,
+  closeModalsThunk,
   openLogin,
   openCreateAcc,
   selectCreateAcc,
@@ -27,5 +28,6 @@ export {
 export {
   default as deckSelectionReducer,
 } from './deck-selection/deckSelectionSlice';
+export { default as AuthForm } from './auth/AuthForm';
 
 export * from './choose-name/chooseNameSlice';
