@@ -1,4 +1,6 @@
-import { ReactComponent as Divider } from './divider.svg'
+import { ReactComponent as WhiteDivider } from './white-divider.svg'
+import { ReactComponent as GreyDivider } from './grey-divider.svg'
+
 /**
  * An SVG that can be used as a divider when <hr />
  * elements don't quite work. An example of a scenario where
@@ -10,4 +12,13 @@ import { ReactComponent as Divider } from './divider.svg'
  *
  * @returns svg
  */
+export type DividerColors = 'white' | 'grey';
+
+export interface DividerProps extends React.HtmlHTMLAttributes<React.ReactSVGElement> {
+    dividerColor: DividerColors
+}
+
+const Divider: React.FC<DividerProps> = ({ dividerColor }) => {
+    return dividerColor === 'white' ? <WhiteDivider /> : <GreyDivider />
+}
 export default Divider;

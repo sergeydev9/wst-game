@@ -18,16 +18,16 @@ const GuestSelection: React.FC = () => {
         return <DeckCard key={i} name={deck.name} thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'} movieRating={deck.movie_rating} />
     })
 
-    const dividerClass = "flex justify-self-stretch flex-grow w-full"
+    const dividerClass = "justify-self-stretch"
     return (
         <>
             <DeckSet>
                 {topSet}
             </DeckSet>
-            <div className="w-full flex flex-row justify-center items-center gap-4 text-white-ish h-8">
-                <Divider className={dividerClass} />
+            <div className="w-full flex flex-row place-items-center gap-4 text-white-ish h-8">
+                <Divider dividerColor='white' className={dividerClass} />
                 <Headline className="w-max flex-shrink-0">Can't find your decks? <Link className="cursor-pointer underline" to="/login">Log In</Link></Headline>
-                <Divider className={dividerClass} />
+                <Divider dividerColor='white' className={dividerClass} />
             </div>
             <DeckSet>
                 {bottomSet}

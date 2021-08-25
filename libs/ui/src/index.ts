@@ -26,4 +26,5 @@ export { default as FaqCarousel } from './lib/faq/Faq';
 export { default as DeckCard } from './lib/deck-card/DeckCard';
 export { default as DeckSet } from './lib/deck-set/DeckSet';
 export { default as Divider } from './lib/divider/Divider';
+
 export * from './lib/typography/Typography';

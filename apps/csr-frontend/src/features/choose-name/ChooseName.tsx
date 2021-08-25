@@ -1,7 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { selectNameRerolls, setGameStatus, setRemainingNameOptions, setCurrentNameOptions, selectCurrentNameOptions } from '../../features';
-import { LargeTitle, Button, RerollNamesButton, Box, TextInput, Headline, WrappedButton } from '@whosaidtrue/ui';
+import {
+    selectNameRerolls,
+    setGameStatus,
+    setRemainingNameOptions,
+    setCurrentNameOptions,
+    selectCurrentNameOptions
+} from '../../features';
+import {
+    LargeTitle,
+    Button,
+    RerollNamesButton,
+    Box,
+    TextInput,
+    Headline,
+    WrappedButton,
+    Divider,
+    Title3
+} from '@whosaidtrue/ui';
 import { NameObject, NameRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
 
@@ -50,6 +66,9 @@ const ChooseName: React.FC = () => {
         dispatch(setCurrentNameOptions());
     }
 
+    // set style for the dividers on the side of OR text
+    const dividerClassName = ""
+
     return (
         <Box boxstyle='white' className="w-max mx-auto px-8 py-10">
             <LargeTitle>Choose Your Player Name</LargeTitle>
@@ -60,7 +79,11 @@ const ChooseName: React.FC = () => {
                 </div>
             </div>
             <div className="flex flex-col items-center gap-4 mt-10 w-full">
-                <Headline className="block">Or</Headline>
+                <div className="w-full flex flex-shrink place-items-center gap-3 h-8 px-32">
+                    <Divider dividerColor='grey' className={dividerClassName} />
+                    <Title3 >OR</Title3>
+                    <Divider dividerColor='grey' className={dividerClassName} />
+                </div>
                 <div className="flex w-full gap-3">
                     <TextInput $border type="text" className="font-semibold text-xl inline w-1/3" placeholder="Create your own" />
                     <Button className="w-2/3 inline" border="thick" $pill fontSize="jumbo">Submit</Button>

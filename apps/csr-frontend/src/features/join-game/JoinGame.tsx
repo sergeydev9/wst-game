@@ -14,11 +14,10 @@ const JoinGame: React.FC = () => {
         initialValues: {
             accessCode: ''
         },
-        // Codes should be validated here. hasn't been discussed yet though
-        // so i'm not going to implement it yet.
-        // validationSchema: Yup.object({
-        //     accessCode: Yup.string().length(6, 'Invalid game code')
-        // }),
+
+        validationSchema: Yup.object({
+            accessCode: Yup.string().length(6, 'Invalid game code')
+        }),
         onSubmit: values => {
             dispatch(initialRequest(values.accessCode))
             history.push(`/join?access_code=${values.accessCode}`)
@@ -30,7 +29,7 @@ const JoinGame: React.FC = () => {
             <Title1>Join a Game</Title1>
             <form onSubmit={formik.handleSubmit} className="flex flex-row gap-6">
                 <TextInput $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
-                <WrappedButton type="submit" color="blue" className="w-max" fontSize="label-big">Join Game</WrappedButton>
+                <WrappedButton type="submit" color="blue" className="w-max" fontSize="label-big">Join Game!</WrappedButton>
             </form>
             {formik.touched.accessCode && formik.errors.accessCode ? (<div className="text-red-light mt-2">{formik.errors.accessCode}</div>) : null}
         </section>

@@ -11,7 +11,7 @@ const SetUpGame: React.FC = () => {
     return (
         <section className="flex flex-col gap-4 items-center p-8">
             <Title1>Host a Game</Title1>
-            <WrappedButton type="button" color="blue" className="w-max" fontSize="label-big" onClick={handler}>Get Started</WrappedButton>
+            <WrappedButton type="button" color="blue" className="w-max" fontSize="label-big" onClick={handler}>Get Started!</WrappedButton>
         </section>
     )
 }
