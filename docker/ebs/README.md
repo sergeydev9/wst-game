@@ -1,0 +1,38 @@
+# Commands
+
+Prerequisite: install `awsebcli` tools.
+
+Create a new EBS app (once):
+```bash
+eb init --platform docker --profile wst-sergey --region us-east-2 --key key-sergey whosaidtrue-backend
+```
+
+Create a new environment (once):
+```bash
+eb create test-env
+```
+
+Deploy the current directory:
+```bash
+eb deploy
+```
+
+Terminate the environemnt:
+```bash
+eb terminate test-env
+```
+
+
+# Troubleshooting
+
+Error: The ECR service failed to authenticate your private repository. The deployment failed.
+Solution: Attach policy "AmazonEC2ContainerRegistryReadOnly" to the "aws-elasticbeanstalk-ec2-role" role
+
+Error: Service isn't healthy
+Solution: Edit the healthcheck ping port on the loadbalancer from 80 to 4000
+
+Error: Can't connect to API
+Solution: Ensure the loadbalancer has listeners for posts 4000 and 4001 configured instead of the default port 80.
+
+Error: Can't connect to the database
+Solution: Make sure the RDS instance is public and correct credentials are used in `.ebs.env` file
