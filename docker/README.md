@@ -42,7 +42,7 @@ Note: The postgres database will need to be setup on first run. See (apps/databa
 
 Connect to the `api` instance and execute the yarn migrate command:
 ```bash
-docker compose -f docker/docker-compose.web.yml api exec
+docker compose -f docker/docker-compose.web.yml exec api bash
 # yarn migrate-dev:up
 ```
 

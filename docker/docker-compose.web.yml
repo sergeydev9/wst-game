@@ -11,7 +11,7 @@ services:
     container_name: api
     restart: always
     env_file:
-      - ../.local.env
+      - .docker.env
     environment:
       - PORT=4200
       - POSTGRES_HOST=postgres
@@ -30,7 +30,7 @@ services:
     container_name: socket-server
     restart: always
     env_file:
-      - ../.local.env
+      - .docker.env
     environment:
       - PORT=4001
       - POSTGRES_HOST=postgres
@@ -56,9 +56,3 @@ services:
     depends_on:
       - api
       - socket-server
-
-# link to network running postgres
-networks:
-  default:
-    external: true
-    name: whosaidtrue-mono_default
