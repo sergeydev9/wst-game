@@ -25,4 +25,7 @@ export { default as DeckSet } from './lib/deck-set/DeckSet';
 export { default as Divider } from './lib/divider/Divider';
 export { default as Button } from './lib/button/Button';
 export { default as ErrorText } from './lib/error-text/ErrorText';
+export { default as DeckFilterBox } from './lib/deck-filter-box/DeckFilterBox';
+export { default as DeckFilterButton } from './lib/deck-filter-box/DeckFilterButton';
+
 export * from './lib/typography/Typography';

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { DeckSelectionResponse } from "@whosaidtrue/api-interfaces";
 import { Deck, MovieRating } from "@whosaidtrue/app-interfaces";
@@ -43,6 +43,16 @@ export const deckSelectionSlice = createSlice({
         clear: () => {
             return initialState;
         },
+        setSfw: (state, action) => {
+            state.sfwOnly = action.payload
+        },
+        removeRating: (state, action) => {
+            state.movieRatingFilters = state.movieRatingFilters.filter(rating => rating !== action.payload)
+        },
+        addRating: (state, action) => {
+            state.movieRatingFilters = [...state.movieRatingFilters, action.payload]
+        }
+
     },
     extraReducers: (builder) => {
         // success
@@ -67,20 +77,39 @@ export const deckSelectionSlice = createSlice({
 })
 
 // actions
-export const { clear } = deckSelectionSlice.actions;
+export const { clear, removeRating, addRating, setSfw } = deckSelectionSlice.actions;
 
 // selectors
-export const selectOwned = (state: RootState) => {
+export const selectMovieRatingFilters = (state: RootState) => state.deckSelection.movieRatingFilters
+export const selectSfwOnly = (state: RootState) => state.deckSelection.sfwOnly
+export const selectOwned = (state: RootState) => state.deckSelection.owned
+export const selectNotOwned = (state: RootState) => state.deckSelection.notOwned
 
-    return state.deckSelection.owned.filter(deck => {
-        return (deck.sfw === state.deckSelection.sfwOnly || deck.sfw === true) && state.deckSelection.movieRatingFilters.some(rating => rating === deck.movie_rating)
-    })
-};
-export const selectNotOwned = (state: RootState) => {
+export const movieFilteredtNotOwned = createSelector(selectNotOwned, selectMovieRatingFilters, (decks, filters) => {
+    // if no filters have been selected, return all decks
+    if (filters.length === 4) {
+        return decks
+    } else {
+        // if any filter has been selected, return only decks that match the filter
+        return decks.filter(deck => {
+            return filters.every(rating => rating !== deck.movie_rating)
+        })
+    }
 
-    return state.deckSelection.notOwned.filter(deck => {
-        return (deck.sfw === state.deckSelection.sfwOnly || deck.sfw === true) && state.deckSelection.movieRatingFilters.some(rating => rating === deck.movie_rating)
+});
+
+export const movieFilteredtOwned = createSelector(selectOwned, selectMovieRatingFilters, (decks, filters) => {
+    return decks.filter(deck => {
+        return filters.some(rating => rating === deck.movie_rating)
     })
-};
+});
+
+export const filteredNotOwned = createSelector(movieFilteredtNotOwned, selectSfwOnly, (decks, sfwOnly) => {
+    return decks.filter(deck => deck.sfw === sfwOnly || deck.sfw === true)
+})
+
+export const filteredOwned = createSelector(movieFilteredtNotOwned, selectSfwOnly, (decks, sfwOnly) => {
+    return decks.filter(deck => deck.sfw === sfwOnly || deck.sfw === true)
+})
 // default
 export default deckSelectionSlice.reducer;

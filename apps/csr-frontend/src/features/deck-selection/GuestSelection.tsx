@@ -1,28 +1,25 @@
 import { Link } from 'react-router-dom';
-import { selectNotOwned } from "./deckSelectionSlice"
+import { filteredNotOwned } from "./deckSelectionSlice"
 import { useAppSelector } from "../../app/hooks"
-import { DeckCard, DeckSet, Divider, Headline } from "@whosaidtrue/ui"
+import { DeckSet, Divider, Headline } from "@whosaidtrue/ui"
+import { cardsFromSet } from '../../util/functions';
 
 const GuestSelection: React.FC = () => {
-    const decks = useAppSelector(selectNotOwned);
+    const decks = useAppSelector(filteredNotOwned);
 
     // first 3 decks before the division line
     const topDecks = decks.slice(0, 3)
-    const topSet = topDecks.map((deck, i) => {
-        return <DeckCard key={i} name={deck.name} thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'} movieRating={deck.movie_rating} />
-    })
+    const topCards = cardsFromSet(topDecks)
 
     // rest of the decks below the line
     const bottomDecks = decks.slice(3)
-    const bottomSet = bottomDecks.map((deck, i) => {
-        return <DeckCard key={i} name={deck.name} thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'} movieRating={deck.movie_rating} />
-    })
+    const bottomCards = cardsFromSet(bottomDecks)
 
 
     return (
         <>
             <DeckSet>
-                {topSet}
+                {topCards}
             </DeckSet>
             <div className="w-2/3 lg:w-full flex flex-row place-items-center gap-4 text-white-ish h-8">
                 <Divider dividerColor='white' />
@@ -30,7 +27,7 @@ const GuestSelection: React.FC = () => {
                 <Divider dividerColor='white' />
             </div>
             <DeckSet>
-                {bottomSet}
+                {bottomCards}
             </DeckSet>
         </>
     )
