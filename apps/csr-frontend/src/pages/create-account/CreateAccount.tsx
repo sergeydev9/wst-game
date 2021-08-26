@@ -18,7 +18,7 @@ const CreateAccount: React.FC = () => {
     // render
     return (
         <Box boxstyle='white' className="w-max mx-auto px-8 py-10">
-            <AuthForm onSuccess={goHome} buttonlabel="Create Account" endpoint="/user/register" $showMinLength />
+            <AuthForm title="Create Account" onSuccess={goHome} buttonlabel="Create Account" endpoint="/user/register" $showMinLength />
             <div className="text-center text-basic-black mt-8">
                 <Headline>Already have an account?</Headline>
                 <Link onClick={close} to="/login"><Headline className="underline">Log in</Headline></Link>

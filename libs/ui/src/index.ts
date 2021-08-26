@@ -24,4 +24,5 @@ export { default as DeckCard } from './lib/deck-card/DeckCard';
 export { default as DeckSet } from './lib/deck-set/DeckSet';
 export { default as Divider } from './lib/divider/Divider';
 export { default as Button } from './lib/button/Button';
+export { default as ErrorText } from './lib/error-text/ErrorText';
 export * from './lib/typography/Typography';

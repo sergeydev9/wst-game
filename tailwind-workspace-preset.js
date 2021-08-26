@@ -73,7 +73,8 @@ module.exports = {
             'active-blue': 'inset 0px 2px #084AB8',
             'yellow': '0px 2px 0px #C17C10',
             'blue-base': '0px 2px 0px #0F69FF',
-            'blue': '0px 2px 0px #084AB8'
+            'blue': '0px 2px 0px #084AB8',
+            'error': '0px 0px 24px #F6E8E8'
         },
     },
     variants: {

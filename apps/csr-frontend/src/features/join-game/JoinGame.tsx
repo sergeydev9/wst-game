@@ -2,13 +2,14 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useHistory } from "react-router-dom";
 
-import { Title1, TextInput, Button } from '@whosaidtrue/ui';
+import { Title1, TextInput, Button, ErrorText } from '@whosaidtrue/ui';
 import { useAppDispatch } from '../../app/hooks';
 import { initialRequest } from '../game/gameSlice';
 
 const JoinGame: React.FC = () => {
     const history = useHistory();
     const dispatch = useAppDispatch();
+    const errMsg = 'Invalid game code';
 
     const formik = useFormik({
         initialValues: {
@@ -16,7 +17,7 @@ const JoinGame: React.FC = () => {
         },
 
         validationSchema: Yup.object({
-            accessCode: Yup.string().length(6, 'Invalid game code')
+            accessCode: Yup.string().length(6, errMsg).required(errMsg)
         }),
         onSubmit: values => {
             dispatch(initialRequest(values.accessCode))
@@ -24,14 +25,15 @@ const JoinGame: React.FC = () => {
         }
     })
 
+    const codeError = formik.touched.accessCode && formik.errors.accessCode ? true : false
     return (
-        <section className="text-center w-full h-full py-8 px-6">
-            <Title1 className="mb-7">Join a Game</Title1>
+        <section className="text-left w-full h-full py-8 px-6">
+            <Title1 className="mb-7 text-center">Join a Game</Title1>
             <form className="flex flex-row gap-4 items-center" onSubmit={formik.handleSubmit}>
-                <TextInput className="flex-2" $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
+                <TextInput error={codeError} className="flex-2 mb-2" $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
                 <Button type="submit" className="flex-1">Join Game!</Button>
             </form>
-            {formik.touched.accessCode && formik.errors.accessCode ? (<div className="text-red-light mt-2">{formik.errors.accessCode}</div>) : null}
+            {codeError ? (<ErrorText>{formik.errors.accessCode}</ErrorText>) : null}
         </section>
     )
 }

@@ -18,7 +18,9 @@ export interface DividerProps extends React.HtmlHTMLAttributes<React.ReactSVGEle
     dividerColor: DividerColors
 }
 
+// Firefox will throw a warning about SVGs with rem dimensions.
+// This warning can be ignored. It still looks fine.
 const Divider: React.FC<DividerProps> = ({ dividerColor }) => {
-    return dividerColor === 'white' ? <WhiteDivider /> : <GreyDivider />
+    return dividerColor === 'white' ? <WhiteDivider width="16rem" height="16rem" /> : <GreyDivider width="4rem" height="4rem" />
 }
 export default Divider;

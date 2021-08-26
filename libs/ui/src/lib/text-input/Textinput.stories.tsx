@@ -10,6 +10,11 @@ export default {
             type: 'boolean',
             default: true
 
+        },
+        error: {
+            name: 'error',
+            type: 'boolean',
+            default: false
         }
     }
 } as Meta;
@@ -18,5 +23,6 @@ export default {
 export const TextInput: Story<TextInputProps> = (args) => <div className="w-56"><Input {...args} type="text" placeholder="4 letter game code" /></div>
 
 TextInput.args = {
-    $border: true
+    $border: true,
+    error: false
 }
