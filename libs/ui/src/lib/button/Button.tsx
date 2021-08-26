@@ -17,18 +17,21 @@ export interface BgProps {
 }
 
 // A div used to wrap around buttons that have a border effect. Defaults to blue.
-const Bg = tw.button<BgProps>`
-    box-border
-    flex
-    flex-col
-    justify-center
-    content-center
+const Bg = tw.div<BgProps>`
     bg-gradient-to-b
-    w-max
     rounded-full
-    ${(p) => (p.btncolor === 'yellow' ? `active: from-yellow-base active:to-yellow-base active:shadow-active-yellow to-yellow-gradient-to
-                                         from-yellow-gradient-from
-                                         shadow-yellow` : `to-blue-gradient-to from-blue-gradient-from active:shadow-none active:to-blue-base active:from-blue-base active:shadow-active-blue`
+    ${(p) => (p.btncolor === 'yellow' ? `active:from-yellow-base
+    active:to-yellow-base
+    active:shadow-active-yellow
+    to-yellow-gradient-to
+    from-yellow-gradient-from
+    shadow-yellow` : `shadow-blue
+    to-blue-gradient-to
+    from-blue-gradient-from
+    active:shadow-none
+    active:to-blue-base
+    active:from-blue-base
+    active:shadow-active-blue`
     )}
 `
 
@@ -43,7 +46,7 @@ const DefaultButton = tw.button<ChildProps>`
     active:bg-blue-base
     ${(p) => (p.$secondary ?
         `border-2 border-blue-base text-blue-base bg-white hover:bg-blue-subtle active:text-white` :
-        `text-white bg-blue-base hover:bg-blue-light`
+        `text-white bg-blue-base hover:bg-blue-light w-p99`
     )}
 `;
 
@@ -58,7 +61,7 @@ const BigTextButton = tw.button<ChildProps>`
     active:bg-blue-base
     ${(p) => (p.$secondary ?
         `border-2 border-blue-base text-blue-base bg-white shadow-blue-base active:text-white` :
-        `text-white bg-blue-base hover:bg-blue-light`
+        `text-white bg-blue-base hover:bg-blue-light w-p99`
     )}
 `;
 
@@ -91,20 +94,20 @@ const InlineButton = tw.button<ChildProps>`
 
 
 
-const Button: React.FC<ButtonProps> = ({ buttonStyle, $secondary, children }) => {
+const Button: React.FC<ButtonProps> = ({ buttonStyle, $secondary, children, ...rest }) => {
 
     switch (buttonStyle) {
         case 'big-text':
             return ($secondary ?
                 <BigTextButton $secondary>{children}</BigTextButton> :
                 <Bg btncolor="blue">
-                    <BigTextButton style={{ textShadow: '0px 1px 0px #084AB8' }}>{children}</BigTextButton>
+                    <BigTextButton  {...rest} style={{ textShadow: '0px 1px 0px #084AB8' }}>{children}</BigTextButton>
                 </Bg>
             )
         case 'small':
             return ($secondary ?
-                <Bg btncolor="yellow"><SmallButton $secondary>{children}</SmallButton></Bg> :
-                <Bg btncolor="blue"><SmallButton style={{ textShadow: '0px 1px 0px #084AB8' }}>{children}</SmallButton></Bg>
+                <Bg btncolor="yellow"><SmallButton $secondary  {...rest} >{children}</SmallButton></Bg> :
+                <Bg btncolor="blue"><SmallButton style={{ textShadow: '0px 1px 0px #084AB8' }}  {...rest}>{children}</SmallButton></Bg>
             )
         case 'inline':
             return ($secondary ?
@@ -115,7 +118,7 @@ const Button: React.FC<ButtonProps> = ({ buttonStyle, $secondary, children }) =>
             return ($secondary ?
                 <DefaultButton $secondary>{children}</DefaultButton> :
                 <Bg btncolor="blue">
-                    <DefaultButton style={{ textShadow: '0px 1px 0px #084AB8' }}>{children}</DefaultButton>
+                    <DefaultButton style={{ textShadow: '0px 1px 0px #084AB8' }}  {...rest}>{children}</DefaultButton>
                 </Bg >
             )
     }

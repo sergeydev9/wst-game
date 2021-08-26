@@ -4,6 +4,10 @@ module.exports = {
             margin: {
                 'btn': '0.1rem'
             },
+            width: {
+                'p99': '99%' // custom width for buttons. Full width breaks the style.
+            },
+
             fontSize: {
                 'large-title': ['42px', { letterSpacing: '-0.02em', lineHeight: '48px' }],
                 'title-1': ['32px', { letterSpacing: '-0.02em', lineHeight: '40px' }],
