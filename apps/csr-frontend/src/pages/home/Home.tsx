@@ -26,41 +26,40 @@ const Home: React.FC = () => {
     )
   })
   return (
-    <div className="flex flex-col gap-16 items-center container mx-auto md:px-32">
+    <div className="grid grid-cols-6 gap-y-16 gap-x-8 items-center container mx-auto px-4 md:px-24">
 
       {/* logo group */}
-      <div className="flex flex-row place-items-center">
-        <Logo className="flex-auto h-72 w-72" />
-        <div className="flex flex-col gap-4 md:place-items-center text-center flex-auto">
-          <LargeTitle className="text-true-white">Can you guess how many of your friends...</LargeTitle>
-          <Box boxstyle='white' className="py-6 px-12" $dropShadow><Title1 className="text-purple-base">binge watched an entire season of a show in a weekend?</Title1></Box>
-        </div>
+      <Logo className="col-span-6 lg:col-span-2 row-span-1 lg:w-full lg:h-full" />
+      <div className="row-span-1 col-span-6 lg:col-span-4 text-center">
+        <LargeTitle className="text-true-white mb-8">Can you guess how many of your friends...</LargeTitle>
+        <Box boxstyle='white' className="py-6 px-12" $dropShadow><Title1 className="text-purple-base">binge watched an entire season of a show in a weekend?</Title1></Box>
       </div>
+
 
       {/* create/join game group */}
-      <div className="flex flex-row gap-8 px-18 justify-center w-full">
-        <Box boxstyle='white' className='w-1/2'>
-          <JoinGame />
-        </Box>
-        <Box boxstyle='white' className='w-1/2'>
-          <SetUpGame />
-        </Box>
-      </div>
+      <Box boxstyle='white' className="row-span-1 col-span-6 lg:col-span-3">
+        <JoinGame />
+      </Box>
+      <Box boxstyle='white' className="row-span-1 col-span-6 lg:col-span-3">
+        <SetUpGame />
+      </Box>
 
       {/* overheard */}
-      <div className="w-max">
+      <div className="row-span-1 col-span-6  lg:col-span-4 lg:col-start-2">
         <Carousel title={'Overheard on Who said true?'}>
           {helper(tempStories)}
         </Carousel>
       </div>
 
+
       {/* faq */}
-      <div className="flex flex-col gap-6">
-        <LargeTitle className="text-true-white self-center">Frequently Asked Questions</LargeTitle>
+      <div className="row-span-1 col-span-6 lg:col-span-4 lg:col-start-2 text-center flex flex-col gap-4 w-full justify-self-center">
+        <LargeTitle className="text-true-white mb-8 ">Frequently Asked Questions</LargeTitle>
         <FaqCarousel question="How many questions are in a question deck?" answer="9" />
         <FaqCarousel question="Is Who said true appropriate for all ages?" answer="no" />
         <FaqCarousel question="How many licks does it take to get to the center of a tootsie pop?" answer="a lot..." />
       </div>
+
 
     </div>
 

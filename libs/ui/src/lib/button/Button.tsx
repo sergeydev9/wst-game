@@ -25,7 +25,8 @@ const Bg = tw.div<BgProps>`
     active:shadow-active-yellow
     to-yellow-gradient-to
     from-yellow-gradient-from
-    shadow-yellow` : `shadow-blue
+    shadow-yellow` :
+        `shadow-blue
     to-blue-gradient-to
     from-blue-gradient-from
     active:shadow-none

@@ -25,11 +25,11 @@ const JoinGame: React.FC = () => {
     })
 
     return (
-        <section className="flex flex-col gap-4 items-center p-8">
-            <Title1>Join a Game</Title1>
-            <form onSubmit={formik.handleSubmit} className="flex flex-row gap-6">
-                <TextInput $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
-                <Button type="submit" className="w-max">Join Game!</Button>
+        <section className="text-center w-full h-full py-8 px-6">
+            <Title1 className="mb-7">Join a Game</Title1>
+            <form className="flex flex-row gap-4 items-center" onSubmit={formik.handleSubmit}>
+                <TextInput className="flex-2" $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
+                <Button type="submit" className="flex-1">Join Game!</Button>
             </form>
             {formik.touched.accessCode && formik.errors.accessCode ? (<div className="text-red-light mt-2">{formik.errors.accessCode}</div>) : null}
         </section>

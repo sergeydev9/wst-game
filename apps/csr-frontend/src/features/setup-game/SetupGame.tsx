@@ -9,9 +9,11 @@ const SetUpGame: React.FC = () => {
         history.push('/decks')
     }
     return (
-        <section className="flex flex-col gap-4 items-center p-8">
-            <Title1>Host a Game</Title1>
-            <Button type="button" className="w-max" onClick={handler}>Get Started!</Button>
+        <section className="text-center w-full h-full py-8 px-6">
+            <Title1 className="mb-7">Host a Game</Title1>
+            <div className="flex justify-center">
+                <Button type="button" onClick={handler}>Get Started!</Button>
+            </div>
         </section>
     )
 }
