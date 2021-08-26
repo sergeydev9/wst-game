@@ -1,39 +1,43 @@
-import { Carousel } from "react-responsive-carousel"
+import { useState } from 'react';
 import { FaAngleRight } from '@react-icons/all-files/fa/FaAngleRight';
 import { Title3 } from '../typography/Typography';
 import Box from '../box/Box';
-import { IRenderArrow } from "@whosaidtrue/app-interfaces";
+import React from 'react';
 
 export interface FaqProps {
     question: string,
     answer: string
 }
 
-// use inline css for more fine grained control than tailwind provides.
-const arrowStyles: React.CSSProperties = {
-    zIndex: 2,
-    width: 15,
-};
 
-
-const next: IRenderArrow = (clickHandler, hasNext, label) => hasNext && (
-    <FaAngleRight onClick={clickHandler} title={label} style={{ ...arrowStyles }} className='h-full w-full absolute top-0 right-0 text-xl cursor-pointer hover:text-basic-gray' />
-)
 
 const Faq: React.FC<FaqProps> = ({ question, answer }) => {
-    return (
-        <Box boxstyle="white" className="text-basic-black py-6 px-4">
-            <Carousel
-                className="leading-7 text-body-small font-semibold"
-                showStatus={false}
-                showIndicators={false}
-                showThumbs={false}
-                renderArrowPrev={() => undefined}
-                renderArrowNext={next}
-            >
-                {[<Title3 className="mr-4" key={1}>{question}</Title3>, <Title3 className="mr-4" key={2}>{answer}</Title3>]}
-            </Carousel>
+    const [open, setOpen] = useState(false)
 
+    const clickHandler = (e: React.MouseEvent) => {
+        setOpen(!open)
+    }
+
+    return (
+        <Box boxstyle="white" className='text-basic-black py-6 px-16 relative'>
+            <Title3 className="bg-white-ish z-10">{question}</Title3>
+            <FaAngleRight onClick={clickHandler} className={`
+            top-5
+            right-5
+            absolute
+            text-3xl
+            ${open ? 'transition duration-100 transform rotate-90' : 'transition duration-100 transform rotate-0'}
+            cursor-pointer
+            hover:text-basic-gray
+            motion-reduce:transition-none
+            motion-reduce:transform-none`} />
+            <Title3 className={`
+            pt-5
+            transition-display
+            motion-reduce:transition-none
+            motion-reduce:transform-none
+            ${open ? 'block' : 'hidden'}
+            `}>{answer}</Title3>
         </Box>
     )
 }

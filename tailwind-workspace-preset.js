@@ -4,6 +4,13 @@ module.exports = {
             flex: {
                 '2': '2 2 0%',
             },
+            transitionProperty: {
+                'display': 'display',
+                'height':'height'
+            },
+            translate: {
+                'extra': '-115%'
+            },
 
             margin: {
                 'btn': '0.1rem'
@@ -80,7 +87,6 @@ module.exports = {
     variants: {
         extend: {
             boxShadow: ['active'],
-            margin: ['active'],
             textColor:['active'],
             backgroundColor: ['checked', 'active'],
             borderColor: ['checked', 'active'],
@@ -90,7 +96,8 @@ module.exports = {
             ringWidth: ['checked'],
             ringColor: ['checked'],
             ringOpacity: ['checked'],
-            padding: ['checked', 'active']
+            padding: ['checked', 'active'],
+            transitionProperty: ['focus', 'responsive', 'motion-safe', 'motion-reduce']
         }
 
     },
