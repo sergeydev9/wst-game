@@ -6,6 +6,11 @@ export interface TokenPayload {
   roles: string[];
 }
 
+export interface ChangePassRequest {
+  oldPass: string;
+  newPass: string;
+}
+
 export interface AuthenticationResponse {
   token: string;
 }

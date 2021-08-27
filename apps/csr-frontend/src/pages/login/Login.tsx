@@ -16,13 +16,13 @@ const Login: React.FC = () => {
 
     // render
     return (
-        <Box boxstyle='white' className="w-max mx-auto px-8 py-10">
+        <div className="px-8 w-96  mx-12 py-10">
             <AuthForm onSuccess={goHome} endpoint="/user/login" buttonlabel="login" title="Login" />
             <div className="text-center text-basic-black mt-8">
                 <Headline>Don't have an account?</Headline>
                 <Link onClick={close} to="/create-account"><Headline className="underline">Create Account</Headline></Link>
             </div>
-        </Box>
+        </div>
 
     )
 }

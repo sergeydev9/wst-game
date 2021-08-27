@@ -7,7 +7,7 @@
  * @return {*}
  */
 const FormGroup: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = ({ children }) => {
-    return <div className="text-left">{children}</div>
+    return <div className="text-left mb-4">{children}</div>
 }
 
 export default FormGroup;

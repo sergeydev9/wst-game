@@ -5,11 +5,13 @@ import { clearError } from "../auth/authSlice";
 export interface ModalState {
     login: boolean;
     createAcc: boolean;
+    changePass: boolean;
 }
 
 export const initialState: ModalState = {
     login: false,
-    createAcc: false
+    createAcc: false,
+    changePass: false,
 }
 
 /**
@@ -40,13 +42,17 @@ export const modalSlice = createSlice({
         },
         openCreateAcc: (state) => {
             state.createAcc = true
+        },
+        openChangePass: (state) => {
+            state.changePass = true
         }
+
     }
 })
 
-export const { closeModals, openLogin, openCreateAcc } = modalSlice.actions
-
+export const { closeModals, openLogin, openCreateAcc, openChangePass } = modalSlice.actions
 export const selectLoginOpen = (state: RootState) => state.modals.login;
 export const selectCreateAcc = (state: RootState) => state.modals.createAcc;
+export const selectChangePass = (state: RootState) => state.modals.changePass
 
 export default modalSlice.reducer

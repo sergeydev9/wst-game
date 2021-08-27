@@ -10,7 +10,7 @@ import {
     updateAccount,
     selectUpdateError,
     logout,
-    selectDetailsError
+    ChangePassword
 } from '../../features';
 import {
     Form,
@@ -21,16 +21,18 @@ import {
     Headline,
     ErrorText,
     InputLabel,
-    Box
+    Box,
+    Modal
 } from "@whosaidtrue/ui";
+import { selectChangePass, openChangePass, closeModals } from '../../features/modal/modalSlice';
 
 const MyAccount: React.FC = () => {
     const history = useHistory()
     const dispatch = useAppDispatch();
     const deckCredits = useAppSelector(selectDeckCredits)
     const email = useAppSelector(selectEmail)
-    const detailsError = useAppSelector(selectDetailsError)
     const updateError = useAppSelector(selectUpdateError)
+    const changePassOpen = useAppSelector(selectChangePass)
 
     useEffect(() => {
         dispatch(fetchDetails())
@@ -62,7 +64,6 @@ const MyAccount: React.FC = () => {
 
             {/* Error */}
             {updateError && <ErrorText>{updateError}</ErrorText>}
-            {detailsError && <ErrorText>{detailsError}</ErrorText>}
             <Form onSubmit={formik.handleSubmit}>
 
                 {/* email */}
@@ -73,7 +74,7 @@ const MyAccount: React.FC = () => {
                 </FormGroup>
 
                 {/* Change Password */}
-                <Headline className="text-left underline text-basic-gray cursor-pointer">Change Password</Headline>
+                <Headline className="text-left underline text-basic-gray cursor-pointer" onClick={() => dispatch(openChangePass())}>Change Password</Headline>
 
                 {/* Deck Credits */}
                 <Headline className="text-basic-black text-left">Free Question Deck Credits: {deckCredits}</Headline>
@@ -84,9 +85,11 @@ const MyAccount: React.FC = () => {
                     <Headline className="underline text-basic-black cursor-pointer" onClick={() => history.go(-1)}>Cancel</Headline>
                 </div>
                 <h4 className="text-off-blue cursor-pointer border-b-2 border-off-blue w-max mx-auto text-xl tracking-wide font-bold leading-relaxed" onClick={logOutClick}>Log Out</h4>
-
             </Form>
-        </Box>
+            <Modal isOpen={changePassOpen} onRequestClose={() => dispatch(closeModals())}>
+                <ChangePassword />
+            </Modal>
+        </Box >
 
     )
 }

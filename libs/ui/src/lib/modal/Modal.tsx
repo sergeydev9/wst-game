@@ -10,7 +10,9 @@ const modalStyles = {
         height: 'min-content',
         width: 'min-content',
         padding: 0,
-        borderRadius: '1.5rem'
+        borderRadius: '1.5rem',
+        maxWidth: '42rem',
+        backgroundColor: '#FBFBFE'
     }
 }
 
@@ -25,7 +27,7 @@ export interface ModalProps extends Modal.Props {
 const WstModal: React.FC<ModalProps> = ({ children, onRequestClose, ...rest }) => {
     return (
         <Modal overlayClassName={overlayClassName} {...rest} style={modalStyles} >
-            <GrFormClose className="absolute right-8 top-11 text-5xl font-black cursor-pointer" onClick={onRequestClose} />
+            <GrFormClose className="absolute right-8 top-11 text-4xl font-black cursor-pointer" onClick={onRequestClose} />
             {children}
         </Modal>
     )

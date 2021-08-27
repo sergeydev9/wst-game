@@ -20,7 +20,9 @@ export {
   openLogin,
   openCreateAcc,
   selectCreateAcc,
-  selectLoginOpen
+  selectLoginOpen,
+  selectChangePass,
+  openChangePass
 } from './modal/modalSlice';
 export {
   default as gameReducer,
@@ -36,5 +38,6 @@ export {
   default as deckSelectionReducer,
 } from './deck-selection/deckSelectionSlice';
 export { default as AuthForm } from './auth/AuthForm';
+export { default as ChangePassword } from './change-password/ChangePassword';
 
 export * from './choose-name/chooseNameSlice';

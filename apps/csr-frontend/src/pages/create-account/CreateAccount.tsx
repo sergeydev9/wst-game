@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
 import { closeModalsThunk } from '../../features';
 import { AuthForm } from '../../features';
-import { Box, Headline } from "@whosaidtrue/ui";
+import { Headline } from "@whosaidtrue/ui";
 
 const CreateAccount: React.FC = () => {
     const history = useHistory();
@@ -17,13 +17,13 @@ const CreateAccount: React.FC = () => {
 
     // render
     return (
-        <Box boxstyle='white' className="w-max mx-auto px-8 py-10">
+        <div className="px-8 w-96  mx-12 py-10">
             <AuthForm title="Create Account" onSuccess={goHome} buttonlabel="Create Account" endpoint="/user/register" $showMinLength />
             <div className="text-center text-basic-black mt-8">
                 <Headline>Already have an account?</Headline>
                 <Link onClick={close} to="/login"><Headline className="underline">Log in</Headline></Link>
             </div>
-        </Box >
+        </div >
 
     )
 }

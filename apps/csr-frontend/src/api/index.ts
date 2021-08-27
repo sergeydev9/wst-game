@@ -5,5 +5,10 @@ import { RootState } from '../app/store';
 export const api = axios.create({
     baseURL: 'http://localhost:3000',
     timeout: 1500,
-    headers: { 'Authorization': `Bearer ${localStorage.getItem('wstState') ? (JSON.parse(localStorage.getItem('wstState') as string) as RootState).auth.token : ''}` }
+})
+
+api.interceptors.request.use(config => {
+    const token = localStorage.getItem('wstState') ? (JSON.parse(localStorage.getItem('wstState') as string) as RootState).auth.token : ''
+    config.headers.Authorization = `Bearer ${token}`;
+    return config;
 })
