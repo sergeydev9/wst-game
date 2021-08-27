@@ -16,7 +16,7 @@ const ContactUs: React.FC = () => {
         e.preventDefault();
     }
     return (
-        <Box boxstyle='white' className="w-max mx-auto px-8 py-10">
+        <Box boxstyle='white' className="w-max mx-auto px-8 py-10 filter drop-shadow-card">
             <Form onSubmit={submitHandler}>
                 {/* title */}
                 <FormGroup>

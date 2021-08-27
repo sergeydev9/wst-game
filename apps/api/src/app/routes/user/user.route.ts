@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express';
-import { validateAuth, validateReset } from '@whosaidtrue/validation';
+import { validateAuth, validateReset, validateUserUpdate } from '@whosaidtrue/validation';
 import { passport } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { signUserPayload } from '@whosaidtrue/middleware';
 import { logger } from '@whosaidtrue/logger';
 import { users } from '../../db';
-import { AccountDetailsResponse, TokenPayload } from '@whosaidtrue/api-interfaces';
+import { AccountDetailsResponse, TokenPayload, UpdateDetailsResponse } from '@whosaidtrue/api-interfaces';
 
 const router = Router();
 
@@ -88,21 +88,29 @@ router.get('/details', passport.authenticate('jwt', { session: false }), async (
 })
 
 
-// TODO: sort out what the user can update on their profile.
 /**
  * Update user profile
  */
-// router.patch('/update', passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
-
-// })
+router.patch('/update', [...validateUserUpdate], passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
+    const { id } = req.user as TokenPayload;
+    const { email } = req.body;
+    try {
+        const { rows } = await users.updateDetails(id, { email });
+        const response: UpdateDetailsResponse = { email: rows[0].email }
+        res.status(200).json(response)
+    } catch (e) {
+        logger.error(e)
+        res.status(500).send(ERROR_MESSAGES.unexpected)
+    }
+})
 
 
 /**
  * Send a reset token to user email
  */
-router.patch('/send-reset', [...validateReset], async (req: Request, res: Response) => {
-    // TODO: implement reset tokens.
-})
+// router.patch('/send-reset', [...validateReset], async (req: Request, res: Response) => {
+// TODO: implement reset tokens.
+// })
 
 
 /**
@@ -110,25 +118,25 @@ router.patch('/send-reset', [...validateReset], async (req: Request, res: Respon
  *
  * Account ID is taken from JWT payload.
  */
-router.delete('/delete', passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
-    try {
-        // get user id from token
-        const { id } = req.user as TokenPayload
-        const { rows } = await users.deleteById(id)
+// router.delete('/delete', passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
+//     try {
+//         // get user id from token
+//         const { id } = req.user as TokenPayload
+//         const { rows } = await users.deleteById(id)
 
-        // if account deleted, count will be 1
-        if (rows[0].count === 1) {
-            res.status(204).send();
-        } else {
-            // This shouldn't be possible, but just in case...
-            logger.error(`a deleteById request for user with id ${id} returned count ${rows[0].count}. This shouldn't happen.`)
-            res.status(500).send("Unable to delete account")
-        }
-    } catch (e) {
-        logger.error(e)
-        res.status(500).send(ERROR_MESSAGES.unexpected)
-    }
-})
+//         // if account deleted, count will be 1
+//         if (rows[0].count === 1) {
+//             res.status(204).send();
+//         } else {
+//             // This shouldn't be possible, but just in case...
+//             logger.error(`a deleteById request for user with id ${id} returned count ${rows[0].count}. This shouldn't happen.`)
+//             res.status(500).send("Unable to delete account")
+//         }
+//     } catch (e) {
+//         logger.error(e)
+//         res.status(500).send(ERROR_MESSAGES.unexpected)
+//     }
+// })
 
 
 export default router;

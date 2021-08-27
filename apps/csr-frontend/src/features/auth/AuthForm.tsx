@@ -65,8 +65,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
             }
         },
     });
-    const emailErr = formik.touched.email && formik.errors.email ? true : false;
-    const pwErr = formik.touched.password && formik.errors.password ? true : false;
+    const emailErr = formik.touched.email && formik.errors.email ? true : undefined;
+    const pwErr = formik.touched.password && formik.errors.password ? true : undefined;
     // render
     return (
         <Form onSubmit={formik.handleSubmit}>

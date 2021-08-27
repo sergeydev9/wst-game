@@ -108,7 +108,7 @@ export const filteredNotOwned = createSelector(movieFilteredtNotOwned, selectSfw
     return decks.filter(deck => deck.sfw === sfwOnly || deck.sfw === true)
 })
 
-export const filteredOwned = createSelector(movieFilteredtNotOwned, selectSfwOnly, (decks, sfwOnly) => {
+export const filteredOwned = createSelector(movieFilteredtOwned, selectSfwOnly, (decks, sfwOnly) => {
     return decks.filter(deck => deck.sfw === sfwOnly || deck.sfw === true)
 })
 // default

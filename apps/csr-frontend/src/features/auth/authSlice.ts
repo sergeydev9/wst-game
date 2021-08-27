@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { useAppDispatch } from "../../app/hooks";
+import axios, { AxiosError } from 'axios';
 import { RootState } from "../../app/store";
+import { api } from '../../api';
 
 export interface AuthState {
   loggedIn: boolean;
@@ -8,7 +9,14 @@ export interface AuthState {
   id: number;
   email: string;
   roles: string[];
+  deckCredits: number;
   authError: string;
+  fetchDetailsError: string;
+  updateError: string;
+}
+
+export interface UserDetailsUpdate {
+  email: string;
 }
 
 export interface logInProps {
@@ -28,8 +36,11 @@ export const initialState: AuthState = {
   roles: [],
   token: '',
   id: 0,
+  deckCredits: 0,
   email: '',
-  authError: ''
+  authError: '',
+  fetchDetailsError: '',
+  updateError: ''
 };
 
 export const setErrorThunk = createAsyncThunk("auth/setErrorThunk",
@@ -40,6 +51,29 @@ export const setErrorThunk = createAsyncThunk("auth/setErrorThunk",
     //clear error after 5 seconds
     setTimeout(() => thunkAPI.dispatch(clearError()), 2000)
 
+  }
+)
+
+// TODO: use details endpoint to retrieve notifications when that feature gets added.
+export const fetchDetails = createAsyncThunk('auth/fetchDetails',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/user/details')
+      return response.data
+    } catch (e) {
+      return rejectWithValue(e.response.data)
+    }
+  }
+)
+
+export const updateAccount = createAsyncThunk<UserDetailsUpdate, { email: string }>('auth/updateAccount',
+  async ({ email }, { rejectWithValue }) => {
+    try {
+      const response = await (await api.patch('/user/update', { email })).headers
+      return response.data
+    } catch (e) {
+      return rejectWithValue(e.response.data)
+    }
   }
 )
 
@@ -62,10 +96,36 @@ export const authSlice = createSlice({
       state.authError = action.payload
     },
     clearError: (state) => {
-      state.authError = ''
+      state.authError = '';
+      state.fetchDetailsError = '';
+      state.updateError = ''
     }
-
   },
+
+  extraReducers: (builder) => {
+    builder.addCase(fetchDetails.fulfilled, (state, action) => {
+      state.deckCredits = action.payload.question_deck_credits;
+    })
+    builder.addCase(fetchDetails.rejected, (state, action) => {
+      state.deckCredits = 0;
+      if (axios.isAxiosError(action.payload)) {
+        state.fetchDetailsError = action.payload.message
+      } else {
+        state.fetchDetailsError = 'Unknown Error'
+      }
+    })
+
+    builder.addCase(updateAccount.fulfilled, (state, action) => {
+      state.email = action.payload.email
+    })
+    builder.addCase(updateAccount.rejected, (state, action) => {
+      if (axios.isAxiosError(action.payload)) {
+        state.updateError = action.payload.message
+      } else {
+        state.updateError = 'Unknown Error'
+      }
+    })
+  }
 });
 
 export const { login, logout, setError, clearError } = authSlice.actions;
@@ -75,6 +135,10 @@ export const { login, logout, setError, clearError } = authSlice.actions;
 
 export const selectAuthToken = (state: RootState) => state.auth.token;
 export const isLoggedIn = (state: RootState) => state.auth.loggedIn;
+export const selectDeckCredits = (state: RootState) => state.auth.deckCredits;
+export const selectEmail = (state: RootState) => state.auth.email;
 export const selectAuthError = (state: RootState) => state.auth.authError;
+export const selectDetailsError = (state: RootState) => state.auth.fetchDetailsError;
+export const selectUpdateError = (state: RootState) => state.auth.updateError;
 
 export default authSlice.reducer;

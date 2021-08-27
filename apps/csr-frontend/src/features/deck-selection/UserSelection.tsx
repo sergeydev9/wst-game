@@ -10,9 +10,10 @@ const UserSelection: React.FC = () => {
     const ownedCards = cardsFromSet(owned)
     const notOwnedCards = cardsFromSet(notOwned)
 
+    // If user doesn't own anything, don't show 'My Decks' section.
     return (
         <>
-            {owned.length && (
+            {owned.length > 0 && (
                 <>
                     <Title2 className="text-true-white">My Decks</Title2>
                     <DeckSet>
@@ -20,7 +21,7 @@ const UserSelection: React.FC = () => {
                     </DeckSet>
                 </>
             )}
-            <Title2>More Decks</Title2>
+            <Title2 className="text-true-white">{owned.length > 0 ? 'More ' : ''}Decks</Title2>
             <DeckSet>
                 {notOwnedCards}
             </DeckSet>

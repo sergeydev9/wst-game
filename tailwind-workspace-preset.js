@@ -48,6 +48,7 @@ module.exports = {
                 'blue-base': '#0F69FF',
                 'blue-light': '#4785EB',
                 'blue-subtle': '#EDF3FC',
+                'off-blue': '#5D5FEF',
                 'white-ish': '#FBFBFE',
                 'true-white': '#FFFFFF',
                 'basic-black': '#190136',

@@ -1,3 +1,4 @@
+import { UserDetailsUpdate } from '@whosaidtrue/app-interfaces';
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
 
@@ -43,7 +44,18 @@ class Users extends Dao {
 
     public async updateEmail(id: number, email: string): Promise<QueryResult> {
         const query = {
-            text: 'UPDATE users SET email = $1 WHERE id = $2',
+            text: 'UPDATE users SET email = $1 WHERE id = $2 RETURNING email',
+            values: [email, id]
+        };
+        return this._pool.query(query)
+
+    }
+
+    // TODO: add notifications to this when that feature is rolled out.
+    public async updateDetails(id: number, update: UserDetailsUpdate): Promise<QueryResult> {
+        const { email } = update
+        const query = {
+            text: 'UPDATE users SET email = $1 WHERE id = $2 RETURNING email',
             values: [email, id]
         };
         return this._pool.query(query)

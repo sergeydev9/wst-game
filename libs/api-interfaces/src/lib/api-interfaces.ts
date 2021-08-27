@@ -23,8 +23,12 @@ export interface AccountDetailsResponse {
   question_deck_credits: number
 }
 
-export interface UpdateAccountRequest {
-  notifications: boolean
+export interface UpdateDetailsRequest {
+  email: string
+}
+
+export interface UpdateDetailsResponse {
+  email: string
 }
 
 export interface NameObject {

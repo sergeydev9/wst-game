@@ -8,6 +8,8 @@ import CreateAccount from '../pages/create-account/CreateAccount';
 import ChooseName from "../features/choose-name/ChooseName";
 import Login from '../pages/login/Login';
 import DeckSelection from '../features/deck-selection/DeckSelection';
+import MyAccount from '../pages/my-account/MyAccount';
+import { GuardedRoute } from "../features";
 
 const App: React.FC = () => {
   return (
@@ -33,6 +35,7 @@ const App: React.FC = () => {
           <Route exact path='/decks'>
             <DeckSelection />
           </Route>
+          <GuardedRoute component={MyAccount} path='/account' exact />
         </Switch>
       </Layout>
     </BrowserRouter>

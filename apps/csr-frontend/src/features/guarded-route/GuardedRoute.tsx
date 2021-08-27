@@ -15,8 +15,8 @@ export interface GuardedRouteProps {
  * page if the user is not logged in. Use this
  * for any user-only pages.
  *
- * @param {*} { component, path, exact }
- * @return {*}
+ * @param {GuradedRouteProps} { component, path, exact }
+ * @return {React.FC}
  */
 const GuardedRoute: React.FC<GuardedRouteProps> = ({
   component,

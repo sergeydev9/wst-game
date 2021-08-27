@@ -210,49 +210,49 @@ describe('/user routes', () => {
         })
     })
 
-    describe('[DELETE] /delete', () => {
+    // describe('[DELETE] /delete', () => {
 
-        it('should return 204 if successful', (done) => {
-            mockedUsers.deleteById.mockResolvedValue({ rows: [{ count: 1 }] } as QueryResult)
-            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
-            supertest(app)
-                .delete('/user/delete')
-                .set('Authorization', `Bearer ${token}`)
-                .expect(204, done)
-        })
+    //     it('should return 204 if successful', (done) => {
+    //         mockedUsers.deleteById.mockResolvedValue({ rows: [{ count: 1 }] } as QueryResult)
+    //         const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+    //         supertest(app)
+    //             .delete('/user/delete')
+    //             .set('Authorization', `Bearer ${token}`)
+    //             .expect(204, done)
+    //     })
 
-        it('should return 500 if count is 0', (done) => {
-            mockedUsers.deleteById.mockResolvedValue({ rows: [{ count: 0 }] } as QueryResult)
-            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
-            supertest(app)
-                .delete('/user/delete')
-                .set('Authorization', `Bearer ${token}`)
-                .expect(500, done)
-        })
+    //     it('should return 500 if count is 0', (done) => {
+    //         mockedUsers.deleteById.mockResolvedValue({ rows: [{ count: 0 }] } as QueryResult)
+    //         const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+    //         supertest(app)
+    //             .delete('/user/delete')
+    //             .set('Authorization', `Bearer ${token}`)
+    //             .expect(500, done)
+    //     })
 
-        it('should return 500 if DB request throws', (done) => {
-            mockedUsers.deleteById.mockRejectedValue('error')
-            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
-            supertest(app)
-                .delete('/user/delete')
-                .set('Authorization', `Bearer ${token}`)
-                .expect(500, done)
-        })
+    //     it('should return 500 if DB request throws', (done) => {
+    //         mockedUsers.deleteById.mockRejectedValue('error')
+    //         const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+    //         supertest(app)
+    //             .delete('/user/delete')
+    //             .set('Authorization', `Bearer ${token}`)
+    //             .expect(500, done)
+    //     })
 
-        it('should return 401 if no auth header is set', (done) => {
-            supertest(app)
-                .delete('/user/delete')
-                .expect(401, done)
-        })
+    //     it('should return 401 if no auth header is set', (done) => {
+    //         supertest(app)
+    //             .delete('/user/delete')
+    //             .expect(401, done)
+    //     })
 
-        it('should return 401 if auth token is invalid', (done) => {
-            const token = jwt.sign('test', 'bad token')
-            supertest(app)
-                .delete('/user/delete')
-                .set('Authorization', `Bearer ${token}`)
-                .expect(401, done)
-        })
-    })
+    //     it('should return 401 if auth token is invalid', (done) => {
+    //         const token = jwt.sign('test', 'bad token')
+    //         supertest(app)
+    //             .delete('/user/delete')
+    //             .set('Authorization', `Bearer ${token}`)
+    //             .expect(401, done)
+    //     })
+    // })
 
     describe('[GET] /details', () => {
 

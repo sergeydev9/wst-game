@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router";
 
 import { Title1, TextInput, Button, ErrorText } from '@whosaidtrue/ui';
 import { useAppDispatch } from '../../app/hooks';
@@ -25,7 +25,7 @@ const JoinGame: React.FC = () => {
         }
     })
 
-    const codeError = formik.touched.accessCode && formik.errors.accessCode ? true : false
+    const codeError = formik.touched.accessCode && formik.errors.accessCode ? true : undefined
     return (
         <section className="text-left w-full h-full py-8 px-6">
             <Title1 className="mb-7 text-center">Join a Game</Title1>

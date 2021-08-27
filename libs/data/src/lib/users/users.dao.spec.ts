@@ -21,6 +21,21 @@ describe('Users', () => {
         pool.end()
     })
 
+    describe('updateEmail', () => {
+        let userId: number;
+
+        beforeEach(async () => {
+            // save user and store id
+            const { rows } = await users.register('test@test.com', 'password');
+            userId = rows[0].id;
+        })
+
+        it('should update email and return new value', async () => {
+            const { rows } = await users.updateEmail(userId, 'new@test.com');
+            expect(rows[0].email).toEqual('new@test.com')
+        })
+    })
+
     describe('register', () => {
         const userEmail = 'test_register@test.com';
         it('should register user', async () => {
@@ -83,7 +98,8 @@ describe('Users', () => {
         })
     })
 
-
+    // TODO: Refactor these tests and split them up into separate describe blocks
+    // for each method.
     describe('with existing user', () => {
         let userId: number;
 

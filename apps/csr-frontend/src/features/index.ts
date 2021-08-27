@@ -4,7 +4,14 @@ export {
   authSlice,
   isLoggedIn,
   login,
-  logout
+  logout,
+  fetchDetails,
+  clearError,
+  selectEmail,
+  selectDeckCredits,
+  selectDetailsError,
+  updateAccount,
+  selectUpdateError
 } from "./auth/authSlice";
 export {
   default as modalReducer,

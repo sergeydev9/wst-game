@@ -64,6 +64,10 @@ export interface UserDeckSelectionOptions extends DeckSelectionOptions {
     userId: number;
 }
 
+export interface UserDetailsUpdate {
+    email: string
+}
+
 export interface User {
     id: number;
     email: string;
