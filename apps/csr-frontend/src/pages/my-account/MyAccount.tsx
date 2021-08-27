@@ -3,7 +3,15 @@ import { useFormik } from 'formik';
 import { useHistory } from 'react-router';
 import * as Yup from 'yup';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectDeckCredits, selectEmail, fetchDetails, updateAccount, selectUpdateError, logout, selectDetailsError } from '../../features';
+import {
+    selectDeckCredits,
+    selectEmail,
+    fetchDetails,
+    updateAccount,
+    selectUpdateError,
+    logout,
+    selectDetailsError
+} from '../../features';
 import {
     Form,
     Title1,
@@ -13,7 +21,6 @@ import {
     Headline,
     ErrorText,
     InputLabel,
-    LabelBig,
     Box
 } from "@whosaidtrue/ui";
 
@@ -40,12 +47,6 @@ const MyAccount: React.FC = () => {
             dispatch(updateAccount({ email: values.email }))
         }
     })
-
-    const cancel = (e: React.MouseEvent) => {
-        history.push('/')
-
-
-    }
 
     const logOutClick = (e: React.MouseEvent) => {
         dispatch(logout())
@@ -80,7 +81,7 @@ const MyAccount: React.FC = () => {
                 {/* Save/Cancel */}
                 <div className="flex flex-row gap-10 items-center">
                     <Button buttonStyle='default' type='submit'>Save Changes</Button>
-                    <Headline className="underline text-basic-black cursor-pointer" onClick={cancel}>Cancel</Headline>
+                    <Headline className="underline text-basic-black cursor-pointer" onClick={() => history.go(-1)}>Cancel</Headline>
                 </div>
                 <h4 className="text-off-blue cursor-pointer border-b-2 border-off-blue w-max mx-auto text-xl tracking-wide font-bold leading-relaxed" onClick={logOutClick}>Log Out</h4>
 

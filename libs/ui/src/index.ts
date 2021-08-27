@@ -27,5 +27,5 @@ export { default as Button } from './lib/button/Button';
 export { default as ErrorText } from './lib/error-text/ErrorText';
 export { default as DeckFilterBox } from './lib/deck-filter-box/DeckFilterBox';
 export { default as DeckFilterButton } from './lib/deck-filter-box/DeckFilterButton';
-
+export { default as Modal } from './lib/modal/Modal';
 export * from './lib/typography/Typography';
