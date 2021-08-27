@@ -99,8 +99,12 @@ router.patch('/update', [...validateUserUpdate], passport.authenticate('jwt', { 
         const response: UpdateDetailsResponse = { email: rows[0].email }
         res.status(200).json(response)
     } catch (e) {
-        logger.error(e)
-        res.status(500).send(ERROR_MESSAGES.unexpected)
+        if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
+            res.status(422).send("A user already exists with that email")
+        } else {
+            logger.error(e)
+            res.status(500).send(ERROR_MESSAGES.unexpected)
+        }
     }
 })
 

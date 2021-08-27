@@ -12,12 +12,12 @@ export default {
 const Template = () => {
     return (
         <Foot>
-            <Socials fbook="facebook.com" insta="instagram.com" twitter="twitter.com" />
             <FooterLinks className="cursor-pointer">
                 <Headline>Who Said True For Schools</Headline>
                 <Headline>Privacy Policy</Headline>
                 <Headline>Terms &amp; Conditions</Headline>
             </FooterLinks>
+            <Socials fbook="facebook.com" insta="instagram.com" twitter="twitter.com" />
         </Foot>
     )
 }

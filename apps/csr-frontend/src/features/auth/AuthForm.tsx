@@ -75,7 +75,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
                 <LargeTitle className="text-center mb-8">{title}</LargeTitle>
 
                 {/* This error reporting stuff is placeholder*/}
-                {authError ? <ErrorText>An account already exists with that email.</ErrorText> : null}
+                {authError && <ErrorText>{authError}</ErrorText>}
             </FormGroup>
 
             {/* email */}

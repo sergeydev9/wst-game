@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import { useHistory } from 'react-router';
 import * as Yup from 'yup';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectDeckCredits, selectEmail, fetchDetails, updateAccount, selectUpdateError, logout } from '../../features';
+import { selectDeckCredits, selectEmail, fetchDetails, updateAccount, selectUpdateError, logout, selectDetailsError } from '../../features';
 import {
     Form,
     Title1,
@@ -22,6 +22,7 @@ const MyAccount: React.FC = () => {
     const dispatch = useAppDispatch();
     const deckCredits = useAppSelector(selectDeckCredits)
     const email = useAppSelector(selectEmail)
+    const detailsError = useAppSelector(selectDetailsError)
     const updateError = useAppSelector(selectUpdateError)
 
     useEffect(() => {
@@ -57,6 +58,10 @@ const MyAccount: React.FC = () => {
         <Box boxstyle='white' className="w-max mx-auto px-8 py-10 filter drop-shadow-card">
             {/*title*/}
             <Title1 className="text-center mb-8">My Account</Title1>
+
+            {/* Error */}
+            {updateError && <ErrorText>{updateError}</ErrorText>}
+            {detailsError && <ErrorText>{detailsError}</ErrorText>}
             <Form onSubmit={formik.handleSubmit}>
 
                 {/* email */}

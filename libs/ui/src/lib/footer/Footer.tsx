@@ -10,7 +10,7 @@ export default tw.footer`
     py-8
     sm:py-2
     items-center
-    lg:flex-row-reverse
+    lg:flex-row
     lg:justify-between
     px-8
 `
