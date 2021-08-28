@@ -1,4 +1,4 @@
-import { Deck } from '@whosaidtrue/app-interfaces';
+import { Deck, NameObject } from '@whosaidtrue/app-interfaces';
 
 export interface TokenPayload {
   id: number;
@@ -36,13 +36,13 @@ export interface UpdateDetailsResponse {
   email: string
 }
 
-export interface NameObject {
-  name: string;
-  id: number;
-  clean: boolean
-}
 export interface NameRequestResponse {
   names: NameObject[];
+}
+
+export interface NameChoiceReport {
+  seen: number[];
+  chosen: number
 }
 
 export interface DeckSelectionResponse {

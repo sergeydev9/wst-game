@@ -117,7 +117,7 @@ router.patch('/change-password', [...validatePasswordChange], passport.authentic
         if (!rows.length) {
             res.status(401).send('Invalid Credentials')
         } else {
-            res.status(204).send('Password change successful')
+            res.status(204).send()
         }
     } catch (e) {
         logger.error(e)

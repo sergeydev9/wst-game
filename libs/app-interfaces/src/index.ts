@@ -68,6 +68,12 @@ export interface UserDetailsUpdate {
     email: string
 }
 
+export interface NameObject {
+    name: string;
+    id: number;
+    clean: boolean
+}
+
 export interface User {
     id: number;
     email: string;
