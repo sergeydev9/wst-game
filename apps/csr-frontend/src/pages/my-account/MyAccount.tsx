@@ -69,7 +69,7 @@ const MyAccount: React.FC = () => {
                 {/* email */}
                 <FormGroup>
                     <InputLabel htmlFor="email">Email</InputLabel>
-                    <TextInput {...formik.getFieldProps('email')} error={emailErr} id="email" $border name="email" type="email" />
+                    <TextInput {...formik.getFieldProps('email')} $hasError={emailErr} id="email" $border name="email" type="email" />
                     {emailErr ? (<ErrorText>{formik.errors.email}</ErrorText>) : null}
                 </FormGroup>
 

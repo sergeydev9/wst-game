@@ -30,7 +30,7 @@ const JoinGame: React.FC = () => {
         <section className="text-left w-full h-full py-8 px-6">
             <Title1 className="mb-7 text-center">Join a Game</Title1>
             <form className="flex flex-row gap-4 items-center" onSubmit={formik.handleSubmit}>
-                <TextInput error={codeError} className="flex-2 mb-2" $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
+                <TextInput $hasError={codeError} className="flex-2 mb-2" $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
                 <Button type="submit" className="flex-1">Join Game!</Button>
             </form>
             {codeError ? (<ErrorText>{formik.errors.accessCode}</ErrorText>) : null}

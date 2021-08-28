@@ -54,6 +54,46 @@ describe('Users', () => {
         })
     })
 
+    describe('changePassword', () => {
+        const password = 'password';
+        const email = 'test@test.com';
+        let userId: number;
+
+        beforeEach(async () => {
+            const { rows } = await users.register(email, password);
+            userId = rows[0].id;
+        })
+
+        it('should successfully change the password', async () => {
+            const newPass = 'newPassword';
+            const { rows } = await users.changePassword(userId, password, newPass)
+            const actual = await users.login(email, newPass)
+
+            expect(rows[0].id).toEqual(userId)
+            expect(actual.rows.length).toEqual(1)
+            expect(actual.rows[0].email).toEqual(email)
+
+        })
+
+        it('should encrypt the new password with bf8', async () => {
+            await users.changePassword(userId, password, 'newPassword')
+            const { rows } = await users.getById(userId)
+            expect(rows[0].password.startsWith('$2a$08$')).toEqual(true)
+
+        })
+
+        it('should return an empty array if password is incorrect', async () => {
+            const newPass = 'newPassword';
+            const { rows } = await users.changePassword(userId, 'wrong', 'newPassword')
+            const actual = await users.login(email, newPass)
+
+            expect(rows[0]).not.toBeDefined()
+            expect(actual.rows.length).toEqual(0)
+            expect(actual.rows[0]).not.toBeDefined()
+
+        })
+    })
+
     describe('getDetails', () => {
         const password = 'password';
         const email = 'test@test.com';

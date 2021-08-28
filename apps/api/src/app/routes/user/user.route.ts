@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express';
-import { validateAuth, validateReset, validateUserUpdate } from '@whosaidtrue/validation';
+import { validateAuth, validateReset, validateUserUpdate, validatePasswordChange } from '@whosaidtrue/validation';
 import { passport } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { signUserPayload } from '@whosaidtrue/middleware';
 import { logger } from '@whosaidtrue/logger';
 import { users } from '../../db';
-import { AccountDetailsResponse, TokenPayload, UpdateDetailsResponse } from '@whosaidtrue/api-interfaces';
+import { AccountDetailsResponse, ChangePassRequest, TokenPayload, UpdateDetailsResponse } from '@whosaidtrue/api-interfaces';
 
 const router = Router();
 
@@ -105,6 +105,23 @@ router.patch('/update', [...validateUserUpdate], passport.authenticate('jwt', { 
             logger.error(e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
+    }
+})
+
+router.patch('/change-password', [...validatePasswordChange], passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
+    const { id } = req.user as TokenPayload;
+    const { oldPass, newPass } = req.body as ChangePassRequest;
+
+    try {
+        const { rows } = await users.changePassword(id, oldPass, newPass);
+        if (!rows.length) {
+            res.status(401).send('Invalid Credentials')
+        } else {
+            res.status(204).send('Password change successful')
+        }
+    } catch (e) {
+        logger.error(e)
+        res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
 

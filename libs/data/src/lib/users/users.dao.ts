@@ -34,9 +34,32 @@ class Users extends Dao {
         return this._pool.query(query);
     }
 
+    /**
+     * For authenticated users to change their passwords on the 'Change Password' screen.
+     *
+     * If old password is wrong, returns empty array.
+     * @param id
+     * @param oldPass
+     * @param newPass
+     * @returns
+     */
+    public async changePassword(id: number, oldPass: string, newPass: string): Promise<QueryResult> {
+        const query = {
+            text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE (users.id = $2 AND users.password = crypt($3, password)) RETURNING id`,
+            values: [newPass, id, oldPass]
+        }
+        return this._pool.query(query)
+    }
+
+    /**
+     * For use in pasword resetting (i.e. email reset), NOT the 'change password' feature.
+     * @param id
+     * @param password
+     * @returns
+     */
     public async updatePassword(id: number, password: string): Promise<QueryResult> {
         const query = {
-            text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8) WHERE id = $2`,
+            text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE id = $2`,
             values: [password, id]
         }
         return this._pool.query(query)

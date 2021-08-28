@@ -5,4 +5,5 @@ export * from './lib/getDeckDetails';
 export * from './lib/joinGame';
 export * from './lib/idQuery';
 export * from './lib/userUpdate';
+export * from './lib/passwordChange';
 export { default as validate } from './lib/validate';

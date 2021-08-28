@@ -276,4 +276,51 @@ describe('/user routes', () => {
         })
     })
 
+    describe('[PATCH] /change-password', () => {
+        it('should return 204 if successful', (done) => {
+            mockedUsers.changePassword.mockResolvedValue({ rows: [1] } as QueryResult)
+            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+            supertest(app)
+                .patch('/user/change-password')
+                .send({ oldPass: 'password123', newPass: 'password1234' })
+                .set('Authorization', `Bearer ${token}`)
+                .expect(204, done)
+        })
+
+        it('should return 401 if db result empty', (done) => {
+            mockedUsers.changePassword.mockResolvedValue({ rows: [] } as QueryResult)
+            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+            supertest(app)
+                .patch('/user/change-password')
+                .send({ oldPass: 'password123', newPass: 'password1234' })
+                .set('Authorization', `Bearer ${token}`)
+                .expect(401, done)
+        })
+
+        it('should return 422 if oldPass missing', (done) => {
+            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+            supertest(app)
+                .patch('/user/change-password')
+                .send({ newPass: 'password1234' })
+                .set('Authorization', `Bearer ${token}`)
+                .expect(422, done)
+        })
+
+        it('should return 422 if newPass missing', (done) => {
+            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+            supertest(app)
+                .patch('/user/change-password')
+                .send({ oldPass: 'password1234' })
+                .set('Authorization', `Bearer ${token}`)
+                .expect(422, done)
+        })
+
+        it('should return 401 if no valid token', (done) => {
+            mockedUsers.changePassword.mockResolvedValue({ rows: [] } as QueryResult)
+            supertest(app)
+                .patch('/user/change-password')
+                .send({ oldPass: 'password123', newPass: 'password1234' })
+                .expect(401, done)
+        })
+    })
 })

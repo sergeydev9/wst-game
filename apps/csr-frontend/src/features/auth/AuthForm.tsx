@@ -91,14 +91,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
             {/* email */}
             <FormGroup>
                 <InputLabel htmlFor="email">Email</InputLabel>
-                <TextInput {...formik.getFieldProps('email')} error={emailErr} id="email" $border name="email" type="email" />
+                <TextInput {...formik.getFieldProps('email')} $hasError={emailErr} id="email" $border name="email" type="email" />
                 {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
             </FormGroup>
 
             {/* password */}
             <FormGroup>
                 <InputLabel htmlFor="password">Password</InputLabel>
-                <TextInput {...formik.getFieldProps('password')} id="password" error={pwErr} $border name="password" type="password" />
+                <TextInput {...formik.getFieldProps('password')} id="password" $hasError={pwErr} $border name="password" type="password" />
                 {$showMinLength && <Headline className="text-basic-gray">8 character minimum length</Headline>}
                 {pwErr && <ErrorText>{formik.errors.password}</ErrorText>}
             </FormGroup>
