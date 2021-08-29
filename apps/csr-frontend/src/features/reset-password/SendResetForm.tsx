@@ -5,7 +5,17 @@ import { useHistory } from 'react-router-dom';
 
 import { useAppDispatch } from "../../app/hooks";
 import { api } from '../../api';
-import { Box, FormGroup, Button, Title1, BodySmall, InputLabel, Form, TextInput, ErrorText } from "@whosaidtrue/ui";
+import { setEmail } from './resetPasswordSlice';
+import {
+    FormGroup,
+    Button,
+    Title1,
+    BodySmall,
+    InputLabel,
+    Form,
+    TextInput,
+    ErrorText
+} from "@whosaidtrue/ui";
 
 const SendResetForm: React.FC = () => {
     const history = useHistory();
@@ -22,12 +32,20 @@ const SendResetForm: React.FC = () => {
         onSubmit: async (values) => {
             try {
                 await api.post('/user/send-reset', { email: values.email })
+                dispatch(setEmail(values.email))
+                history.push('/reset/enter-code')
             } catch (e) {
                 console.error(e)
+                if (e.response?.data) {
+                    setError(e.response.data)
+                } else {
+                    setError('An unkown error has occured')
+                }
             }
         }
     })
 
+    const emailErr = formik.touched.email && formik.errors.email ? true : false
     return (
         <Form className="bg-white-ish rounded-3xl mx-auto filter  drop-shadow-card px-8 py-6" onSubmit={formik.handleSubmit}>
             <div>
@@ -38,8 +56,10 @@ const SendResetForm: React.FC = () => {
 
             <FormGroup>
                 <InputLabel htmlFor='email'>Email</InputLabel>
-                <TextInput $border $hasError={error ? true : false} type="email" id="email" {...formik.getFieldProps('email')} />
+                <TextInput className="mb-3" $border $hasError={emailErr} type="email" id="email" {...formik.getFieldProps('email')} />
+                {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
             </FormGroup>
+
             <Button type="submit">Send Reset Email</Button>
         </Form>
     )

@@ -49,3 +49,11 @@ export interface DeckSelectionResponse {
   owned: Deck[];
   notOwned: Deck[];
 }
+
+export interface ResetCodeVerificationRequest {
+  code: string
+}
+
+export interface ResetCodeVerificationResponse {
+  resetToken: string
+}

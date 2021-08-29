@@ -1,19 +1,21 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import tw from "tailwind-styled-components";
 
-const Styled = tw.input`
+export interface SecurityCodeDigitProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    $hasError?: boolean
+}
+
+const Styled = tw.input<SecurityCodeDigitProps>`
+    ${(p) => p.$hasError ? 'bg-red-subtle-fill border-red-base shadow-error' : 'bg-white-ish border-purple-base'}
     form-input
     border-1
-    border-purple-base
-    rounded-xl
-    h-24
-    w-20
-    bg-purple-subtle-fill
+    rounded-3xl
+    h-40
+    w-28
     text-title-1
     text-center
     cursor-pointer
 `
-// TODO: Find out what validation styling should be for this.
-const DigitInput: React.FC = (props) => <Styled {...props} type="text" maxLength={1} size={1} min={0} max={9} pattern="[0-9]{1}" />
 
-export default DigitInput
+
+export default Styled

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 
 import { LargeTitle, DeckFilterBox, DeckFilterButton } from "@whosaidtrue/ui"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -16,9 +16,9 @@ const Decks: React.FC = () => {
     const isSFWOnly = useAppSelector(selectSfwOnly)
     const movieFilters = useAppSelector(selectMovieRatingFilters)
 
-    const isNotInFilters = useCallback((rating: MovieRating) => {
+    const isNotInFilters = (rating: MovieRating) => {
         return !movieFilters.some(r => r === rating)
-    }, [movieFilters])
+    }
 
     useEffect(() => {
         dispatch(getDeckSelection())
