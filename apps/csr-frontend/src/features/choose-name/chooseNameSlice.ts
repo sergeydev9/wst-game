@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { NameObject } from "@whosaidtrue/api-interfaces";
+import { NameObject } from "@whosaidtrue/app-interfaces";
 
 export interface ChooseNameState {
     remainingNameOptions: NameObject[]; // remainining options

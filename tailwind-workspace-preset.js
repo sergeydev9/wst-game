@@ -17,7 +17,8 @@ module.exports = {
             },
             width: {
                 'p99': '99%', // custom width for buttons. Full width breaks the style.
-                'change-password': '40rem'
+                'change-password': '40rem',
+                '28rem': '28rem'
             },
 
             fontSize: {

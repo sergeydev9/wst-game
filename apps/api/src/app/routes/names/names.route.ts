@@ -24,7 +24,8 @@ router.patch('/report', [...validateNameReport], async (req: Request, res: Respo
     } catch (e) {
         logger.error(e)
     } finally {
-        // client doesn't need to know what happens to this report
+        // client doesn't need to know what happens to this report.
+        // Send 204 even if error.
         res.status(204).send()
     }
 })

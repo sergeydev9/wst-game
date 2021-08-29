@@ -9,7 +9,9 @@ import ChooseName from "../features/choose-name/ChooseName";
 import Login from '../pages/login/Login';
 import DeckSelection from '../features/deck-selection/DeckSelection';
 import MyAccount from '../pages/my-account/MyAccount';
+import SendReset from '../features/reset-password/SendResetForm';
 import { GuardedRoute } from "../features";
+import SendResetForm from "../features/reset-password/SendResetForm";
 
 const App: React.FC = () => {
   return (
@@ -36,6 +38,9 @@ const App: React.FC = () => {
             <DeckSelection />
           </Route>
           <GuardedRoute component={MyAccount} path='/account' exact />
+          <Route exact path='/reset/send-email'>
+            <SendResetForm />
+          </Route>
         </Switch>
       </Layout>
     </BrowserRouter>

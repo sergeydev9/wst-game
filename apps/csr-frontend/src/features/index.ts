@@ -38,6 +38,9 @@ export {
   default as deckSelectionReducer,
 } from './deck-selection/deckSelectionSlice';
 export { default as AuthForm } from './auth/AuthForm';
-export { default as ChangePassword } from './change-password/ChangePassword';
+export { default as Login } from './auth/Login';
+export { default as CreateAccount } from './auth/CreateAccount';
+export { default as ChangePassword } from './change-password/ChangePassword'; // The modal in the 'My Account' secion
+export { default as resetPasswordReducer } from './reset-password/resetPasswordSlice'; // Reset via email code
 
 export * from './choose-name/chooseNameSlice';

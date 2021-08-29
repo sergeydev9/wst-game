@@ -1,8 +1,8 @@
-import { Modal } from '@whosaidtrue/ui';
+import { Modal, NoFlexBox } from '@whosaidtrue/ui';
 import { Button } from '@whosaidtrue/ui';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import Login from '../../pages/login/Login';
-import CreateAccount from '../../pages/create-account/CreateAccount';
+import Login from '../../features/auth/Login';
+import CreateAccount from '../../features/auth/CreateAccount';
 import { openLogin, openCreateAcc, closeModals, selectCreateAcc, selectLoginOpen } from '../modal/modalSlice';
 
 
@@ -29,10 +29,14 @@ const GuestButtons = () => {
             <Button onClick={openLoginModal} type="button" buttonStyle='small' $secondary>Log In</Button>
             <Button onClick={openCreateAccModal} type="button" buttonStyle='small' $secondary>Create Account</Button>
             <Modal isOpen={isLoginOpen} onRequestClose={close}>
-                <Login />
+                <NoFlexBox className="w-96">
+                    <Login />
+                </NoFlexBox>
             </Modal>
             <Modal isOpen={isCreateAccOpen} onRequestClose={close}>
-                <CreateAccount />
+                <NoFlexBox className="w-28rem">
+                    <CreateAccount />
+                </NoFlexBox>
             </Modal>
         </>
     )

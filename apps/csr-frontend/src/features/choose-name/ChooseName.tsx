@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
     selectNameRerolls,
@@ -16,15 +16,14 @@ import {
     Title3,
     Title1
 } from '@whosaidtrue/ui';
-import { NameObject, NameRequestResponse } from '@whosaidtrue/api-interfaces';
+import { NameObject } from '@whosaidtrue/app-interfaces';
+import { NameRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
 
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
     const names = useAppSelector(selectCurrentNameOptions);
     const rerolls = useAppSelector(selectNameRerolls);
-
-    const [nameRequestErr, setNameRequestErr] = useState('')
 
     // get a batch of 6 names when user first arrives
     useEffect(() => {
