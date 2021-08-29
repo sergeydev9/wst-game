@@ -1,15 +1,13 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
 export interface ResetPasswordState {
     email: string;
-    error: string;
     token: string
 }
 
 const initialState: ResetPasswordState = {
-    email: 'test@test.com',
-    error: '',
+    email: '',
     token: ''
 }
 
@@ -23,19 +21,15 @@ const resetSlice = createSlice({
         setEmail: (state, action) => {
             state.email = action.payload
         },
-        setError: (state, action) => {
-            state.error = action.payload
-        },
         setToken: (state, action) => {
             state.token = action.payload
         }
     }
 })
 
-export const { setEmail, setError, setToken, clear } = resetSlice.actions;
+export const { setEmail, setToken, clear } = resetSlice.actions;
 
 export const selectResetEmail = (state: RootState) => state.resetPassword.email
-export const selectResetCode = (state: RootState) => state.resetPassword.token
-export const selectResetError = (state: RootState) => state.resetPassword.error
+export const selectResetToken = (state: RootState) => state.resetPassword.token
 
 export default resetSlice.reducer

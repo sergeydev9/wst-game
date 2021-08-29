@@ -2,12 +2,11 @@ import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import * as Yup from 'yup';
 import { useHistory } from 'react-router';
 import { ResetCodeVerificationResponse } from '@whosaidtrue/api-interfaces';
-import { Field, FieldInputProps, Formik, useFormikContext } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import { api } from '../../api';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setToken, selectResetEmail, clear } from './resetPasswordSlice';
 import { Form, SecurityCodeDigit as Digit, Title3, Title1, ErrorText } from '@whosaidtrue/ui';
-import { string } from 'pg-format';
 
 // get the form, and methods from context. Submit as soon
 // as form is valid
@@ -40,6 +39,13 @@ const EnterCode: React.FC = () => {
     const history = useHistory();
     const [error, setError] = useState('')
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        // make sure this page is only accessed from previous page
+        if (!email) {
+            history.push('/')
+        }
+    })
 
     // Input Refs
     const char1Ref = useRef<HTMLInputElement>(null);

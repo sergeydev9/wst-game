@@ -13,6 +13,7 @@ import SendReset from '../features/reset-password/SendResetForm';
 import { GuardedRoute } from "../features";
 import SendResetForm from "../features/reset-password/SendResetForm";
 import EnterCode from "../features/reset-password/EnterCode";
+import NewPassword from "../features/reset-password/NewPassword";
 
 const App: React.FC = () => {
   return (
@@ -44,6 +45,9 @@ const App: React.FC = () => {
           </Route>
           <Route exact path="/reset/enter-code">
             <EnterCode />
+          </Route>
+          <Route exact path="/reset/new-pass">
+            <NewPassword />
           </Route>
         </Switch>
       </Layout>
