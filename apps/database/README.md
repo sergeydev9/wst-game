@@ -356,25 +356,6 @@ SELECT * FROM user_owned_decks(USER_ID)
 Delete all password reset codes older than 1 day.
 Call this function from an exteranl cron job.
 
-### update_host
-
-- *parameters:*  h_name citext, p_id integer, g_id integer,
-- *returns:* game_id integer
-
-Set the host_name and host_id columns for a game.
-
-This function makes it easier to update host info for a game
-in the event that the host changes. It looks up the user_id
-from the player_id, and sets that, along with the specified name.
-
-Returns game id to signal success.
-
-Raises 'Cannot find user id for player id %' if player has no associated user row.
-
-```sql
-update_host(HOST_NAME, HOST_PLAYER_ID, GAME_ID)
-```
-
 ### get_name_choices
 
 - *parameters:* num_names integer, clean boolean

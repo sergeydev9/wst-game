@@ -13,7 +13,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     // all decks with status 'active' and purchase_price 0
     pgm.createView('free_decks', {}, `
     SELECT * FROM active_decks
-    WHERE decks.purchase_price = 0
+    WHERE active_decks.purchase_price = '0.00'
     `)
 
     // all questions with status 'active'
@@ -24,28 +24,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
 
     // delete all reset_codes older than 1 day
     pgm.createFunction('delete_reset_codes', [], { language: 'SQL' }, `
-    DELETE FROM reset_codes WHERE created_at<=DATE_SUB(NOW(), INTERVAL 1 DAY)
+    DELETE FROM reset_codes WHERE created_at <= (NOW() - INTERVAL '1 DAY');
     `)
-
-    // set host user_id and player_name from player_id
-    pgm.createFunction('update_host', [{ mode: 'IN', type: 'varchar(200)', name: 'h_name' }, { mode: 'IN', type: 'integer', name: 'p_id' }, { mode: 'IN', type: 'integer', name: 'g_id' }], { returns: 'game_id integer', language: 'plpgsql' }, `
-    BEGIN
-        RETURN QUERY
-        WITH u_id AS (
-            SELECT users.id
-            FROM users
-            LEFT JOIN game_players ON game_players.user_id = users.id
-            WHERE game_players.id = p_id
-            )
-        IF SELECT count(u_id) = 0
-            RAISE EXCEPTION 'Cannot find user id for player id %', p_id
-        ELSE
-            UPDATE games
-            SET host_id = u_id, host_name = h_name
-            WHERE games.id = g_id
-            RETURNING games.id;
-        END IF;
-    END`)
 
     // get number of users that answered 'true' on a given game_question.id
     pgm.createFunction('number_true_answers', [{ mode: 'IN', type: 'integer', name: 'gqId' }], { returns: 'smallint', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
