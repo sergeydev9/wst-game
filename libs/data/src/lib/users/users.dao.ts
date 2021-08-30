@@ -99,6 +99,24 @@ class Users extends Dao {
     }
 
     /**
+     * Set a reset_code on a user row.
+     *
+     * returns the email if successful.
+     *
+     * Returns an empty array if there was no user with that email.
+     * @param email
+     * @param code
+     * @returns
+     */
+    public async setResetCode(email: string, code: string): Promise<QueryResult> {
+        const query = {
+            text: 'UPDATE users SET reset_code = $2 WHERE email = $1 RETURNING email, reset_code',
+            values: [email, code]
+        };
+        return this._pool.query(query)
+    }
+
+    /**
      * Reduce the user's remaining credits by 1 iff they have credits remaining.
      *
      *

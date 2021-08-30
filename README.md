@@ -42,6 +42,7 @@ The api reads from the following env variables:
 - DOMAIN
 - DATABASE_URL=postgres://postgres:password@localhost:5432/whosaidtrue-dev
 - NX_API_BASEURL=http://localhost:3000
+- SG_API_KEY=somefakekey
 
 These can be changed for local dev in `.local.env`
 

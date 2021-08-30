@@ -5,7 +5,13 @@ import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { signUserPayload } from '@whosaidtrue/middleware';
 import { logger } from '@whosaidtrue/logger';
 import { users } from '../../db';
-import { AccountDetailsResponse, ChangePassRequest, TokenPayload, UpdateDetailsResponse } from '@whosaidtrue/api-interfaces';
+import { sendResetCode } from '../../services';
+import {
+    AccountDetailsResponse,
+    ChangePassRequest,
+    TokenPayload,
+    UpdateDetailsResponse
+} from '@whosaidtrue/api-interfaces';
 
 const router = Router();
 
@@ -129,9 +135,34 @@ router.patch('/change-password', [...validatePasswordChange], passport.authentic
 /**
  * Send a reset token to user email
  */
-// router.patch('/send-reset', [...validateReset], async (req: Request, res: Response) => {
-// TODO: implement reset tokens.
-// })
+router.patch('/send-reset', [...validateReset], async (req: Request, res: Response) => {
+    const { email } = req.body;
+    const code = `${Math.floor(1000 + Math.random() * 9000)}` // generate a random reset code, 4 digit string.
+
+    try {
+        const { rows } = await users.setResetCode(email, code);
+
+        // if no user was updated, that account doesn't exist
+        if (!rows.length) {
+            res.send(404).send('Could not find a user with that email')
+        } else {
+            // if code was set, send reset email
+            const resetResponse = await sendResetCode(rows[0].email, rows[0].reset_code);
+
+            // Sendgrid responds with 202 if email was sent
+            if (resetResponse[0].statusCode === 202) {
+                res.status(202).send('Reset code sent')
+            } else {
+                logger.error(resetResponse);
+                res.status(500).send(ERROR_MESSAGES.unexpected)
+            }
+        }
+
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send(ERROR_MESSAGES.unexpected)
+    }
+})
 
 
 /**
