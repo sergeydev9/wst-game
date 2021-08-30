@@ -1,78 +1,52 @@
-import * as compression from 'compression';
-import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors';
-import * as express from 'express';
-import * as helmet from 'helmet';
-import * as hpp from 'hpp';
-import * as morgan from 'morgan';
-import * as swaggerJSDoc from 'swagger-jsdoc';
-import * as swaggerUi from 'swagger-ui-express';
-import DB from './db';
-import { errorHandler } from '@whosaidtrue/middleware';
-import { logger, stream } from '@whosaidtrue/logger';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
+import hpp from 'hpp';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import { user, healthcheck, decks } from './routes';
+import { logger } from '@whosaidtrue/logger';
 
 class App {
-    public app: express.Application;
-    public port: string | number;
-    public env: string;
+    public readonly app = express();
+    private readonly port = process.env.PORT || 4000;
 
-    constructor(routes: express.Router[]) {
-        this.app = express();
-        this.port = process.env.PORT || 4000;
-        this.env = process.env.NODE_ENV || 'development';
-
-        this.connectToDatabase();
+    constructor() {
         this.initializeMiddlewares();
-        this.initializeRoutes(routes);
+        this.initializeRoutes();
         this.initializeSwagger();
-        this.initializeErrorHandling();
     }
 
     public listen() {
         this.app.listen(this.port, () => {
             logger.info(`=================================`);
-            logger.info(`======= ENV: ${this.env} =======`);
+            logger.info(`======= ENV: ${process.env.NODE_ENV} =======`);
             logger.info(`🚀 App listening on the port ${this.port}`);
             logger.info(`=================================`);
         });
     }
 
-    public getServer() {
-        return this.app;
-    }
-
-    private connectToDatabase() {
-        DB.sequelize.sync({ force: false });
-    }
-
     private initializeMiddlewares() {
-        if (this.env === 'production') {
-            this.app.use(morgan('combined', { stream }));
-            this.app.use(cors({ origin: 'your.domain.com', credentials: true }));
-        } else {
-            this.app.use(morgan('dev', { stream }));
-            this.app.use(cors({ origin: true, credentials: true }));
-        }
-
-        this.app.use(hpp());
-        this.app.use(helmet());
-        this.app.use(compression());
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
+        this.app.use(cors({ origin: process.env.DOMAIN || true, credentials: true }));
+        this.app.use(hpp());
+        this.app.use(helmet());
     }
 
-    private initializeRoutes(routes: express.Router[]) {
-        routes.forEach(route => {
-            this.app.use('/', route);
-        });
+    private initializeRoutes() {
+        this.app.use('/healthz', healthcheck)
+        this.app.use('/user', user)
+        this.app.use('/decks', decks)
     }
 
     private initializeSwagger() {
         const options = {
             swaggerDefinition: {
                 info: {
-                    title: 'REST API',
+                    title: 'Who said true? API',
                     version: '1.0.0',
                     description: 'Backend api docs',
                 },
@@ -82,10 +56,6 @@ class App {
 
         const specs = swaggerJSDoc(options);
         this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-    }
-
-    private initializeErrorHandling() {
-        this.app.use(errorHandler);
     }
 }
 

@@ -76,6 +76,9 @@
     },
     "util": {
       "tags": []
+    },
+    "validation": {
+      "tags": []
     }
   }
 }

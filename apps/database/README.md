@@ -38,6 +38,8 @@ This directory contains the migrations and seeds, both for production and develo
 
 - [Running a .sql file](#running-a-sql-file)
 
+- [Seeding data in development](#seeding-data-in-development)
+
 ## node-pg-migrate
 
 ----
@@ -229,7 +231,7 @@ updated_at | timestamptz | no | no | now()
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-name | varchar(200) | no | yes
+name | citext | no | yes
 clean | boolean | no | no
 times_displayed | integer | no | no | 0
 times_chosen | integer | no | no | 0
@@ -369,6 +371,17 @@ SELECT * FROM get_game_host(GAME_ID)
 Deletes any existing game_host rows with the same game_id as the row being inserted.
 Cannot be called directly. Only returns a trigger function.
 
+### get_name_choices
+
+- *parameters:* num_names integer, clean boolean
+- *returns:* id, name
+
+Returns the specified number of names. If clean is `true`, only returns names with `clean` true. Else can return either.
+
+```sql
+SELECT * FROM get_name_choices(NUMBER_OF_NAMES, true)
+```
+
 ## Triggers
 
 ----
@@ -405,7 +418,7 @@ table | columns | unique
 | game_players | game_id, player_name | yes
 | game_answers | question_id | no
 | questions | deck_id | no
-| user_decks | user_id | no
+| user_decks | user_id deck_id | yes
 
 ## Extensions
 
@@ -431,7 +444,6 @@ Returns all decks that have the value `active` in the `status` column. Returns a
 
 Returns all decks that have the value `active` in the `status` column. Returns all columns.
 
-
 ## Running a SQL file
 
 ----
@@ -440,3 +452,11 @@ The `./dev` directory is mounted into the Postgres container at the container pa
 any `.sql` file located in the `./dev` directory.
 
 To do so, simply start a shell in the postgres container, log in to pgsql and connect to your development database (should be whosaidtrue-dev) and run `\i /usr/local/dev/{SQL_FILE_NAME}`
+
+## Seeding data in development
+
+The `./seeds` directory contains a script that inserts seed data into the database. It uses the credentials found in `../../.local.env` to connect to the database.
+
+Before the seeds can be run, the application must be built by webpack. To do this, run `nx build database`. This need to be done **every time** there are changes to the seed scripts.
+
+Once the application has been built and the database is up and running, you can insert the seed data using the "seed-dev" npm script defined in the root `package.json`. To do this, run `yarn seed-dev`.

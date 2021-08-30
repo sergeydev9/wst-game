@@ -1,19 +1,33 @@
-import { User } from '@whosaidtrue/data'
-import { Request } from 'express';
+import { Deck } from '@whosaidtrue/app-interfaces';
 
-export interface Message {
-  message: string;
-}
-
-export interface DataStoredInToken {
+export interface TokenPayload {
   id: number;
+  email: string;
+  roles: string[];
 }
 
-export interface TokenData {
-  jwt: string;
-  expiresIn: number;
+export interface AuthenticationResponse {
+  token: string;
 }
 
-export interface RequestWithUser extends Request {
-  user: User;
+export interface AuthenticationRequest {
+  email: string;
+  password: string;
+}
+
+export interface AccountDetailsResponse {
+  id: number;
+  email: string;
+  roles: string[];
+  notifications: boolean;
+  question_deck_credits: number
+}
+
+export interface UpdateAccountRequest {
+  notifications: boolean
+}
+
+export interface CreateGameDecksResponse {
+  ownedDecks: Partial<Deck>[];
+  unownedDecks: Partial<Deck>[];
 }

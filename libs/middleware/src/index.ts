@@ -1,4 +1,2 @@
-// export * from './lib/auth/auth';
-export * from './lib/errorHandler/errorHandler';
-export * from './lib/validation/validation';
-export * from './lib/dtos';
+export { default as passport } from './lib/authentication/jwtStrategy';
+export { default as signUserPayload } from './lib/authentication/signUserPayload';

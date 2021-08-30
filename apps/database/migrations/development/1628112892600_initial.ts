@@ -13,7 +13,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createExtension('pgcrypto');
     pgm.createExtension('citext');
 
-
     /**
     * ======================================
     * TYPES
@@ -215,7 +214,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     // generatedNames
     pgm.createTable('generated_names', {
         id: 'id',
-        name: { type: 'varchar(200)', notNull: true },
+        name: { type: 'citext', notNull: true, unique: true },
         clean: { type: 'boolean', notNull: true },
         times_displayed: { type: 'integer', notNull: true, default: 0 },
         times_chosen: { type: 'integer', notNull: true, default: 0 },
@@ -494,7 +493,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createIndex('game_players', ['game_id', 'player_name'], { unique: true });
     pgm.createIndex('game_answers', 'question_id');
     pgm.createIndex('questions', 'deck_id');
-    pgm.createIndex('user_decks', 'user_id');
+    pgm.createIndex('user_decks', ['user_id', 'deck_id']);
 
 
 }

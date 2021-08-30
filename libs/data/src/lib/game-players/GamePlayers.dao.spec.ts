@@ -38,7 +38,7 @@ describe('GamePlayers', () => {
             expect(rows[0].id).toBeDefined();
         })
 
-        it('should should throw if game not found', async () => {
+        it('should throw if game not found', async () => {
             const player = TEST_GAME_PLAYERS[0]
             game_id += 1; // shouldn't exist
             try {
@@ -66,8 +66,7 @@ describe('GamePlayers', () => {
 
             try {
                 const { player_name } = player;
-                player_name.toUpperCase();
-                await players.insertOne({ ...player, game_id, player_name })
+                await players.insertOne({ ...player, game_id, player_name: player_name.toUpperCase() })
             } catch (e) {
                 const expected = new DatabaseError('duplicate key value violates unique constraint "game_players_game_id_player_name_unique_index"', 1, 'error');
                 expect(e).toEqual(expected)

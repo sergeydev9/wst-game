@@ -1,6 +1,8 @@
 import { Pool } from 'pg';
 import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { cleanDb } from '../util/cleanDb';
+import insertNamesQuery from '../util/insertNamesQuery';
+import { left, right } from '../util/generateName';
 import GeneratedNames from './GeneratedNames.dao';
 
 describe('GeneratedNames', () => {
@@ -23,6 +25,29 @@ describe('GeneratedNames', () => {
     describe('reportChoices', () => {
         it('should successfully report a set of choices', async () => {
             //TODO: finish
+        })
+    })
+
+    describe('getNameChoices', () => {
+        it('should return the correct number of names', async () => {
+            //insert names
+            await pool.query(insertNamesQuery(500, 50))
+
+            const { rows } = await names.getChoices(9);
+            expect(rows.length).toEqual(9)
+
+        })
+
+        it('should only return clean names', async () => {
+            // Insert almost only not clean names
+            await pool.query(insertNamesQuery(500, 491))
+            const { rows } = await names.getChoices(9, true);
+
+            // should return the small subset of clean names
+            expect(rows.length).toEqual(9)
+            rows.forEach(name => {
+                expect(name.clean).toEqual(true)
+            })
         })
     })
 })

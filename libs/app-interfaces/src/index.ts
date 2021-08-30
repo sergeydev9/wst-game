@@ -42,6 +42,15 @@ export type ThemeColor = 'primary'
     | 'red-subtle'
     | 'red-light';
 
+export interface DeckSelectionOptions {
+    pageSize: number;
+    pageNumber: number;
+    ageRating?: number;
+}
+export interface UserDeckSelectionOptions extends DeckSelectionOptions {
+    userId: number;
+}
+
 export interface User {
     id: number;
     email: string;

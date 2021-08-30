@@ -10,6 +10,7 @@ module.exports = {
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
+  setupFiles: ['../../jest.setEnv.js'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/middleware',
 };

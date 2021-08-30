@@ -239,7 +239,7 @@
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/database",
-            "main": "apps/database/src/main.ts",
+            "main": "apps/database/seeds/main.ts",
             "tsConfig": "apps/database/tsconfig.app.json"
           },
           "configurations": {
@@ -250,24 +250,10 @@
             }
           }
         },
-        "serve": {
-          "executor": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "database:build"
-          }
-        },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["apps/database/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/database"],
-          "options": {
-            "jestConfig": "apps/database/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }
@@ -535,6 +521,38 @@
           "outputs": ["coverage/libs/util"],
           "options": {
             "jestConfig": "libs/util/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "validation": {
+      "root": "libs/validation",
+      "sourceRoot": "libs/validation/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/validation",
+            "tsConfig": "libs/validation/tsconfig.lib.json",
+            "packageJson": "libs/validation/package.json",
+            "main": "libs/validation/src/index.ts",
+            "assets": ["libs/validation/*.md"]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/validation/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/validation"],
+          "options": {
+            "jestConfig": "libs/validation/jest.config.js",
             "passWithNoTests": true
           }
         }

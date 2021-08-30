@@ -1,4 +1,3 @@
-import { UserRole } from '@whosaidtrue/app-interfaces';
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
 
@@ -6,7 +5,6 @@ class Users extends Dao {
     constructor(pool: Pool) {
         super(pool, 'users');
     }
-
     /**
      * Insert a new user.
      *
@@ -18,28 +16,26 @@ class Users extends Dao {
      *
      * @throws {DatabaseError}
      * Will throw exception if a user already exists with provided email,
-     * or if a value in roles array is invalid (i.e. not a member of the defined type)
      *
      * @example
-     * const result = await users.register({email: test@example.com, password: 'password', roles: ['user']});
-     * // result.rows = [{id: 1, email: 'test@example.com', roles: ['user']}]
+     * const result = await users.register('test@example.com','password');
+     * // result.rows = [{id: 1, email: 'test@example.com', roles: ['user'], notifications: false}]
      *
      * @param {Partial<User>} user
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public async register(user: { email: string, password: string, roles: UserRole[] }): Promise<QueryResult> {
-        const { email, password, roles } = user;
+    public async register(email: string, password: string): Promise<QueryResult> {
         const query = {
             text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, roles",
-            values: [email, password, roles]
+            values: [email, password, ["user"]]
         }
         return this._pool.query(query);
     }
 
     public async updatePassword(id: number, password: string): Promise<QueryResult> {
         const query = {
-            text: `UPDATE users SET password = $1 WHERE id = $2`,
+            text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8) WHERE id = $2`,
             values: [password, id]
         }
         return this._pool.query(query)
@@ -88,7 +84,7 @@ class Users extends Dao {
     }
 
     /**
-     * Set user's notifications to true if false, and vice versa for the specified user.
+     * Set user's notifications to the specified value
      *
      * Returns an object with the new value of "notifications"
      *
@@ -96,16 +92,16 @@ class Users extends Dao {
      * @example
      * // initial_user_value = {id: 5, ..., notifications: false}
      *
-     * const result = await users.reduceCredits(5);
+     * const result = await users.toggleNotifications(5, true);
      * result.rows[0] // {notifications: true}
      *
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public async toggleNotifications(userId: number): Promise<QueryResult> {
+    public async toggleNotifications(userId: number, value: boolean): Promise<QueryResult> {
         const query = {
-            text: 'UPDATE users SET notifications = NOT notifications WHERE id = $1 RETURNING notifications',
-            values: [userId]
+            text: 'UPDATE users SET notifications = $1 WHERE id = $2 RETURNING notifications',
+            values: [value, userId]
         };
         return this._pool.query(query)
     }
@@ -118,7 +114,7 @@ class Users extends Dao {
      */
     public async getDetails(userId: number): Promise<QueryResult> {
         const query = {
-            text: 'SELECT email, question_deck_credits, notifications FROM users WHERE id = $1',
+            text: 'SELECT id, email, array_to_json(roles) AS roles, question_deck_credits, notifications FROM users WHERE id = $1',
             values: [userId]
         };
         return this._pool.query(query)
@@ -129,7 +125,7 @@ class Users extends Dao {
      *
      * @param {string} email
      * @param {string} password
-     * @return  {Promise<QueryResult>} {id, email, roles[]}
+     * @return  {Promise<QueryResult>} {id, email, roles[], notifications}
      * @memberof Users
      */
     public async login(email: string, password: string): Promise<QueryResult> {

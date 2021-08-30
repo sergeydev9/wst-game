@@ -18,7 +18,7 @@ abstract class Dao {
         return this._pool.query(query);
     }
 
-    public async deleteById(id: string) {
+    public async deleteById(id: number) {
         const query = {
             text: `DELETE FROM ${this.tableName} WHERE id = $1`,
             values: [id]

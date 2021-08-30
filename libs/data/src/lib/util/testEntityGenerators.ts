@@ -29,7 +29,7 @@ export function* testNames(num: number, extra: string) {
  * @param {number} num
  * @param {string} extra
  */
-export function* testDecks(num: number, extra: string) {
+export function* testDecks(num: number, extra = '-') {
     if (num <= 0) {
         throw new Error("num must be above 0")
     }
@@ -45,9 +45,9 @@ export function* testDecks(num: number, extra: string) {
             sfw: true,
             status: 'active' as DeckStatus,
             description: 'A deck for testing',
-            purchase_price: '1.00',
+            purchase_price: '2.00',
             example_question: 'An example question',
-            thumbnail_url: './placeholder.svg'
+            thumbnail_url: './assets/placeholder.svg'
         }
         count += 1;
     }

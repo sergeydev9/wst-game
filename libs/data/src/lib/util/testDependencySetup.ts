@@ -4,15 +4,17 @@
  */
 
 import { Pool } from "pg";
+import format from 'pg-format';
 import Decks from '../decks/Decks.dao';
-import TEST_DECKS from '../test-objects/decks';
+import TEST_DECKS from '../test-objects/Decks';
 import Questions from '../questions/Questions.dao';
-import TEST_QUESTIONS from '../test-objects/questions';
-import { testQuestions } from "./testEntityGenerators";
+import TEST_QUESTIONS from '../test-objects/Questions';
+import { testQuestions, testDecks } from "./testEntityGenerators";
 import Games from '../games/Games.dao';
 import TEST_GAMES from '../test-objects/games';
 import GamePlayers from "../game-players/GamePlayers.dao";
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
+import Users from '../users/Users.dao';
 
 const random = () => (Math.random() + 1).toString(36).substring(7); // prevent name collisions
 /**
@@ -22,7 +24,7 @@ const random = () => (Math.random() + 1).toString(36).substring(7); // prevent n
  * @param {Pool} pool
  * @return {number} id
  */
-export async function setupDeck(pool: Pool) {
+export async function setupOneDeck(pool: Pool) {
     const decks = new Decks(pool)
 
     const name = `${TEST_DECKS[0].name} - ${random()}`
@@ -42,7 +44,7 @@ export async function setupDeck(pool: Pool) {
  */
 export async function setupGame(pool: Pool, accessCode?: string) {
     const games = new Games(pool)
-    const deck_id = await setupDeck(pool)
+    const deck_id = await setupOneDeck(pool)
 
     // if access code defined, use that, else generate random code
     const access_code = accessCode ? accessCode : random();
@@ -69,7 +71,7 @@ export async function setupQuestion(pool: Pool, numQuestions = 1, deckId?: numbe
 
     // if no deckId input, generate one.
     if (!deckId) {
-        deck_id = await setupDeck(pool)
+        deckId = await setupOneDeck(pool)
     } else {
         deck_id = deckId;
     }
@@ -99,15 +101,57 @@ export async function setupGamePlayer(pool: Pool): Promise<[number, number, numb
     return [player_id, game_id, deck_id];
 }
 
-//TODO: Finish
-export async function setupAnswer(pool: Pool) {
-    const questions = new Questions(pool)
+export async function setupDecks(pool: Pool, totalDecks: number, numRating?: number, ageRating?: number) {
+    const deckIds = [];
 
-    const [game_id, deck_id] = await setupGame(pool)
+    // save totalDecks number of decks in DB
+    const decks = []
+    let count = 0
 
-    // insert question
-    const questionResult = await questions.insertOne({ ...TEST_QUESTIONS[0], deck_id })
+    for (const [index, deck] of [...testDecks(totalDecks)].entries()) {
+        let { age_rating } = deck;
+        const { name, sort_order, sfw, movie_rating, purchase_price, status, description, clean } = deck;
 
-    // insert game_player
-    // insert game_question
+        // set numRating decks to have ageRating
+        // only set for even indexed decks so that higher rating decks
+        // aren't clusetered at the start
+        if (count < numRating && index % 2 === 0) {
+            age_rating = ageRating;
+            count++
+        }
+
+        decks.push([name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean]);
+    }
+
+    const deckQuery = {
+        text: format('INSERT INTO decks (name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean ) VALUES %L RETURNING id', decks),
+    }
+
+    // store ids of saved decks
+    const result = await pool.query(deckQuery);
+    result.rows.forEach(row => deckIds.push(row.id))
+
+    return deckIds
+}
+
+export async function setupUserDecks(pool: Pool, totalDecks: number, ownedDecks: number, ageRating = 0, numRating = 0) {
+    // save user
+    const users = new Users(pool);
+    const { rows } = await users.register('test_decks@test.com', 'password');
+    const userId = rows[0].id;
+
+    const deckIds = await setupDecks(pool, totalDecks, numRating, ageRating)
+
+    // user owns onwnedDecks number of decks
+    const userDecks = []
+    deckIds.slice(0, ownedDecks).forEach(id => {
+        userDecks.push([id, userId])
+
+    })
+    const userDeckQuery = {
+        text: format('INSERT INTO user_decks (deck_id, user_id) VALUES %L', userDecks),
+    }
+    await pool.query(userDeckQuery)
+
+    return { userId, deckIds }
 }

@@ -1,103 +1,27 @@
-import { Sequelize } from 'sequelize';
-import {
-    userFactory,
-    deckFactory,
-    userDeckFactory,
-    answerFactory,
-    deckQuestionFactory,
-    gameFactory,
-    gamePlayerFactory,
-    gameQuestionFactory,
-    playerNameFactory,
-    questionFactory
-} from '@whosaidtrue/data';
-import { logger } from '@whosaidtrue/logger';
+import { Pool } from 'pg'
+import { Users, Decks, Games, GeneratedNames } from '@whosaidtrue/data';
 
+let pool: Pool;
 
+if (process.env.NODE_ENV !== 'production') {
+    pool = new Pool({
+        user: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        database: process.env.POSTGRES_DB,
+        host: process.env.POSTGRES_HOST,
+        port: 5432
+    })
 
-const sequelize = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
-    host: process.env.POSTGRES_HOST,
-    dialect: 'postgres',
-    define: {
-        charset: 'utf8mb4',
-        collate: 'utf8mb4_general_ci',
-        underscored: true,
-        freezeTableName: true,
-    },
-    pool: {
-        min: parseInt(process.env.DB_POOL_MIN),
-        max: parseInt(process.env.DB_POOL_MAX),
-    },
-    logQueryParameters: process.env.NODE_ENV === 'development',
-    logging: (query, time) => {
-        logger.info(time + 'ms' + ' ' + query);
-    },
-    benchmark: true,
-});
+} else {
+    // TODO: If using Amazon Rdb then process is differnt.
+    pool = new Pool();
+}
 
-sequelize.authenticate();
+if (!pool) throw new Error('Postgres connection pool unavailable')
 
-const DB = {
-    Users: userFactory(sequelize),
-    Decks: deckFactory(sequelize),
-    UserDecks: userDeckFactory(sequelize),
-    Questions: questionFactory(sequelize),
-    DeckQuestions: deckQuestionFactory(sequelize),
-    Games: gameFactory(sequelize),
-    GamePlayers: gamePlayerFactory(sequelize),
-    GameQuestions: gameQuestionFactory(sequelize),
-    PlayerNames: playerNameFactory(sequelize),
-    Answers: answerFactory(sequelize),
-    sequelize, // connection instance (RAW queries)
-    Sequelize, // library
-};
+const users = new Users(pool);
+const games = new Games(pool);
+const decks = new Decks(pool);
+const names = new GeneratedNames(pool);
 
-DB.Users.hasMany(DB.UserDecks, {
-    sourceKey: 'id',
-    foreignKey: 'userId',
-    as: 'decks',
-});
-
-DB.Questions.hasMany(DB.GameQuestions, {
-    sourceKey: 'id',
-    foreignKey: 'questionId',
-    as: 'gameQuestion',
-});
-
-DB.Questions.hasMany(DB.DeckQuestions, {
-    sourceKey: 'id',
-    foreignKey: 'questionId',
-    as: 'deckQuestions',
-});
-
-DB.PlayerNames.hasMany(DB.GamePlayers, {
-    sourceKey: 'id',
-    foreignKey: 'gamePlayerId',
-    as: 'gamePlayer',
-});
-
-DB.Decks.hasMany(DB.UserDecks, {
-    sourceKey: 'id',
-    foreignKey: 'deckId',
-    as: 'userDecks',
-});
-
-DB.Decks.hasMany(DB.Games, {
-    sourceKey: 'id',
-    foreignKey: 'deckId',
-    as: 'games',
-});
-
-DB.Decks.hasMany(DB.GameQuestions, {
-    sourceKey: 'id',
-    foreignKey: 'deckId',
-    as: 'gameDeck',
-});
-
-DB.Decks.hasMany(DB.DeckQuestions, {
-    sourceKey: 'id',
-    foreignKey: 'deckId',
-    as: 'questionsInDeck',
-});
-
-export default DB;
+export { users, games, decks, names, pool };
