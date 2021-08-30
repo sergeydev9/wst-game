@@ -19,7 +19,7 @@ class GamePlayers extends Dao {
      * @return {{id, player_name}}  {Promise<QueryResult>}
      * @memberof GamePlayers
      */
-    public async insertOne(player: IInsertGamePlayer): Promise<QueryResult> {
+    public insertOne(player: IInsertGamePlayer): Promise<QueryResult> {
         const { player_name, game_id } = player;
         const query = {
             text: `INSERT INTO game_players (player_name, game_id) VALUES ($1, $2) RETURNING id, player_name`,

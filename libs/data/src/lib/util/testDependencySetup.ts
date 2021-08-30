@@ -64,17 +64,12 @@ export async function setupGame(pool: Pool, accessCode?: string) {
  * @param {number} [numQuestions=1]
  * @return {{deck_id: number, question_ids: number[]}}
  */
-export async function setupQuestion(pool: Pool, numQuestions = 1, deckId?: number): Promise<{ deck_id: number, question_ids: number[] }> {
+export async function setupQuestion(pool: Pool, numQuestions = 1, inputDeckId?: number): Promise<{ deck_id: number, question_ids: number[] }> {
     const questions = new Questions(pool);
-    let deck_id: number;
     const question_ids = []
 
     // if no deckId input, generate one.
-    if (!deckId) {
-        deckId = await setupOneDeck(pool)
-    } else {
-        deck_id = deckId;
-    }
+    const deck_id = inputDeckId ? inputDeckId : await setupOneDeck(pool)
 
     // create set of qestions using deck id
     for (const question of testQuestions(numQuestions, deck_id)) {

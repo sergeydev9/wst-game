@@ -34,7 +34,7 @@ class GeneratedNames extends Dao {
      * @return {*}  {Promise<QueryResult>}
      * @memberof GeneratedNames
      */
-    public async getChoices(num: number, clean = false): Promise<QueryResult> {
+    public getChoices(num: number, clean = false): Promise<QueryResult> {
         const query = {
             text: 'SELECT * FROM get_name_choices($1, $2)',
             values: [num, clean]
@@ -44,7 +44,7 @@ class GeneratedNames extends Dao {
     }
 
     //TODO: finish. Need to write function still
-    public async reportChoices(seen: number[], chosen: number): Promise<QueryResult> {
+    public reportChoices(seen: number[], chosen: number): Promise<QueryResult> {
         const query = {
             text: `record_name_selection($1, $2)`,
             values: [seen, chosen]

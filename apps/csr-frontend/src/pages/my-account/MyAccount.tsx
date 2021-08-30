@@ -8,7 +8,6 @@ import {
     selectEmail,
     fetchDetails,
     updateAccount,
-    selectUpdateError,
     logout,
     ChangePassword
 } from '../../features';
@@ -31,7 +30,6 @@ const MyAccount: React.FC = () => {
     const dispatch = useAppDispatch();
     const deckCredits = useAppSelector(selectDeckCredits)
     const email = useAppSelector(selectEmail)
-    const updateError = useAppSelector(selectUpdateError)
     const changePassOpen = useAppSelector(selectChangePass)
 
     useEffect(() => {
@@ -61,9 +59,6 @@ const MyAccount: React.FC = () => {
         <Box boxstyle='white' className="w-max mx-auto px-8 py-10 filter drop-shadow-card">
             {/*title*/}
             <Title1 className="text-center mb-8">My Account</Title1>
-
-            {/* Error */}
-            {updateError && <ErrorText>{updateError}</ErrorText>}
             <Form onSubmit={formik.handleSubmit}>
 
                 {/* email */}

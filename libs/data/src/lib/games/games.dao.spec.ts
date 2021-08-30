@@ -50,62 +50,6 @@ describe('Games', () => {
         })
     })
 
-    describe('setHost', () => {
-
-        it('should insert a new game_host record', async () => {
-            const { rows } = await games.setHost(game_id, player_id);
-            expect(rows[0].id).toBeDefined();
-        })
-
-        it('should delete the old host when a new one is created', async () => {
-            // get host for game query
-            const query = {
-                text: 'SELECT * FROM game_hosts WHERE game_id = $1',
-                values: [game_id]
-            }
-
-            // set initial player as host
-            await games.setHost(game_id, player_id);
-            const result1 = await pool.query(query);
-
-            // initial player is only host
-            expect(result1.rows.length).toEqual(1);
-            expect(result1.rows[0].game_player_id).toEqual(player_id)
-
-            // create second player and assign to same game
-            const { rows } = await players.insertOne({ ...TEST_GAME_PLAYERS[1], game_id });
-            const secondPlayer = rows[0]
-
-            // set second player as host
-            await games.setHost(game_id, secondPlayer.id);
-
-            // get host for game
-            const actual = await pool.query(query);
-
-            // there is only 1 host, and it's the second player.
-            expect(actual.rows.length).toEqual(1);
-            expect(actual.rows[0].game_player_id).toEqual(secondPlayer.id)
-        })
-    })
-
-    describe('getHost', () => {
-
-        it('should retrieve correct host', async () => {
-            // insert host
-            const { rows } = await games.setHost(game_id, player_id);
-            const hostId = rows[0].id;
-
-            // get host
-            const actual = await games.getHost(game_id);
-            const host = actual.rows[0];
-
-            // data from get host should match
-            expect(host.id).toEqual(player_id);
-            expect(host.player_name).toBeDefined();
-        })
-
-    })
-
     describe('setStartDate', () => {
 
         it('should set the end date of a game', async () => {

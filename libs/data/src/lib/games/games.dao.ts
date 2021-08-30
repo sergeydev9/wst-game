@@ -7,7 +7,7 @@ class Games extends Dao {
         super(pool, 'games');
     }
 
-    public async insertOne(game: IInsertGame): Promise<QueryResult> {
+    public insertOne(game: IInsertGame): Promise<QueryResult> {
         const { deck_id, status, access_code } = game;
         const query = {
             text: `INSERT INTO games (
@@ -21,7 +21,7 @@ class Games extends Dao {
         return this.pool.query(query);
     }
 
-    public async getByAccessCode(code: string): Promise<QueryResult> {
+    public getByAccessCode(code: string): Promise<QueryResult> {
         const query = {
             text: 'SELECT * FROM games WHERE access_code = $1',
             values: [code]
@@ -29,7 +29,7 @@ class Games extends Dao {
         return this.pool.query(query);
     }
 
-    public async setStatus(gameId: number, status: string): Promise<QueryResult> {
+    public setStatus(gameId: number, status: string): Promise<QueryResult> {
         const query = {
             text: 'UPDATE games SET status = $2 WHERE id = $1',
             values: [gameId, status]
@@ -54,45 +54,6 @@ class Games extends Dao {
     // }
 
     /**
-     * Create a game_hosts record with game_id, player_id.
-     *
-     * If a record already exists with that game_id, the existing record will
-     * be deleted.
-     *
-     * returns id of host record
-     *
-     * @param {number} game_id
-     * @param {number} player_id
-     * @return {{id: number}}  {Promise<QueryResult>}
-     * @memberof Games
-     */
-    public async setHost(game_id: number, player_id: number): Promise<QueryResult> {
-        const query = {
-            text: 'INSERT INTO game_hosts (game_id, game_player_id) VALUES ($1, $2) RETURNING id',
-            values: [game_id, player_id]
-        }
-
-        return this.pool.query(query);
-    }
-
-
-    /**
-     * Get host for game id. Returns the player_id and player name of matching host.
-     *
-     * @param {number} game_id
-     * @return {{id: number, player_name: string}}  {Promise<QueryResult>}
-     * @memberof Games
-     */
-    public async getHost(game_id: number): Promise<QueryResult> {
-        const query = {
-            text: 'SELECT * from get_game_host($1)',
-            values: [game_id]
-        }
-
-        return this.pool.query(query)
-    }
-
-    /**
      * Set start_date for game.
      *
      * Returns id and start_date of game.
@@ -104,7 +65,7 @@ class Games extends Dao {
      * @return {{id: number, start_date: Date}}  {Promise<QueryResult>}
      * @memberof Games
      */
-    public async setStartDate(game_id: number, date: Date): Promise<QueryResult> {
+    public setStartDate(game_id: number, date: Date): Promise<QueryResult> {
         const query = {
             text: 'UPDATE games SET start_date = $1 WHERE id = $2 RETURNING id, start_date',
             values: [date.toISOString(), game_id]
@@ -125,7 +86,7 @@ class Games extends Dao {
      * @return {{id: number, start_date: Date}}  {Promise<QueryResult>}
      * @memberof Games
      */
-    public async setEndDate(game_id: number, date: Date): Promise<QueryResult> {
+    public setEndDate(game_id: number, date: Date): Promise<QueryResult> {
         const query = {
             text: 'UPDATE games SET end_date = $1 WHERE id = $2 RETURNING id, end_date',
             values: [date.toISOString(), game_id]
@@ -134,13 +95,13 @@ class Games extends Dao {
         return this.pool.query(query);
     }
 
-    // public async create(): Promise<QueryResult> {}
+    // public create(): Promise<QueryResult> {}
 
-    // public async gameStateById(gameId: number): Promise<QueryResult> {}
+    // public gameStateById(gameId: number): Promise<QueryResult> {}
 
-    // public async gameStateByAccessCode(code: string): Promise<QueryResult> {}
+    // public gameStateByAccessCode(code: string): Promise<QueryResult> {}
 
-    // public async getScoreboard(gameId: number) { }
+    // public getScoreboard(gameId: number) { }
 }
 
 export default Games;
