@@ -10,28 +10,41 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     WHERE decks.status = 'active'
     `)
 
+    // all decks with status 'active' and purchase_price 0
+    pgm.createView('free_decks', {}, `
+    SELECT * FROM active_decks
+    WHERE decks.purchase_price = 0
+    `)
+
     // all questions with status 'active'
     pgm.createView('active_questions', {}, `
     SELECT * FROM questions
     WHERE questions.status = 'active'
     `)
 
-    // delete existing host for game
-    pgm.createFunction('delete_host_for_game', [], { returns: 'trigger', language: 'plpgsql', parallel: 'SAFE' }, `
-    BEGIN
-        DELETE FROM game_hosts WHERE game_hosts.game_id = NEW.game_id;
-        RETURN NEW;
-    END`)
+    // delete all reset_codes older than 1 day
+    pgm.createFunction('delete_reset_codes', [], { language: 'SQL' }, `
+    DELETE FROM reset_codes WHERE created_at<=DATE_SUB(NOW(), INTERVAL 1 DAY)
+    `)
 
-    // get host for game
-    pgm.createFunction('get_game_host', [{ mode: 'IN', type: 'integer', name: 'input_game_id' }], { returns: 'table(id integer, player_name text)', language: 'plpgsql', parallel: 'SAFE' }, `
+    // set host user_id and player_name from player_id
+    pgm.createFunction('update_host', [{ mode: 'IN', type: 'varchar(200)', name: 'h_name' }, { mode: 'IN', type: 'integer', name: 'p_id' }, { mode: 'IN', type: 'integer', name: 'g_id' }], { returns: 'game_id integer', language: 'plpgsql' }, `
     BEGIN
-        RETURN QUERY SELECT
-            game_players.id,
-            game_players.player_name::text
-        FROM game_players
-        LEFT JOIN game_hosts ON game_hosts.game_player_id = game_players.id
-        WHERE game_hosts.game_id = input_game_id;
+        RETURN QUERY
+        WITH u_id AS (
+            SELECT users.id
+            FROM users
+            LEFT JOIN game_players ON game_players.user_id = users.id
+            WHERE game_players.id = p_id
+            )
+        IF SELECT count(u_id) = 0
+            RAISE EXCEPTION 'Cannot find user id for player id %', p_id
+        ELSE
+            UPDATE games
+            SET host_id = u_id, host_name = h_name
+            WHERE games.id = g_id
+            RETURNING games.id;
+        END IF;
     END`)
 
     // get number of users that answered 'true' on a given game_question.id
@@ -40,16 +53,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         RETURN(SELECT Count(*) FROM "game_answers" AS answers WHERE answers."game_question_id" = "gqId" AND answers."value" = 'true');
     END`)
 
-
-    // TODO: finish if desired.
-    // pgm.createFunction('generate_game_questions', [{ type: 'integer', mode: 'IN', name: 'game_id' }, { type: 'integer', mode: 'IN', name: 'q_number' }], { returns: 'table (id integer, text text, text_for_guess text, follow_up text, deck_name text, question_sequence_index integer, question_total integer, question_id integer)', language: 'plpgsql' }, `
-    // DECLARE
-    //     question_total int8 := 0;
-    // BEGIN
-    //     FOR deck_question IN
-    //         SELECT id AS question_id
-    // END
-    // `)
 
     /**
      * Return decks owned by the user.
@@ -97,14 +100,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         WHERE NOT EXISTS ( SELECT * FROM user_decks WHERE user_decks.user_id = input_id AND user_decks.deck_id = decks.id );
     END
     `)
-
-    // delete existing host for game before inserting new one
-    pgm.createTrigger('game_hosts', 'delete_host', {
-        when: 'BEFORE',
-        operation: 'INSERT',
-        level: 'ROW',
-        function: 'delete_host_for_game',
-    })
 
     // Get specified number of generated names. Names are selected randomly.
     // This method gets slower as the table grows. If the number of name

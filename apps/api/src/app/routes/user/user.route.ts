@@ -5,7 +5,7 @@ import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { signUserPayload } from '@whosaidtrue/middleware';
 import { logger } from '@whosaidtrue/logger';
 import { users } from '../../db';
-import { sendResetCode } from '../../services';
+import { emailService } from '../../services';
 import {
     AccountDetailsResponse,
     ChangePassRequest,
@@ -147,7 +147,7 @@ router.patch('/send-reset', [...validateReset], async (req: Request, res: Respon
             res.send(404).send('Could not find a user with that email')
         } else {
             // if code was set, send reset email
-            const resetResponse = await sendResetCode(rows[0].email, rows[0].reset_code);
+            const resetResponse = await emailService.sendResetCode(rows[0].email, rows[0].reset_code);
 
             // Sendgrid responds with 202 if email was sent
             if (resetResponse[0].statusCode === 202) {

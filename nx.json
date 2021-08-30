@@ -55,6 +55,9 @@
     "database": {
       "tags": []
     },
+    "email": {
+      "tags": []
+    },
     "logger": {
       "tags": []
     },

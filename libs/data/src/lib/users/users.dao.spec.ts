@@ -17,7 +17,7 @@ describe('Users', () => {
         await cleanDb(pool);
     })
 
-    afterAll(async () => {
+    afterAll(() => {
         pool.end()
     })
 

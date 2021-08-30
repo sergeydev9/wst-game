@@ -26,7 +26,7 @@ class Users extends Dao {
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public async register(email: string, password: string): Promise<QueryResult> {
+    public register(email: string, password: string): Promise<QueryResult> {
         const query = {
             text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, roles",
             values: [email, password, ["user"]]
@@ -43,7 +43,7 @@ class Users extends Dao {
      * @param newPass
      * @returns
      */
-    public async changePassword(id: number, oldPass: string, newPass: string): Promise<QueryResult> {
+    public changePassword(id: number, oldPass: string, newPass: string): Promise<QueryResult> {
         const query = {
             text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE (users.id = $2 AND users.password = crypt($3, password)) RETURNING id`,
             values: [newPass, id, oldPass]
@@ -57,7 +57,7 @@ class Users extends Dao {
      * @param password
      * @returns
      */
-    public async updatePassword(id: number, password: string): Promise<QueryResult> {
+    public updatePassword(id: number, password: string): Promise<QueryResult> {
         const query = {
             text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE id = $2`,
             values: [password, id]
@@ -65,7 +65,7 @@ class Users extends Dao {
         return this._pool.query(query)
     }
 
-    public async updateEmail(id: number, email: string): Promise<QueryResult> {
+    public updateEmail(id: number, email: string): Promise<QueryResult> {
         const query = {
             text: 'UPDATE users SET email = $1 WHERE id = $2 RETURNING email',
             values: [email, id]
@@ -75,7 +75,7 @@ class Users extends Dao {
     }
 
     // TODO: add notifications to this when that feature is rolled out.
-    public async updateDetails(id: number, update: UserDetailsUpdate): Promise<QueryResult> {
+    public updateDetails(id: number, update: UserDetailsUpdate): Promise<QueryResult> {
         const { email } = update
         const query = {
             text: 'UPDATE users SET email = $1 WHERE id = $2 RETURNING email',
@@ -90,7 +90,7 @@ class Users extends Dao {
      *
      * @returns {Promise<QueryResult>} result.rows = [{question_deck_credits: NEW_VALUE}]
      */
-    public async setCredits(userId: number, value: number): Promise<QueryResult> {
+    public setCredits(userId: number, value: number): Promise<QueryResult> {
         const query = {
             text: 'UPDATE users SET question_deck_credits = $2 WHERE id = $1 RETURNING question_deck_credits',
             values: [userId, value]
@@ -108,7 +108,7 @@ class Users extends Dao {
      * @param code
      * @returns
      */
-    public async setResetCode(email: string, code: string): Promise<QueryResult> {
+    public setResetCode(email: string, code: string): Promise<QueryResult> {
         const query = {
             text: 'UPDATE users SET reset_code = $2 WHERE email = $1 RETURNING email, reset_code',
             values: [email, code]
@@ -128,7 +128,7 @@ class Users extends Dao {
      *
      * @returns {Promise<QueryResult>} result.rows = [{question_deck_credits: NEW_VALUE}]
      */
-    public async reduceCredits(userId: number): Promise<QueryResult> {
+    public reduceCredits(userId: number): Promise<QueryResult> {
         const query = {
             text: 'UPDATE users SET question_deck_credits = question_deck_credits - 1 WHERE id = $1 AND question_deck_credits > 0 RETURNING question_deck_credits',
             values: [userId]
@@ -151,7 +151,7 @@ class Users extends Dao {
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public async toggleNotifications(userId: number, value: boolean): Promise<QueryResult> {
+    public toggleNotifications(userId: number, value: boolean): Promise<QueryResult> {
         const query = {
             text: 'UPDATE users SET notifications = $1 WHERE id = $2 RETURNING notifications',
             values: [value, userId]
@@ -165,7 +165,7 @@ class Users extends Dao {
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public async getDetails(userId: number): Promise<QueryResult> {
+    public getDetails(userId: number): Promise<QueryResult> {
         const query = {
             text: 'SELECT id, email, array_to_json(roles) AS roles, question_deck_credits, notifications FROM users WHERE id = $1',
             values: [userId]
@@ -181,7 +181,7 @@ class Users extends Dao {
      * @return  {Promise<QueryResult>} {id, email, roles[], notifications}
      * @memberof Users
      */
-    public async login(email: string, password: string): Promise<QueryResult> {
+    public login(email: string, password: string): Promise<QueryResult> {
         const query = {
             text: 'SELECT id, email, array_to_json(roles) AS roles FROM users WHERE email = $1 AND password = crypt($2, password)',
             values: [email, password]
