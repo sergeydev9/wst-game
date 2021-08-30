@@ -165,15 +165,6 @@ describe('Users', () => {
             const { rows } = await users.setCredits(userId, 5);
             expect(rows[0].question_deck_credits).toEqual(5)
         })
-
-        it('should reduce credits', async () => {
-            // set credits to 5
-            await users.setCredits(userId, 5);
-            // reduce
-            const { rows } = await users.reduceCredits(userId);
-            expect(rows[0].question_deck_credits).toEqual(4)
-        })
-
         it('should get user account details', async () => {
             const { rows } = await users.getDetails(userId);
 
@@ -182,10 +173,6 @@ describe('Users', () => {
             expect(rows[0].question_deck_credits).toEqual(0);
         })
 
-        it('should set notifications to true', async () => {
-            const { rows } = await users.toggleNotifications(userId, true);
-            expect(rows[0].notifications).toEqual(true)
-        })
     })
 
     describe('createGuest', () => {
@@ -233,6 +220,44 @@ describe('Users', () => {
             expect(secondTotal.rows.length).toEqual(1) // it didn't insert a second one
             expect(secondTotal.rows[0].code).not.toEqual(firstTotal.rows[0].code) // it correctly updated the first one
 
+        })
+
+        it("should return empty array if user doesn't exist", async () => {
+            const { rows } = await users.upsertResetCode('notReal@email.com', '1234');
+            expect(rows.length).toEqual(0)
+
+        })
+    })
+
+    describe('verifyResetCode', () => {
+        const userEmail = 'test@test.com'
+        const code = '1234'
+
+        beforeEach(async () => {
+            // insert initial user before each test
+            await users.register(userEmail, 'password123');
+            await users.upsertResetCode(userEmail, code);
+        })
+
+        it('should return user_email if code was correct', async () => {
+            const { rows } = await users.verifyResetCode(userEmail, code)
+            expect(rows.length).toEqual(1);
+            expect(rows[0].user_email).toEqual(userEmail)
+        })
+
+        it('should return empty array if code was wrong', async () => {
+            const { rows } = await users.verifyResetCode(userEmail, '1235')
+            expect(rows.length).toEqual(0);
+        })
+
+        it('should match using email AND reset code, not just code', async () => {
+            const secondEmail = 'test2@test.com';
+            await users.register(secondEmail, 'password123');
+            await users.upsertResetCode(secondEmail, code);
+            const { rows } = await users.verifyResetCode(secondEmail, code)
+
+            expect(rows.length).toEqual(1)
+            expect(rows[0].user_email).toEqual(secondEmail)
         })
     })
 })

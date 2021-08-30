@@ -124,47 +124,23 @@ class Users extends Dao {
     }
 
     /**
-     * Reduce the user's remaining credits by 1 iff they have credits remaining.
+     * For use in password resetting. If code is correct,
+     * will return user_email.
      *
-     *
-     * @example
-     * // initial_user_value = {id: 5, ..., question_deck_credits: 1}
-     * const result = await users.reduceCredits(5);
-     *
-     * result.rows[0] // {question_deck_credits: 0}
-     *
-     * @returns {Promise<QueryResult>} result.rows = [{question_deck_credits: NEW_VALUE}]
+     * If code was incorrect, will return empty array.
+     * @param email
+     * @param code
+     * @returns
      */
-    public reduceCredits(userId: number): Promise<QueryResult> {
+    public verifyResetCode(email: string, code: string): Promise<QueryResult> {
         const query = {
-            text: 'UPDATE users SET question_deck_credits = question_deck_credits - 1 WHERE id = $1 AND question_deck_credits > 0 RETURNING question_deck_credits',
-            values: [userId]
-        };
+            text: 'SELECT user_email FROM reset_codes WHERE user_email = $1 AND code = crypt($2, code)',
+            values: [email, code]
+        }
+
         return this._pool.query(query)
     }
 
-    /**
-     * Set user's notifications to the specified value
-     *
-     * Returns an object with the new value of "notifications"
-     *
-     *
-     * @example
-     * // initial_user_value = {id: 5, ..., notifications: false}
-     *
-     * const result = await users.toggleNotifications(5, true);
-     * result.rows[0] // {notifications: true}
-     *
-     * @return {Promise<QueryResult>}
-     * @memberof Users
-     */
-    public toggleNotifications(userId: number, value: boolean): Promise<QueryResult> {
-        const query = {
-            text: 'UPDATE users SET notifications = $1 WHERE id = $2 RETURNING notifications',
-            values: [value, userId]
-        };
-        return this._pool.query(query)
-    }
 
     /**
      * User account details for the 'My Account' page.
