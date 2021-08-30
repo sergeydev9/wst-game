@@ -52,7 +52,7 @@ class Users extends Dao {
     }
 
     /**
-     * Use this to change account passwords in cases where the old password is unkown
+     * Use this to change account passwords in cases where the old password is unknown
      * (i.e. email reset/adding passwords to guest accounts).
      *
      * The difference this method and the 'changePassword' method is that this method doesn't
@@ -62,14 +62,25 @@ class Users extends Dao {
      * @param password
      * @returns
      */
-    public resetPassword(id: number, password: string): Promise<QueryResult> {
+    public resetPassword(email: string, password: string): Promise<QueryResult> {
         const query = {
-            text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE id = $2`,
-            values: [password, id]
+            text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE email = $2 RETURNING id, email, array_to_json(roles) AS roles`,
+            values: [password, email]
         }
         return this._pool.query(query)
     }
 
+    /**
+     * Updates the email.
+     *
+     * Currently not being used, but this might change. Keeping it around for now
+     * just in case.
+     *
+     * @param {number} id
+     * @param {string} email
+     * @return {*}  {Promise<QueryResult>}
+     * @memberof Users
+     */
     public updateEmail(id: number, email: string): Promise<QueryResult> {
         const query = {
             text: 'UPDATE users SET email = $1 WHERE id = $2 RETURNING email',

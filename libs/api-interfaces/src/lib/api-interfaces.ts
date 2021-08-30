@@ -1,5 +1,8 @@
 import { Deck, NameObject } from '@whosaidtrue/app-interfaces';
 
+/**
+ * user
+ */
 export interface TokenPayload {
   id: number;
   email: string;
@@ -28,14 +31,27 @@ export interface AccountDetailsResponse {
   question_deck_credits: number
 }
 
-export interface UpdateDetailsRequest {
+export interface WithEmailBody {
   email: string
 }
-
-export interface UpdateDetailsResponse {
-  email: string
+export interface ResetCodeVerificationRequest {
+  code: string;
+  email: string;
 }
 
+export interface ResetCodeVerificationResponse {
+  resetToken: string
+}
+
+// last step in password reset process
+export interface ResetRequest {
+  password: string;
+  resetToken: string;
+}
+
+/**
+ * names
+ */
 export interface NameRequestResponse {
   names: NameObject[];
 }
@@ -45,15 +61,10 @@ export interface NameChoiceReport {
   chosen: number
 }
 
+/**
+ * decks
+ */
 export interface DeckSelectionResponse {
   owned: Deck[];
   notOwned: Deck[];
-}
-
-export interface ResetCodeVerificationRequest {
-  code: string
-}
-
-export interface ResetCodeVerificationResponse {
-  resetToken: string
 }

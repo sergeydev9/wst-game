@@ -356,6 +356,18 @@ SELECT * FROM user_owned_decks(USER_ID)
 Delete all password reset codes older than 1 day.
 Call this function from an exteranl cron job.
 
+### upsert_reset_code
+
+- *parameters:* u_email varchar(1000), r_code varchar(4)
+- *returns:* id integer
+
+Saves encrypted password reset code for a user with the given email, and
+returns the user's id.
+
+If the user already has a reset code, replaces old code with new value.
+
+If the user doesn't exist, returns an empty array.
+
 ### get_name_choices
 
 - *parameters:* num_names integer, clean boolean

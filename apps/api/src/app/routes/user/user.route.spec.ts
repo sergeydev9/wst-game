@@ -8,10 +8,16 @@ import validator from 'validator';
 // local
 import App from '../../App';
 import { users } from '../../db';
+import { emailService } from '../../services';
 import { signUserPayload } from '@whosaidtrue/middleware';
+import { ClientResponse } from '@sendgrid/mail';
 
 const mockedUsers = mocked(users, true)
+const mockedSendgrid = mocked(emailService, true);
+
 jest.mock('../../db')
+jest.mock('../../services')
+
 
 describe('/user routes', () => {
     let app: Application;
@@ -208,6 +214,41 @@ describe('/user routes', () => {
             expect(body[0].msg).toEqual('Invalid value')
             expect(body.length).toEqual(1);
         })
+
+        it('should respond with 202 if sendgrid responds with 202', (done) => {
+            mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
+            mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 202 } as ClientResponse, {}])
+            supertest(app)
+                .patch('/user/send-reset')
+                .send({ email: 'email@test.com' })
+                .expect(202, done)
+        })
+
+        it('should respond with 500 if sendgrid responds with something other than 202', (done) => {
+            mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
+            mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 400 } as ClientResponse, {}])
+            supertest(app)
+                .patch('/user/send-reset')
+                .send({ email: 'email@test.com' })
+                .expect(500, done)
+        })
+
+        it('should respond with 500 if DB request fails', (done) => {
+            mockedUsers.upsertResetCode.mockRejectedValue(new DatabaseError('error', 1, 'error'))
+            supertest(app)
+                .patch('/user/send-reset')
+                .send({ email: 'email@test.com' })
+                .expect(500, done)
+        })
+
+
+        it('should respond with 404 if no records returned', (done) => {
+            mockedUsers.upsertResetCode.mockResolvedValue({ rows: [] } as QueryResult)
+            supertest(app)
+                .patch('/user/send-reset')
+                .send({ email: 'email@test.com' })
+                .expect(404, done)
+        })
     })
 
     // describe('[DELETE] /delete', () => {
@@ -321,6 +362,124 @@ describe('/user routes', () => {
                 .patch('/user/change-password')
                 .send({ oldPass: 'password123', newPass: 'password1234' })
                 .expect(401, done)
+        })
+    })
+
+
+
+
+    describe('[POST] /validate-reset', () => {
+
+        it('should respond with 422 if no email', (done) => {
+            supertest(app)
+                .post('/user/validate-reset')
+                .send({ code: '1234' })
+                .expect(422, done)
+        })
+
+        it('should respond with 422 if email invalid', (done) => {
+            supertest(app)
+                .post('/user/validate-reset')
+                .send({ code: '1234', email: 'wrong' })
+                .expect(422, done)
+        })
+
+        it('should respond with 422 if code invalid', (done) => {
+            supertest(app)
+                .post('/user/validate-reset')
+                .send({ code: '12a4', email: 'wrong' })
+                .expect(422, done)
+        })
+
+        it('should respond with 422 if code missing', (done) => {
+            supertest(app)
+                .post('/user/validate-reset')
+                .send({ email: 'email@email.com' })
+                .expect(422, done)
+        })
+
+        it('should respond with 401 if no records found. This means code was wrong.', done => {
+            mockedUsers.verifyResetCode.mockResolvedValue({ rows: [] } as QueryResult)
+            supertest(app)
+                .post('/user/validate-reset')
+                .send({ code: '1234', email: 'email@test.com' })
+                .expect(401, done)
+        })
+
+        it('should respond with 500 if DB request fails.', done => {
+            mockedUsers.verifyResetCode.mockRejectedValue(new DatabaseError('error', 1, 'error'))
+            supertest(app)
+                .post('/user/validate-reset')
+                .send({ code: '1234', email: 'email@test.com' })
+                .expect(500, done)
+        })
+
+        it('should respond with 202 with a json token in body if working.', async () => {
+            mockedUsers.verifyResetCode.mockResolvedValue({ rows: [{ user_email: 'email@test.com' }] } as QueryResult)
+            const result = await supertest(app)
+                .post('/user/validate-reset')
+                .send({ code: '1234', email: 'email@test.com' })
+                .expect(202)
+
+            expect(validator.isJWT(result.body.resetToken)).toEqual(true)
+        })
+
+    })
+
+    describe('[PATCH] /reset', () => {
+        const email = 'email@email.com'
+        const password = 'password123'
+        const resetToken = signUserPayload({ id: 1, email, roles: ["user"] })
+        it('should respond with 422 if password missing', (done) => {
+            supertest(app)
+                .patch('/user/reset')
+                .send({ resetToken })
+                .expect(422, done)
+
+        })
+
+        it('should respond with 422 if reset token missing', (done) => {
+            supertest(app)
+                .patch('/user/reset')
+                .send({ password })
+                .expect(422, done)
+
+        })
+        it("should respond with 422 if reset token isn't JWT", (done) => {
+            supertest(app)
+                .patch('/user/reset')
+                .send({ resetToken: 'abc', password })
+                .expect(422, done)
+
+        })
+
+        it("should respond with 400 if nothing returned from query", (done) => {
+            mockedUsers.resetPassword.mockResolvedValue({ rows: [] } as QueryResult);
+            supertest(app)
+                .patch('/user/reset')
+                .send({ resetToken, password })
+                .expect(400, done)
+
+        })
+
+        it("should respond with 401 if token invalid", (done) => {
+            mockedUsers.resetPassword.mockResolvedValue({ rows: [] } as QueryResult);
+            const token = jwt.sign('xyz', 'abc');
+            supertest(app)
+                .patch('/user/reset')
+                .send({ resetToken: token, password })
+                .expect(401, done)
+
+        })
+
+        it("should return 202 and a token on success", async () => {
+            mockedUsers.resetPassword.mockResolvedValue({ rows: [{ id: 1, email, roles: ['user'] }] } as QueryResult);
+            const result = await supertest(app)
+                .patch('/user/reset')
+                .send({ resetToken, password })
+                .expect(202)
+
+            expect(validator.isJWT(result.body.token)).toEqual(true);
         })
     })
 })

@@ -260,4 +260,32 @@ describe('Users', () => {
             expect(rows[0].user_email).toEqual(secondEmail)
         })
     })
+
+    describe('resetPassword', () => {
+        const userEmail = 'test@test.com'
+
+        beforeEach(async () => {
+            // insert initial user before each test
+            await users.register(userEmail, 'password123');
+        })
+
+        it('should return auth object', async () => {
+            const { rows } = await users.resetPassword(userEmail, 'password12345');
+            expect(rows[0].id).toBeDefined();
+            expect(rows[0].email).toEqual(userEmail)
+            expect(rows[0].roles[0]).toEqual('user')
+        })
+
+        it('should change the password', async () => {
+            await users.resetPassword(userEmail, 'password12345');
+            const fail = await users.login(userEmail, 'password123')
+            const succeed = await users.login(userEmail, 'password12345');
+
+            expect(fail.rows.length).toEqual(0)
+            expect(succeed.rows.length).toEqual(1)
+
+
+        })
+
+    })
 })
