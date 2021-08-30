@@ -285,7 +285,7 @@ updated_at | timestamptz | no | no | now()
 id | integer | no | yes
 user_id | integer | yes | no | | users | SET NULL
 user_email | varchar(1000) | no | yes
-code: | varchar(4) | no
+code: | text | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 

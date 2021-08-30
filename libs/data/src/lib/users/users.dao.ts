@@ -28,7 +28,7 @@ class Users extends Dao {
      */
     public register(email: string, password: string): Promise<QueryResult> {
         const query = {
-            text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, roles",
+            text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, array_to_json(roles) AS roles",
             values: [email, password, ["user"]]
         }
         return this._pool.query(query);
@@ -52,12 +52,17 @@ class Users extends Dao {
     }
 
     /**
-     * For use in pasword resetting (i.e. email reset), NOT the 'change password' feature.
+     * Use this to change account passwords in cases where the old password is unkown
+     * (i.e. email reset/adding passwords to guest accounts).
+     *
+     * The difference this method and the 'changePassword' method is that this method doesn't
+     * check the old password, it just changes it.
+     *
      * @param id
      * @param password
      * @returns
      */
-    public updatePassword(id: number, password: string): Promise<QueryResult> {
+    public resetPassword(id: number, password: string): Promise<QueryResult> {
         const query = {
             text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE id = $2`,
             values: [password, id]
@@ -99,18 +104,20 @@ class Users extends Dao {
     }
 
     /**
-     * Set a reset_code on a user row.
+     * UPSERT a reset_code for a user
      *
-     * returns the email if successful.
+     * Returns the email if successful.
+     *
+     * If there is already a reset_code for a user, the old code will be replced.
      *
      * Returns an empty array if there was no user with that email.
      * @param email
      * @param code
      * @returns
      */
-    public setResetCode(email: string, code: string): Promise<QueryResult> {
+    public upsertResetCode(email: string, code: string): Promise<QueryResult> {
         const query = {
-            text: 'UPDATE users SET reset_code = $2 WHERE email = $1 RETURNING email, reset_code',
+            text: 'SELECT * FROM upsert_reset_code($1, $2)',
             values: [email, code]
         };
         return this._pool.query(query)
@@ -186,6 +193,25 @@ class Users extends Dao {
             text: 'SELECT id, email, array_to_json(roles) AS roles FROM users WHERE email = $1 AND password = crypt($2, password)',
             values: [email, password]
         }
+        return this._pool.query(query)
+    }
+
+    /**
+     * Create a user with no password.
+     *
+     * Called from the 'play as guest host' flow.
+     *
+     * Will throw a unique key error if user already exists with that email.
+     *
+     * @param email
+     * @returns
+     */
+    public createGuest(email: string): Promise<QueryResult> {
+        const query = {
+            text: 'INSERT INTO users (email, roles) VALUES ( $1, $2) RETURNING id, email, array_to_json(roles) AS roles',
+            values: [email, ['user']]
+        }
+
         return this._pool.query(query)
     }
 }

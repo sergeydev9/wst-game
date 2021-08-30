@@ -320,7 +320,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         id: 'id',
         user_id: { type: 'integer', notNull: true, references: 'users', onDelete: 'CASCADE' },
         user_email: { type: 'varchar(1000)', notNull: true, unique: true },
-        code: { type: 'varchar(4)', notNull: true },
+        code: { type: 'text', notNull: true }, // encrypted
         created_at: {
             type: 'timestamptz',
             notNull: true,

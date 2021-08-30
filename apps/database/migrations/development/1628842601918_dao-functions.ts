@@ -33,10 +33,20 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         RETURN(SELECT Count(*) FROM "game_answers" AS answers WHERE answers."game_question_id" = "gqId" AND answers."value" = 'true');
     END`)
 
+    pgm.createFunction('upsert_reset_code', [{ mode: 'IN', type: 'varchar(1000)', name: 'u_email' }, { mode: 'IN', type: 'varchar(4)', name: 'r_code' }], { returns: 'table(email varchar(1000))', onNull: true, language: 'plpgsql' }, `
+    BEGIN
+        RETURN QUERY
+        INSERT INTO reset_codes (code, user_email, user_id)
+        SELECT crypt(r_code, gen_salt('bf', 4)), users.email, users.id
+        FROM users
+        WHERE users.email = u_email
+        ON CONFLICT (user_email)
+        DO UPDATE SET code = crypt(r_code, gen_salt('bf', 4))
+        RETURNING reset_codes.user_email;
+    END`)
 
-    /**
-     * Return decks owned by the user.
-     */
+
+    // returns decks owned by a user
     pgm.createFunction('user_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, purchase_price money, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
         RETURN QUERY SELECT

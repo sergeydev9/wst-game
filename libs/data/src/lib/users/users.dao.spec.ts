@@ -42,7 +42,10 @@ describe('Users', () => {
             const { rows } = await users.register(userEmail, 'password');
             expect(rows.length).toEqual(1);
             expect(rows[0].id).toBeDefined();
-            expect(rows[0].email).toBeDefined();
+            expect(rows[0].email).toEqual(userEmail);
+            expect(rows[0].roles.length).toEqual(1);
+            expect(rows[0].roles[0]).toEqual('user')
+
         })
 
         it('should encrypt the password', async () => {
@@ -104,7 +107,7 @@ describe('Users', () => {
             userId = rows[0].id;
         })
 
-        it('should return expected columns', async () => {
+        it('should return id, email, notifications, roles, question_deck_credits, and not password', async () => {
             const { rows } = await users.getDetails(userId);
             const { id, email, roles, notifications, question_deck_credits } = rows[0]
 
@@ -129,7 +132,8 @@ describe('Users', () => {
             const { rows } = await users.login(email, password);
             expect(rows[0].id).toBeDefined();
             expect(rows[0].email).toEqual(email);
-            expect(rows[0].roles.length).toBeGreaterThan(0)
+            expect(rows[0].roles.length).toEqual(1)
+            expect(rows[0].roles[0]).toEqual('user')
         })
 
         it('should return empty rows if password is incorrect', async () => {
@@ -153,8 +157,7 @@ describe('Users', () => {
                 // attempt duplicate
                 await users.register('test@test.com', 'passwordx')
             } catch (e) {
-                const expected = new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error")
-                expect(e.message).toEqual(expected.message)
+                expect(e).toEqual(new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error"))
             }
         })
 
@@ -182,6 +185,54 @@ describe('Users', () => {
         it('should set notifications to true', async () => {
             const { rows } = await users.toggleNotifications(userId, true);
             expect(rows[0].notifications).toEqual(true)
+        })
+    })
+
+    describe('createGuest', () => {
+        it('should create a guest and return id, email, and array of roles', async () => {
+            const { rows } = await users.createGuest('test@test.com')
+
+            expect(rows[0].id).toBeDefined()
+            expect(rows[0].email).toEqual('test@test.com')
+            expect(rows[0].roles.length).toEqual(1)
+            expect(rows[0].roles[0]).toEqual('user')
+
+        })
+
+        it('should throw duplicate key error if user already exists with that email', async () => {
+            await users.register('test@test.com', 'abcd'); // register user
+            try {
+                // try to duplicate
+                await users.createGuest('test@test.com')
+            } catch (e) {
+                expect(e).toEqual(new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error"))
+            }
+        })
+    })
+
+    describe('upsertResetCode', () => {
+        const userEmail = 'test@test.com'
+
+        beforeEach(async () => {
+            // insert initial user before each test
+            await users.register(userEmail, 'password123');
+        })
+
+        it('should create a new reset code and return the email address', async () => {
+            const { rows } = await users.upsertResetCode(userEmail, '1234');
+            expect(rows[0].email).toEqual(userEmail)
+        })
+
+        it('should update and not insert if user already has a code', async () => {
+            await users.upsertResetCode(userEmail, '1234'); // first upsert
+            const firstTotal = await pool.query('SELECT * FROM reset_codes'); // get all codes
+            const { rows } = await users.upsertResetCode(userEmail, '1235'); // upsert again
+            const secondTotal = await pool.query('SELECT * FROM reset_codes'); // get all codes after second upsert
+
+            expect(rows[0].email).toEqual(userEmail) // got email back
+            expect(secondTotal.rows.length).toEqual(1) // it didn't insert a second one
+            expect(secondTotal.rows[0].code).not.toEqual(firstTotal.rows[0].code) // it correctly updated the first one
+
         })
     })
 })
