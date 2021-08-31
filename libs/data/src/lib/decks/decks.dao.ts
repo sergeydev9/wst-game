@@ -205,6 +205,8 @@ class Decks extends Dao {
      * Call this method when someone that doesn't have an account
      * needs to be shown some decks.
      *
+     * Only returns decks with purchase price > 0.
+     *
      * options:
      *  - pageNumber: sets the number of decks to skip
      *
@@ -217,16 +219,16 @@ class Decks extends Dao {
      * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public deckSelection(options: DeckSelectionOptions): Promise<QueryResult> {
+    public guestDeckSelection(options: DeckSelectionOptions): Promise<QueryResult> {
         const { pageNumber, pageSize, ageRating } = options;
 
         let queryString: string;
         let valueArray: number[];
         if (!ageRating) {
-            queryString = `SELECT * from active_decks ORDER BY id OFFSET $1 LIMIT $2`
+            queryString = `SELECT * from not_free_decks ORDER BY id OFFSET $1 LIMIT $2`
             valueArray = [pageNumber * pageSize, pageSize]
         } else {
-            queryString = `SELECT * from active_decks WHERE active_decks.age_rating < $3 ORDER BY id OFFSET $1 LIMIT $2`
+            queryString = `SELECT * from not_free_decks WHERE not_free_decks.age_rating < $3 ORDER BY id OFFSET $1 LIMIT $2`
             valueArray = [pageNumber * pageSize, pageSize, ageRating]
         }
 

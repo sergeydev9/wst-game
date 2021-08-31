@@ -204,7 +204,7 @@ describe('Decks', () => {
 
         it('should return the expected number of decks', async () => {
             await setupDecks(pool, 50)
-            const { rows } = await decks.deckSelection({ pageNumber: 0, pageSize: 30 })
+            const { rows } = await decks.guestDeckSelection({ pageNumber: 0, pageSize: 30 })
             expect(rows.length).toEqual(30)
         })
 

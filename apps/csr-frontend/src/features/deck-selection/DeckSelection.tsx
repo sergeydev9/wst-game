@@ -32,7 +32,7 @@ const Decks: React.FC = () => {
         }
     }
 
-    const toggleSfw = (e: React.MouseEvent) => {
+    const toggleSfw = (_: React.MouseEvent) => {
         dispatch(setSfw(!isSFWOnly))
     }
 

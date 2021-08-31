@@ -12,7 +12,21 @@ const insertDecks = async (pool: Pool, num: number) => {
     const deckObjects = [...testDecks(num)];
 
     // need array of the values for each deck object
-    const decks = deckObjects.map(obj => [...Object.values(obj)])
+    const decks = deckObjects.map((obj, i) => {
+        if (i % 5 === 0) {
+            obj.purchase_price = '0.00' // make 1/5 decks free
+        }
+
+        if (i % 3 == 0) {
+            obj.movie_rating = 'PG'
+        }
+
+        if (i % 2) {
+            obj.sfw = false
+        }
+
+        return [...Object.values(obj)]
+    })
     const query = {
         text: format('INSERT INTO decks (name, sort_order, clean, age_rating, movie_rating, sfw, status, description, purchase_price, example_question, thumbnail_url) VALUES %L RETURNING id', decks),
     }

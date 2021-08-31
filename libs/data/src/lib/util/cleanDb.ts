@@ -20,7 +20,8 @@ export function cleanDb(pool: Pool) {
         pool.query(`DELETE FROM game_questions WHERE id > 0`),
         pool.query(`DELETE FROM game_players WHERE id > 0`),
         pool.query(`DELETE FROM game_answers WHERE id > 0`),
-        pool.query(`DELETE FROM generated_names WHERE id > 0`)
+        pool.query(`DELETE FROM generated_names WHERE id > 0`),
+        pool.query(`DELETE FROM reset_codes WHERE id > 0`)
     ];
 
     return Promise.all(promises);

@@ -7,8 +7,6 @@ import { DeckSet, Title2 } from "@whosaidtrue/ui"
 const UserSelection: React.FC = () => {
     const owned = useAppSelector(filteredOwned);
     const notOwned = useAppSelector(filteredNotOwned)
-    const ownedCards = cardsFromSet(owned)
-    const notOwnedCards = cardsFromSet(notOwned)
 
     // If user doesn't own anything, don't show 'My Decks' section.
     return (
@@ -17,13 +15,13 @@ const UserSelection: React.FC = () => {
                 <>
                     <Title2 className="text-true-white">My Decks</Title2>
                     <DeckSet>
-                        {ownedCards}
+                        {cardsFromSet(owned)}
                     </DeckSet>
                 </>
             )}
             <Title2 className="text-true-white">{owned.length > 0 ? 'More ' : ''}Decks</Title2>
             <DeckSet>
-                {notOwnedCards}
+                {cardsFromSet(notOwned)}
             </DeckSet>
         </>
     )

@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { ExtractJwt } from 'passport-jwt';
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
 import { decks } from '../../db';
-import { TokenPayload } from '@whosaidtrue/api-interfaces';
+import { DeckSelectionResponse, TokenPayload } from '@whosaidtrue/api-interfaces';
 
 const router = Router();
 
@@ -29,20 +29,22 @@ router.get('/selection', async (req: Request, res: Response) => {
         // One set is an array of all the decks they own,
         // the other is an array of decks they don't own.
         if (id) {
-            const [userDecks, notOwned] = await Promise.all([decks.getUserDecks(id), decks.userDeckSelection({ pageNumber: 0, pageSize: 100, userId: id })])
+            // get decks
+            const [userDecks, notOwned] = await Promise.all(
+                [decks.getUserDecks(id),
+                decks.userDeckSelection({ pageNumber: 0, pageSize: 100, userId: id })
+                ]);
 
-            // Should match type DeckSelectionResponse in @whosaidtrue/api-interfaces
+            // send
             res.status(200).json({
                 owned: userDecks.rows,
                 notOwned: notOwned.rows
-            })
+            } as DeckSelectionResponse)
 
         } else {
-            // no valid id, send guest selection
-            const selection = await decks.deckSelection({ pageNumber: 0, pageSize: 100 })
-
-            // Should match type DeckSelectionResponse in @whosaidtrue/api-interfaces
-            res.status(200).json({ notOwned: selection.rows, owned: [] })
+            // no valid id, send guest selection and free decks
+            const [free, notFree] = await Promise.all([decks.getFreeDecks(), decks.guestDeckSelection({ pageNumber: 0, pageSize: 100 })])
+            res.status(200).json({ owned: free.rows, notOwned: notFree.rows } as DeckSelectionResponse)
         }
     } catch (e) {
         logger.error(e)
