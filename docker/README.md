@@ -56,11 +56,15 @@ or the `AWS_PROFILE` that setup in your `~/.aws/credentials`.
 
 To build:
 ```bash
+export AWS_PROFILE='your-profile-name'
+export AWS_DEFAULT_REGION='us-east-2'
 docker/build.sh
 ```
 
 OR to build and upload
 
 ```bash
+export AWS_PROFILE='your-profile-name'
+export AWS_DEFAULT_REGION='us-east-2'
 docker/build.sh --push
 ```
