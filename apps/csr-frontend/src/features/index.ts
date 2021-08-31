@@ -34,13 +34,12 @@ export {
   selectGameStatus,
   selectPlayerName
 } from './game/gameSlice';
-export {
-  default as decksReducer,
-} from './decks/deckSlice';
+export { default as decksReducer } from './decks/deckSlice';
 export { default as AuthForm } from './auth/AuthForm';
 export { default as Login } from './auth/Login';
 export { default as CreateAccount } from './auth/CreateAccount';
 export { default as ChangePassword } from './change-password/ChangePassword'; // The modal in the 'My Account' secion
 export { default as resetPasswordReducer } from './reset-password/resetPasswordSlice'; // Reset via email code
+export { default as cartReducer } from './cart/cartSlice';
 
 export * from './choose-name/chooseNameSlice';

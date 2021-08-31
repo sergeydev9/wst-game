@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
 import { Deck } from '@whosaidtrue/app-interfaces';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { DeckSet, DeckCard, Modal, NoFlexBox } from '@whosaidtrue/ui';
 import DeckDetailsModal from './DeckDetailsModal';
+import { selectIsDetailsModalOpen, setSelectedDeck, clearSelectedDeck, getSelectedDeck, setDetailsModalState } from './deckSlice';
 
 export interface DeckCardSetProps {
     decks: Deck[],
     owned: boolean;
 }
 const DeckCardSet: React.FC<DeckCardSetProps> = ({ decks, owned }) => {
-
-    const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
+    const dispatch = useAppDispatch()
+    const isModalOpen = useAppSelector(selectIsDetailsModalOpen)
+    const selectedDeck = useAppSelector(getSelectedDeck)
 
     const deckHelper = (decks: Deck[]) => {
         return decks.map((deck, i) => {
@@ -19,7 +21,10 @@ const DeckCardSet: React.FC<DeckCardSetProps> = ({ decks, owned }) => {
                     name={deck.name}
                     thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'}
                     movieRating={deck.movie_rating}
-                    onClick={() => setSelectedDeck(deck)}
+                    onClick={() => {
+                        dispatch(setSelectedDeck({ deck, isOwned: owned }))
+                        dispatch(setDetailsModalState(true))
+                    }}
                 />
             )
         })
@@ -30,9 +35,12 @@ const DeckCardSet: React.FC<DeckCardSetProps> = ({ decks, owned }) => {
             <DeckSet>
                 {deckHelper(decks)}
             </DeckSet>
-            <Modal isOpen={selectedDeck ? true : false} onRequestClose={() => setSelectedDeck(null)} shouldCloseOnOverlayClick={true}>
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={() => dispatch(clearSelectedDeck())}
+                shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-28rem">
-                    {selectedDeck && <DeckDetailsModal deck={selectedDeck as Deck} isOwned={owned} />}
+                    <DeckDetailsModal />
                 </NoFlexBox>
 
             </Modal>

@@ -1,5 +1,5 @@
 import Layout from "./Layout";
-import { Route, Switch, BrowserRouter } from "react-router-dom";
+import { Route, Switch, BrowserRouter, Redirect } from "react-router-dom";
 
 // TODO: make a suspense fallback so these can be lazy loaded.
 import Home from "../pages/home/Home";
@@ -48,6 +48,7 @@ const App: React.FC = () => {
           <Route exact path="/reset/new-pass">
             <NewPassword />
           </Route>
+          <Redirect to='/' path="*" />
         </Switch>
       </Layout>
     </BrowserRouter>

@@ -1,10 +1,12 @@
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { closeModalsThunk, AuthForm } from '../../features'
 import { Headline } from "@whosaidtrue/ui";
+import { openCreateAcc, selectLoginOpen } from '../modal/modalSlice';
 
 const Login: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
+    const isModal = useAppSelector(selectLoginOpen)
     const history = useHistory()
     const dispatch = useAppDispatch()
 
@@ -12,13 +14,23 @@ const Login: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
         dispatch(closeModalsThunk())
     }
 
+    // stay in current location if loging in from modal
+    const successHandler = () => {
+        if (!isModal) {
+            history.push('/')
+        }
+    }
+
     // render
     return (
         <>
-            <AuthForm onSuccess={() => history.push('/')} endpoint="/user/login" buttonlabel="login" title="Login" />
+            <AuthForm onSuccess={successHandler} endpoint="/user/login" buttonlabel="login" title="Login" />
             <div className="text-center text-basic-black mt-8">
                 <Headline>Don't have an account?</Headline>
-                <Link onClick={close} to="/create-account"><Headline className="underline">Create Account</Headline></Link>
+                {(isModal ?
+                    <Headline className="underline cursor-pointer" onClick={() => dispatch(openCreateAcc())}>Create Account</Headline> :
+                    <Link onClick={close} to="/create-account"><Headline className="underline">Create Account</Headline></Link>
+                )}
             </div>
         </>
 

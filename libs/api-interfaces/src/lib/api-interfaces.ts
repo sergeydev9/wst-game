@@ -75,5 +75,12 @@ export interface DeckSelectionResponse {
 
 export interface CreateGameRequest {
   deckId: number,
-  userId: number,
+}
+
+/**
+ * orders
+ */
+
+export interface BuyWithCreditsRequest {
+  deckId: number
 }

@@ -1,14 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreateGameRequest } from "@whosaidtrue/api-interfaces";
 import { Deck } from '@whosaidtrue/app-interfaces';
-import { number } from "yargs";
 import { api } from '../../api';
 
 // local imports
 import { RootState } from "../../app/store";
 
 type GameStatus = 'notInGame'
-    | "creating"
     | "connecting"
     | "removed"
     | "lobby"
@@ -66,9 +64,9 @@ export const initialState: GameState = {
 
 export const createGame = createAsyncThunk(
     'game/create',
-    async (createGameReq: CreateGameRequest, thunkApi) => {
+    async (deckId: number, thunkApi) => {
         try {
-            const response = await api.post('/games/create', createGameReq)
+            const response = await api.post('/games/create', { deckId } as CreateGameRequest)
             return response.data;
         } catch (e) {
             thunkApi.rejectWithValue(e.response.data)
@@ -97,6 +95,14 @@ export const gameSlice = createSlice({
             state.accessCode = action.payload;
             state.status = 'choosingName';
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(createGame.fulfilled, (state, action) => {
+            state.accessCode = action.payload.accessCode
+            state.isHost = true
+            state.deck = action.payload.deck
+            state.status = 'choosingName'
+        })
     }
 })
 

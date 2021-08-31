@@ -135,9 +135,6 @@ export const authSlice = createSlice({
 
 export const { login, logout, setError, clearError } = authSlice.actions;
 
-
-
-
 export const selectAuthToken = (state: RootState) => state.auth.token;
 export const isLoggedIn = (state: RootState) => state.auth.loggedIn;
 export const selectDeckCredits = (state: RootState) => state.auth.deckCredits;

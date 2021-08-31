@@ -47,7 +47,7 @@ const DefaultButton = tw.button<ChildProps>`
     active:bg-blue-base
     ${(p) => (p.$secondary ?
         `border-2 border-blue-base text-blue-base bg-white hover:bg-blue-subtle active:text-white` :
-        `text-white bg-blue-base hover:bg-blue-light w-p99`
+        `text-white bg-blue-base hover:bg-blue-light w-p99 active:shadow-active-blue`
     )}
 `;
 

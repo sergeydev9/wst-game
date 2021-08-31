@@ -57,7 +57,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
                 // login
                 dispatch(login({ ...user, token }))
 
-                // close any modals
+                // close any auth modals
                 dispatch(closeModals())
 
                 // call optional callback
