@@ -1,6 +1,12 @@
-import { Pool, QueryResult } from 'pg';
+import {Pool, QueryResult, QueryResultRow} from 'pg';
 import Dao from '../base.dao';
 import { IInsertGamePlayer } from '@whosaidtrue/app-interfaces';
+
+export interface GamePlayerRow extends QueryResultRow {
+    id: number;
+    game_id: number;
+    player_name: string;
+}
 
 class GamePlayers extends Dao {
     constructor(pool: Pool) {

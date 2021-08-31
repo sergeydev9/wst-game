@@ -1,8 +1,17 @@
 import { IInsertQuestion } from '@whosaidtrue/app-interfaces';
-import { Pool } from 'pg';
+import {Pool, QueryResultRow} from 'pg';
 import Dao from '../base.dao';
 
-
+export interface QuestionRow extends QueryResultRow {
+    id: number;
+    text: string;
+    text_for_guess: string;
+    follow_up: string;
+    deck_id: number;
+    age_rating: number;
+    created_at: Date;
+    updated_at: Date;
+}
 
 class Question extends Dao {
     constructor(pool: Pool) {
