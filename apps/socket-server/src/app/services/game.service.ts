@@ -1,5 +1,10 @@
 import Game from "../game/game";
 import Player from "../game/player";
+
+import {GamePlayerRow, GameRow, QuestionRow} from '@whosaidtrue/data';
+
+import { gamesDao } from '../db';
+
 import {
   FinalScores,
   HostJoinedGame,
@@ -15,39 +20,55 @@ import {
 class GameService {
   private games = {};
 
-  public devOnlyFindOrCreateGame(code: string) {
-    const game = this.findGame(code);
-    return game ? game : this.createGame(code);
+  public async getGame(code: string): Promise<Game> {
+
+    if (this.games[code]) {
+      return this.games[code];
+    }
+
+    return this.createGame(code);
   }
 
-  public findGame(code: string) {
-    return this.games[code];
+  public async createGame(code: string): Promise<Game> {
+
+    if (this.games[code]) {
+      throw new Error(`Game ${code} already exists`);
+    }
+
+    const gameResult = await gamesDao.getByAccessCode(code);
+    if (gameResult.rowCount !== 1) {
+      throw new Error(`Game ${code} not found`);
+    }
+    const game: GameRow = gameResult.rows[0];
+
+    const hostResult = await gamesDao.getHost(game.id);
+    if (hostResult.rowCount !== 1) {
+      throw new Error(`Game ${code} has no host`);
+    }
+    const host: GamePlayerRow = hostResult.rows[0];
+
+    // TODO: gamesDao.getQuestions(gameRow.id)
+    const questions: QuestionRow[] = [
+      {text: 'Text 1', text_for_guess: 'Test for guess 1', follow_up: 'Follow up 1'} as QuestionRow,
+      {text: 'Text 2', text_for_guess: 'Test for guess 2', follow_up: 'Follow up 2'} as QuestionRow,
+      {text: 'Text 3', text_for_guess: 'Test for guess 3', follow_up: 'Follow up 3'} as QuestionRow,
+      {text: 'Text 4', text_for_guess: 'Test for guess 4', follow_up: 'Follow up 4'} as QuestionRow,
+      {text: 'Text 5', text_for_guess: 'Test for guess 5', follow_up: 'Follow up 5'} as QuestionRow,
+      {text: 'Text 6', text_for_guess: 'Test for guess 6', follow_up: 'Follow up 6'} as QuestionRow,
+      {text: 'Text 7', text_for_guess: 'Test for guess 7', follow_up: 'Follow up 7'} as QuestionRow,
+      {text: 'Text 8', text_for_guess: 'Test for guess 8', follow_up: 'Follow up 8'} as QuestionRow,
+      {text: 'Text 9', text_for_guess: 'Test for guess 9', follow_up: 'Follow up 9'} as QuestionRow,
+      {text: 'Text 10', text_for_guess: 'Test for guess 10', follow_up: 'Follow up 10'} as QuestionRow,
+    ];
+    // TODO: games --> decks relationship?
+
+    const gameInstance = new Game(game, host, questions);
+
+    this.games[gameInstance.code] = gameInstance;
+    return gameInstance;
   }
 
-  public createGame(code: string): Game {
-
-    // TODO: init from db or return error
-    const game = new Game(code, {
-      name: 'Fake Deck',
-      questions: [
-        {text: 'GameQuestion 1', type: 'Entertainment'},
-        {text: 'GameQuestion 2', type: 'Entertainment'},
-        {text: 'GameQuestion 3', type: 'Entertainment'},
-        {text: 'GameQuestion 4', type: 'Entertainment'},
-        {text: 'GameQuestion 5', type: 'Entertainment'},
-        {text: 'GameQuestion 6', type: 'Entertainment'},
-        {text: 'GameQuestion 7', type: 'Entertainment'},
-        {text: 'GameQuestion 8', type: 'Entertainment'},
-        {text: 'GameQuestion 9', type: 'Entertainment'},
-        {text: 'GameQuestion 10', type: 'Entertainment'},
-      ],
-    });
-
-    this.games[game.code] = game;
-    return game;
-  }
-
-  public createPlayer(playerId: string, game: Game) {
+  public async getPlayer(playerId: string, game: Game) {
     // TODO: check re-join
     const player = new Player(playerId, game);
 

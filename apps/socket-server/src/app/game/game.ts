@@ -1,11 +1,12 @@
 import {EventEmitter} from "events";
 import Player from "./player";
+import {GamePlayerRow, GameRow, QuestionRow} from "@whosaidtrue/data";
 
 // TODO: temp type defs, will probably replace with db models
 type GameQuestion = {
   text: string;
-  followUp: string;
-  type: string;
+  text_for_guess: string;
+  follow_up: string;
   reader?: Player;
   players: Player[];
   answers: {
@@ -42,16 +43,13 @@ class Game extends EventEmitter {
   public reader: Player;
   public readonly readerOrder: Player[] = [];
 
-  constructor(code: string, deck: Deck) {
+  constructor(game: GameRow, host: GamePlayerRow, questions: QuestionRow[]) {
     super();
-    this.code = code;
-    this.deck = deck;
+    this.code = game.access_code;
 
-    deck.questions.forEach(deckQuestion => {
+    questions.forEach(q => {
       const gameQuestion: GameQuestion = {
-        text: deckQuestion.text,
-        followUp: 'What was the show?', // TODO
-        type: deckQuestion.type,
+        ...q,
         reader: null,
         players: [],
         answers: []
@@ -153,7 +151,7 @@ class Game extends EventEmitter {
     const groupTrueCount = q.answers.filter(a => a.answer === 'true').length;
 
     return {
-      followUp: q.followUp,
+      followUp: q.follow_up,
       playersCount: q.players.length,
       groupTrueCount: groupTrueCount,
       groupPercent: groupTrueCount / q.players.length,
