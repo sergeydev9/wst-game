@@ -26,7 +26,7 @@ Run `nx build my-app` to build the project. The build artifacts will be stored i
 
 ## api
 
-The api app requires a running database. Start up postgres by running `docker compose -f docker/docker-compose.yml up`. Once the database is up and running, start the api server by running `nx serve api`. 
+The api app requires a running database. Start up postgres by running `docker compose -f docker/docker-compose.yml up`. Once the database is up and running, start the api server by running `nx serve api`.
 
 ### Envirnment Variables
 

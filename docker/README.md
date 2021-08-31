@@ -4,7 +4,6 @@ This directory contains docker scripts for running, building, and uploading dock
 for development and production.
 
 
-
 # Installing Dependencies
 
 Before running in development mode the `package.json` file needs to be installed. This is 
@@ -20,7 +19,6 @@ OR
 ```bash
 docker/isntall.sh
 ```
-
 
 
 # Running in Development Mode

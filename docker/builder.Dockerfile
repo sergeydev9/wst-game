@@ -8,4 +8,3 @@ RUN yarn install
 COPY . .
 RUN yarn build api --prod
 RUN yarn build socket-server --prod
-git s
