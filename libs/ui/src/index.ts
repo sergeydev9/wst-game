@@ -29,4 +29,5 @@ export { default as DeckFilterBox } from './lib/deck-filter-box/DeckFilterBox';
 export { default as DeckFilterButton } from './lib/deck-filter-box/DeckFilterButton';
 export { default as Modal } from './lib/modal/Modal';
 export { default as NoFlexBox } from './lib/no-flex-box/NoFlexBox';
+export { default as DeckDetails } from './lib/deck-details/DeckDetails';
 export * from './lib/typography/Typography';

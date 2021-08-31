@@ -1,7 +1,7 @@
-import { filteredNotOwned, filteredOwned } from "./deckSelectionSlice"
+import { filteredNotOwned, filteredOwned } from "./deckSlice"
 import { useAppSelector } from "../../app/hooks"
-import { cardsFromSet } from "../../util/functions"
-import { DeckSet, Title2 } from "@whosaidtrue/ui"
+import { Title2 } from "@whosaidtrue/ui"
+import DeckCardSet from './DeckCardSet'
 
 
 const UserSelection: React.FC = () => {
@@ -14,15 +14,11 @@ const UserSelection: React.FC = () => {
             {owned.length > 0 && (
                 <>
                     <Title2 className="text-true-white">My Decks</Title2>
-                    <DeckSet>
-                        {cardsFromSet(owned)}
-                    </DeckSet>
+                    <DeckCardSet decks={owned} owned={true} />
                 </>
             )}
             <Title2 className="text-true-white">{owned.length > 0 ? 'More ' : ''}Decks</Title2>
-            <DeckSet>
-                {cardsFromSet(notOwned)}
-            </DeckSet>
+            <DeckCardSet decks={notOwned} owned={false} />
         </>
     )
 }

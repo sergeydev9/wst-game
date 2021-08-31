@@ -4,7 +4,7 @@ import {
     chooseNameReducer,
     gameReducer,
     modalReducer,
-    deckSelectionReducer,
+    decksReducer,
     resetPasswordReducer
 } from "../features";
 import { enhancer } from "addon-redux";
@@ -20,7 +20,7 @@ export const store = configureStore({
         chooseName: chooseNameReducer,
         game: gameReducer,
         modals: modalReducer,
-        deckSelection: deckSelectionReducer,
+        decks: decksReducer,
         resetPassword: resetPasswordReducer
     },
     preloadedState: persistedState,

@@ -16,7 +16,7 @@ const modalStyles = {
     }
 }
 
-const overlayClassName = "bg-opacity-60 bg-black fixed top-0 left-0 right-0 bottom-0"
+const overlayClassName = "bg-opacity-60 bg-black fixed top-0 left-0 right-0 bottom-0 z-10"
 
 export interface ModalProps extends Modal.Props {
     isOpen: boolean;
@@ -26,7 +26,7 @@ export interface ModalProps extends Modal.Props {
 
 const WstModal: React.FC<ModalProps> = ({ children, onRequestClose, ...rest }) => {
     return (
-        <Modal overlayClassName={overlayClassName} {...rest} style={modalStyles} >
+        <Modal overlayClassName={overlayClassName} onRequestClose={onRequestClose} {...rest} style={modalStyles} >
             <GrFormClose className="absolute right-6 top-8 text-4xl z-10 font-black cursor-pointer" onClick={onRequestClose} />
             {children}
         </Modal>

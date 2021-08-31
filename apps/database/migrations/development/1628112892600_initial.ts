@@ -316,6 +316,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         }
     });
 
+    // DEV_NOTE should add a counter and limit resets
     pgm.createTable('reset_codes', {
         id: 'id',
         user_id: { type: 'integer', notNull: true, references: 'users', onDelete: 'CASCADE' },

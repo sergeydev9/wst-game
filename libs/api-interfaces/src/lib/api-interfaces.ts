@@ -68,3 +68,12 @@ export interface DeckSelectionResponse {
   owned: Deck[];
   notOwned: Deck[];
 }
+
+/**
+ * games
+ */
+
+export interface CreateGameRequest {
+  deckId: number,
+  userId: number,
+}

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 import { LargeTitle, DeckFilterBox, DeckFilterButton } from "@whosaidtrue/ui"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { getDeckSelection, selectSfwOnly, selectMovieRatingFilters, addRating, setSfw, removeRating } from './deckSelectionSlice';
+import { getDeckSelection, selectSfwOnly, selectMovieRatingFilters, addRating, setSfw, removeRating } from './deckSlice';
 import { isLoggedIn } from '../auth/authSlice';
 import UserSelection from './UserSelection';
 import GuestSelection from './GuestSelection';

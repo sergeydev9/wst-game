@@ -6,6 +6,7 @@ export interface ModalState {
     login: boolean;
     createAcc: boolean;
     changePass: boolean;
+
 }
 
 export const initialState: ModalState = {
@@ -53,6 +54,7 @@ export const modalSlice = createSlice({
 export const { closeModals, openLogin, openCreateAcc, openChangePass } = modalSlice.actions
 export const selectLoginOpen = (state: RootState) => state.modals.login;
 export const selectCreateAcc = (state: RootState) => state.modals.createAcc;
-export const selectChangePass = (state: RootState) => state.modals.changePass
+export const selectChangePass = (state: RootState) => state.modals.changePass;
+
 
 export default modalSlice.reducer

@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { CreateGameRequest } from "@whosaidtrue/api-interfaces";
 import { Deck } from '@whosaidtrue/app-interfaces';
+import { number } from "yargs";
+import { api } from '../../api';
 
 // local imports
 import { RootState } from "../../app/store";
@@ -15,14 +18,15 @@ type GameStatus = 'notInGame'
     | "error"
     | "choosingName"
 
-type JoinRequestStatus = 'idle' | 'accepted' | 'rejected' | 'awaitingResponse' | 'error' | 'notSent'
+type JoinRequestStatus = 'idle' | 'accepted' | 'rejected' | 'awaitingResponse' | 'error'
 
 export interface GameState {
     status: GameStatus;
     gameId: string;
+    deck: Deck;
     isHost: boolean;
     currentHostName: string;
-    otherPlayers: string[];
+    players: string[];
     currentQuestionIndex: number;
     accessCode: string;
     playerId: number;
@@ -35,9 +39,22 @@ export interface GameState {
 export const initialState: GameState = {
     status: 'notInGame',
     gameId: '',
+    deck: {
+        id: 0,
+        name: '',
+        sort_order: 0,
+        clean: false,
+        age_rating: 0,
+        status: 'active',
+        description: '',
+        movie_rating: 'G',
+        sfw: true,
+        thumbnail_url: '',
+        purchase_price: ''
+    },
     isHost: false,
     accessCode: '',
-    otherPlayers: [],
+    players: [],
     currentQuestionIndex: 0,
     currentHostName: '',
     playerName: '',
@@ -46,6 +63,19 @@ export const initialState: GameState = {
     joinRequestError: '',
     playerId: 0
 }
+
+export const createGame = createAsyncThunk(
+    'game/create',
+    async (createGameReq: CreateGameRequest, thunkApi) => {
+        try {
+            const response = await api.post('/games/create', createGameReq)
+            return response.data;
+        } catch (e) {
+            thunkApi.rejectWithValue(e.response.data)
+        }
+
+    }
+)
 
 export const gameSlice = createSlice({
     name: "game",
@@ -65,7 +95,6 @@ export const gameSlice = createSlice({
         },
         initialRequest: (state, action) => {
             state.accessCode = action.payload;
-            state.joinRequestStatus = 'notSent';
             state.status = 'choosingName';
         }
     }

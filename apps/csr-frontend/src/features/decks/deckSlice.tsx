@@ -1,25 +1,30 @@
 import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { DeckSelectionResponse } from "@whosaidtrue/api-interfaces";
-import { Deck, MovieRating } from "@whosaidtrue/app-interfaces";
+import { Deck, MovieRating, RequestStatus } from "@whosaidtrue/app-interfaces";
 import { api } from '../../api';
 
-export type DeckSelectionStatus = 'idle' | 'loading'
 
-export interface DeckSelectionState {
-    status: DeckSelectionStatus;
+export interface DeckState {
+    getSelectionStatus: RequestStatus;
+    getDetailsStatus: RequestStatus;
     sfwOnly: boolean;
     movieRatingFilters: MovieRating[];
     owned: Deck[];
     notOwned: Deck[]
+    ownedMap: Record<string, Deck>;
+    notOwnedMap: Record<string, Deck>;
 }
 
-export const initialState: DeckSelectionState = {
-    status: 'idle',
+export const initialState: DeckState = {
+    getSelectionStatus: 'idle',
+    getDetailsStatus: 'idle',
     sfwOnly: false,
     movieRatingFilters: ["G", "PG", "PG-13", "R"],
     owned: [],
-    notOwned: []
+    notOwned: [],
+    ownedMap: {},
+    notOwnedMap: {}
 }
 
 export const getDeckSelection = createAsyncThunk(
@@ -36,8 +41,8 @@ export const getDeckSelection = createAsyncThunk(
     }
 )
 
-export const deckSelectionSlice = createSlice({
-    name: 'deckSelection',
+export const deckSlice = createSlice({
+    name: 'decks',
     initialState,
     reducers: {
         clear: () => {
@@ -57,9 +62,10 @@ export const deckSelectionSlice = createSlice({
     extraReducers: (builder) => {
         // success
         builder.addCase(getDeckSelection.fulfilled, (state, action) => {
-            state.owned = action.payload.owned;
-            state.notOwned = action.payload.notOwned;
-            state.status = 'idle';
+            const { owned, notOwned } = action.payload;
+            state.owned = owned;
+            state.notOwned = notOwned;
+            state.getSelectionStatus = 'idle';
         })
 
         // error
@@ -70,20 +76,20 @@ export const deckSelectionSlice = createSlice({
         })
         // loading
         builder.addCase(getDeckSelection.pending, (state, action) => {
-            state.status = 'loading';
+            state.getSelectionStatus = 'loading';
 
         })
     }
 })
 
 // actions
-export const { clear, removeRating, addRating, setSfw } = deckSelectionSlice.actions;
+export const { clear, removeRating, addRating, setSfw } = deckSlice.actions;
 
 // selectors
-export const selectMovieRatingFilters = (state: RootState) => state.deckSelection.movieRatingFilters
-export const selectSfwOnly = (state: RootState) => state.deckSelection.sfwOnly
-export const selectOwned = (state: RootState) => state.deckSelection.owned
-export const selectNotOwned = (state: RootState) => state.deckSelection.notOwned
+export const selectMovieRatingFilters = (state: RootState) => state.decks.movieRatingFilters
+export const selectSfwOnly = (state: RootState) => state.decks.sfwOnly
+export const selectOwned = (state: RootState) => state.decks.owned
+export const selectNotOwned = (state: RootState) => state.decks.notOwned
 
 export const movieFilteredtNotOwned = createSelector(selectNotOwned, selectMovieRatingFilters, (decks, filters) => {
     // if no filters have been selected, return all decks
@@ -112,4 +118,4 @@ export const filteredOwned = createSelector(movieFilteredtOwned, selectSfwOnly, 
     return decks.filter(deck => deck.sfw === sfwOnly || deck.sfw === true)
 })
 // default
-export default deckSelectionSlice.reducer;
+export default deckSlice.reducer;

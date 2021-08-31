@@ -35,8 +35,8 @@ export {
   selectPlayerName
 } from './game/gameSlice';
 export {
-  default as deckSelectionReducer,
-} from './deck-selection/deckSelectionSlice';
+  default as decksReducer,
+} from './decks/deckSlice';
 export { default as AuthForm } from './auth/AuthForm';
 export { default as Login } from './auth/Login';
 export { default as CreateAccount } from './auth/CreateAccount';

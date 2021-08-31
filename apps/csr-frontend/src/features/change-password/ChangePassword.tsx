@@ -47,7 +47,7 @@ const ChangePassword: React.FC = () => {
     const confPwErr = formik.touched.confPass && formik.errors.confPass ? true : undefined
 
     return (
-        <div className="text-center px-8 py-11 w-change-password rounded-3xl bg-white-ish border-0">
+        <div className="text-center px-8 py-11 w-40rem rounded-3xl bg-white-ish border-0">
             <form className="w-full flex flex-col gap-4" onSubmit={formik.handleSubmit}>
                 {/* title */}
                 <FormGroup>

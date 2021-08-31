@@ -5,6 +5,7 @@ export interface UserStory {
     lines: string[];
 }
 
+export type RequestStatus = 'idle' | 'loading';
 export type QuestionStatus = 'active' | 'inactive' | 'poll';
 export type UserRating = 'great' | 'bad';
 export type DeckStatus = 'active' | 'inactive' | 'pending';

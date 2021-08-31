@@ -1,6 +1,6 @@
 import { testDecks } from '@whosaidtrue/data';
 import { Deck, MovieRating } from '@whosaidtrue/app-interfaces';
-import deckSelectionReducer, { initialState, DeckSelectionState, selectOwned } from "./deckSelectionSlice";
+import deckSelectionReducer, { initialState, DeckSelectionState, selectOwned } from "./deckSlice";
 import { store } from '../../app/store';
 
 
