@@ -136,7 +136,7 @@ class Decks extends Dao {
      */
     public getUserDecks(userId: number): Promise<QueryResult> {
         const query = {
-            text: 'SELECT * from user_owned_decks($1)',
+            text: 'SELECT * from user_owned_decks($1) UNION ALL (SELECT * FROM free_decks)',
             values: [userId]
         }
         return this.pool.query(query);
@@ -238,6 +238,13 @@ class Decks extends Dao {
         return this.pool.query(query)
     }
 
+    /**
+     * Get all free decks.
+     */
+    public getFreeDecks(): Promise<QueryResult> {
+        return this.pool.query('SELECT * FROM free_decks')
+    }
+
 
     /**
      * Get all active questions for specified deck.
@@ -267,8 +274,7 @@ class Decks extends Dao {
         }
         return this.pool.query(query)
     }
-    // TODO: need this?
-    // public async checkIfUserOwns(deckId: number): Promise<QueryResult> {}
+
 
 }
 

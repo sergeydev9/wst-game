@@ -104,7 +104,7 @@ export async function setupDecks(pool: Pool, totalDecks: number, numRating?: num
     let count = 0
 
     for (const [index, deck] of [...testDecks(totalDecks)].entries()) {
-        let { age_rating } = deck;
+        let { age_rating, } = deck;
         const { name, sort_order, sfw, movie_rating, purchase_price, status, description, clean } = deck;
 
         // set numRating decks to have ageRating
@@ -114,6 +114,7 @@ export async function setupDecks(pool: Pool, totalDecks: number, numRating?: num
             age_rating = ageRating;
             count++
         }
+
 
         decks.push([name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean]);
     }

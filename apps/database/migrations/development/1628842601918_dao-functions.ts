@@ -12,8 +12,41 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
 
     // all decks with status 'active' and purchase_price 0
     pgm.createView('free_decks', {}, `
-    SELECT * FROM active_decks
+    SELECT
+        id,
+        name,
+        sort_order,
+        clean,
+        age_rating,
+        movie_rating,
+        sfw,
+        status,
+        description,
+        example_question,
+        purchase_price,
+        thumbnail_url
+    FROM active_decks
     WHERE active_decks.purchase_price = '0.00'
+    `)
+
+
+    // all decks with status 'active' and purchase_price 0
+    pgm.createView('not_free_decks', {}, `
+    SELECT
+        id,
+        name,
+        sort_order,
+        clean,
+        age_rating,
+        movie_rating,
+        sfw,
+        status,
+        description,
+        example_question,
+        purchase_price,
+        thumbnail_url
+    FROM active_decks
+    WHERE active_decks.purchase_price > '0.00'
     `)
 
     // all questions with status 'active'
@@ -73,20 +106,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
      */
     pgm.createFunction('user_not_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, purchase_price money, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
     BEGIN
-        RETURN QUERY SELECT
-            decks.id,
-            decks.name,
-            decks.sort_order,
-            decks.clean,
-            decks.age_rating,
-            decks.movie_rating,
-            decks.sfw,
-            decks.status,
-            decks.description,
-            decks.example_question,
-            decks.purchase_price,
-            decks.thumbnail_url
-        FROM active_decks AS decks
+        RETURN QUERY SELECT *
+        FROM not_free_decks AS decks
         WHERE NOT EXISTS ( SELECT * FROM user_decks WHERE user_decks.user_id = input_id AND user_decks.deck_id = decks.id );
     END
     `)

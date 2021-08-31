@@ -15,13 +15,14 @@ router.get('/selection', async (req: Request, res: Response) => {
         // Check header for token
         const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
 
-        let id;
+        let id: number;
         // if there is a token, verify it and extract user id
         if (token) {
             try {
                 const { user } = jwt.verify(token, process.env.JWT_SECRET) as { user: TokenPayload }
                 id = user.id;
-            } catch { }  // fail silently if token invalid
+                //  eslint-disable-next-line
+            } catch (_) { }  // fail silently if token invalid
         }
 
         // if id found, send user 2 sets of decks.

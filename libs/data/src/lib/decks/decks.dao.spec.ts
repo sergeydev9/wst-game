@@ -183,6 +183,17 @@ describe('Decks', () => {
             const { rows } = await decks.getNotOwned(userId);
             expect(rows.length).toEqual(2)
         })
+
+
+        it('should include any free decks', async () => {
+            for (const deck of testDecks(1, 'random')) {
+                deck.purchase_price = '0.00'
+                await decks.insertOne({ ...deck })
+            }
+
+            const { rows } = await decks.getUserDecks(userId);
+            expect(rows.length).toEqual(4)
+        })
     })
 
     describe('deckSelection', () => {
@@ -243,6 +254,7 @@ describe('Decks', () => {
             const { rows } = await decks.userDeckSelection({ userId, pageNumber: 4, pageSize: 30 });
             expect(rows.length).toEqual(0)
         })
+
 
         // TODO add test for age filter
 

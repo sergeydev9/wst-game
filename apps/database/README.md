@@ -342,7 +342,8 @@ SELECT * FROM user_owned_decks(USER_ID)
 - *parameters:* user_id
 - *returns:* List of Decks.
 
-Returns all decks that the specified user does NOT own.
+Returns all decks that the specified user does NOT own, and that have a purchase price
+greater than 0 (free decks are counted as 'owned' in the UI)
 
 ```sql
 SELECT * FROM user_owned_decks(USER_ID)
@@ -435,7 +436,12 @@ Returns all decks that have the value `active` in the `status` column. Returns a
 ### free_decks
 
 eturns all decks that have the value `active` in the `status` column.
-and a purchase price of `0`. Returns all columns.
+and a purchase price of `0`. Returns only columns meant for public display.
+
+### not_free_decks
+
+eturns all decks that have the value `active` in the `status` column.
+and a purchase price above `0`. Returns only columns meant for public display.
 
 ### active_questions
 
