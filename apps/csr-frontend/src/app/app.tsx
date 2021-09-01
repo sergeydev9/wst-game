@@ -7,7 +7,7 @@ import ContactUs from "../pages/contact-us/ContactUs";
 import CreateAccount from '../pages/create-account/CreateAccount';
 import ChooseName from "../features/choose-name/ChooseName";
 import Login from '../pages/login/Login';
-import DeckSelection from '../features/decks/DeckSelection';
+import Decks from '../pages/decks/Decks';
 import MyAccount from '../pages/my-account/MyAccount';
 import { GuardedRoute } from "../features";
 import SendResetForm from "../features/reset-password/SendResetForm";
@@ -36,7 +36,7 @@ const App: React.FC = () => {
             <Login />
           </Route>
           <Route exact path='/decks'>
-            <DeckSelection />
+            <Decks />
           </Route>
           <GuardedRoute component={MyAccount} path='/account' exact />
           <Route exact path='/reset/send-email'>

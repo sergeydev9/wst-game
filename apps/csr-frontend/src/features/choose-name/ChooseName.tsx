@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
     selectNameRerolls,
-    setGameStatus,
     setRemainingNameOptions,
     setCurrentNameOptions,
     selectCurrentNameOptions
-} from '../../features';
+} from './chooseNameSlice';
+import { setGameStatus } from '../game/gameSlice';
 import {
     Button,
     RerollNamesButton,

@@ -30,4 +30,5 @@ export { default as DeckFilterButton } from './lib/deck-filter-box/DeckFilterBut
 export { default as Modal } from './lib/modal/Modal';
 export { default as NoFlexBox } from './lib/no-flex-box/NoFlexBox';
 export { default as DeckDetails } from './lib/deck-details/DeckDetails';
+export { default as PaymentMethodSelect } from './lib/payment-method-select/PaymentMethodSelect';
 export * from './lib/typography/Typography';

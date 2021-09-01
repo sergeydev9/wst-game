@@ -44,7 +44,6 @@ const Decks: React.FC = () => {
                 <DeckFilterButton onClick={toggleRating('PG-13')} selected={isNotInFilters('PG-13')}>PG-13-Rated</DeckFilterButton>
                 <DeckFilterButton onClick={toggleRating('R')} selected={isNotInFilters('R')}>R-Rated</DeckFilterButton>
                 <DeckFilterButton onClick={toggleSfw} selected={isSFWOnly}>Work Friendly</DeckFilterButton>
-
             </DeckFilterBox>
             {loggedIn ? <UserSelection /> : <GuestSelection />}
         </div>
