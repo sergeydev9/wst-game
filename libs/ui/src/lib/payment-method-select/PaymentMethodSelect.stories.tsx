@@ -7,7 +7,7 @@ export default {
 }
 
 export const PaymentMethodSelection = () => (
-    <MethodSelection submitCallback={(e) => e.preventDefault()} googleAvailable={true} appleAvailable={true} >
+    <MethodSelection submitCallback={(e) => e.preventDefault()} googleAvailable={true} appleAvailable={true} hasCredits={true} >
 
     </MethodSelection>
 )

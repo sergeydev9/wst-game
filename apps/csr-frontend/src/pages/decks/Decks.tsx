@@ -37,7 +37,6 @@ const Decks: React.FC = () => {
                 <NoFlexBox className="w-28rem">
                     <CheckoutModal />
                 </NoFlexBox>
-
             </Modal>
         </>
     )
