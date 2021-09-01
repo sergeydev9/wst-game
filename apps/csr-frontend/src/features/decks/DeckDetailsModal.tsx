@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { isLoggedIn, selectDeckCredits } from '../auth/authSlice';
 import { DeckDetails, Title1, Headline } from '@whosaidtrue/ui';
-import { getSelectedDeck, selectIsOwned, setDetailsModalState } from './deckSlice';
+import { getSelectedDeck, selectIsOwned } from './deckSlice';
 import { fetchDetails } from '../auth/authSlice';
-import { openLogin } from '../modal/modalSlice';
+import { setFullModal, selectFullModalFactory } from '../modal/modalSlice';
 import DeckDetailsButton from './DeckDetailsButton';
 
 const DeckDetailsModal: React.FC = () => {
@@ -23,8 +23,7 @@ const DeckDetailsModal: React.FC = () => {
     }, [loggedIn, dispatch])
 
     const loginClick = () => {
-        dispatch(openLogin())
-        dispatch(setDetailsModalState(false))
+        dispatch(setFullModal('login'))
     }
 
     return (

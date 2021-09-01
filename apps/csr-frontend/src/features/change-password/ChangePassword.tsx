@@ -13,7 +13,7 @@ import {
     Title2
 } from '@whosaidtrue/ui';
 import { useAppDispatch } from '../../app/hooks';
-import { closeModals } from '../modal/modalSlice';
+import { setFullModal } from '../modal/modalSlice';
 
 
 const ChangePassword: React.FC = () => {
@@ -35,7 +35,7 @@ const ChangePassword: React.FC = () => {
             const { oldPass, newPass } = values
             try {
                 await api.patch('/user/change-password', { oldPass, newPass })
-                dispatch(closeModals())
+                dispatch(setFullModal(''))
             } catch (e) {
                 setChangeErr(e.response.data)
             }

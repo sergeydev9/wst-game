@@ -23,14 +23,14 @@ import {
     Box,
     Modal
 } from "@whosaidtrue/ui";
-import { selectChangePass, openChangePass, closeModals } from '../../features/modal/modalSlice';
+import { setFullModal, selectFullModalFactory } from '../../features/modal/modalSlice';
 
 const MyAccount: React.FC = () => {
     const history = useHistory()
     const dispatch = useAppDispatch();
     const deckCredits = useAppSelector(selectDeckCredits)
     const email = useAppSelector(selectEmail)
-    const changePassOpen = useAppSelector(selectChangePass)
+    const changePassOpen = useAppSelector(selectFullModalFactory('changePassword'))
 
     useEffect(() => {
         dispatch(fetchDetails())
@@ -69,7 +69,7 @@ const MyAccount: React.FC = () => {
                 </FormGroup>
 
                 {/* Change Password */}
-                <Headline className="text-left underline text-basic-gray cursor-pointer" onClick={() => dispatch(openChangePass())}>Change Password</Headline>
+                <Headline className="text-left underline text-basic-gray cursor-pointer" onClick={() => dispatch(setFullModal('changePassword'))}>Change Password</Headline>
 
                 {/* Deck Credits */}
                 <Headline className="text-basic-black text-left">Free Question Deck Credits: {deckCredits}</Headline>
@@ -81,7 +81,7 @@ const MyAccount: React.FC = () => {
                 </div>
                 <h4 className="text-off-blue cursor-pointer border-b-2 border-off-blue w-max mx-auto text-xl tracking-wide font-bold leading-relaxed" onClick={logOutClick}>Log Out</h4>
             </Form>
-            <Modal isOpen={changePassOpen} onRequestClose={() => dispatch(closeModals())}>
+            <Modal isOpen={changePassOpen} onRequestClose={() => dispatch(setFullModal(''))}>
                 <ChangePassword />
             </Modal>
         </Box >

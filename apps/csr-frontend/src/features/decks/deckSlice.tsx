@@ -12,7 +12,6 @@ export interface DeckState {
     movieRatingFilters: MovieRating[];
     owned: Deck[];
     notOwned: Deck[];
-    deckDetailsModalOpen: boolean;
     selectedDeck: Deck;
     isSelectedOwned: boolean;
 }
@@ -24,7 +23,6 @@ export const initialState: DeckState = {
     movieRatingFilters: ["G", "PG", "PG-13", "R"],
     owned: [],
     notOwned: [],
-    deckDetailsModalOpen: false,
     selectedDeck: {
         id: 0,
         name: '',
@@ -71,15 +69,11 @@ export const deckSlice = createSlice({
         addRating: (state, action) => {
             state.movieRatingFilters = [...state.movieRatingFilters, action.payload]
         },
-        setDetailsModalState: (state, action) => {
-            state.deckDetailsModalOpen = action.payload
-        },
         setSelectedDeck: (state, action) => {
             state.selectedDeck = action.payload.deck
             state.isSelectedOwned = action.payload.isOwned
         },
         clearSelectedDeck: (state) => {
-            state.deckDetailsModalOpen = false;
             state.selectedDeck = initialState.selectedDeck;
             state.isSelectedOwned = false
         }
@@ -115,7 +109,6 @@ export const {
     removeRating,
     addRating,
     setSfw,
-    setDetailsModalState,
     setSelectedDeck,
     clearSelectedDeck
 } = deckSlice.actions;
@@ -125,7 +118,6 @@ export const selectMovieRatingFilters = (state: RootState) => state.decks.movieR
 export const selectSfwOnly = (state: RootState) => state.decks.sfwOnly
 export const selectOwned = (state: RootState) => state.decks.owned
 export const selectNotOwned = (state: RootState) => state.decks.notOwned
-export const selectIsDetailsModalOpen = (state: RootState) => state.decks.deckDetailsModalOpen
 export const getSelectedDeck = (state: RootState) => state.decks.selectedDeck
 export const selectIsOwned = (state: RootState) => state.decks.isSelectedOwned
 

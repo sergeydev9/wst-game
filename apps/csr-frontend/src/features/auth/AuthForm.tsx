@@ -3,9 +3,8 @@ import * as Yup from 'yup';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { AuthenticationResponse } from '@whosaidtrue/api-interfaces';
 import { decodeUserToken } from '../../util/functions';
-import { login, closeModals } from '../../features'
+import { login } from './authSlice'
 import {
-    Form,
     LargeTitle,
     FormGroup,
     TextInput,
@@ -56,9 +55,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
 
                 // login
                 dispatch(login({ ...user, token }))
-
-                // close any auth modals
-                dispatch(closeModals())
 
                 // call optional callback
                 onSuccess()

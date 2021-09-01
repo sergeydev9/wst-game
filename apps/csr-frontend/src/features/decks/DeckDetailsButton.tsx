@@ -4,9 +4,8 @@ import { Button } from '@whosaidtrue/ui';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { isLoggedIn } from '../auth/authSlice';
 import { createGame } from '../game/gameSlice';
-import { setDetailsModalState } from './deckSlice';
-import { openPreGameAuth, openLogin } from '../modal/modalSlice';
-import { goToCheckout, addToCart } from '../cart/cartSlice';
+import { setFullModal } from '../modal/modalSlice';
+import { addToCart } from '../cart/cartSlice';
 
 export interface DeckDetailsButtonProps {
     deck: Deck;
@@ -20,20 +19,22 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
 
     const addToCartThenGoToAuth = () => {
         dispatch(addToCart(deck))
-        dispatch(openLogin())
+        dispatch(setFullModal('login'))
+    }
+
+    const addToCartThenGoToCheckout = () => {
+        dispatch(addToCart(deck))
+        dispatch(setFullModal("choosePaymentMethod"))
     }
 
     let handler: (e: React.MouseEvent) => void;
-
     if (isOwned) {
         handler = () => {
-            dispatch(setDetailsModalState(false))
-            loggedIn ? dispatch(createGame(deck.id)) : dispatch(openPreGameAuth())
+            loggedIn ? dispatch(createGame(deck.id)) : dispatch(setFullModal('preGameAuth'))
         }
     } else {
         handler = () => {
-            dispatch(setDetailsModalState(false))
-            loggedIn ? dispatch(goToCheckout(deck.id)) : addToCartThenGoToAuth()
+            loggedIn ? addToCartThenGoToCheckout() : addToCartThenGoToAuth()
         }
     }
     return (

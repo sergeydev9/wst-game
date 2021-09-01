@@ -16,8 +16,6 @@ export type PurchaseStatus = 'noItem'
 export interface CartState {
     status: PurchaseStatus;
     deck: Deck;
-    isCheckoutModalOpen: boolean;
-
 }
 
 export const initialState: CartState = {
@@ -35,19 +33,17 @@ export const initialState: CartState = {
         thumbnail_url: '',
         purchase_price: ''
     },
-    isCheckoutModalOpen: false
 }
 
 export const buyWithCredits = createAsyncThunk(
     'cart/buyWithCredits',
     async (deckId: number, thunkApi) => {
         try {
-            const response = await api.post('/games/create', { deckId } as BuyWithCreditsRequest)
+            const response = await api.post('/orders/credit', { deckId } as BuyWithCreditsRequest)
             return response.data;
         } catch (e) {
             thunkApi.rejectWithValue(e.response.data)
         }
-
     }
 )
 
@@ -65,9 +61,6 @@ export const cartSlice = createSlice({
         clearCart: () => {
             return initialState
         },
-        setCheckoutModalState: (state, action) => {
-            state.isCheckoutModalOpen = action.payload
-        },
         addToCart: (state, action) => {
             state.deck = action.payload
         },
@@ -77,21 +70,17 @@ export const cartSlice = createSlice({
         goToCheckout: (state, action) => {
             state.deck = action.payload.deck
             state.status = 'hasItem'
-            state.isCheckoutModalOpen = true
-        }
+        },
     },
 
 })
 
 export const {
     addToCart,
-    setCheckoutModalState,
     clearCart,
-    goToCheckout
 } = cartSlice.actions;
 
 // selectors
-export const selectIsCartModalOpen = (state: RootState) => state.cart.isCheckoutModalOpen;
 export const selectCartStatus = (state: RootState) => state.cart.status;
 
 export default cartSlice.reducer;

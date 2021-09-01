@@ -48,7 +48,9 @@ const App: React.FC = () => {
           <Route exact path="/reset/new-pass">
             <NewPassword />
           </Route>
-          <Redirect to='/' path="*" />
+          <Route path="*" >
+            <Home />
+          </Route>
         </Switch>
       </Layout>
     </BrowserRouter>

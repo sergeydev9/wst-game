@@ -1,8 +1,12 @@
 import { Deck } from '@whosaidtrue/app-interfaces';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { DeckSet, DeckCard, Modal, NoFlexBox } from '@whosaidtrue/ui';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { selectFullModalFactory, setFullModal } from '../modal/modalSlice';
 import DeckDetailsModal from './DeckDetailsModal';
-import { selectIsDetailsModalOpen, setSelectedDeck, clearSelectedDeck, getSelectedDeck, setDetailsModalState } from './deckSlice';
+import {
+    setSelectedDeck,
+    clearSelectedDeck,
+} from './deckSlice';
 
 export interface DeckCardSetProps {
     decks: Deck[],
@@ -10,8 +14,12 @@ export interface DeckCardSetProps {
 }
 const DeckCardSet: React.FC<DeckCardSetProps> = ({ decks, owned }) => {
     const dispatch = useAppDispatch()
-    const isModalOpen = useAppSelector(selectIsDetailsModalOpen)
-    const selectedDeck = useAppSelector(getSelectedDeck)
+    const isModalOpen = useAppSelector(selectFullModalFactory('deckDetails'))
+
+    const closeHandler = () => {
+        dispatch(setFullModal(''))
+        dispatch(clearSelectedDeck())
+    }
 
     const deckHelper = (decks: Deck[]) => {
         return decks.map((deck, i) => {
@@ -23,7 +31,7 @@ const DeckCardSet: React.FC<DeckCardSetProps> = ({ decks, owned }) => {
                     movieRating={deck.movie_rating}
                     onClick={() => {
                         dispatch(setSelectedDeck({ deck, isOwned: owned }))
-                        dispatch(setDetailsModalState(true))
+                        dispatch(setFullModal('deckDetails'))
                     }}
                 />
             )
@@ -37,7 +45,7 @@ const DeckCardSet: React.FC<DeckCardSetProps> = ({ decks, owned }) => {
             </DeckSet>
             <Modal
                 isOpen={isModalOpen}
-                onRequestClose={() => dispatch(clearSelectedDeck())}
+                onRequestClose={closeHandler}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-28rem">
                     <DeckDetailsModal />

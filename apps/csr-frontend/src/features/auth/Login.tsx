@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { closeModalsThunk, AuthForm } from '../../features'
 import { Headline } from "@whosaidtrue/ui";
-import { openCreateAcc, selectLoginOpen } from '../modal/modalSlice';
+import { setFullModal, selectFullModalFactory } from '../modal/modalSlice';
 
 const Login: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
-    const isModal = useAppSelector(selectLoginOpen)
+    const isModal = useAppSelector(selectFullModalFactory('login'))
     const history = useHistory()
     const dispatch = useAppDispatch()
 
@@ -28,7 +28,7 @@ const Login: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
             <div className="text-center text-basic-black mt-8">
                 <Headline>Don't have an account?</Headline>
                 {(isModal ?
-                    <Headline className="underline cursor-pointer" onClick={() => dispatch(openCreateAcc())}>Create Account</Headline> :
+                    <Headline className="underline cursor-pointer" onClick={() => dispatch(setFullModal('createAccount'))}>Create Account</Headline> :
                     <Link onClick={close} to="/create-account"><Headline className="underline">Create Account</Headline></Link>
                 )}
             </div>

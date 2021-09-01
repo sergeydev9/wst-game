@@ -1,33 +1,36 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { clearError } from "../auth/authSlice";
-import { setCheckoutModalState } from "../cart/cartSlice";
+
+
+export type FullModal = "createAccount"
+    | "preGameAuth"
+    | "login"
+    | "deckDetails"
+    | "changePassword"
+    | "choosePaymentMethod"
+    | "freeCreditPurchase"
+    | "cardPurchase"
+    | "payPal"
+    | "applePay"
+    | "googlePay"
+    | "purchaseSuccess"
+    | "removedFromGame"
+    | "freeCreditAward"
+    | "gameOptions"
+    | ""
 
 export interface ModalState {
-    login: boolean;
-    createAcc: boolean;
-    changePass: boolean;
-    preGameAuth: boolean
+    fullModal: FullModal
+    messageModal: string
 
 }
 
 export const initialState: ModalState = {
-    login: false,
-    createAcc: false,
-    changePass: false,
-    preGameAuth: false
+    fullModal: '',
+    messageModal: ''
 }
 
-/**
- * Close all modals and clear the error state on auth
- * Call this instead of close modals directly.
- * This is to avoid a situation where when a user
- * receives an error message on one modal, and
- * immediately opens another modal. They would see
- * their old error message displayed on the new modal
- * if both modals include the auth form component
- * since that form gets its error message from the redux store.
- */
 export const closeModalsThunk = createAsyncThunk(
     'modals/closeThunk',
     async (_, thunkAPI) => {
@@ -35,10 +38,10 @@ export const closeModalsThunk = createAsyncThunk(
 
         // if there is an item in the cart, open checkout
         if (state.cart?.status !== 'noItem') {
-            thunkAPI.dispatch(setCheckoutModalState(true))
+            thunkAPI.dispatch(setFullModal('choosePaymentMethod'))
         }
         thunkAPI.dispatch(clearError());
-        thunkAPI.dispatch(closeModals())
+        thunkAPI.dispatch(setFullModal(''))
     }
 )
 
@@ -46,41 +49,18 @@ export const modalSlice = createSlice({
     name: 'modals',
     initialState,
     reducers: {
-        closeModals: () => {
-            return initialState;
-        },
-        openLogin: (state) => {
-            state.createAcc = false
-            state.login = true
-            state.changePass = false
-            state.preGameAuth = false
-        },
-        openCreateAcc: (state) => {
-            state.createAcc = true
-            state.login = false
-            state.changePass = false
-            state.preGameAuth = false
-        },
-        openChangePass: (state) => {
-            state.changePass = true
-            state.createAcc = false
-            state.login = false
-            state.preGameAuth = false
-        },
-        openPreGameAuth: (state) => {
-            state.preGameAuth = true
-            state.changePass = true
-            state.createAcc = false
-            state.login = false
+        // to open a modal, pass it's name to this
+        // to close all modals, pass an empty string
+        // only 1 modal can be open at a time
+        setFullModal: (state, action) => {
+            state.fullModal = action.payload
         }
-
     }
 })
 
-export const { closeModals, openLogin, openCreateAcc, openChangePass, openPreGameAuth } = modalSlice.actions
-export const selectLoginOpen = (state: RootState) => state.modals.login;
-export const selectCreateAcc = (state: RootState) => state.modals.createAcc;
-export const selectChangePass = (state: RootState) => state.modals.changePass;
+export const { setFullModal } = modalSlice.actions
+export const selectFullModal = (state: RootState) => state.modals.fullModal;
 
+export const selectFullModalFactory = (modal: FullModal) => createSelector(selectFullModal, (fullModal) => fullModal === modal)
 
 export default modalSlice.reducer

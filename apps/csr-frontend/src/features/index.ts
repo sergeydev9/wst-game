@@ -15,14 +15,7 @@ export {
 } from "./auth/authSlice";
 export {
   default as modalReducer,
-  closeModals,
   closeModalsThunk,
-  openLogin,
-  openCreateAcc,
-  selectCreateAcc,
-  selectLoginOpen,
-  selectChangePass,
-  openChangePass
 } from './modal/modalSlice';
 export {
   default as gameReducer,

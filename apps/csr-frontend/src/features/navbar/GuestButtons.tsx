@@ -3,25 +3,25 @@ import { Button } from '@whosaidtrue/ui';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import Login from '../../features/auth/Login';
 import CreateAccount from '../../features/auth/CreateAccount';
-import { openLogin, openCreateAcc, closeModals, selectCreateAcc, selectLoginOpen } from '../modal/modalSlice';
+import { setFullModal, selectFullModalFactory } from '../modal/modalSlice';
 
 
 const GuestButtons = () => {
 
     const dispatch = useAppDispatch();
-    const isLoginOpen = useAppSelector(selectLoginOpen)
-    const isCreateAccOpen = useAppSelector(selectCreateAcc)
+    const isLoginOpen = useAppSelector(selectFullModalFactory('login'))
+    const isCreateAccOpen = useAppSelector(selectFullModalFactory('createAccount'))
 
     const close = () => {
-        dispatch(closeModals())
+        dispatch(setFullModal(''))
     }
 
     const openLoginModal = (e: React.MouseEvent) => {
-        dispatch(openLogin());
+        dispatch(setFullModal('login'));
     }
 
     const openCreateAccModal = (e: React.MouseEvent) => {
-        dispatch(openCreateAcc())
+        dispatch(setFullModal('createAccount'))
     }
 
     return (
