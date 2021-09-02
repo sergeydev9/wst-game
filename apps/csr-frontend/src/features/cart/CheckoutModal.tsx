@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { PaymentRequest } from '@stripe/stripe-js'
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { PaymentMethodSelect } from '@whosaidtrue/ui';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -41,7 +42,9 @@ const CheckoutModal: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => 
                     }
                 }
             })
-
+            if (paymentRequest) {
+                setPaymentRequest(paymentRequest)
+            }
         }
     }, [method, stripe, deck])
 
@@ -55,7 +58,7 @@ const CheckoutModal: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => 
                 dispatch(setFullModal('googlePay'))
                 return
             case 'deckCredit':
-                dispatch(setFullModal('deckCredit'))
+                dispatch(setFullModal('freeCreditPurchase'))
                 return
             default:
                 dispatch(setFullModal(''))

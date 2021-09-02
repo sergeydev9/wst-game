@@ -22,14 +22,12 @@ const Invite: React.FC = () => {
 
     const copyUrl = async (e: React.MouseEvent) => {
         await navigator.clipboard.writeText('whosaidtrue.com/x/XYV1FC')
-
-
     }
 
     const copyCode = async (e: React.MouseEvent) => {
         await navigator.clipboard.writeText('XYV1FC')
-
     }
+
     return (
         <NoFlexBox className="w-max mx-auto text-basic-black text-center pb-16">
 

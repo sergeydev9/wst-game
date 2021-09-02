@@ -28,4 +28,5 @@ export { default as resetPasswordReducer } from './reset-password/resetPasswordS
 export { default as cartReducer } from './cart/cartSlice';
 export { default as CheckoutModal } from './cart/CheckoutModal';
 export { default as CreditCardForm } from './cart/CreditCardForm';
+export { default as RedeemCredits } from './cart/RedeemCredits';
 export * from './choose-name/chooseNameSlice';

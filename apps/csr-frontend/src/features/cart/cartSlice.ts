@@ -82,5 +82,6 @@ export const {
 
 // selectors
 export const selectCartStatus = (state: RootState) => state.cart.status;
+export const selectDeckId = (state: RootState) => state.cart.deck.id;
 
 export default cartSlice.reducer;

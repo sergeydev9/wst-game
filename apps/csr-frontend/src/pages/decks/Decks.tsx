@@ -6,7 +6,8 @@ import {
     clearSelectedDeck,
     selectFullModalFactory,
     CheckoutModal,
-    CreditCardForm
+    CreditCardForm,
+    RedeemCredits
 } from '../../features';
 import { Modal, NoFlexBox, } from '@whosaidtrue/ui'
 
@@ -68,8 +69,8 @@ const Decks: React.FC = () => {
                 isOpen={isDeckCreditOpen}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
-                <NoFlexBox className="w-28rem">
-                    <CreditCardForm />
+                <NoFlexBox className="w-max">
+                    <RedeemCredits />
                 </NoFlexBox>
             </Modal>
         </>
