@@ -16,8 +16,6 @@ class GameRoute {
 
     // @ts-ignore
     this.router.ws('/game/:code/player/:guid', this.gameController.joinGameWs);
-
-    this.router.post('/game/create', this.gameController.createGame);
   }
 }
 

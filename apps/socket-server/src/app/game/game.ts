@@ -1,12 +1,9 @@
 import {EventEmitter} from "events";
 import Player from "./player";
-import {GamePlayerRow, GameRow, QuestionRow} from "@whosaidtrue/data";
+import {GamePlayerRow, GameRow, QuestionRow, DeckRow } from "@whosaidtrue/data";
 
-// TODO: temp type defs, will probably replace with db models
 type GameQuestion = {
-  text: string;
-  text_for_guess: string;
-  follow_up: string;
+  questionRow: QuestionRow;
   reader?: Player;
   players: Player[];
   answers: {
@@ -16,20 +13,11 @@ type GameQuestion = {
   }[];
 };
 
-type DeckQuestion = {
-  text: string;
-  type: string;
-}
-
-type Deck = {
-  name: string;
-  questions: DeckQuestion[];
-};
-
-
 class Game extends EventEmitter {
-  public readonly code: string;
-  public readonly deck: Deck;
+  public readonly gameRow: GameRow;
+  public readonly hostRow: GamePlayerRow;
+  public readonly deckRow: DeckRow;
+
   public readonly connected: Player[] = [];
   public readonly disconnected: Player[] = [];
   public readonly waiting: Player[] = [];
@@ -43,13 +31,15 @@ class Game extends EventEmitter {
   public reader: Player;
   public readonly readerOrder: Player[] = [];
 
-  constructor(game: GameRow, host: GamePlayerRow, questions: QuestionRow[]) {
+  constructor(game: GameRow, host: GamePlayerRow, deck: DeckRow, questions: QuestionRow[]) {
     super();
-    this.code = game.access_code;
+    this.gameRow = game;
+    this.hostRow = host;
+    this.deckRow = deck;
 
     questions.forEach(q => {
       const gameQuestion: GameQuestion = {
-        ...q,
+        questionRow: q,
         reader: null,
         players: [],
         answers: []
@@ -84,19 +74,19 @@ class Game extends EventEmitter {
 
   public joinWaitingRoom(player: Player) {
     if (!this.connected.includes(player)) {
-      throw new Error('Not connected, game: ' + this.code);
+      throw new Error('Not connected, gameRow: ' + this.gameRow.access_code);
     }
 
     if (this.disconnected.includes(player)) {
-      throw new Error('Disconnected, game: ' + this.code);
+      throw new Error('Disconnected, gameRow: ' + this.gameRow.access_code);
     }
 
     if (this.waiting.includes(player)) {
-      throw new Error('Already in waiting room, game: ' + this.code);
+      throw new Error('Already in waiting room, gameRow: ' + this.gameRow.access_code);
     }
 
     if (!player.name) {
-      throw new Error('Please pick a name, game: ' + this.code);
+      throw new Error('Please pick a name, gameRow: ' + this.gameRow.access_code);
     }
 
     this.waiting.push(player);
@@ -151,7 +141,7 @@ class Game extends EventEmitter {
     const groupTrueCount = q.answers.filter(a => a.answer === 'true').length;
 
     return {
-      followUp: q.follow_up,
+      followUp: q.questionRow.follow_up,
       playersCount: q.players.length,
       groupTrueCount: groupTrueCount,
       groupPercent: groupTrueCount / q.players.length,

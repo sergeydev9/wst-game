@@ -3,7 +3,7 @@ import Player from "../game/player";
 
 import {GamePlayerRow, GameRow, QuestionRow} from '@whosaidtrue/data';
 
-import {gamesDao} from '../db';
+import {decksDao, gamesDao} from '../db';
 
 import {
   FinalScores,
@@ -68,15 +68,18 @@ class GameService {
       {text: 'Text 9', text_for_guess: 'Test for guess 9', follow_up: 'Follow up 9'} as QuestionRow,
       {text: 'Text 10', text_for_guess: 'Test for guess 10', follow_up: 'Follow up 10'} as QuestionRow,
     ];
-    // TODO: games --> decks relationship?
 
-    const gameInstance = new Game(game, host, questions);
+    const deckResult = await decksDao.getDetails(game.deck_id);
+    const deck = deckResult.rows[0];
 
-    this.games[gameInstance.code] = gameInstance;
+
+    const gameInstance = new Game(game, host, deck, questions);
+
+    this.games[code] = gameInstance;
     return gameInstance;
   }
 
-  public async getPlayer(playerId: string, game: Game) {
+  public async getPlayer(playerId: number, game: Game) {
     // TODO: check re-join
     const player = new Player(playerId, game);
 
@@ -118,15 +121,14 @@ class GameService {
       game.active.splice(index, 1);
     }
 
-    if (game.host?.playerId == player.playerId) {
-      game.host = null;
-      // TODO: handle host gone
+    if (player.isHost()) {
+      // TODO: handle host left
     }
   }
 
   public playerJoinGame(game: Game, player: Player, playerName: string) {
     if (!game.checkName(playerName)) {
-      throw new Error(`Sorry! The name '${playerName}' is already taken, game: ${game.code}`);
+      throw new Error(`Sorry! The name '${playerName}' is already taken, game: ${game.gameRow.access_code}`);
     }
 
     player.name = playerName;
@@ -146,7 +148,7 @@ class GameService {
 
   public hostJoinGame(game: Game, player: Player, playerName: string) {
     if (!game.checkName(playerName)) {
-      throw new Error(`Sorry! The name '${playerName}' is already taken, game: ${game.code}`);
+      throw new Error(`Sorry! The name '${playerName}' is already taken, game: ${game.gameRow.access_code}`);
     }
 
     player.name = playerName;
@@ -166,13 +168,11 @@ class GameService {
   }
 
   public nextQuestion(game: Game, player: Player) {
-    if (game.host?.playerId != player.playerId) {
-      throw new Error('Only the host can advance to next question.');
-    }
+    player.requireHost();
 
     const q = game.nextQuestion();
     if (q == null) {
-      throw new Error('No more questions game over.');
+      throw new Error('No more questions gameRow over.');
     }
 
     const msg: QuestionPart1 = {
@@ -183,7 +183,7 @@ class GameService {
         readerName: q.reader.name,
         questionNumber: game.questionNumber,
         questionTotal: game.questions.length,
-        questionText: q.text,
+        questionText: q.questionRow.text,
       },
     };
     game.notifyActive(msg);
@@ -191,7 +191,7 @@ class GameService {
 
   public playerAnswerPart1(game: Game, player: Player, data: any) {
     if (game.questionNumber < 1) {
-      throw new Error(`Game ${game.code} hasn't started yet!`);
+      throw new Error(`Game ${game.gameRow.access_code} hasn't started yet!`);
     }
 
     if (game.questionNumber != data.questionNumber) {
@@ -223,7 +223,7 @@ class GameService {
         playersCount: q.players.length,
         questionNumber: game.questionNumber,
         questionTotal: game.questions.length,
-        questionText: 'How many players answered true for ' + q.text,
+        questionText: 'How many players answered true for ' + q.questionRow.text,
 
       },
     };
@@ -232,7 +232,7 @@ class GameService {
 
   public playerAnswerPart2(game: Game, player: Player, data: any) {
     if (game.questionNumber < 1) {
-      throw new Error(`Game ${game.code} hasn't started yet!`);
+      throw new Error(`Game ${game.gameRow.access_code} hasn't started yet!`);
     }
 
     if (game.questionNumber != data.questionNumber) {
@@ -282,9 +282,7 @@ class GameService {
   }
 
   public forceShowResults(game: Game, player: Player) {
-    if (game.host?.playerId != player.playerId) {
-      throw new Error('Only the host can advance to results before all players have answered.');
-    }
+    player.requireHost();
 
     this.showResults(game);
   }
@@ -303,9 +301,7 @@ class GameService {
   }
 
   public showScores(game: Game, player: Player) {
-    if (game.host?.playerId != player.playerId) {
-      throw new Error('Only the host can advance to scores.');
-    }
+    player.requireHost();
 
     const gameScore = game.currentScore();
     const header: QuestionScores = {
@@ -328,15 +324,13 @@ class GameService {
   }
 
   public showFinalScores(game: Game, player: Player) {
-    if (game.host != player) {
-      throw new Error('Only the host can advance to final scores.');
-    }
+    player.requireHost();
 
     const gameScore = game.currentScore();
     const header: FinalScores = {
       event: 'FinalScores',
       status: 'ok',
-      debug: `Final scores for game: ${game.code}`,
+      debug: `Final scores for game: ${game.gameRow.access_code}`,
     };
 
     game.active.forEach(player => {
@@ -346,7 +340,7 @@ class GameService {
           gameScore: gameScore,
           playerScore: player.currentScore(),
           funFacts: this.funFacts(game, player),
-          deckName: game.deck.name,
+          deckName: game.deckRow.name,
         },
       };
       player.notify(msg);

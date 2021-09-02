@@ -11,8 +11,9 @@ class WebsocketService {
     this.gameService = gameService;
   }
 
-  public async handle(ws: WebSocket, gameCode: string, playerId: string) {
+  public async handle(ws: WebSocket, gameCode: string, playerId: number) {
     try {
+      console.log("WebsocketService.handle");
 
       const game = await this.gameService.getGame(gameCode);
       const player = await this.gameService.getPlayer(playerId, game);
@@ -26,7 +27,7 @@ class WebsocketService {
         event: 'GameConnected',
         success: true,
         message: 'Welcome! Please pick a name.',
-        data: {gameCode: player.game.code, playerId: playerId}
+        data: {gameCode: player.game.gameRow.access_code, playerId: playerId}
       }));
     } catch (e) {
       console.error(e);
