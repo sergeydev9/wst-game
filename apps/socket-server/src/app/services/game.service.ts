@@ -3,7 +3,7 @@ import Player from "../game/player";
 
 import {GamePlayerRow, GameRow, QuestionRow} from '@whosaidtrue/data';
 
-import { gamesDao } from '../db';
+import {gamesDao} from '../db';
 
 import {
   FinalScores,
@@ -17,19 +17,27 @@ import {
   QuestionScores
 } from "@whosaidtrue/api-interfaces";
 
+import {Mutex} from 'async-mutex';
+
+
 class GameService {
   private games = {};
+  private locks = {};
 
   public async getGame(code: string): Promise<Game> {
-
-    if (this.games[code]) {
-      return this.games[code];
+    if (!this.locks[code]) {
+      this.locks[code] = new Mutex();
     }
 
-    return this.createGame(code);
+    const release = await this.locks[code].acquire();
+    try {
+      return this.games[code] ? this.games[code] : this.createGame(code);
+    } finally {
+      release();
+    }
   }
 
-  public async createGame(code: string): Promise<Game> {
+  private async createGame(code: string): Promise<Game> {
 
     if (this.games[code]) {
       throw new Error(`Game ${code} already exists`);
