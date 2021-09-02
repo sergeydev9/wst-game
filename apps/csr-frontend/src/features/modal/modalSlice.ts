@@ -60,7 +60,6 @@ export const modalSlice = createSlice({
 
 export const { setFullModal } = modalSlice.actions
 export const selectFullModal = (state: RootState) => state.modals.fullModal;
-
 export const selectFullModalFactory = (modal: FullModal) => createSelector(selectFullModal, (fullModal) => fullModal === modal)
 
 export default modalSlice.reducer

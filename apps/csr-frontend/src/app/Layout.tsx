@@ -4,8 +4,8 @@ import NavBar from '../features/navbar/Navbar'
 
 const Layout: React.FC = ({ children }) => {
     return (
-        <div className="min-h-screen flex flex-col">
-            <div style={{ backgroundImage: "url('./assets/bg.svg'), linear-gradient(180deg, #6325AD 0%, #411872 100%)" }} className='flex-grow pb-16'>
+        <div className="min-h-screen flex flex-col w-screen">
+            <div style={{ backgroundImage: "url('./assets/bg.svg'), linear-gradient(180deg, #6325AD 0%, #411872 100%)" }} className='flex-grow pb-16 w-full'>
                 <NavBar />
                 <main>{children}</main>
             </div>

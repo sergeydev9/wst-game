@@ -30,7 +30,7 @@ const DeckDetailsModal: React.FC = () => {
         <>
             <Title1 className="text-center mb-6 mt-2">{deck.name}</Title1>
             <DeckDetails {...deck}></DeckDetails>
-            <div className="my-8 px-16">
+            <div className="my-8 px-8 md:px-16">
                 <DeckDetailsButton deck={deck} isOwned={isOwned} />
             </div>
             {!loggedIn && !isOwned && (<>

@@ -27,4 +27,5 @@ export { default as ChangePassword } from './change-password/ChangePassword'; //
 export { default as resetPasswordReducer } from './reset-password/resetPasswordSlice'; // Reset via email code
 export { default as cartReducer } from './cart/cartSlice';
 export { default as CheckoutModal } from './cart/CheckoutModal';
+export { default as CreditCardForm } from './cart/CreditCardForm';
 export * from './choose-name/chooseNameSlice';

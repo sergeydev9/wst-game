@@ -1,5 +1,13 @@
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { DeckSelection, DeckDetailsModal, setFullModal, clearSelectedDeck, selectFullModalFactory, CheckoutModal } from '../../features';
+import {
+    DeckSelection,
+    DeckDetailsModal,
+    setFullModal,
+    clearSelectedDeck,
+    selectFullModalFactory,
+    CheckoutModal,
+    CreditCardForm
+} from '../../features';
 import { Modal, NoFlexBox, } from '@whosaidtrue/ui'
 
 const Decks: React.FC = () => {
@@ -7,6 +15,10 @@ const Decks: React.FC = () => {
     const dispatch = useAppDispatch();
     const isDetailsOpen = useAppSelector(selectFullModalFactory('deckDetails'))
     const isChoosePaymentOpen = useAppSelector(selectFullModalFactory('choosePaymentMethod'))
+    const isCardPaymentOpen = useAppSelector(selectFullModalFactory('cardPurchase'))
+    const isGooglePayOpen = useAppSelector(selectFullModalFactory('googlePay'))
+
+
     const closeDetails = () => {
         dispatch(setFullModal(''))
         dispatch(clearSelectedDeck())
@@ -24,7 +36,7 @@ const Decks: React.FC = () => {
                 isOpen={isDetailsOpen}
                 onRequestClose={closeDetails}
                 shouldCloseOnOverlayClick={true}>
-                <NoFlexBox className="w-28rem">
+                <NoFlexBox className="w-80 md:w-28rem">
                     <DeckDetailsModal />
                 </NoFlexBox>
             </Modal>
@@ -36,6 +48,26 @@ const Decks: React.FC = () => {
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-28rem">
                     <CheckoutModal />
+                </NoFlexBox>
+            </Modal>
+
+            {/* Credit card */}
+            <Modal
+                isOpen={isCardPaymentOpen}
+                onRequestClose={close}
+                shouldCloseOnOverlayClick={true}>
+                <NoFlexBox className="w-28rem">
+                    <CreditCardForm />
+                </NoFlexBox>
+            </Modal>
+
+            {/* Google Pay */}
+            <Modal
+                isOpen={isGooglePayOpen}
+                onRequestClose={close}
+                shouldCloseOnOverlayClick={true}>
+                <NoFlexBox className="w-28rem">
+                    <CreditCardForm />
                 </NoFlexBox>
             </Modal>
         </>
