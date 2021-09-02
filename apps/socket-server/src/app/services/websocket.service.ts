@@ -15,8 +15,7 @@ class WebsocketService {
     try {
       console.log("WebsocketService.handle");
 
-      const game = await this.gameService.getGame(gameCode);
-      const player = await this.gameService.getPlayer(playerId, game);
+      const player = await this.gameService.connectPlayer(playerId, gameCode);
       const client = new WebsocketClient(ws, player, this.gameService);
 
       client.on('close', () => this.onDisconnected(client));

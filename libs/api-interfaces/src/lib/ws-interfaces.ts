@@ -22,7 +22,7 @@ export interface PlayerJoinGame extends WebsocketMessage {
 }
 
 export interface PlayerJoinedGame extends WebsocketMessage {
-  event: 'PlayerJoinedGame';
+  event: 'PlayerJoinedGame' | 'HostJoinedGame';
 }
 
 export interface HostJoinGame extends WebsocketMessage {

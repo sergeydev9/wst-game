@@ -1,15 +1,18 @@
 import {EventEmitter} from "events";
 import Game from "./game";
 
+export type GameStatus = 'new' | 'waiting' | 'playing';
+
 class Player extends EventEmitter {
-  public readonly playerId: number;
-  public readonly game: Game;
   public name?: string;
 
-  public constructor(playerId: number, game: Game) {
+  public clientStatus: 'connected' | 'disconnected' = 'disconnected';
+  public gameStatus: GameStatus = 'new';
+
+  public constructor(
+      public readonly playerId: number,
+      public readonly game: Game) {
     super();
-    this.playerId = playerId;
-    this.game = game;
   }
 
   public isHost() {

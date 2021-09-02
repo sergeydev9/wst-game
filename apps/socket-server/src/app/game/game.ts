@@ -1,6 +1,6 @@
 import {EventEmitter} from "events";
-import Player from "./player";
-import {GamePlayerRow, GameRow, QuestionRow, DeckRow } from "@whosaidtrue/data";
+import Player, {GameStatus} from "./player";
+import {DeckRow, GamePlayerRow, GameRow, QuestionRow} from "@whosaidtrue/data";
 
 type GameQuestion = {
   questionRow: QuestionRow;
@@ -18,10 +18,7 @@ class Game extends EventEmitter {
   public readonly hostRow: GamePlayerRow;
   public readonly deckRow: DeckRow;
 
-  public readonly connected: Player[] = [];
-  public readonly disconnected: Player[] = [];
-  public readonly waiting: Player[] = [];
-  public readonly active: Player[] = [];
+  public readonly players: Player[] = [];
 
   public host: Player;
 
@@ -48,59 +45,61 @@ class Game extends EventEmitter {
     });
   }
 
-  public notifyAll(message: any) {
-    this.connected.forEach(p => p.notify(message));
+  public getPlayers(status?: GameStatus) {
+    if (status) {
+      this.getConnectedPlayers().filter(p => p.gameStatus === status);
+    }
+    return this.getConnectedPlayers();
   }
 
-  public emitConnected(event: string, message: any) {
-    this.connected.forEach(p => p.emit(event, message));
+  private getConnectedPlayers() {
+    return this.players.filter(p => p.clientStatus === 'connected');
+  }
+
+  public notifyAll(message: any) {
+    this.getPlayers().forEach(p => p.notify(message));
   }
 
   public notifyWaiting(message: any) {
-    this.waiting.forEach(p => p.notify(message));
+    this.getPlayers('waiting')
+        .forEach(p => p.notify(message));
   }
 
-  public emitWaiting(event: string, message: any) {
-    this.waiting.forEach(p => p.emit(event, message));
-  }
-
-  public notifyActive(message: any) {
-    this.active.forEach(p => p.notify(message));
-  }
-
-  public emitActive(event: string, message: any) {
-    this.active.forEach(p => p.emit(event, message));
+  public notifyPlaying(message: any) {
+    this.getPlayers('playing')
+        .forEach(p => p.notify(message));
   }
 
   public joinWaitingRoom(player: Player) {
-    if (!this.connected.includes(player)) {
-      throw new Error('Not connected, gameRow: ' + this.gameRow.access_code);
+    if (!this.checkName(player)) {
+      throw new Error(`Sorry! The name '${player.name}' is already taken, game: ${this.gameRow.access_code}`);
     }
 
-    if (this.disconnected.includes(player)) {
-      throw new Error('Disconnected, gameRow: ' + this.gameRow.access_code);
+    if (player.clientStatus !== 'connected') {
+      throw new Error('Not connected, game: ' + this.gameRow.access_code);
     }
 
-    if (this.waiting.includes(player)) {
-      throw new Error('Already in waiting room, gameRow: ' + this.gameRow.access_code);
+    if (!this.players.includes(player)) {
+      throw new Error('Not in game: ' + this.gameRow.access_code);
+    }
+
+    if (player.gameStatus === 'waiting') {
+      throw new Error('Already in waiting room, game: ' + this.gameRow.access_code);
     }
 
     if (!player.name) {
-      throw new Error('Please pick a name, gameRow: ' + this.gameRow.access_code);
+      throw new Error('Please pick a name, game: ' + this.gameRow.access_code);
     }
 
-    this.waiting.push(player);
+    player.gameStatus = 'waiting';
     this.readerOrder.push(player);
-
-    // remove from active
-    const index = this.active.indexOf(player);
-    if (index > -1) {
-      this.active.splice(index, 1);
-    }
   }
 
-  public checkName(name: string) {
-    return !this.connected.map(p => p.name).includes(name);
+  public checkName(player: Player) {
+    return !this.players
+        .filter(p => p != player)
+        .map(p => p.name)
+        .includes(player.name);
   }
 
   public getQuestion(question: number) {
@@ -117,13 +116,12 @@ class Game extends EventEmitter {
     }
 
     // move all players from waiting room to active
-    this.active.push(...this.waiting);
-    this.waiting.splice(0, this.waiting.length);
+    this.getPlayers('waiting').forEach(p => p.gameStatus = 'playing');
 
     this.questionNumber++;
     const nextQuestion = this.getQuestion(this.questionNumber);
     nextQuestion.reader = this.readerForQuestion(this.questionNumber);
-    nextQuestion.players =  [...this.active];
+    nextQuestion.players = [...this.getPlayers('playing')];
 
     return nextQuestion;
   }

@@ -3,14 +3,12 @@ import * as WebSocket from 'ws';
 import * as uuid from 'uuid';
 import GameService from "../services/game.service";
 import {AnswerPart1, HostJoinGame, PlayerJoinGame, WebsocketError, WebsocketMessage} from '@whosaidtrue/api-interfaces'
-import Game from "../game/game";
 import Player from "../game/player";
 
 class WebsocketClient extends EventEmitter {
 
   public readonly clientId: string;
   public readonly player: Player;
-  public readonly game: Game;
 
   private readonly ws: WebSocket;
   private readonly gameService: GameService;
@@ -77,13 +75,9 @@ class WebsocketClient extends EventEmitter {
 
       switch (message.event) {
         case 'HostJoinGame': // -> HostJoinedGame
-
-          this.gameService.hostJoinGame(game, this.player, (message as HostJoinGame).payload.playerName);
-          break;
-
         case 'PlayerJoinGame': // -> PlayerJoinedGame
 
-          this.gameService.playerJoinGame(game, this.player, (message as PlayerJoinGame).payload.playerName);
+          this.gameService.joinGame(this.player, (message as HostJoinGame).payload.playerName);
           break;
 
         case 'NextQuestion': // -> QuestionPart1 | FinalScores

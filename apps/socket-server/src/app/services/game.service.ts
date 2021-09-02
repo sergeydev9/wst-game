@@ -24,17 +24,12 @@ class GameService {
   private games = {};
   private locks = {};
 
-  public async getGame(code: string): Promise<Game> {
-    if (!this.locks[code]) {
-      this.locks[code] = new Mutex();
+  private async getGame(code: string): Promise<Game> {
+    if (this.games[code]) {
+      return this.games[code];
     }
 
-    const release = await this.locks[code].acquire();
-    try {
-      return this.games[code] ? this.games[code] : this.createGame(code);
-    } finally {
-      release();
-    }
+    return this.createGame(code);
   }
 
   private async createGame(code: string): Promise<Game> {
@@ -79,89 +74,83 @@ class GameService {
     return gameInstance;
   }
 
-  public async getPlayer(playerId: number, game: Game) {
-    // TODO: check re-join
-    const player = new Player(playerId, game);
+  public async connectPlayer(playerId: number, gameCode: string) {
+    if (!this.locks[gameCode]) {
+      this.locks[gameCode] = new Mutex();
+    }
 
-    game.connected.push(player);
+    let player;
+    const release = await this.locks[gameCode].acquire();
+    try {
+      player = await this.getPlayer(playerId, gameCode);
+    } finally {
+      release();
+    }
 
-    // TODO: persist db?
+    // don't allow multiple connections
+    // TODO: disconnect the other player instead?
+    if (player.clientStatus === 'connected') {
+      throw new Error("Already Connected");
+    }
+
+    player.clientStatus = 'connected';
+    return player;
+  }
+
+  private async getPlayer(playerId: number, gameCode: string) {
+
+    const game = await this.getGame(gameCode);
+    let player = game.players.find(p => p.playerId == playerId);
+
+    if (!player) {
+      player = new Player(playerId, game);
+      game.players.push(player);
+    }
 
     return player;
   }
 
   public disconnectPlayer(player: Player) {
-    const game = player.game;
 
-    let index = game.connected.indexOf(player);
-    if (index > -1) {
-      game.connected.splice(index, 1);
-      game.disconnected.push(player);
-      player.emit("disconnected");
-      game.emit('disconnected', player);
+    player.clientStatus = 'disconnected';
 
-      const msg: PlayerLeftGame = {
-        event: 'PlayerLeftGame',
-        status: 'ok',
-        debug: `Player ${player.name} has left the game.`,
-        payload: {
-          playerName: player.name,
-        },
-      };
-      game.notifyAll(msg);
-    }
+    const msg: PlayerLeftGame = {
+      event: 'PlayerLeftGame',
+      status: 'ok',
+      debug: `Player ${player.name} has left the game.`,
+      payload: {
+        playerName: player.name,
+      },
+    };
+    player.game.notifyAll(msg);
 
-    index = game.waiting.indexOf(player);
-    if (index > -1) {
-      game.waiting.splice(index, 1);
-    }
-
-    index = game.active.indexOf(player);
-    if (index > -1) {
-      game.active.splice(index, 1);
-    }
 
     if (player.isHost()) {
       // TODO: handle host left
     }
   }
 
-  public playerJoinGame(game: Game, player: Player, playerName: string) {
-    if (!game.checkName(playerName)) {
-      throw new Error(`Sorry! The name '${playerName}' is already taken, game: ${game.gameRow.access_code}`);
+  public joinGame(player: Player, playerName: string) {
+    const game = player.game;
+    player.name = playerName;
+    if (game.hostRow.id == player.playerId) {
+      game.host = player;
     }
 
-    player.name = playerName;
+    player.clientStatus = 'connected';
     game.joinWaitingRoom(player);
 
+
     const msg: PlayerJoinedGame = {
-      event: 'PlayerJoinedGame',
+      event: (player.isHost()) ? 'PlayerJoinedGame' : 'HostJoinedGame',
       status: "ok",
       debug: `New player '${player.name}' joined the game`,
       payload: {
         newPlayer: player.name,
-        currentPlayers: game.waiting.map(p => p.name),
-      },
-    };
-    game.notifyAll(msg);
-  }
-
-  public hostJoinGame(game: Game, player: Player, playerName: string) {
-    if (!game.checkName(playerName)) {
-      throw new Error(`Sorry! The name '${playerName}' is already taken, game: ${game.gameRow.access_code}`);
-    }
-
-    player.name = playerName;
-    game.host = player;
-    game.joinWaitingRoom(player);
-
-    const msg: HostJoinedGame = {
-      event: 'HostJoinedGame',
-      status: "ok",
-      debug: `The host '${player.name}' joined the game`,
-      payload: {
-        newPlayer: player.name,
-        currentPlayers: game.waiting.map(p => p.name),
+        currentPlayers: game.getPlayers().map(p => p.name),
+        clientStatus: player.clientStatus,
+        gameStatus: player.gameStatus,
+        host: player.isHost(),
       },
     };
     game.notifyAll(msg);
@@ -186,7 +175,7 @@ class GameService {
         questionText: q.questionRow.text,
       },
     };
-    game.notifyActive(msg);
+    game.notifyPlaying(msg);
   }
 
   public playerAnswerPart1(game: Game, player: Player, data: any) {
@@ -273,7 +262,7 @@ class GameService {
         answersCount: answersCount,
       },
     };
-    game.notifyActive(msg);
+    game.notifyPlaying(msg);
 
     // auto-advance to results
     if (answersCount >= playersCount) {
@@ -297,7 +286,7 @@ class GameService {
         results: game.questionResults(game.questionNumber)
       },
     };
-    game.notifyActive(msg);
+    game.notifyPlaying(msg);
   }
 
   public showScores(game: Game, player: Player) {
@@ -310,7 +299,7 @@ class GameService {
       debug: `Scores for question ${game.questionNumber}`,
     };
 
-    game.active.forEach(player => {
+    game.getPlayers('playing').forEach(player => {
       const msg: QuestionScores = {
         ...header,
         payload: {
@@ -333,7 +322,7 @@ class GameService {
       debug: `Final scores for game: ${game.gameRow.access_code}`,
     };
 
-    game.active.forEach(player => {
+    game.getPlayers('playing').forEach(player => {
       const msg: FinalScores = {
         ...header,
         payload: {
