@@ -17,6 +17,8 @@ const Decks: React.FC = () => {
     const isChoosePaymentOpen = useAppSelector(selectFullModalFactory('choosePaymentMethod'))
     const isCardPaymentOpen = useAppSelector(selectFullModalFactory('cardPurchase'))
     const isGooglePayOpen = useAppSelector(selectFullModalFactory('googlePay'))
+    const isDeckCreditOpen = useAppSelector(selectFullModalFactory('freeCreditPurchase'))
+
 
 
     const closeDetails = () => {
@@ -61,9 +63,9 @@ const Decks: React.FC = () => {
                 </NoFlexBox>
             </Modal>
 
-            {/* Google Pay */}
+            {/* Deck Credit */}
             <Modal
-                isOpen={isGooglePayOpen}
+                isOpen={isDeckCreditOpen}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-28rem">

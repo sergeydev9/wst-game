@@ -13,6 +13,7 @@ import { GuardedRoute } from "../features";
 import SendResetForm from "../features/reset-password/SendResetForm";
 import EnterCode from "../features/reset-password/EnterCode";
 import NewPassword from "../features/reset-password/NewPassword";
+import Invite from "../pages/invite/Invite";
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,9 @@ const App: React.FC = () => {
         <Switch>
           <Route exact path="/">
             <Home />
+          </Route>
+          <Route exact path="/game/invite">
+            <Invite />
           </Route>
           <Route exact path='/contact-us' >
             <ContactUs />

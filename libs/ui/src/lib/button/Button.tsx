@@ -100,7 +100,7 @@ const Button: React.FC<ButtonProps> = ({ buttonStyle, $secondary, children, ...r
     switch (buttonStyle) {
         case 'big-text':
             return ($secondary ?
-                <BigTextButton $secondary>{children}</BigTextButton> :
+                <BigTextButton $secondary  {...rest}>{children}</BigTextButton> :
                 <Bg btncolor="blue">
                     <BigTextButton  {...rest} style={{ textShadow: '0px 1px 0px #084AB8' }}>{children}</BigTextButton>
                 </Bg>
@@ -112,12 +112,12 @@ const Button: React.FC<ButtonProps> = ({ buttonStyle, $secondary, children, ...r
             )
         case 'inline':
             return ($secondary ?
-                <InlineButton $secondary>{children}</InlineButton> :
-                <InlineButton style={{ textShadow: '0px 1px 0px #084AB8' }}>{children}</InlineButton>
+                <InlineButton $secondary  {...rest}>{children}</InlineButton> :
+                <InlineButton style={{ textShadow: '0px 1px 0px #084AB8' }}  {...rest}>{children}</InlineButton>
             )
         default:
             return ($secondary ?
-                <DefaultButton $secondary>{children}</DefaultButton> :
+                <DefaultButton $secondary  {...rest}>{children}</DefaultButton> :
                 <Bg btncolor="blue">
                     <DefaultButton style={{ textShadow: '0px 1px 0px #084AB8' }}  {...rest}>{children}</DefaultButton>
                 </Bg >

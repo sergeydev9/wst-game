@@ -28,13 +28,12 @@ class Email {
   public sendResetCode(recipientEmail: string, code: string) {
     const subject = 'Who Said True? - Password Reset';
     const content = `
-      !DOCTYPE html>
         <html>
           <body>
             <center style="background-color: #eaeaea; width: 24rem; margin: auto; padding: 4rem">
               <h1>Who Said True?</h1>
               <p>Someone has requested a password reset for your account at whosaidtrue.com.</p>
-              <h2>Your reset code is: <blockquote>${code}/blockquote></h2>
+              <h2>Your reset code is: <blockquote>${code}</blockquote></h2>
               <p>If you did not expect this email, please feel free to ignore it.</p>
             </center>
           </body>

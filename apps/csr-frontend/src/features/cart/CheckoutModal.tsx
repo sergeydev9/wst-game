@@ -70,8 +70,8 @@ const CheckoutModal: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => 
             setValue={setMethod}
             onSubmit={onSubmit}
             hasCredits={credits > 0}
-            appleAvailable={true}
-            googleAvailable={true} />
+            appleAvailable={apple}
+            googleAvailable={google} />
     );
 };
 

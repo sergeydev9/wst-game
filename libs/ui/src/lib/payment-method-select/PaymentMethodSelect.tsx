@@ -46,27 +46,27 @@ const PaymentMethodSelect: React.FC<PaymentMethodSelectProps> = ({ setValue, app
                 <legend className="mb-8 text-center flex-nowrap"><BodyMedium>Choose your payment method:</BodyMedium></legend>
                 {hasCredits && (<InputGroup>
                     <RadioInput id="deckCredit" name="paymentMethod" value="deckCredit" type="radio" onChange={onChange} />
-                    <Label htmlFor="deckCredit"><NavLogo className={iconClassName} />Free Deck Credit</Label>
+                    <Label htmlFor="deckCredit"><NavLogo className={iconClassName} type="icon" />Free Deck Credit</Label>
                 </InputGroup>)}
                 {appleAvailable && (
                     <InputGroup>
                         <RadioInput id="applePay" name="paymentMethod" value="applePay" type="radio" onChange={onChange} />
-                        <Label htmlFor="applePay"><AppleMark className={iconClassName} />Apple Pay</Label>
+                        <Label htmlFor="applePay"><AppleMark className={iconClassName} type="icon" />Apple Pay</Label>
                     </InputGroup>
                 )}
                 {googleAvailable && (
                     <InputGroup>
                         <RadioInput id="googlePay" name="paymentMethod" value="googlePay" type="radio" onChange={onChange} />
-                        <Label htmlFor="googlePay"><GoogleMark className={iconClassName} />Google Pay</Label>
+                        <Label htmlFor="googlePay"><GoogleMark className={iconClassName} type="icon" />Google Pay</Label>
                     </InputGroup>
                 )}
                 <InputGroup>
                     <RadioInput id="payPal" name="paymentMethod" value="payPal" type="radio" onChange={onChange} />
-                    <Label htmlFor="payPal"><PayPal className={iconClassName} />PayPal</Label>
+                    <Label htmlFor="payPal"><PayPal className={iconClassName} type="icon" />PayPal</Label>
                 </InputGroup>
                 <InputGroup className="mb-6">
                     <RadioInput id="creditCard" name="paymentMethod" value="creditCard" type="radio" onChange={onChange} />
-                    <Label htmlFor="creditCard"><BsCreditCard className={iconClassName} />Credit Card</Label>
+                    <Label htmlFor="creditCard"><BsCreditCard className={iconClassName} type="icon" />Credit Card</Label>
                 </InputGroup>
                 <Button type="submit">Continue to Checkout</Button>
             </fieldset>
