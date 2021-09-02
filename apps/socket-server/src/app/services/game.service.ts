@@ -7,15 +7,14 @@ import {decksDao, gamesDao} from '../db';
 
 import {
   FinalScores,
+  GameState,
   PlayerAnswered,
   PlayerJoinedGame,
   PlayerLeftGame,
-  QuestionPart1,
   QuestionPart2,
   QuestionResults,
   QuestionScores,
-  GameState,
-  QuestionState
+  QuestionState, ResultState
 } from "@whosaidtrue/api-interfaces";
 
 import {Mutex} from 'async-mutex';
@@ -146,7 +145,6 @@ class GameService {
     const msg: PlayerJoinedGame = {
       event: 'PlayerJoinedGame',
       status: "ok",
-      debug: `New player '${player.name}' joined the game`,
       payload: {
         name: player.name,
         is_host: player.isHost(),
@@ -154,40 +152,10 @@ class GameService {
     };
     game.notifyAllExcept(player, msg);
 
-    // set question state
     if (game.questionNumber > 0) {
-      const q = game.currentQuestion();
-      const questionState: QuestionState = {
-        event: 'QuestionState',
-        status: "ok",
-        payload: {
-          question_id: q.questionRow.id,
-          status: q.status,
-          primary_text: q.questionRow.text,
-          secondary_text: q.questionRow.text_for_guess,
-          question_sequence_index: game.questionNumber,
-          number_pending_answers: q.players.length - q.answers.length,
-          reader_name: q.reader.name,
-        }
-      };
-      player.notify(questionState);
+      player.notify(this.getQuestionState(game));
     }
-
-    // set game state
-    const gameState: GameState = {
-      event: 'GameState',
-      status: "ok",
-      payload: {
-        game_id: game.gameRow.id,
-        host_id: game.hostRow.id,
-        status: game.status,
-        current_players: game.getPlayers().map(p => p.name),
-        total_questions: game.questions.length,
-        current_question: game.questionNumber,
-        deck_id: game.deckRow.id
-      },
-    };
-    game.notifyAll(gameState);
+    game.notifyAll(this.getGameState(game));
   }
 
   public nextQuestion(game: Game, player: Player) {
@@ -198,18 +166,8 @@ class GameService {
       throw new Error('No more questions gameRow over.');
     }
 
-    const msg: QuestionPart1 = {
-      event: 'QuestionPart1',
-      status: 'ok',
-      payload: {
-        readerId: q.reader.playerId,
-        readerName: q.reader.name,
-        questionNumber: game.questionNumber,
-        questionTotal: game.questions.length,
-        questionText: q.questionRow.text,
-      },
-    };
-    game.notifyPlaying(msg);
+    game.notifyAll(this.getQuestionState(game));
+    game.notifyAll(this.getGameState(game));
   }
 
   public playerAnswerPart1(game: Game, player: Player, data: any) {
@@ -368,6 +326,43 @@ class GameService {
       };
       player.notify(msg);
     });
+  }
+
+  public getQuestionState(game: Game): QuestionState{
+    const q = game.currentQuestion();
+    return {
+      event: 'QuestionState',
+      status: "ok",
+      payload: {
+        question_id: q.questionRow.id,
+        status: q.status,
+        primary_text: q.questionRow.text,
+        secondary_text: q.questionRow.text_for_guess,
+        question_sequence_index: game.questionNumber,
+        number_pending_answers: q.players.length - q.answers.length,
+        reader_name: q.reader.name,
+      }
+    };
+  }
+
+  public getGameState(game: Game): GameState {
+    return {
+      event: 'GameState',
+      status: "ok",
+      payload: {
+        game_id: game.gameRow.id,
+        host_id: game.hostRow.id,
+        status: game.status,
+        current_players: game.getPlayers().map(p => p.name),
+        total_questions: game.questions.length,
+        current_question: game.questionNumber,
+        deck_id: game.deckRow.id
+      }
+    };
+  }
+
+  public getResultsState(game: Game): ResultState {
+    return {} as ResultState;  // TODO
   }
 
   public funFacts(game: Game, player: Player) {
