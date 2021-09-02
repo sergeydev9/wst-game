@@ -19,10 +19,18 @@ class Player extends EventEmitter {
     return this.game.deckRow.id == this.playerId;
   }
 
-  public requireHost() {
-    if (!this.isHost()) {
-      throw new Error("You need to be a host to perform this action.")
+  public getAnswer(questionNumber: number)
+  {
+    const q = this.game.getQuestion(questionNumber);
+
+    let answer = q.answers.find(a => a.player.playerId == this.playerId);
+
+    if (!answer) {
+      answer = {player: this, state: 'part-1'};
+      q.answers.push(answer);
     }
+
+    return answer;
   }
 
   public currentScore() {

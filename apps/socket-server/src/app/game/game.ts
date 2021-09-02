@@ -2,20 +2,22 @@ import {EventEmitter} from "events";
 import Player, {GameStatus} from "./player";
 
 import {
-  Game as IGame,
+  AnswerValue,
   Deck as IDeck,
+  Game as IGame,
+  GamePlayer as IGamePlayer,
   Question as IQuestion,
-  GamePlayer as IGamePlayer
 } from '@whosaidtrue/app-interfaces';
+import {PlayerScore} from "@whosaidtrue/api-interfaces";
 
-type GameQuestion = {
+export type GameQuestion = {
   questionRow: IQuestion;
   reader?: Player;
   players: Player[];
   answers: {
     player: Player;
     state: 'part-1' | 'part-2' | 'finished';
-    answer?: 'true' | 'false' | 'pass';
+    answer?: AnswerValue
     guess?: number;
   }[];
 };
@@ -53,34 +55,34 @@ class Game extends EventEmitter {
     });
   }
 
-  public getPlayers(status?: GameStatus) {
+  public getConnectedPlayers(status?: GameStatus) {
     if (status) {
-      this.getConnectedPlayers().filter(p => p.gameStatus === status);
+      this.getConnected().filter(p => p.gameStatus === status);
     }
-    return this.getConnectedPlayers();
+    return this.getConnected();
   }
 
-  private getConnectedPlayers() {
+  private getConnected() {
     return this.players.filter(p => p.clientStatus === 'connected');
   }
 
   public notifyAll(message: any) {
-    this.getPlayers().forEach(p => p.notify(message));
+    this.getConnectedPlayers().forEach(p => p.notify(message));
   }
 
   public notifyAllExcept(exclude: Player, message: any) {
-    this.getPlayers()
+    this.getConnectedPlayers()
         .filter(p => p != exclude)
         .forEach(p => p.notify(message));
   }
 
   public notifyWaiting(message: any) {
-    this.getPlayers('waiting')
+    this.getConnectedPlayers('waiting')
         .forEach(p => p.notify(message));
   }
 
   public notifyPlaying(message: any) {
-    this.getPlayers('playing')
+    this.getConnectedPlayers('playing')
         .forEach(p => p.notify(message));
   }
 
@@ -134,12 +136,12 @@ class Game extends EventEmitter {
     }
 
     // move all players from waiting room to active
-    this.getPlayers('waiting').forEach(p => p.gameStatus = 'playing');
+    this.getConnectedPlayers('waiting').forEach(p => p.gameStatus = 'playing');
 
     this.questionNumber++;
     const nextQuestion = this.getQuestion(this.questionNumber);
     nextQuestion.reader = this.readerForQuestion(this.questionNumber);
-    nextQuestion.players = [...this.getPlayers('playing')];
+    nextQuestion.players = [...this.getConnectedPlayers('playing')];
 
     return nextQuestion;
   }
@@ -148,51 +150,79 @@ class Game extends EventEmitter {
     return this.questionNumber == this.questions.length;
   }
 
-  public questionResults(question: number) {
-    if (question < 1 || question > this.questions.length) {
-      throw new Error(`Invalid question ${question}, valid: 1-${this.questions.length}`);
+  public questionResults(questionNumber: number, player: Player) {
+    if (questionNumber < 1 || questionNumber > this.questions.length) {
+      throw new Error(`Invalid question ${questionNumber}, valid: 1-${this.questions.length}`);
     }
 
-    const q = this.questions[question - 1];
-    const groupTrueCount = q.answers.filter(a => a.answer === 'true').length;
+    const question = this.questions[questionNumber - 1];
+    const correctAnswer = question.answers.filter(a => a.answer === 'true').length;
+    const answer = player.getAnswer(questionNumber);
 
     return {
-      followUp: q.questionRow.follow_up,
-      playersCount: q.players.length,
-      groupTrueCount: groupTrueCount,
-      groupPercent: groupTrueCount / q.players.length,
-      globalPercent: 0.5, // TODO: global stats from db
+      question_number: questionNumber,
+      question_total: this.questions.length,
+
+      result: answer.guess,
+      result_text: question.questionRow.text_for_guess,
+      follow_up_text: question.questionRow.follow_up,
+
+      your_group_percent: correctAnswer / question.players.length,
+      all_players_percent: 0.5, // TODO: global stats from db
     };
   }
 
-  public currentScore() {
-    // TODO: implement scores
+  public getCurrentScores(questionNumber: number, player: Player): PlayerScore[] {
+    // TODO: calculate scores
     return [
       {
-        place: 1,
-        playerName: 'Jane the Bin',
-        points: 11500,
+        player_id: 1,
+        player_name: 'Mystic Raccoon',
+        current_rank: 1,
+        current_score: 12000,
+        previous_rank: 1,
+        previous_score: 12000,
       },
       {
-        place: 2,
-        playerName: 'John Doe',
-        points: 9430,
+        player_id: 2,
+        player_name: 'Chuffed Caterpillar',
+        current_rank: 2,
+        current_score: 11000,
+        previous_rank: 4,
+        previous_score: 9000,
       },
       {
-        place: 3,
-        playerName: 'Exotic Animal',
-        points: 9430,
+        player_id: 3,
+        player_name: 'Massive Rodent',
+        current_rank: 3,
+        current_score: 10000,
+        previous_rank: 3,
+        previous_score: 10000,
       },
       {
-        place: 4,
-        playerName: 'Mystic Raccoon',
-        points: 8970,
+        player_id: 4,
+        player_name: 'Psycho Giraffe',
+        current_rank: 4,
+        current_score: 9000,
+        previous_rank: 1,
+        previous_score: 9000,
       },
       {
-        place: 5,
-        playerName: 'Game Name',
-        points: 5500,
+        player_id: 5,
+        player_name: 'Angelic Nerd',
+        current_rank: 5,
+        current_score: 8000,
+        previous_rank: 5,
+        previous_score: 8000,
       },
+      {
+        player_id: player.playerId,
+        player_name: player.name,
+        current_rank: 8,
+        current_score: 7000,
+        previous_rank: 8,
+        previous_score: 7000,
+      }
     ];
   }
 

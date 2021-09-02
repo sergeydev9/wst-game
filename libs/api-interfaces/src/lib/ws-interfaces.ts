@@ -1,127 +1,162 @@
 export interface WebsocketMessage {
-  event: string;
-  status: string;
-  debug?: string;
-  payload?: Record<string, unknown>;
+  event: string,
+  status: string,
+  debug?: string,
+  payload?: Record<string, unknown>,
 }
 
 export interface WebsocketError extends WebsocketMessage {
-  event: string;
-  status: 'fail';
+  event: string,
+  status: 'fail',
   payload: {
-    errorMessage: string;
-    [key: string]: unknown;
+    errorMessage: string,
+    [key: string]: unknown,
   }
 }
 
 export interface PlayerJoinGame extends WebsocketMessage {
-  event: 'PlayerJoinGame';
+  event: 'PlayerJoinGame',
   payload: {
-    playerName: string;
-  };
+    playerName: string,
+  },
 }
 
 export interface PlayerJoinedGame extends WebsocketMessage {
-  event: 'PlayerJoinedGame' | 'HostJoinedGame';
+  event: 'PlayerJoinedGame' | 'HostJoinedGame',
 }
 
 export interface HostJoinGame extends WebsocketMessage {
-  event: 'HostJoinGame';
+  event: 'HostJoinGame',
   payload: {
-    playerName: string;
-  };
+    playerName: string,
+  },
 }
 
 export interface HostJoinedGame extends WebsocketMessage {
-  event: 'HostJoinedGame';
+  event: 'HostJoinedGame',
 }
 
 export interface PlayerLeftGame extends WebsocketMessage {
-  event: 'PlayerLeftGame';
+  event: 'PlayerLeftGame',
   payload: {
-    playerName: string;
-  };
+    player_name: string,
+    is_host: boolean,
+  },
 }
 
 export interface HostLeftGame extends WebsocketMessage {
-  event: 'HostLeftGame';
+  event: 'HostLeftGame',
 }
 
 export interface NextQuestion extends WebsocketMessage {
-  event: 'NextQuestion';
+  event: 'NextQuestion',
 }
 
 export interface SkipQuestion extends WebsocketMessage {
-  event: 'SkipQuestion';
+  event: 'SkipQuestion',
 }
 
 export interface QuestionPart1 extends WebsocketMessage {
-  event: 'QuestionPart1';
+  event: 'QuestionPart1',
 }
 
 export interface AnswerPart1 extends WebsocketMessage {
-  event: 'AnswerPart1';
+  event: 'AnswerPart1',
 }
 
 export interface QuestionPart2 extends WebsocketMessage {
-  event: 'QuestionPart2';
+  event: 'QuestionPart2',
 }
 
 export interface AnswerPart2 extends WebsocketMessage {
-  event: 'AnswerPart2';
+  event: 'AnswerPart2',
 }
 
 export interface PlayerAnswered extends WebsocketMessage {
-  event: 'PlayerAnswered';
+  event: 'PlayerAnswered',
 }
 
 export interface QuestionResults extends WebsocketMessage {
-  event: 'QuestionResults';
+  event: 'QuestionResults',
 }
 
 export interface QuestionScores extends WebsocketMessage {
-  event: 'QuestionScores';
+  event: 'QuestionScores',
 }
 
 export interface FinalScores extends WebsocketMessage {
-  event: 'FinalScores';
+  event: 'FinalScores',
 }
 
 export interface RemovePlayer extends WebsocketMessage {
-  event: 'RemovePlayer';
+  event: 'RemovePlayer',
 }
 
 export interface QuestionState extends WebsocketMessage {
   payload: {
-    question_id: number;
-    status: string;
-    primary_text: string;
-    secondary_text: string;
-    question_sequence_index: number;
-    number_pending_answers: number;
-    reader_name: string;
+    question_id: number,
+    status: string,
+    primary_text: string,
+    secondary_text: string,
+    question_sequence_index: number,
+    number_pending_answers: number,
+    reader_name: string,
   }
 
 }
 
 export interface GameState extends WebsocketMessage {
   payload: {
-    game_id: number;
-    host_id: number;
-    status: string;
-    current_players: string[];
-    total_questions: number;
-    current_question: number;
-    deck_id: number;
+    game_id: number,
+    host_id: number,
+    status: string,
+    current_players: string[],
+    total_questions: number,
+    current_question: number,
+    deck_id: number,
   }
 }
 
 export interface ResultState extends WebsocketMessage {
   payload: {
-    result: boolean;
-    result_text: string;
-    follow_up_text: string;
-    score_reports: string[];  // TODO
-    winner_name: string;
+    question_number: number,
+    question_total: number,
+
+    result: number,
+    result_text: string,
+    follow_up_text: string,
+
+    your_group_percent: number,
+    all_players_percent: number,
+  }
+}
+
+export interface ScoreState extends WebsocketMessage {
+  payload: {
+    question_number: number,
+    question_total: number,
+    player_guess: number,
+    correct_answer: number,
+    scoreboard: PlayerScore[],
+    fun_facts?: FunFact[],    // final scores
+  }
+}
+
+export interface PlayerScore {
+  player_id: number,
+  player_name: string,
+  current_rank: number,
+  current_score: number,
+  previous_rank: number,
+  previous_score: number,
+}
+
+export interface FunFact {
+  title: string,
+  subtitle: string,
+  body: {
+    text?: string,
+    your_group_percent?: number,
+    all_players_percent?: number,
   }
 }

@@ -1,25 +1,27 @@
-import Game from "../game/game";
+import Game, {GameQuestion} from "../game/game";
 import Player from "../game/player";
 
 import {
-  Game as IGame,
+  AnswerValue,
   Deck as IDeck,
-  Question as IQuestion,
-  GameAnswer as IGameAnswer,
-  GamePlayer as IGamePlayer, IInsertGame, IInsertAnwser
+  Game as IGame,
+  GamePlayer as IGamePlayer,
+  IInsertAnwser,
+  Question as IQuestion
 } from '@whosaidtrue/app-interfaces';
 
 import {answersDao, decksDao, gamesDao} from '../db';
 
 import {
   FinalScores,
+  FunFact,
   GameState,
   PlayerJoinedGame,
   PlayerLeftGame,
-  QuestionResults,
   QuestionScores,
   QuestionState,
-  ResultState
+  ResultState,
+  ScoreState
 } from "@whosaidtrue/api-interfaces";
 
 import {Mutex} from 'async-mutex';
@@ -70,7 +72,7 @@ class GameService {
     ];
 
     const deckResult = await decksDao.getDetails(game.deck_id);
-    const deck = deckResult.rows[0];
+    const deck: IDeck = deckResult.rows[0];
 
 
     const gameInstance = new Game(game, host, deck, questions);
@@ -124,7 +126,8 @@ class GameService {
       status: 'ok',
       debug: `Player ${player.name} has left the game.`,
       payload: {
-        playerName: player.name,
+        player_name: player.name,
+        is_host: player.isHost(),
       },
     };
     player.game.notifyAll(msg);
@@ -158,189 +161,161 @@ class GameService {
     game.notifyAllExcept(player, msg);
 
     if (game.questionNumber > 0) {
-      player.notify(this.getQuestionState(player));
+      player.notify(this.getQuestionState(player, game.questionNumber));
     }
     game.notifyAll(this.getGameState(game));
   }
 
-  public nextQuestion(game: Game, player: Player) {
-    player.requireHost();
+  public hostNextQuestion(game: Game, player: Player) {
+    this.requireHostAction(player);
 
     const q = game.nextQuestion();
     if (q == null) {
       throw new Error('No more questions gameRow over.');
     }
 
-    game.getPlayers().forEach(p => p.notify(this.getQuestionState(p)));
+    game.getConnectedPlayers().forEach(p => p.notify(this.getQuestionState(p, game.questionNumber)));
     game.notifyAll(this.getGameState(game));
   }
 
   public async submitAnswerPart1(game: Game, player: Player, data: any) {
-    if (game.questionNumber < 1) {
-      throw new Error(`Game ${game.gameRow.access_code} hasn't started yet!`);
-    }
+    this.requireCurrentQuestion(game, data.questionNumber);
 
-    if (game.questionNumber != data.questionNumber) {
-      throw new Error(`Expecting answer for question ${game.questionNumber} but got ${data.questionNumber}`);
-    }
+    const answer = player.getAnswer(data.questionNumber);
+    this.requireAnswerState(answer, 'part-1');
 
-    const q = game.getQuestion(data.questionNumber);
-
-    let answer = q.answers.find(a => a.player.playerId == player.playerId);
-
-    if (!answer) {
-      answer = {player: player, state: 'part-1'};
-      q.answers.push(answer);
-    }
-
-    // prevent player from answering multiple times
-    if (answer.answer !== undefined) {
-      throw Error(`Already answered question ${data.questionNumber} with ${answer.answer}`);
-    }
+    const question = game.getQuestion(data.questionNumber);
+    this.requireValidAnswer(question, data.answer);
 
     answer.answer = data.answer;
     answer.state = 'part-2';
 
-    player.notify(this.getQuestionState(player));
-    game.notifyAll(this.getGameState(game));
+    player.notify(this.getQuestionState(player, data.questionNumber));
   }
 
   public async submitAnswerPart2(game: Game, player: Player, data: any) {
-    if (game.questionNumber < 1) {
-      throw new Error(`Game ${game.gameRow.access_code} hasn't started yet!`);
-    }
+    this.requireCurrentQuestion(game, data.questionNumber);
 
-    if (game.questionNumber != data.questionNumber) {
-      throw new Error(`Expecting answer for question ${game.questionNumber} but got ${data.questionNumber}`);
-    }
+    const answer = player.getAnswer(data.questionNumber);
+    this.requireAnswerState(answer, 'part-2');
 
-    const q = game.getQuestion(data.questionNumber);
-
-    const answer = q.answers.find(a => a.player.playerId == player.playerId);
-
-    if (!answer) {
-      throw Error(`Must answer question ${data.questionNumber} before guessing.`);
-    }
-
-    // prevent player from guessing multiple times
-    if (answer.guess !== undefined) {
-      throw Error(`Already guessed question ${data.questionNumber} with ${answer.guess}%`);
-    }
-
-    const playersCount = q.players.length;
-
-    if (data.guess < 0 || data.guess > playersCount) {
-      throw Error(`Invalid guess, should be a value between 0 and ${playersCount}`);
-    }
+    const question = game.getQuestion(data.questionNumber);
+    this.requireValidGuess(question, data.guess);
 
     answer.guess = data.guess;
     answer.state = 'finished';
 
     const answerRow: IInsertAnwser = {
       game_player_id: player.playerId,
-      game_question_id: q.questionRow.id,
+      game_question_id: question.questionRow.id,
       game_id: game.gameRow.id,
       value: answer.answer,
       number_true_guess: answer.guess,
     };
     await answersDao.submit(answerRow);
 
-    game.getPlayers().forEach(p => p.notify(this.getQuestionState(p)));
+    game.getConnectedPlayers().forEach(p => p.notify(this.getQuestionState(p, data.questionNumber)));
 
     // auto-advance to results
-    const answersCount = q.answers.filter(a => a.answer !== undefined && a.guess !== undefined).length;
-    if (answersCount >= playersCount) {
+    const finished = this.countFinishedAnswers(question);
+    if (finished >= question.players.length) {
+      console.log(`auto advance to results game: ${game.gameRow.access_code}, question: ${game.questionNumber}`);
       this.showResults(game);
     }
   }
 
-  public forceShowResults(game: Game, player: Player) {
-    player.requireHost();
+  private requireHostAction(player: Player) {
+    if (!player.isHost()) {
+      throw new Error("You need to be a host to perform this action.")
+    }
+  }
+
+  private requireAnswerState(answer, state: string) {
+    if (answer.state != state) {
+      throw Error(`Expecting question state: ${state} but got '${answer.state}'`);
+    }
+  }
+
+  private requireCurrentQuestion(game: Game, questionNumber: number) {
+    if (game.questionNumber != questionNumber) {
+      throw new Error(`Expecting answer for question ${game.questionNumber} but got ${questionNumber}`);
+    }
+  }
+
+  private requireValidAnswer(question: GameQuestion, answer?: AnswerValue) {
+    if (!answer) {
+      throw Error(`Invalid answer, should be one of ['pass', 'true', 'false]`);
+    }
+    // TODO: allow only one pass?
+  }
+
+  private requireValidGuess(question: GameQuestion, guess?: number) {
+    if (!guess || guess < 0 || guess > question.players.length) {
+      throw Error(`Invalid guess, should be a value between 0 and ${question.players.length}`);
+    }
+  }
+
+  private countFinishedAnswers(question: GameQuestion) {
+    return question.answers.filter(a => a.state == 'finished').length;
+  }
+
+  private countTrueAnswers(question: GameQuestion) {
+    return question.answers.filter(a => a.answer == 'true').length;
+  }
+
+  public hostShowResults(game: Game, player: Player) {
+    this.requireHostAction(player);
 
     this.showResults(game);
   }
 
-  public showResults(game: Game) {
-    const msg: QuestionResults = {
-      event: 'QuestionResults',
-      status: 'ok',
-      debug: `Results for question ${game.questionNumber}`,
-      payload: {
-        questionNumber: game.questionNumber,
-        results: game.questionResults(game.questionNumber)
-      },
-    };
-    game.notifyPlaying(msg);
-  }
-
-  public showScores(game: Game, player: Player) {
-    player.requireHost();
-
-    const gameScore = game.currentScore();
-    const header: QuestionScores = {
-      event: 'QuestionScores',
-      status: 'ok',
-      debug: `Scores for question ${game.questionNumber}`,
-    };
-
-    game.getPlayers('playing').forEach(player => {
-      const msg: QuestionScores = {
-        ...header,
-        payload: {
-          questionNumber: game.questionNumber,
-          gameScore: gameScore,
-          playerScore: player.currentScore(),
-        },
-      };
+  private showResults(game: Game) {
+    game.getConnectedPlayers().forEach(player => {
+      const msg = this.getResultState(game.questionNumber, player);
       player.notify(msg);
     });
   }
 
-  public showFinalScores(game: Game, player: Player) {
-    player.requireHost();
+  public hostShowScores(game: Game, player: Player) {
+    this.requireHostAction(player);
 
-    const gameScore = game.currentScore();
-    const header: FinalScores = {
-      event: 'FinalScores',
-      status: 'ok',
-      debug: `Final scores for game: ${game.gameRow.access_code}`,
-    };
-
-    game.getPlayers('playing').forEach(player => {
-      const msg: FinalScores = {
-        ...header,
-        payload: {
-          gameScore: gameScore,
-          playerScore: player.currentScore(),
-          funFacts: this.funFacts(game, player),
-          deckName: game.deckRow.name,
-        },
-      };
+    game.getConnectedPlayers().forEach(player => {
+      const msg = this.getScoreState(game.questionNumber, player);
       player.notify(msg);
     });
   }
 
-  public getQuestionState(player: Player): QuestionState {
-    const q = player.game.currentQuestion();
-    const a = q.answers.find(a => a.player.playerId == player.playerId);
-    const playersCount = q.players.length;
-    const answersCount = q.answers.filter(a => a.answer !== undefined && a.guess !== undefined).length;
+  public hostShowFinalScores(game: Game, player: Player) {
+    this.requireHostAction(player);
+
+    game.getConnectedPlayers().forEach(player => {
+      const msg = this.getScoreState(game.questionNumber, player);
+
+      // final scores has extra fun facts
+      msg.payload.fun_facts = this.getFunFacts(player);
+      player.notify(msg);
+    });
+  }
+
+  private getQuestionState(player: Player, questionNumber: number): QuestionState {
+    const q = player.game.getQuestion(questionNumber);
+    const a = player.getAnswer(questionNumber);
     return {
       event: 'QuestionState',
       status: "ok",
       payload: {
         question_id: q.questionRow.id,
-        status: a && a.state ? a.state : 'part-1',
+        status: a.state,
         primary_text: q.questionRow.text,
         secondary_text: q.questionRow.text_for_guess,
         question_sequence_index: player.game.questionNumber,
-        number_pending_answers: playersCount - answersCount,
+        number_pending_answers: q.players.length - this.countFinishedAnswers(q),
         reader_name: q.reader.name,
       }
     };
   }
 
-  public getGameState(game: Game): GameState {
+  private getGameState(game: Game): GameState {
     return {
       event: 'GameState',
       status: "ok",
@@ -348,7 +323,7 @@ class GameService {
         game_id: game.gameRow.id,
         host_id: game.hostRow.id,
         status: game.status,
-        current_players: game.getPlayers().map(p => p.name),
+        current_players: game.getConnectedPlayers().map(p => p.name),
         total_questions: game.questions.length,
         current_question: game.questionNumber,
         deck_id: game.deckRow.id
@@ -356,34 +331,64 @@ class GameService {
     };
   }
 
-  public getResultsState(game: Game): ResultState {
-    return {} as ResultState;  // TODO
+  private getResultState(questionNumber: number, player: Player): ResultState {
+    return {
+      event: 'ResultState',
+      status: 'ok',
+      payload: {
+        ...player.game.questionResults(questionNumber, player),
+      },
+    };
   }
 
-  public funFacts(game: Game, player: Player) {
-    // TODO: implement fun facts
+  private getScoreState(questionNumber: number, player: Player): ScoreState {
+    const q = player.game.getQuestion(questionNumber);
+    const a = player.getAnswer(questionNumber);
+    return {
+      event: 'ScoreState',
+      status: 'ok',
+      payload: {
+        question_number: player.game.questionNumber,
+        question_total: player.game.questions.length,
+        player_guess: a.guess,
+        correct_answer: this.countTrueAnswers(q),
+        scoreboard: player.game.getCurrentScores(questionNumber, player)
+      },
+    };
+  }
+
+  private getFunFacts(player: Player): FunFact[] {
+    // TODO: get from db
     return [
       {
         title: 'Bucket List Challenge',
-        subTitle: 'Been to another country',
-        yourGroup: 0,
-        allPlayers: 0.5,
+        subtitle: 'Been to another country',
+        body: {
+          your_group_percent: 0,
+          all_players_percent: 0.5,
+        }
       },
       {
         title: 'Your Group vs. All Players',
-        subTitle: 'Drunk a body shot off someone.',
-        yourGroup: 1,
-        allPlayers: 0.5,
+        subtitle: 'Drunk a body shot off someone.',
+        body: {
+          your_group_percent: 1,
+          all_players_percent: 0.5,
+        }
       },
       {
         title: 'Most Similar Players',
-        subTitle: 'Bene & Game Name',
-        bodyText: 'Bene & Game Name answered 75% of questions similarly.',
+        subtitle: 'Bene & Game Name',
+        body: {
+          text: 'Bene & Game Name answered 75% of questions similarly.',
+        }
       },
       {
         title: 'Most Similar To You',
-        subTitle: 'John Doe',
-        bodyText: 'You and John Doe answered 50% of questions similarly.',
+        subtitle: 'John Doe',
+        body: {
+          text: 'You and John Doe answered 50% of questions similarly.',
+        }
       },
     ];
   }

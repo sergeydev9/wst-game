@@ -83,9 +83,9 @@ class WebsocketClient extends EventEmitter {
         case 'NextQuestion': // -> QuestionPart1 | FinalScores
 
           if (this.player.game.isFinalQuestion()) {
-            await this.gameService.showFinalScores(game, this.player);
+            await this.gameService.hostShowFinalScores(game, this.player);
           } else {
-            await this.gameService.nextQuestion(game, this.player);
+            await this.gameService.hostNextQuestion(game, this.player);
           }
           break;
 
@@ -101,17 +101,17 @@ class WebsocketClient extends EventEmitter {
 
         case 'ShowResults': // -> QuestionResults
 
-          await this.gameService.forceShowResults(game, this.player);
+          await this.gameService.hostShowResults(game, this.player);
           break;
 
         case 'ShowScores': // -> QuestionScores
 
-          await this.gameService.showScores(game, this.player);
+          await this.gameService.hostShowScores(game, this.player);
           break;
 
         case 'ShowFinalScores': // -> FinalScores
 
-          await this.gameService.showFinalScores(game, this.player);
+          await this.gameService.hostShowFinalScores(game, this.player);
           break;
 
         default:
