@@ -58,7 +58,7 @@ class WebsocketClient extends EventEmitter {
     this.ws.send(JSON.stringify(message));
   };
 
-  private handleMessage = (data: any) => {
+  private handleMessage = async (data: any) => {
 
     let message: WebsocketMessage;
     try {
@@ -77,41 +77,41 @@ class WebsocketClient extends EventEmitter {
         case 'HostJoinGame': // -> HostJoinedGame
         case 'PlayerJoinGame': // -> PlayerJoinedGame
 
-          this.gameService.joinGame(this.player, (message as HostJoinGame).payload.playerName);
+          await this.gameService.joinGame(this.player, (message as HostJoinGame).payload.playerName);
           break;
 
         case 'NextQuestion': // -> QuestionPart1 | FinalScores
 
           if (this.player.game.isFinalQuestion()) {
-            this.gameService.showFinalScores(game, this.player);
+            await this.gameService.showFinalScores(game, this.player);
           } else {
-            this.gameService.nextQuestion(game, this.player);
+            await this.gameService.nextQuestion(game, this.player);
           }
           break;
 
         case 'AnswerPart1': // -> QuestionPart2
 
-          this.gameService.playerAnswerPart1(game, this.player, message.payload);
+          await this.gameService.submitAnswerPart1(game, this.player, message.payload);
           break;
 
         case 'AnswerPart2': // -> PlayerAnswered, QuestionResults
 
-          this.gameService.playerAnswerPart2(game, this.player, message.payload);
+          await this.gameService.submitAnswerPart2(game, this.player, message.payload);
           break;
 
         case 'ShowResults': // -> QuestionResults
 
-          this.gameService.forceShowResults(game, this.player);
+          await this.gameService.forceShowResults(game, this.player);
           break;
 
         case 'ShowScores': // -> QuestionScores
 
-          this.gameService.showScores(game, this.player);
+          await this.gameService.showScores(game, this.player);
           break;
 
         case 'ShowFinalScores': // -> FinalScores
 
-          this.gameService.showFinalScores(game, this.player);
+          await this.gameService.showFinalScores(game, this.player);
           break;
 
         default:

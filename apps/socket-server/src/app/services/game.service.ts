@@ -1,20 +1,25 @@
 import Game from "../game/game";
 import Player from "../game/player";
 
-import {GamePlayerRow, GameRow, QuestionRow} from '@whosaidtrue/data';
+import {
+  Game as IGame,
+  Deck as IDeck,
+  Question as IQuestion,
+  GameAnswer as IGameAnswer,
+  GamePlayer as IGamePlayer, IInsertGame, IInsertAnwser
+} from '@whosaidtrue/app-interfaces';
 
-import {decksDao, gamesDao} from '../db';
+import {answersDao, decksDao, gamesDao} from '../db';
 
 import {
   FinalScores,
   GameState,
-  PlayerAnswered,
   PlayerJoinedGame,
   PlayerLeftGame,
-  QuestionPart2,
   QuestionResults,
   QuestionScores,
-  QuestionState, ResultState
+  QuestionState,
+  ResultState
 } from "@whosaidtrue/api-interfaces";
 
 import {Mutex} from 'async-mutex';
@@ -42,26 +47,26 @@ class GameService {
     if (gameResult.rowCount !== 1) {
       throw new Error(`Game ${code} not found`);
     }
-    const game: GameRow = gameResult.rows[0];
+    const game: IGame = gameResult.rows[0];
 
     const hostResult = await gamesDao.getHost(game.id);
     if (hostResult.rowCount !== 1) {
       throw new Error(`Game ${code} has no host`);
     }
-    const host: GamePlayerRow = hostResult.rows[0];
+    const host: IGamePlayer = hostResult.rows[0];
 
     // TODO: gamesDao.getQuestions(gameRow.id)
-    const questions: QuestionRow[] = [
-      {text: 'Text 1', text_for_guess: 'Test for guess 1', follow_up: 'Follow up 1'} as QuestionRow,
-      {text: 'Text 2', text_for_guess: 'Test for guess 2', follow_up: 'Follow up 2'} as QuestionRow,
-      {text: 'Text 3', text_for_guess: 'Test for guess 3', follow_up: 'Follow up 3'} as QuestionRow,
-      {text: 'Text 4', text_for_guess: 'Test for guess 4', follow_up: 'Follow up 4'} as QuestionRow,
-      {text: 'Text 5', text_for_guess: 'Test for guess 5', follow_up: 'Follow up 5'} as QuestionRow,
-      {text: 'Text 6', text_for_guess: 'Test for guess 6', follow_up: 'Follow up 6'} as QuestionRow,
-      {text: 'Text 7', text_for_guess: 'Test for guess 7', follow_up: 'Follow up 7'} as QuestionRow,
-      {text: 'Text 8', text_for_guess: 'Test for guess 8', follow_up: 'Follow up 8'} as QuestionRow,
-      {text: 'Text 9', text_for_guess: 'Test for guess 9', follow_up: 'Follow up 9'} as QuestionRow,
-      {text: 'Text 10', text_for_guess: 'Test for guess 10', follow_up: 'Follow up 10'} as QuestionRow,
+    const questions: IQuestion[] = [
+      {id: 1, text: 'Text 1', text_for_guess: 'Test for guess 1', follow_up: 'Follow up 1'} as IQuestion,
+      {id: 1, text: 'Text 2', text_for_guess: 'Test for guess 2', follow_up: 'Follow up 2'} as IQuestion,
+      {id: 1, text: 'Text 3', text_for_guess: 'Test for guess 3', follow_up: 'Follow up 3'} as IQuestion,
+      {id: 1, text: 'Text 4', text_for_guess: 'Test for guess 4', follow_up: 'Follow up 4'} as IQuestion,
+      {id: 1, text: 'Text 5', text_for_guess: 'Test for guess 5', follow_up: 'Follow up 5'} as IQuestion,
+      {id: 1, text: 'Text 6', text_for_guess: 'Test for guess 6', follow_up: 'Follow up 6'} as IQuestion,
+      {id: 1, text: 'Text 7', text_for_guess: 'Test for guess 7', follow_up: 'Follow up 7'} as IQuestion,
+      {id: 1, text: 'Text 8', text_for_guess: 'Test for guess 8', follow_up: 'Follow up 8'} as IQuestion,
+      {id: 1, text: 'Text 9', text_for_guess: 'Test for guess 9', follow_up: 'Follow up 9'} as IQuestion,
+      {id: 1, text: 'Text 10', text_for_guess: 'Test for guess 10', follow_up: 'Follow up 10'} as IQuestion,
     ];
 
     const deckResult = await decksDao.getDetails(game.deck_id);
@@ -153,7 +158,7 @@ class GameService {
     game.notifyAllExcept(player, msg);
 
     if (game.questionNumber > 0) {
-      player.notify(this.getQuestionState(game));
+      player.notify(this.getQuestionState(player));
     }
     game.notifyAll(this.getGameState(game));
   }
@@ -166,11 +171,11 @@ class GameService {
       throw new Error('No more questions gameRow over.');
     }
 
-    game.notifyAll(this.getQuestionState(game));
+    game.getPlayers().forEach(p => p.notify(this.getQuestionState(p)));
     game.notifyAll(this.getGameState(game));
   }
 
-  public playerAnswerPart1(game: Game, player: Player, data: any) {
+  public async submitAnswerPart1(game: Game, player: Player, data: any) {
     if (game.questionNumber < 1) {
       throw new Error(`Game ${game.gameRow.access_code} hasn't started yet!`);
     }
@@ -183,35 +188,24 @@ class GameService {
 
     let answer = q.answers.find(a => a.player.playerId == player.playerId);
 
-    // prevent player from answering multiple times
-    if (answer?.answer !== undefined) {
-      throw Error(`Already answered question ${data.questionNumber} with ${answer.answer}`);
-    }
-
     if (!answer) {
-      answer = {player: player};
+      answer = {player: player, state: 'part-1'};
       q.answers.push(answer);
     }
 
-    // record part 1
+    // prevent player from answering multiple times
+    if (answer.answer !== undefined) {
+      throw Error(`Already answered question ${data.questionNumber} with ${answer.answer}`);
+    }
+
     answer.answer = data.answer;
+    answer.state = 'part-2';
 
-    // send part 2
-    const msg: QuestionPart2 = {
-      event: 'QuestionPart2',
-      status: 'ok',
-      payload: {
-        playersCount: q.players.length,
-        questionNumber: game.questionNumber,
-        questionTotal: game.questions.length,
-        questionText: 'How many players answered true for ' + q.questionRow.text,
-
-      },
-    };
-    player.notify(msg);
+    player.notify(this.getQuestionState(player));
+    game.notifyAll(this.getGameState(game));
   }
 
-  public playerAnswerPart2(game: Game, player: Player, data: any) {
+  public async submitAnswerPart2(game: Game, player: Player, data: any) {
     if (game.questionNumber < 1) {
       throw new Error(`Game ${game.gameRow.access_code} hasn't started yet!`);
     }
@@ -233,30 +227,28 @@ class GameService {
       throw Error(`Already guessed question ${data.questionNumber} with ${answer.guess}%`);
     }
 
-    if (data.guess < 0.0 || data.guess > 1.0) {
-      throw Error(`Invalid guess, should be a percentage between 0 and 1.`);
+    const playersCount = q.players.length;
+
+    if (data.guess < 0 || data.guess > playersCount) {
+      throw Error(`Invalid guess, should be a value between 0 and ${playersCount}`);
     }
 
-    // record part 2
     answer.guess = data.guess;
+    answer.state = 'finished';
 
-    const playersCount = q.players.length;
-    const answersCount = q.answers.filter(a => a.answer !== undefined && a.guess !== undefined).length;
-
-    const msg: PlayerAnswered = {
-      event: 'PlayerAnswered',
-      status: 'ok',
-      debug: `Player ${player.name} answered question ${data.questionNumber}`,
-      payload: {
-        playerName: player.name,
-        playersAnswered: q.answers.map(a => a.player.name),
-        playersCount: playersCount,
-        answersCount: answersCount,
-      },
+    const answerRow: IInsertAnwser = {
+      game_player_id: player.playerId,
+      game_question_id: q.questionRow.id,
+      game_id: game.gameRow.id,
+      value: answer.answer,
+      number_true_guess: answer.guess,
     };
-    game.notifyPlaying(msg);
+    await answersDao.submit(answerRow);
+
+    game.getPlayers().forEach(p => p.notify(this.getQuestionState(p)));
 
     // auto-advance to results
+    const answersCount = q.answers.filter(a => a.answer !== undefined && a.guess !== undefined).length;
     if (answersCount >= playersCount) {
       this.showResults(game);
     }
@@ -328,18 +320,21 @@ class GameService {
     });
   }
 
-  public getQuestionState(game: Game): QuestionState{
-    const q = game.currentQuestion();
+  public getQuestionState(player: Player): QuestionState {
+    const q = player.game.currentQuestion();
+    const a = q.answers.find(a => a.player.playerId == player.playerId);
+    const playersCount = q.players.length;
+    const answersCount = q.answers.filter(a => a.answer !== undefined && a.guess !== undefined).length;
     return {
       event: 'QuestionState',
       status: "ok",
       payload: {
         question_id: q.questionRow.id,
-        status: q.status,
+        status: a && a.state ? a.state : 'part-1',
         primary_text: q.questionRow.text,
         secondary_text: q.questionRow.text_for_guess,
-        question_sequence_index: game.questionNumber,
-        number_pending_answers: q.players.length - q.answers.length,
+        question_sequence_index: player.game.questionNumber,
+        number_pending_answers: playersCount - answersCount,
         reader_name: q.reader.name,
       }
     };

@@ -1,23 +1,29 @@
 import {EventEmitter} from "events";
 import Player, {GameStatus} from "./player";
-import {DeckRow, GamePlayerRow, GameRow, QuestionRow} from "@whosaidtrue/data";
+
+import {
+  Game as IGame,
+  Deck as IDeck,
+  Question as IQuestion,
+  GamePlayer as IGamePlayer
+} from '@whosaidtrue/app-interfaces';
 
 type GameQuestion = {
-  questionRow: QuestionRow;
+  questionRow: IQuestion;
   reader?: Player;
   players: Player[];
-  status: 'new' | 'reading' | 'part-1' | 'part-2' | 'finished';
   answers: {
     player: Player;
+    state: 'part-1' | 'part-2' | 'finished';
     answer?: 'true' | 'false' | 'pass';
     guess?: number;
   }[];
 };
 
 class Game extends EventEmitter {
-  public readonly gameRow: GameRow;
-  public readonly hostRow: GamePlayerRow;
-  public readonly deckRow: DeckRow;
+  public readonly gameRow: IGame;
+  public readonly hostRow: IGamePlayer;
+  public readonly deckRow: IDeck;
 
   public readonly players: Player[] = [];
 
@@ -30,7 +36,7 @@ class Game extends EventEmitter {
   public reader: Player;
   public readonly readerOrder: Player[] = [];
 
-  constructor(game: GameRow, host: GamePlayerRow, deck: DeckRow, questions: QuestionRow[]) {
+  constructor(game: IGame, host: IGamePlayer, deck: IDeck, questions: IQuestion[]) {
     super();
     this.gameRow = game;
     this.hostRow = host;
@@ -39,7 +45,6 @@ class Game extends EventEmitter {
     questions.forEach(q => {
       const gameQuestion: GameQuestion = {
         questionRow: q,
-        status: 'new',
         reader: null,
         players: [],
         answers: []
