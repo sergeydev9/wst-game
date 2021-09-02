@@ -7,14 +7,15 @@ import {decksDao, gamesDao} from '../db';
 
 import {
   FinalScores,
-  HostJoinedGame,
   PlayerAnswered,
   PlayerJoinedGame,
   PlayerLeftGame,
   QuestionPart1,
   QuestionPart2,
   QuestionResults,
-  QuestionScores
+  QuestionScores,
+  GameState,
+  QuestionState
 } from "@whosaidtrue/api-interfaces";
 
 import {Mutex} from 'async-mutex';
@@ -141,19 +142,52 @@ class GameService {
     game.joinWaitingRoom(player);
 
 
+    // player joined
     const msg: PlayerJoinedGame = {
-      event: (player.isHost()) ? 'PlayerJoinedGame' : 'HostJoinedGame',
+      event: 'PlayerJoinedGame',
       status: "ok",
       debug: `New player '${player.name}' joined the game`,
       payload: {
-        newPlayer: player.name,
-        currentPlayers: game.getPlayers().map(p => p.name),
-        clientStatus: player.clientStatus,
-        gameStatus: player.gameStatus,
-        host: player.isHost(),
+        name: player.name,
+        is_host: player.isHost(),
       },
     };
-    game.notifyAll(msg);
+    game.notifyAllExcept(player, msg);
+
+    // set question state
+    if (game.questionNumber > 0) {
+      const q = game.currentQuestion();
+      const questionState: QuestionState = {
+        event: 'QuestionState',
+        status: "ok",
+        payload: {
+          question_id: q.questionRow.id,
+          status: q.status,
+          primary_text: q.questionRow.text,
+          secondary_text: q.questionRow.text_for_guess,
+          question_sequence_index: game.questionNumber,
+          number_pending_answers: q.players.length - q.answers.length,
+          reader_name: q.reader.name,
+        }
+      };
+      player.notify(questionState);
+    }
+
+    // set game state
+    const gameState: GameState = {
+      event: 'GameState',
+      status: "ok",
+      payload: {
+        game_id: game.gameRow.id,
+        host_id: game.hostRow.id,
+        status: game.status,
+        current_players: game.getPlayers().map(p => p.name),
+        total_questions: game.questions.length,
+        current_question: game.questionNumber,
+        deck_id: game.deckRow.id
+      },
+    };
+    game.notifyAll(gameState);
   }
 
   public nextQuestion(game: Game, player: Player) {

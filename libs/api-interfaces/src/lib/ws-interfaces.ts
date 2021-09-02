@@ -90,3 +90,38 @@ export interface FinalScores extends WebsocketMessage {
 export interface RemovePlayer extends WebsocketMessage {
   event: 'RemovePlayer';
 }
+
+export interface QuestionState extends WebsocketMessage {
+  payload: {
+    question_id: number;
+    status: string;
+    primary_text: string;
+    secondary_text: string;
+    question_sequence_index: number;
+    number_pending_answers: number;
+    reader_name: string;
+  }
+
+}
+
+export interface GameState extends WebsocketMessage {
+  payload: {
+    game_id: number;
+    host_id: number;
+    status: string;
+    current_players: string[];
+    total_questions: number;
+    current_question: number;
+    deck_id: number;
+  }
+}
+
+export interface ResultState extends WebsocketMessage {
+  payload: {
+    result: boolean;
+    result_text: string;
+    follow_up_text: string;
+    score_reports: string[];  // TODO
+    winner_name: string;
+  }
+}

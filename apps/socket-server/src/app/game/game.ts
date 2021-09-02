@@ -6,6 +6,7 @@ type GameQuestion = {
   questionRow: QuestionRow;
   reader?: Player;
   players: Player[];
+  status: 'new' | 'reading' | 'part-1' | 'part-2' | 'finished';
   answers: {
     player: Player;
     answer?: 'true' | 'false' | 'pass';
@@ -20,6 +21,7 @@ class Game extends EventEmitter {
 
   public readonly players: Player[] = [];
 
+  public status: 'lobby' | 'pre-lobby' | 'playing' | 'post-game' | 'finished' | 'error' = 'lobby';
   public host: Player;
 
   public questionNumber = 0;
@@ -37,6 +39,7 @@ class Game extends EventEmitter {
     questions.forEach(q => {
       const gameQuestion: GameQuestion = {
         questionRow: q,
+        status: 'new',
         reader: null,
         players: [],
         answers: []
@@ -58,6 +61,12 @@ class Game extends EventEmitter {
 
   public notifyAll(message: any) {
     this.getPlayers().forEach(p => p.notify(message));
+  }
+
+  public notifyAllExcept(exclude: Player, message: any) {
+    this.getPlayers()
+        .filter(p => p != exclude)
+        .forEach(p => p.notify(message));
   }
 
   public notifyWaiting(message: any) {
@@ -100,6 +109,10 @@ class Game extends EventEmitter {
         .filter(p => p != player)
         .map(p => p.name)
         .includes(player.name);
+  }
+
+  public currentQuestion() {
+    return this.getQuestion(this.questionNumber);
   }
 
   public getQuestion(question: number) {
