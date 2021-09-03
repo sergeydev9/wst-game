@@ -13,12 +13,10 @@ import {
 import {answersDao, decksDao, gamesDao} from '../db';
 
 import {
-  FinalScores,
   FunFact,
   GameState,
   PlayerJoinedGame,
   PlayerLeftGame,
-  QuestionScores,
   QuestionState,
   ResultState,
   ScoreState
@@ -154,7 +152,7 @@ class GameService {
       event: 'PlayerJoinedGame',
       status: "ok",
       payload: {
-        name: player.name,
+        player_name: player.name,
         is_host: player.isHost(),
       },
     };
