@@ -12,7 +12,7 @@ import { signUserPayload } from '@whosaidtrue/middleware';
 const mockedDecks = mocked(decks, true)
 jest.mock('../../db')
 
-describe('/decks routes', () => {
+describe('decks routes', () => {
     let app: Application;
 
     beforeAll(() => {
@@ -22,11 +22,6 @@ describe('/decks routes', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     })
-
-    describe('[GET] /decks?id=', () => {
-
-    })
-
     /** DEV_NOTE
      * These tests are fairly specific to the implementation.
      * Should maybe replace these with a broader integration test
@@ -52,7 +47,9 @@ describe('/decks routes', () => {
         })
 
         it('should have owned and notOwned attributes in successful response if not logged in', async () => {
-            mockedDecks.deckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.guestDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.getFreeDecks.mockResolvedValue({ rows: [] } as QueryResult)
+
 
             const result = await supertest(app)
                 .get('/decks/selection')
@@ -81,7 +78,8 @@ describe('/decks routes', () => {
         })
 
         it('should get guest decks if no token', async () => {
-            mockedDecks.deckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.guestDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.getFreeDecks.mockResolvedValue({ rows: [] } as QueryResult)
 
             await supertest(app)
                 .get('/decks/selection')
@@ -89,11 +87,12 @@ describe('/decks routes', () => {
                 .expect(200)
 
             expect(mockedDecks.getUserDecks).not.toBeCalled();
-            expect(mockedDecks.deckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
+            expect(mockedDecks.guestDeckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
         })
 
         it('should get guest decks if bad token', async () => {
-            mockedDecks.deckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.guestDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.getFreeDecks.mockResolvedValue({ rows: [] } as QueryResult)
 
             const token = jwt.sign('bad', 'token')
             await supertest(app)
@@ -103,7 +102,7 @@ describe('/decks routes', () => {
                 .expect(200)
 
             expect(mockedDecks.getUserDecks).not.toBeCalled();
-            expect(mockedDecks.deckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
+            expect(mockedDecks.guestDeckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
         })
     })
 

@@ -9,7 +9,7 @@ import { purchaseWithCredits } from '../../services';
 
 const router = Router();
 
-router.post('/credit', [...validateDeckId], passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
+router.post('/credits', [...validateDeckId], passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
     const { deckId } = req.body as BuyWithCreditsRequest;
     const { id } = req.user as TokenPayload; // user id form token
 
