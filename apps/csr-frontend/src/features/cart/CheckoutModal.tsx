@@ -69,7 +69,6 @@ const CheckoutModal: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => 
 
     return (
         <PaymentMethodSelect
-            className="w-screen"
             setValue={setMethod}
             onSubmit={onSubmit}
             hasCredits={credits > 0}

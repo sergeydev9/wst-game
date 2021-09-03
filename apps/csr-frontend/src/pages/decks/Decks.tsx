@@ -60,7 +60,7 @@ const Decks: React.FC = () => {
                 isOpen={isChoosePaymentOpen}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
-                <NoFlexBox className="w-28rem">
+                <NoFlexBox className="w-80 pt-7 lg:pt-0 md:w-28rem" >
                     <Suspense fallback={<Loading />}>
                         <CheckoutModal />
                     </Suspense>
@@ -72,7 +72,7 @@ const Decks: React.FC = () => {
                 isOpen={isCardPaymentOpen}
                 onRequestClose={closeAndClearCart}
                 shouldCloseOnOverlayClick={true}>
-                <NoFlexBox className="w-28rem">
+                <NoFlexBox className="w-80 md:w-28rem">
                     <Suspense fallback={<Loading />}>
                         <CreditCardForm />
                     </Suspense>
@@ -84,7 +84,7 @@ const Decks: React.FC = () => {
                 isOpen={isDeckCreditOpen}
                 onRequestClose={closeAndClearCart}
                 shouldCloseOnOverlayClick={true}>
-                <NoFlexBox className="w-max">
+                <NoFlexBox className="w-80  md:w-28rem">
                     <Suspense fallback={<Loading />}>
                         <RedeemCredits />
                     </Suspense>
