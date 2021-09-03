@@ -1,16 +1,21 @@
+import { lazy, Suspense } from 'react'
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
     DeckSelection,
-    DeckDetailsModal,
     setFullModal,
     clearSelectedDeck,
     selectFullModalFactory,
-    CheckoutModal,
-    CreditCardForm,
-    RedeemCredits
 } from '../../features';
-import { Modal, NoFlexBox, } from '@whosaidtrue/ui'
+import { Modal, NoFlexBox, } from '@whosaidtrue/ui';
 import { clearCart } from '../../features/cart/cartSlice';
+
+const CreditCardForm = lazy(() => import('../../features/cart/CreditCardForm'));
+const CheckoutModal = lazy(() => import('../../features/cart/CheckoutModal'));
+const DeckDetailsModal = lazy(() => import('../../features/decks/DeckDetailsModal'));
+const RedeemCredits = lazy(() => import('../../features/cart/RedeemCredits'));
+
+// TODO: make a real loading element
+const Loading = () => <div>Loading...</div>;
 
 const Decks: React.FC = () => {
 
@@ -44,7 +49,9 @@ const Decks: React.FC = () => {
                 onRequestClose={closeDetails}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-80 md:w-28rem">
-                    <DeckDetailsModal />
+                    <Suspense fallback={<Loading />}>
+                        <DeckDetailsModal />
+                    </Suspense>
                 </NoFlexBox>
             </Modal>
 
@@ -54,7 +61,9 @@ const Decks: React.FC = () => {
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-28rem">
-                    <CheckoutModal />
+                    <Suspense fallback={<Loading />}>
+                        <CheckoutModal />
+                    </Suspense>
                 </NoFlexBox>
             </Modal>
 
@@ -64,7 +73,9 @@ const Decks: React.FC = () => {
                 onRequestClose={closeAndClearCart}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-28rem">
-                    <CreditCardForm />
+                    <Suspense fallback={<Loading />}>
+                        <CreditCardForm />
+                    </Suspense>
                 </NoFlexBox>
             </Modal>
 
@@ -74,7 +85,9 @@ const Decks: React.FC = () => {
                 onRequestClose={closeAndClearCart}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-max">
-                    <RedeemCredits />
+                    <Suspense fallback={<Loading />}>
+                        <RedeemCredits />
+                    </Suspense>
                 </NoFlexBox>
             </Modal>
         </>
