@@ -1,24 +1,22 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
     DeckSelection,
     setFullModal,
     clearSelectedDeck,
     selectFullModalFactory,
+    Loading
 } from '../../features';
 import { Modal, NoFlexBox, } from '@whosaidtrue/ui';
-import { clearCart } from '../../features/cart/cartSlice';
 
+// Lazy load modals
 const CreditCardForm = lazy(() => import('../../features/cart/CreditCardForm'));
 const CheckoutModal = lazy(() => import('../../features/cart/CheckoutModal'));
 const DeckDetailsModal = lazy(() => import('../../features/decks/DeckDetailsModal'));
 const RedeemCredits = lazy(() => import('../../features/cart/RedeemCredits'));
 
-// TODO: make a real loading element
-const Loading = () => <div>Loading...</div>;
 
 const Decks: React.FC = () => {
-
     const dispatch = useAppDispatch();
     const isDetailsOpen = useAppSelector(selectFullModalFactory('deckDetails'))
     const isChoosePaymentOpen = useAppSelector(selectFullModalFactory('choosePaymentMethod'))
@@ -32,11 +30,6 @@ const Decks: React.FC = () => {
 
     const close = () => {
         dispatch(setFullModal(''))
-    }
-
-    const closeAndClearCart = () => {
-        dispatch(setFullModal(''))
-        dispatch(clearCart());
     }
 
     return (
@@ -60,7 +53,7 @@ const Decks: React.FC = () => {
                 isOpen={isChoosePaymentOpen}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
-                <NoFlexBox className="w-80 pt-7 lg:pt-0 md:w-28rem" >
+                <NoFlexBox className="w-80 pt-7 md:w-28rem" >
                     <Suspense fallback={<Loading />}>
                         <CheckoutModal />
                     </Suspense>
@@ -70,7 +63,7 @@ const Decks: React.FC = () => {
             {/* Credit card */}
             <Modal
                 isOpen={isCardPaymentOpen}
-                onRequestClose={closeAndClearCart}
+                onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-80 md:w-28rem">
                     <Suspense fallback={<Loading />}>
@@ -79,10 +72,10 @@ const Decks: React.FC = () => {
                 </NoFlexBox>
             </Modal>
 
-            {/* Deck Credit */}
+            {/* Free Deck Credit */}
             <Modal
                 isOpen={isDeckCreditOpen}
-                onRequestClose={closeAndClearCart}
+                onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-80  md:w-28rem">
                     <Suspense fallback={<Loading />}>

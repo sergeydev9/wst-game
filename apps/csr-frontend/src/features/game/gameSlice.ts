@@ -62,6 +62,7 @@ export const initialState: GameState = {
     playerId: 0
 }
 
+// TODO: change the error handling here
 export const createGame = createAsyncThunk(
     'game/create',
     async (deckId: number, thunkApi) => {
@@ -69,7 +70,7 @@ export const createGame = createAsyncThunk(
             const response = await api.post('/games/create', { deckId } as CreateGameRequest)
             return response.data;
         } catch (e) {
-            thunkApi.rejectWithValue(e.response.data)
+            return thunkApi.rejectWithValue('error')
         }
 
     }
@@ -85,6 +86,9 @@ export const gameSlice = createSlice({
         setGameStatus: (state, action) => {
             state.status = action.payload;
         },
+        setGameDeck: (state, action) => {
+            state.deck = action.payload
+        },
         setPlayerName: (state, action) => {
             state.playerName = action.payload;
         },
@@ -97,12 +101,12 @@ export const gameSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(createGame.fulfilled, (state, action) => {
-            state.accessCode = action.payload.accessCode
-            state.isHost = true
-            state.deck = action.payload.deck
-            state.status = 'choosingName'
-        })
+        // builder.addCase(createGame.fulfilled, (state, action) => {
+        //     state.accessCode = action.payload.accessCode
+        //     state.isHost = true
+        //     state.deck = action.payload.deck
+        //     state.status = 'choosingName'
+        // })
     }
 })
 
@@ -111,12 +115,14 @@ export const {
     setPlayerName,
     initialRequest,
     setGameStatus,
-    leaveGame
+    leaveGame,
+    setGameDeck
 } = gameSlice.actions;
 
 // selectors
 export const selectPlayerName = (state: RootState) => state.game.playerName;
 export const selectGameStatus = (state: RootState) => state.game.status;
-export const selectAccessCode = (state: RootState) => state.game.accessCode
+export const selectAccessCode = (state: RootState) => state.game.accessCode;
+export const selectGameDeck = (state: RootState) => state.game.deck;
 
 export default gameSlice.reducer;

@@ -1,15 +1,15 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { Deck } from '@whosaidtrue/app-interfaces';
-import { BuyWithCreditsRequest } from "@whosaidtrue/api-interfaces";
-import { api } from '../../api';
 
 // local imports
 import { RootState } from "../../app/store";
 
+// TODO: remove unnecessary statuses when this feature is finished
 export type PurchaseStatus = 'noItem'
     | "hasItem"
-    | "completed"
+    | "success"
     | "rejected"
+    | "pending"
     | "error"
     | "cancelled"
 
@@ -35,25 +35,6 @@ export const initialState: CartState = {
     },
 }
 
-export const buyWithCredits = createAsyncThunk(
-    'cart/buyWithCredits',
-    async (deckId: number, thunkApi) => {
-        try {
-            const response = await api.post('/purchase/credits', { deckId } as BuyWithCreditsRequest)
-            return response.data;
-        } catch (e) {
-            thunkApi.rejectWithValue(e.response.data)
-        }
-    }
-)
-
-// export const buyWithMoney = createAsyncThunk(
-//     'cart/buyWithMoney',
-//     async (deckId:number, thunkApi) => {
-
-//     }
-// )
-
 export const cartSlice = createSlice({
     name: "cart",
     initialState,
@@ -78,10 +59,12 @@ export const cartSlice = createSlice({
 export const {
     addToCart,
     clearCart,
+    setStatus
 } = cartSlice.actions;
 
 // selectors
 export const selectCartStatus = (state: RootState) => state.cart.status;
 export const selectDeckId = (state: RootState) => state.cart.deck.id;
+export const selectCartDeck = (state: RootState) => state.cart.deck;
 
 export default cartSlice.reducer;

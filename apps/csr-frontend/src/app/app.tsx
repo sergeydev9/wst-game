@@ -14,6 +14,7 @@ import SendResetForm from "../features/reset-password/SendResetForm";
 import EnterCode from "../features/reset-password/EnterCode";
 import NewPassword from "../features/reset-password/NewPassword";
 import Invite from "../pages/invite/Invite";
+import PurchaseSuccess from "../pages/purchase-success/PurchaseSuccess";
 
 const App: React.FC = () => {
   return (
@@ -51,6 +52,9 @@ const App: React.FC = () => {
           </Route>
           <Route exact path="/reset/new-pass">
             <NewPassword />
+          </Route>
+          <Route exact path="/purchase-success">
+            <PurchaseSuccess />
           </Route>
           <Route path="*" >
             <Home />

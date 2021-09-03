@@ -16,7 +16,7 @@ export {
   setFullModal,
   selectFullModalFactory
 } from './modal/modalSlice';
-export { default as gameReducer } from './game/gameSlice';
+export { default as gameReducer, selectGameDeck } from './game/gameSlice';
 export { default as decksReducer, clearSelectedDeck } from './decks/deckSlice';
 export { default as AuthForm } from './auth/AuthForm';
 export { default as Login } from './auth/Login';
@@ -29,4 +29,5 @@ export { default as cartReducer } from './cart/cartSlice';
 export { default as CheckoutModal } from './cart/CheckoutModal';
 export { default as CreditCardForm } from './cart/CreditCardForm';
 export { default as RedeemCredits } from './cart/RedeemCredits';
+export { default as Loading } from './loading/Loading';
 export * from './choose-name/chooseNameSlice';
