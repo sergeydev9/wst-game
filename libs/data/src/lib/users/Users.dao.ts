@@ -115,6 +115,19 @@ class Users extends Dao {
     }
 
     /**
+     * Increment a user's credits by a specified value.
+     *
+     * @returns {Promise<QueryResult>} result.rows = [{question_deck_credits: NEW_VALUE}]
+     */
+    public incrementCredits(userId: number, value: number): Promise<QueryResult> {
+        const query = {
+            text: 'UPDATE users SET question_deck_credits = question_deck_credits + $2 WHERE id = $1 RETURNING question_deck_credits',
+            values: [userId, value]
+        };
+        return this._pool.query(query)
+    }
+
+    /**
      * UPSERT a reset_code for a user
      *
      * Returns the email if successful.

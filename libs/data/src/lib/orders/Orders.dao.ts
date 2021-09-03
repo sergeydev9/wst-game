@@ -15,7 +15,7 @@ class Orders extends Dao {
 
             // reduce user's credits by 1 if they have credits.
             const reduceQuery = {
-                text: 'UPDATE users SET question_deck_credits = question_deck_credits - 1 WHERE id = $1 AND question_deck_credits > 0 RETURNING id, question_deck_credits',
+                text: 'UPDATE users SET question_deck_credits = question_deck_credits - 1 WHERE id = $1 AND question_deck_credits > 0 RETURNING id',
                 values: [userId]
             }
             const reduceResponse = await client.query(reduceQuery)
@@ -23,7 +23,6 @@ class Orders extends Dao {
             if (!reduceResponse.rows[0]) {
                 // if no user was updated, then either the user has been deleted,
                 // or they don't actually have any credits left.
-                client.release();
                 return
             }
             // create new order record
