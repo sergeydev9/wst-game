@@ -24,7 +24,7 @@ const CreditPurchase: React.FC = () => {
             <Title1 className="text-center mb-8 mt-1 px-12 text-basic-black">Purchase with Free Deck Credit?</Title1>
             <div className="px-36">
                 <Button onClick={confirm}>Yes</Button>
-                <Button $secondary className="w-full mt-8 mb-2" onClick={cancel}>No</Button>
+                <Button $secondary className="w-full mt-8 mb-3" onClick={cancel}>No</Button>
             </div>
 
         </>

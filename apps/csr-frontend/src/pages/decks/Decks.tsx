@@ -10,6 +10,7 @@ import {
     RedeemCredits
 } from '../../features';
 import { Modal, NoFlexBox, } from '@whosaidtrue/ui'
+import { clearCart } from '../../features/cart/cartSlice';
 
 const Decks: React.FC = () => {
 
@@ -17,10 +18,7 @@ const Decks: React.FC = () => {
     const isDetailsOpen = useAppSelector(selectFullModalFactory('deckDetails'))
     const isChoosePaymentOpen = useAppSelector(selectFullModalFactory('choosePaymentMethod'))
     const isCardPaymentOpen = useAppSelector(selectFullModalFactory('cardPurchase'))
-    const isGooglePayOpen = useAppSelector(selectFullModalFactory('googlePay'))
     const isDeckCreditOpen = useAppSelector(selectFullModalFactory('freeCreditPurchase'))
-
-
 
     const closeDetails = () => {
         dispatch(setFullModal(''))
@@ -30,6 +28,12 @@ const Decks: React.FC = () => {
     const close = () => {
         dispatch(setFullModal(''))
     }
+
+    const closeAndClearCart = () => {
+        dispatch(setFullModal(''))
+        dispatch(clearCart());
+    }
+
     return (
         <>
             <DeckSelection />
@@ -57,7 +61,7 @@ const Decks: React.FC = () => {
             {/* Credit card */}
             <Modal
                 isOpen={isCardPaymentOpen}
-                onRequestClose={close}
+                onRequestClose={closeAndClearCart}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-28rem">
                     <CreditCardForm />
@@ -67,7 +71,7 @@ const Decks: React.FC = () => {
             {/* Deck Credit */}
             <Modal
                 isOpen={isDeckCreditOpen}
-                onRequestClose={close}
+                onRequestClose={closeAndClearCart}
                 shouldCloseOnOverlayClick={true}>
                 <NoFlexBox className="w-max">
                     <RedeemCredits />

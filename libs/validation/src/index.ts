@@ -7,4 +7,5 @@ export * from './lib/idQuery';
 export * from './lib/userUpdate';
 export * from './lib/passwordChange';
 export * from './lib/nameReport';
+export * from './lib/deckId';
 export { default as validate } from './lib/validate';

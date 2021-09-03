@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { user, healthcheck, decks, names } from './routes';
+import { user, healthcheck, decks, names, purchase } from './routes';
 import { logger } from '@whosaidtrue/logger';
 
 // TODO: Make it crash if it can't connect to database
@@ -16,7 +16,10 @@ class App {
     constructor() {
         this.initializeMiddlewares();
         this.initializeRoutes();
-        this.initializeSwagger();
+
+        if (process.env.NODE_ENV === 'development') {
+            this.initializeSwagger();
+        }
     }
 
     public listen() {
@@ -42,7 +45,7 @@ class App {
         this.app.use('/user', user)
         this.app.use('/decks', decks)
         this.app.use('/names', names)
-
+        this.app.use('/purchase', purchase)
     }
 
     private initializeSwagger() {

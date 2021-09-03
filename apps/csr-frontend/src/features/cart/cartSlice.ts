@@ -39,7 +39,7 @@ export const buyWithCredits = createAsyncThunk(
     'cart/buyWithCredits',
     async (deckId: number, thunkApi) => {
         try {
-            const response = await api.post('/orders/credit', { deckId } as BuyWithCreditsRequest)
+            const response = await api.post('/purchase/credit', { deckId } as BuyWithCreditsRequest)
             return response.data;
         } catch (e) {
             thunkApi.rejectWithValue(e.response.data)

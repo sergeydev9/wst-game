@@ -10,7 +10,7 @@ const pool = new Pool({
     database: process.env.POSTGRES_DB,
     host: process.env.POSTGRES_HOST,
     port: 5432
-})
+});
 
 
 
