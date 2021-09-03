@@ -19,7 +19,7 @@ jest.mock('../../db')
 jest.mock('../../services')
 
 
-describe('/user routes', () => {
+describe('user routes', () => {
     let app: Application;
 
     beforeAll(() => {

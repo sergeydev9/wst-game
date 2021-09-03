@@ -4,16 +4,14 @@ import { Application } from 'express';
 import { mocked } from 'ts-jest/utils';
 import { signUserPayload } from '@whosaidtrue/middleware';
 import App from '../../App';
-import { purchaseWithCredits } from '../../services'
-import { pool } from '../../db';
+import { orders } from '../../db';
 
 jest.mock('../../services');
 jest.mock('../../db');
 
-const mockedPurchases = mocked(purchaseWithCredits, true);
-const mockedPool = mocked(pool, true);
+const mockedOrders = mocked(orders, true);
 
-describe('/purchase routes', () => {
+describe('purchase routes', () => {
     let app: Application;
     const validToken = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
 
@@ -22,13 +20,36 @@ describe('/purchase routes', () => {
     })
 
     describe('[POST] /credits', () => {
+
+        it('sould respond with 422 if no deckId', done => {
+            supertest(app)
+                .post('/purchase/credits')
+                .set('Authorization', `Bearer ${validToken}`)
+                .expect(422, done)
+        })
+
+        it('sould respond with 401 if no token', done => {
+            supertest(app)
+                .post('/purchase/credits')
+                .send({ deckId: 15 })
+                .expect(422, done)
+        })
         it('should respond with 400 if result from service is undefined', done => {
-            mockedPurchases.mockResolvedValue(undefined)
+            mockedOrders.purchaseWithCredits.mockResolvedValue(undefined)
             supertest(app)
                 .post('/purchase/credits')
                 .set('Authorization', `Bearer ${validToken}`)
                 .send({ deckId: 15 })
                 .expect(400, done)
+        })
+
+        it('should respond with 201 if result from service is a deck id', done => {
+            mockedOrders.purchaseWithCredits.mockResolvedValue(15)
+            supertest(app)
+                .post('/purchase/credits')
+                .set('Authorization', `Bearer ${validToken}`)
+                .send({ deckId: 15 })
+                .expect(201, done)
         })
     })
 })

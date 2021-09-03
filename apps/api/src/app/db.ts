@@ -1,5 +1,5 @@
 import { Pool } from 'pg'
-import { Users, Decks, Games, GeneratedNames } from '@whosaidtrue/data';
+import { Users, Decks, Games, GeneratedNames, Orders } from '@whosaidtrue/data';
 
 
 
@@ -18,5 +18,6 @@ const users = new Users(pool);
 const games = new Games(pool);
 const decks = new Decks(pool);
 const names = new GeneratedNames(pool);
+const orders = new Orders(pool);
 
-export { users, games, decks, names, pool };
+export { users, games, decks, names, pool, orders };

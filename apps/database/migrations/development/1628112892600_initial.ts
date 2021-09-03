@@ -20,7 +20,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     */
     pgm.createType('deck_status', ["active", "inactive", "pending"]);
     pgm.createType('question_status', ["active", "inactive", "poll"]);
-    pgm.createType('user_role', ["admin", "user"]);
+    pgm.createType('user_role', ["admin", "user", "guest", "test"]);
     pgm.createType('answer_value', ["true", "false", "pass"]);
     pgm.createType('user_rating', ["great", "bad"])
 
@@ -303,7 +303,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         user_id: { type: 'integer', notNull: true, references: 'users', onDelete: 'SET NULL' },
         deck_id: { type: 'integer', notNull: true, references: 'decks', onDelete: 'SET NULL' },
         credits_used: { type: 'boolean', notNull: true, default: false }, // true if user used free deck credits to make this purchase
-        charge_data: { type: 'jsonb', notNull: true }, // stripe charge json object. Contains the details for the charge
+        charge_data: { type: 'jsonb', notNull: false }, // stripe charge json object. Contains the details for the charge
         created_at: {
             type: 'timestamptz',
             notNull: true,

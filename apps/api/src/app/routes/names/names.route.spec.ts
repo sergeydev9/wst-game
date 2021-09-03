@@ -4,7 +4,7 @@ import { Application } from 'express';
 import App from '../../App';
 
 
-describe('/names routes', () => {
+describe('names routes', () => {
     let app: Application;
 
     beforeAll(() => {

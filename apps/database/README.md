@@ -298,7 +298,7 @@ Some custom types have been created to improve database performance. Column stha
 ---|---
 deck_status | "active", "inactive", "pending"
 question_status | "active", "inactive", "poll"
-user_role | "admin", "user"
+user_role | "admin", "user", "guest", "test"
 answer_value | "true", "false", "pass"
 user_rating | "great", "bad"
 

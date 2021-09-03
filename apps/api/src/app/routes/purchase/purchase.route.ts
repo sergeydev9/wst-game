@@ -3,9 +3,8 @@ import { validateDeckId } from '@whosaidtrue/validation';
 import { passport } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { logger } from '@whosaidtrue/logger';
-import { pool } from '../../db';
+import { orders } from '../../db';
 import { BuyWithCreditsRequest, TokenPayload } from '@whosaidtrue/api-interfaces';
-import { purchaseWithCredits } from '../../services';
 
 const router = Router();
 
@@ -13,10 +12,8 @@ router.post('/credits', [...validateDeckId], passport.authenticate('jwt', { sess
     const { deckId } = req.body as BuyWithCreditsRequest;
     const { id } = req.user as TokenPayload; // user id form token
 
-    const client = await pool.connect();
-
     try {
-        const result = await purchaseWithCredits(client, id, deckId);
+        const result = await orders.purchaseWithCredits(id, deckId);
 
         if (!result) {
             res.status(400).send('Unable to redeem credits for that user.')
