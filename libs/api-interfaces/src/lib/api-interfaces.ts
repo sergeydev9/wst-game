@@ -77,6 +77,10 @@ export interface CreateGameRequest {
   deckId: number,
 }
 
+export interface CreateGameResponse {
+  game_id: number,
+  access_code: string;
+}
 /**
  * orders
  */

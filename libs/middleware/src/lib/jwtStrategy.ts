@@ -3,7 +3,7 @@ import passport from 'passport';
 
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET
+    secretOrKey: process.env.JWT_SECRET,
 };
 
 export default passport.use(new Strategy(options, async (payload, done) => {

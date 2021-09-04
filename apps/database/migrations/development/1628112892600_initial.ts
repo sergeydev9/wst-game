@@ -86,11 +86,12 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     // for any query that tries to directly set the value from one to the other.
     pgm.createTable('games', {
         id: 'id',
-        access_code: { type: 'varchar(200)', notNull: false, unique: true },
+        total_questions: { type: 'smallint', notNull: true, default: 0 },
+        access_code: { type: 'varchar(10)', notNull: false, unique: true },
         status: { type: 'varchar(100)', notNull: true }, // TODO: create custom type? what are the possible values?
         deck_id: { type: 'integer', notNull: false, references: 'decks', onDelete: 'SET NULL' },
         start_date: { type: 'timestamptz', notNull: false },
-        host_name: { type: 'varchar(200)', notNull: false },
+        host_player_name: { type: 'varchar(200)', notNull: false },
         host_id: { type: 'integer', notNull: false, references: 'users', onDelete: 'SET NULL' },
         end_date: { type: 'timestamptz', notNull: false },
         created_at: {

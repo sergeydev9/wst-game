@@ -1,7 +1,13 @@
 import { MigrationBuilder, ColumnDefinitions } from 'node-pg-migrate';
 
 export const shorthands: ColumnDefinitions | undefined = undefined;
-
+/**
+ *
+ *
+ * @export
+ * @param {MigrationBuilder} pgm
+ * @return {*}  {Promise<void>}
+ */
 export async function up(pgm: MigrationBuilder): Promise<void> {
 
     // all decks with status 'active'
@@ -139,8 +145,44 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     END
     `)
 
-
-
+    /**
+     *
+     * Creates a new game row, as well as a new game_question row
+     * for each question with status active that belongs to the specified
+     * deck.
+     *
+     * On first run will create a counter sequence if one doesn't exist already.
+     *
+     * Resets sequence to 1 after function is done.
+     *
+     * Sequence will be dropped when the database session that created it ends.
+     * @param d_id integer deck id
+     * @param h_id integer user id of host
+     *
+     * @returns {id: number, access_code: string}
+     */
+    pgm.createFunction('create_game', [{ mode: 'IN', type: 'integer', name: 'd_id' }, { mode: 'IN', type: 'integer', name: 'h_id' }], { returns: 'table(id integer, access_code varchar(10))', language: 'plpgsql' }, `
+    BEGIN
+        CREATE TEMP SEQUENCE IF NOT EXISTS counter START 1;
+        RETURN QUERY
+        WITH
+        d_questions AS ( --get all active questions for the deck
+            SELECT * FROM active_questions WHERE deck_id = d_id ORDER BY random()
+        ),
+        new_game AS ( --create new game
+            INSERT INTO games (access_code, status, deck_id, host_id)
+            VALUES (encode(gen_random_bytes(3), 'hex'), 'lobby', d_id, h_id)
+            RETURNING games.id, games.access_code
+        ), ins AS (
+            INSERT INTO game_questions (question_sequence_index, game_id, question_id)
+            SELECT nextval('counter'), new_game.id, d_questions.id
+            FROM d_questions
+            CROSS JOIN new_game
+        )
+        SELECT * FROM new_game;
+        ALTER SEQUENCE counter RESTART WITH 1;
+    END;
+    `)
 }
 // export async function down(pgm: MigrationBuilder): Promise<void> {
 // }

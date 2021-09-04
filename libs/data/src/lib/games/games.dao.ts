@@ -95,7 +95,27 @@ class Games extends Dao {
         return this.pool.query(query);
     }
 
-    // public create(): Promise<QueryResult> {}
+    /**
+     * Create a new game record, as well as a game_question record
+     * for every active question that belongs to the specified deck.
+     *
+     * Host id is set to the specified user id.
+     *
+     * Returns a  single row containing the game id and access_code
+     * for the new game.
+     *
+     * @param {number} userId user id of host
+     * @param {number} deckId deck id for the game
+     * @return {id: number, access_code: string}
+     * @memberof Games
+     */
+    public create(userId: number, deckId: number): Promise<QueryResult> {
+        const query = {
+            text: 'SELECT * FROM create_game($1, $2)',
+            values: [userId, deckId]
+        }
+        return this.pool.query(query)
+    }
 
     // public gameStateById(gameId: number): Promise<QueryResult> {}
 

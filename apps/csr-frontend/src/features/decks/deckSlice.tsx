@@ -77,8 +77,6 @@ export const deckSlice = createSlice({
             state.selectedDeck = initialState.selectedDeck;
             state.isSelectedOwned = false
         }
-
-
     },
     extraReducers: (builder) => {
         // success
