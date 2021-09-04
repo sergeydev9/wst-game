@@ -89,12 +89,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
     return (
         <form className="flex flex-col gap-3" onSubmit={formik.handleSubmit}>
             {/* title */}
-            <FormGroup>
-                {$smallTitle ? <Title2 className="text-center mb-3">{title}</Title2> : <LargeTitle className="text-center mb-3">{title}</LargeTitle>}
+            {$smallTitle ? <Title2 className="text-center mb-3">{title}</Title2> : <LargeTitle className="text-center mb-3">{title}</LargeTitle>}
 
-                {/* This error reporting stuff is placeholder*/}
-                {authError && <ErrorText className="text-center">{authError}</ErrorText>}
-            </FormGroup>
+            {/* This error reporting stuff is placeholder*/}
+            {authError && <ErrorText className="text-center">{authError}</ErrorText>}
+
 
             {/* email */}
             <FormGroup>

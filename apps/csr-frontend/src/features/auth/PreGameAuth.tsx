@@ -2,11 +2,11 @@ import { useHistory } from 'react-router';
 import * as Yup from 'yup';
 import { api } from '../../api'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { closeModalsThunk, AuthForm } from '../../features'
-import { Title1, TextInput, Headline, FormGroup, InputLabel, ErrorText, Button, LargeTitle, Divider, Title2 } from "@whosaidtrue/ui";
-import { setFullModal, selectFullModalFactory } from '../modal/modalSlice';
+import { AuthForm } from '../../features'
+import { TextInput, Headline, FormGroup, InputLabel, ErrorText, Button, Divider, Title2 } from "@whosaidtrue/ui";
+import { setFullModal, } from '../modal/modalSlice';
 import { useFormik } from 'formik';
-import { setGameDeck, setGameStatus, createGame } from '../game/gameSlice';
+import { setGameDeck, createGame } from '../game/gameSlice';
 import { clearCart, selectCartDeck } from '../cart/cartSlice';
 import { AuthenticationResponse } from '@whosaidtrue/api-interfaces';
 import { decodeUserToken } from '../../util/functions';
@@ -67,7 +67,7 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 </FormGroup>
                 <Button type="submit">Continue</Button>
             </form>
-            <div className="w-full flex flex-row justify-center items-center gap-3 h-8 px-20 my-10">
+            <div className="w-full flex flex-row justify-center items-center gap-3 h-8 px-20 my-8">
                 <Divider dividerColor='grey' />
                 <h3 className="font-black text-title-3" >OR</h3>
                 <Divider dividerColor='grey' />

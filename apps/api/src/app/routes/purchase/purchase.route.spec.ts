@@ -21,14 +21,14 @@ describe('purchase routes', () => {
 
     describe('[POST] /credits', () => {
 
-        it('sould respond with 422 if no deckId', done => {
+        it('should respond with 422 if no deckId', done => {
             supertest(app)
                 .post('/purchase/credits')
                 .set('Authorization', `Bearer ${validToken}`)
                 .expect(422, done)
         })
 
-        it('sould respond with 401 if no token', done => {
+        it('should respond with 401 if no token', done => {
             supertest(app)
                 .post('/purchase/credits')
                 .send({ deckId: 15 })
