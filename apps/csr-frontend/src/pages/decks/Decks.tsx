@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense } from 'react'
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
     DeckSelection,
@@ -15,6 +15,7 @@ const CheckoutModal = lazy(() => import('../../features/cart/CheckoutModal'));
 const DeckDetailsModal = lazy(() => import('../../features/decks/DeckDetailsModal'));
 const RedeemCredits = lazy(() => import('../../features/cart/RedeemCredits'));
 const PreGameAuth = lazy(() => import('../../features/auth/PreGameAuth'));
+const GuestRedirect = lazy(() => import('../../features/auth/GuestAccountRedirect'));
 
 
 const Decks: React.FC = () => {
@@ -24,6 +25,7 @@ const Decks: React.FC = () => {
     const isCardPaymentOpen = useAppSelector(selectFullModalFactory('cardPurchase'))
     const isDeckCreditOpen = useAppSelector(selectFullModalFactory('freeCreditPurchase'))
     const isPreGameAuthOpen = useAppSelector(selectFullModalFactory('preGameAuth'))
+    const isGuestRedirectOpen = useAppSelector(selectFullModalFactory('guestAccountRedirect'))
 
     const closeDetails = () => {
         dispatch(setFullModal(''))
@@ -49,6 +51,19 @@ const Decks: React.FC = () => {
                     </Suspense>
                 </NoFlexBox>
             </Modal>
+
+            {/* Guest Account Redirect */}
+            <Modal
+                isOpen={isGuestRedirectOpen}
+                onRequestClose={closeDetails}
+                shouldCloseOnOverlayClick={true}>
+                <NoFlexBox className="w-80 md:w-28rem">
+                    <Suspense fallback={<Loading />}>
+                        <GuestRedirect />
+                    </Suspense>
+                </NoFlexBox>
+            </Modal>
+
 
             {/* Choose Payment Method */}
             <Modal

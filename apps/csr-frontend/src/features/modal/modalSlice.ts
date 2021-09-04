@@ -18,6 +18,7 @@ export type FullModal = "createAccount"
     | "removedFromGame"
     | "freeCreditAward"
     | "gameOptions"
+    | "guestAccountRedirect"
     | ""
 
 export interface ModalState {

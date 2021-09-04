@@ -2,10 +2,11 @@ import React from 'react';
 import { Deck } from '@whosaidtrue/app-interfaces'
 import { Button } from '@whosaidtrue/ui';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { isLoggedIn } from '../auth/authSlice';
+import { isLoggedIn, selectRoles } from '../auth/authSlice';
 import { createGame } from '../game/gameSlice';
 import { setFullModal } from '../modal/modalSlice';
 import { addToCart } from '../cart/cartSlice';
+import { clearSelectedDeck } from '..';
 
 export interface DeckDetailsButtonProps {
     deck: Deck;
@@ -15,6 +16,7 @@ export interface DeckDetailsButtonProps {
 const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) => {
     const dispatch = useAppDispatch();
     const loggedIn = useAppSelector(isLoggedIn)
+    const roles = useAppSelector(selectRoles);
     const buttonText = isOwned ? 'Play Deck' : deck.purchase_price
 
     const addToCartThenGoToAuth = () => {
@@ -23,8 +25,15 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
     }
 
     const addToCartThenGoToCheckout = () => {
-        dispatch(addToCart(deck))
-        dispatch(setFullModal("choosePaymentMethod"))
+        // check if guest account. Redirect if true.
+        if (roles.some(role => role === 'guest')) {
+            dispatch(clearSelectedDeck())
+            dispatch(setFullModal('guestAccountRedirect'))
+        } else {
+            dispatch(addToCart(deck))
+            dispatch(setFullModal("choosePaymentMethod"))
+        }
+
     }
 
     let handler: (e: React.MouseEvent) => void;

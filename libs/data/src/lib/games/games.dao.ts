@@ -75,9 +75,9 @@ class Games extends Dao {
     }
 
     /**
-     * Set start_date for game.
+     * Set end_date for game.
      *
-     * Returns id and start_date of game.
+     * Returns id and end_date of game.
      *
      * Return value of end_date is a date, not a string.
      *

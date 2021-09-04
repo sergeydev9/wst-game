@@ -142,5 +142,6 @@ export const selectEmail = (state: RootState) => state.auth.email;
 export const selectAuthError = (state: RootState) => state.auth.authError;
 export const selectDetailsError = (state: RootState) => state.auth.fetchDetailsError;
 export const selectUpdateError = (state: RootState) => state.auth.updateError;
+export const selectRoles = (state: RootState) => state.auth.roles
 
 export default authSlice.reducer;

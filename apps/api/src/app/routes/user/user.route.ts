@@ -11,7 +11,7 @@ import {
 } from '@whosaidtrue/validation';
 import { passport, signResetPayload } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, } from '@whosaidtrue/util';
-import { signUserPayload } from '@whosaidtrue/middleware';
+import { signUserPayload, signGuestPayload } from '@whosaidtrue/middleware';
 import { logger } from '@whosaidtrue/logger';
 import { users } from '../../db';
 import { emailService } from '../../services';
@@ -249,7 +249,7 @@ router.post('/guest', [...emailOnly], async (req: Request, res: Response) => {
     try {
         const { rows } = await users.createGuest(req.body.email);
         const { id, email, roles } = rows[0]
-        const token = signUserPayload({ id, email, roles })
+        const token = signGuestPayload({ id, email, roles }) // token only valid for 1 day
 
         res.status(201).json({ token } as AuthenticationResponse);
 
