@@ -8,11 +8,13 @@ app.listen();
 
 // test db connection, end process if db unreachable
 (async () => {
-    const client = await pool.connect();
-    if (!client) {
+    try {
+        await pool.connect();
+    } catch {
         logger.fatal('Database unreachable. Exiting node process')
         process.exit(1);
     }
+
 })();
 
 // no dangling connections

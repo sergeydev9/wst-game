@@ -1,6 +1,14 @@
 import { Router, Request, Response } from 'express';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
-import { validateAuth, validateResetEmail, validateUserUpdate, validatePasswordChange, validateResetCode, validateReset } from '@whosaidtrue/validation';
+import {
+    validateAuth,
+    validateResetEmail,
+    validateUserUpdate,
+    validatePasswordChange,
+    validateResetCode,
+    validateReset,
+    emailOnly
+} from '@whosaidtrue/validation';
 import { passport, signResetPayload } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { signUserPayload } from '@whosaidtrue/middleware';
@@ -234,31 +242,25 @@ router.patch('/reset', [...validateReset], async (req: Request, res: Response) =
 
 })
 
-
 /**
- * Delete user account.
- *
- * Account ID is taken from JWT payload.
+ * Register guest user
  */
-// router.delete('/delete', passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
-//     try {
-//         // get user id from token
-//         const { id } = req.user as TokenPayload
-//         const { rows } = await users.deleteById(id)
+router.post('/guest', [...emailOnly], async (req: Request, res: Response) => {
+    try {
+        const { rows } = await users.createGuest(req.body.email);
+        const { id, email, roles } = rows[0]
+        const token = signUserPayload({ id, email, roles })
 
-//         // if account deleted, count will be 1
-//         if (rows[0].count === 1) {
-//             res.status(204).send();
-//         } else {
-//             // This shouldn't be possible, but just in case...
-//             logger.error(`a deleteById request for user with id ${id} returned count ${rows[0].count}. This shouldn't happen.`)
-//             res.status(500).send("Unable to delete account")
-//         }
-//     } catch (e) {
-//         logger.error(e)
-//         res.status(500).send(ERROR_MESSAGES.unexpected)
-//     }
-// })
+        res.status(201).json({ token } as AuthenticationResponse);
 
+    } catch (e) {
+        if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
+            res.status(422).send("A user already exists with that email")
+        } else {
+            logger.error(e)
+            res.status(500).send(ERROR_MESSAGES.unexpected)
+        }
+    }
+})
 
 export default router;

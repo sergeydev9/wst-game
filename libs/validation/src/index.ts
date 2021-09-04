@@ -8,4 +8,5 @@ export * from './lib/userUpdate';
 export * from './lib/passwordChange';
 export * from './lib/nameReport';
 export * from './lib/deckId';
+export * from './lib/emailOnly';
 export { default as validate } from './lib/validate';

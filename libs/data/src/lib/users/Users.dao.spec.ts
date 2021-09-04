@@ -182,7 +182,7 @@ describe('Users', () => {
             expect(rows[0].id).toBeDefined()
             expect(rows[0].email).toEqual('test@test.com')
             expect(rows[0].roles.length).toEqual(1)
-            expect(rows[0].roles[0]).toEqual('user')
+            expect(rows[0].roles[0]).toEqual('guest')
 
         })
 

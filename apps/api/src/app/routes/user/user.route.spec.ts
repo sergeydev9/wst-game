@@ -482,4 +482,56 @@ describe('user routes', () => {
             expect(validator.isJWT(result.body.token)).toEqual(true);
         })
     })
+
+    describe('[POST] /guest', () => {
+        it('should respond with 422 if no email', done => {
+            supertest(app)
+                .post('/user/guest')
+                .expect(422, done)
+        })
+
+        it('should respond with 422 if email invalid', done => {
+            supertest(app)
+                .post('/user/guest')
+                .send({ email: 'wrong' })
+                .expect(422, done)
+        })
+
+        it('should respond with 422 if db threw email key error', done => {
+            mockedUsers.createGuest.mockRejectedValue(new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, 'error'))
+            supertest(app)
+                .post('/user/guest')
+                .send({ email: 'email@email.com' })
+                .expect(422, done)
+        })
+
+        it('should respond with 500 if db threw other error', done => {
+            mockedUsers.createGuest.mockRejectedValue(new Error(''))
+            supertest(app)
+                .post('/user/guest')
+                .send({ email: 'email@email.com' })
+                .expect(500, done)
+        })
+
+        it('should respond with 201 if db success', async () => {
+            // set mock value
+            mockedUsers.createGuest.mockResolvedValue({ rows: [{ id: 1, email: 'email@email.com', roles: ["guest"], notifications: false }] } as QueryResult)
+
+            const { body } = await supertest(app)
+                .post('/user/guest')
+                .send({ email: 'email@test.com' })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(201)
+
+            // response should be a valid JWT token
+            expect(validator.isJWT(body.token)).toEqual(true)
+
+            // JWT token payload has expected attributes
+            const { user } = jwt.decode(body.token, { json: true })
+            expect(user.id).toEqual(1)
+            expect(user.email).toEqual('email@email.com')
+            expect(user.roles).toEqual(["guest"])
+        })
+    })
 })

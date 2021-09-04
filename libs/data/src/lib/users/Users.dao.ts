@@ -209,7 +209,7 @@ class Users extends Dao {
     public createGuest(email: string): Promise<QueryResult> {
         const query = {
             text: 'INSERT INTO users (email, roles) VALUES ( $1, $2) RETURNING id, email, array_to_json(roles) AS roles',
-            values: [email, ['user']]
+            values: [email, ['guest']]
         }
 
         return this._pool.query(query)
