@@ -56,27 +56,27 @@ export const setErrorThunk = createAsyncThunk("auth/setErrorThunk",
 // TODO: use details endpoint to retrieve notifications when that feature gets added.
 export const fetchDetails = createAsyncThunk('auth/fetchDetails',
   async (_, { rejectWithValue, dispatch }) => {
-    try {
-      const response = await api.get('/user/details')
+
+    return api.get('/user/details').then(response => {
       return response.data
-    } catch (e) {
-      //clear error after 5 seconds
+    }).catch(e => {
       setTimeout(() => dispatch(clearError()), 2000)
       return rejectWithValue(e.response.data)
-    }
+    })
+
   }
 )
 
 export const updateAccount = createAsyncThunk<UserDetailsUpdate, { email: string }>('auth/updateAccount',
   async ({ email }, { rejectWithValue, dispatch }) => {
-    try {
-      const response = await api.patch('/user/update', { email })
+
+    return api.patch('/user/update', { email }).then(response => {
       return response.data
-    } catch (e) {
-      //clear error after 5 seconds
+    }).catch(e => {
       setTimeout(() => dispatch(clearError()), 2000)
       return rejectWithValue(e.response.data)
-    }
+    })
+
   }
 )
 

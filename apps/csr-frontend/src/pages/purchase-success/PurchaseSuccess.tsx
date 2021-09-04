@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Title1, Box, DeckCard, Button, Headline, NoFlexBox } from "@whosaidtrue/ui"
+import { Title1, Box, DeckCard, Button } from "@whosaidtrue/ui"
 import popper from './party-popper-emoji.png';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectGameDeck } from '../../features'

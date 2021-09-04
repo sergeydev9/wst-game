@@ -24,7 +24,7 @@ const Login: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     // render
     return (
         <>
-            <AuthForm onSuccess={successHandler} endpoint="/user/login" buttonlabel="login" title="Login" />
+            <AuthForm onSuccess={successHandler} endpoint="/user/login" buttonlabel="login" title="Login" $showForgotPassword />
             <div className="text-center text-basic-black mt-8">
                 <Headline>Don't have an account?</Headline>
                 {(isModal ?

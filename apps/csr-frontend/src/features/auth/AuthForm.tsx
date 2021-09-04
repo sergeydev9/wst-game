@@ -11,20 +11,27 @@ import {
     InputLabel,
     Button,
     Headline,
-    ErrorText
+    ErrorText,
+    Title2
 } from "@whosaidtrue/ui";
 import { api } from '../../api';
 import { selectAuthError, setErrorThunk, clearError } from './authSlice';
+import { Link } from 'react-router-dom';
+import { setFullModal } from '../modal/modalSlice';
+import { clearCart } from '../cart/cartSlice';
+import { clear } from '../decks/deckSlice';
 
 export interface AuthFormProps {
     endpoint: string;
     title: string;
     buttonlabel: string;
     $showMinLength?: boolean;
+    $showForgotPassword?: boolean;
+    $smallTitle?: boolean;
     onSuccess: () => void;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $showMinLength, title }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, title, $showMinLength, $showForgotPassword, $smallTitle }) => {
     const dispatch = useAppDispatch();
 
     // TODO: need to clarify how this error is reported. Maybe move this to flash message modal?
@@ -45,10 +52,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
         }),
         onSubmit: async (values) => {
             const { email, password } = values
-            try {
-                // clear any error messages
-                dispatch(clearError())
-                const response = await api.post<AuthenticationResponse>(endpoint, { email, password })
+
+            // clear any error messages
+            dispatch(clearError())
+            return api.post<AuthenticationResponse>(endpoint, { email, password }).then(response => {
                 const { token } = response.data
                 const decoded = decodeUserToken(token)
                 const { user } = decoded;
@@ -58,9 +65,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
 
                 // call optional callback
                 onSuccess()
-            } catch (e) {
-                const status = e.response?.status;
-                const data = e.response?.data;
+            }).catch(e => {
+                const { status, data } = e.response
                 if ((status === 422 || status === 401) && data) {
                     dispatch(setErrorThunk(e.response.data as string))
                 } else {
@@ -68,17 +74,23 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
                     dispatch(setErrorThunk('An unknown error has occurred, please try again later'))
                     console.error(e)
                 }
-            }
+            })
         },
     });
     const emailErr = formik.touched.email && formik.errors.email ? true : undefined;
     const pwErr = formik.touched.password && formik.errors.password ? true : undefined;
+
+    const clearCartAndDetails = () => {
+        dispatch(setFullModal(''))
+        dispatch(clearCart())
+        dispatch(clear())
+    }
     // render
     return (
         <form className="flex flex-col gap-3" onSubmit={formik.handleSubmit}>
             {/* title */}
             <FormGroup>
-                <LargeTitle className="text-center mb-3">{title}</LargeTitle>
+                {$smallTitle ? <Title2 className="text-center mb-3">{title}</Title2> : <LargeTitle className="text-center mb-3">{title}</LargeTitle>}
 
                 {/* This error reporting stuff is placeholder*/}
                 {authError && <ErrorText className="text-center">{authError}</ErrorText>}
@@ -96,6 +108,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, $
                 <InputLabel htmlFor="password">Password</InputLabel>
                 <TextInput {...formik.getFieldProps('password')} id="password" $hasError={pwErr} $border name="password" type="password" />
                 {$showMinLength && <Headline className="text-basic-gray">8 character minimum length</Headline>}
+                {$showForgotPassword && <Headline className="text-basic-gray underline mt-3" onClick={clearCartAndDetails}><Link to="/reset/send-email">Forgot Password?</Link></Headline>}
+
                 {pwErr && <ErrorText>{formik.errors.password}</ErrorText>}
             </FormGroup>
 

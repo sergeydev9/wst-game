@@ -16,7 +16,7 @@ export {
   setFullModal,
   selectFullModalFactory
 } from './modal/modalSlice';
-export { default as gameReducer, selectGameDeck } from './game/gameSlice';
+export { default as gameReducer, selectGameDeck, createGame } from './game/gameSlice';
 export { default as decksReducer, clearSelectedDeck } from './decks/deckSlice';
 export { default as AuthForm } from './auth/AuthForm';
 export { default as Login } from './auth/Login';

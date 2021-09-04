@@ -14,6 +14,7 @@ const CreditCardForm = lazy(() => import('../../features/cart/CreditCardForm'));
 const CheckoutModal = lazy(() => import('../../features/cart/CheckoutModal'));
 const DeckDetailsModal = lazy(() => import('../../features/decks/DeckDetailsModal'));
 const RedeemCredits = lazy(() => import('../../features/cart/RedeemCredits'));
+const PreGameAuth = lazy(() => import('../../features/auth/PreGameAuth'));
 
 
 const Decks: React.FC = () => {
@@ -22,6 +23,7 @@ const Decks: React.FC = () => {
     const isChoosePaymentOpen = useAppSelector(selectFullModalFactory('choosePaymentMethod'))
     const isCardPaymentOpen = useAppSelector(selectFullModalFactory('cardPurchase'))
     const isDeckCreditOpen = useAppSelector(selectFullModalFactory('freeCreditPurchase'))
+    const isPreGameAuthOpen = useAppSelector(selectFullModalFactory('preGameAuth'))
 
     const closeDetails = () => {
         dispatch(setFullModal(''))
@@ -80,6 +82,18 @@ const Decks: React.FC = () => {
                 <NoFlexBox className="w-80  md:w-28rem">
                     <Suspense fallback={<Loading />}>
                         <RedeemCredits />
+                    </Suspense>
+                </NoFlexBox>
+            </Modal>
+
+            {/* pre-game auth (user isn't logged and tries to start a game with a free deck)*/}
+            <Modal
+                isOpen={isPreGameAuthOpen}
+                onRequestClose={close}
+                shouldCloseOnOverlayClick={true}>
+                <NoFlexBox className="w-80 md:w-28rem">
+                    <Suspense fallback={<Loading />}>
+                        <PreGameAuth />
                     </Suspense>
                 </NoFlexBox>
             </Modal>
