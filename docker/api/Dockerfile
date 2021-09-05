@@ -2,7 +2,7 @@ FROM node:14-alpine
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=4000
+ENV PORT=3000
 
 COPY dist/apps/api/package.json .
 RUN npm install && \

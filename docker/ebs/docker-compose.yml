@@ -9,9 +9,9 @@ services:
       - .env
       - .ebs.env
     environment:
-      - PORT=4000
+      - PORT=3000
     ports:
-      - 4000:4000
+      - 3000:3000
 
   socket-server:
     image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/api:20210830-bf659d3

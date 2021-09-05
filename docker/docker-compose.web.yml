@@ -13,10 +13,9 @@ services:
     env_file:
       - .docker.env
     environment:
-      - PORT=4000
-      - POSTGRES_HOST=postgres
+      - PORT=3000
     ports:
-      - 4000:4000
+      - 3000:3000
 
     depends_on:
       - postgres
@@ -33,7 +32,6 @@ services:
       - .docker.env
     environment:
       - PORT=4001
-      - POSTGRES_HOST=postgres
     ports:
       - 4001:4001
 
