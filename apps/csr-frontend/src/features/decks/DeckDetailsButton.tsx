@@ -2,7 +2,7 @@ import React from 'react';
 import { Deck } from '@whosaidtrue/app-interfaces'
 import { Button } from '@whosaidtrue/ui';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { isLoggedIn, selectRoles } from '../auth/authSlice';
+import { isLoggedIn, selectIsGuest } from '../auth/authSlice';
 import { createGame } from '../game/gameSlice';
 import { setFullModal } from '../modal/modalSlice';
 import { addToCart } from '../cart/cartSlice';
@@ -16,7 +16,7 @@ export interface DeckDetailsButtonProps {
 const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) => {
     const dispatch = useAppDispatch();
     const loggedIn = useAppSelector(isLoggedIn)
-    const roles = useAppSelector(selectRoles);
+    const isGuest = useAppSelector(selectIsGuest);
     const buttonText = isOwned ? 'Play Deck' : deck.purchase_price
 
     const addToCartThenGoToAuth = () => {
@@ -26,7 +26,7 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
 
     const addToCartThenGoToCheckout = () => {
         // check if guest account. Redirect if true.
-        if (roles.some(role => role === 'guest')) {
+        if (isGuest) {
             dispatch(clearSelectedDeck())
             dispatch(setFullModal('guestAccountRedirect'))
         } else {

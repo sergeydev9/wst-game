@@ -3,7 +3,6 @@ import { useAppSelector } from "../../app/hooks"
 import { Title2 } from "@whosaidtrue/ui"
 import DeckCardSet from './DeckCardSet'
 
-
 const UserSelection: React.FC = () => {
     const owned = useAppSelector(filteredOwned);
     const notOwned = useAppSelector(filteredNotOwned)
@@ -22,6 +21,5 @@ const UserSelection: React.FC = () => {
         </>
     )
 }
-
 
 export default UserSelection

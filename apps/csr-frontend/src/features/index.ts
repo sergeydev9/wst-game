@@ -8,7 +8,8 @@ export {
   fetchDetails,
   updateAccount,
   selectDeckCredits,
-  selectEmail
+  selectEmail,
+  selectIsGuest
 } from "./auth/authSlice";
 export {
   default as modalReducer,

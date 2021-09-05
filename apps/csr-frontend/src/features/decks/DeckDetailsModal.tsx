@@ -4,7 +4,7 @@ import { isLoggedIn, selectDeckCredits } from '../auth/authSlice';
 import { DeckDetails, Title1, Headline } from '@whosaidtrue/ui';
 import { getSelectedDeck, selectIsOwned } from './deckSlice';
 import { fetchDetails } from '../auth/authSlice';
-import { setFullModal, selectFullModalFactory } from '../modal/modalSlice';
+import { setFullModal } from '../modal/modalSlice';
 import DeckDetailsButton from './DeckDetailsButton';
 
 const DeckDetailsModal: React.FC = () => {

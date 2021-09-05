@@ -8,7 +8,6 @@ const GuestSelection: React.FC = () => {
     const notFree = useAppSelector(filteredNotOwned);
     const free = useAppSelector(filteredOwned);
 
-
     return (
         <>
             {free.length > 0 && (

@@ -4,6 +4,7 @@ import { api } from '../../api';
 
 export interface AuthState {
   loggedIn: boolean;
+  isGuest: boolean;
   token: string;
   id: number;
   email: string;
@@ -32,6 +33,7 @@ export interface LoginActionPayload {
 
 export const initialState: AuthState = {
   loggedIn: false,
+  isGuest: false,
   roles: [],
   token: '',
   id: 0,
@@ -89,6 +91,10 @@ export const authSlice = createSlice({
     },
     login: (state, action: PayloadAction<LoginActionPayload>) => {
       const { token, email, id, roles } = action.payload
+
+      if (roles.some(role => role === 'guest')) {
+        state.isGuest = true;
+      }
       state.token = token;
       state.email = email;
       state.id = id;
@@ -142,6 +148,7 @@ export const selectEmail = (state: RootState) => state.auth.email;
 export const selectAuthError = (state: RootState) => state.auth.authError;
 export const selectDetailsError = (state: RootState) => state.auth.fetchDetailsError;
 export const selectUpdateError = (state: RootState) => state.auth.updateError;
-export const selectRoles = (state: RootState) => state.auth.roles
+export const selectRoles = (state: RootState) => state.auth.roles;
+export const selectIsGuest = (state: RootState) => state.auth.isGuest;
 
 export default authSlice.reducer;
