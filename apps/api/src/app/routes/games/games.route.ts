@@ -32,7 +32,7 @@ router.post('/create', [...deckId], passport.authenticate('jwt', { session: fals
             res.status(201).json({ game_id: rows[0].id, access_code: rows[0].access_code } as CreateGameResponse)
         }
     } catch (e) {
-        logger.error(e)
+        logger.error(`inputs: user id: ${id}, deck id: ${deckId}, error: ${e}, stack: ${e.stack}`)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })

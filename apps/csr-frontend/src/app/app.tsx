@@ -34,7 +34,7 @@ const App: React.FC = () => {
           <Route exact path='/create-account' >
             <CreateAccount />
           </Route>
-          <Route path='/join'>
+          <Route path='/x/:access_code'>
             <ChooseName />
           </Route>
           <Route exact path='/login'>

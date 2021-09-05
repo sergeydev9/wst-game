@@ -31,4 +31,5 @@ export { default as Modal } from './lib/modal/Modal';
 export { default as NoFlexBox } from './lib/no-flex-box/NoFlexBox';
 export { default as DeckDetails } from './lib/deck-details/DeckDetails';
 export { default as PaymentMethodSelect } from './lib/payment-method-select/PaymentMethodSelect';
+export { default as InviteLinks } from './lib/invite/Invite'
 export * from './lib/typography/Typography';

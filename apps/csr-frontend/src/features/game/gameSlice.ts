@@ -1,32 +1,35 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateGameRequest } from "@whosaidtrue/api-interfaces";
+import { CreateGameRequest, CreateGameResponse } from "@whosaidtrue/api-interfaces";
 import { Deck } from '@whosaidtrue/app-interfaces';
 import { api } from '../../api';
 
 // local imports
 import { RootState } from "../../app/store";
 
+// TODO: clean up statuses that don't get used
 type GameStatus = 'notInGame'
+    | "gameCreateSuccess"
+    | "gameCreateError"
     | "connecting"
     | "removed"
     | "lobby"
     | "playing"
     | "postGame"
     | "disconnected"
-    | "error"
+    | "gameCreateError"
     | "choosingName"
 
 type JoinRequestStatus = 'idle' | 'accepted' | 'rejected' | 'awaitingResponse' | 'error'
 
 export interface GameState {
     status: GameStatus;
-    gameId: string;
+    game_id: number;
     deck: Deck;
     isHost: boolean;
     currentHostName: string;
     players: string[];
     currentQuestionIndex: number;
-    accessCode: string;
+    access_code: string;
     playerId: number;
     playerName: string;
     hasJoined: boolean;
@@ -36,7 +39,7 @@ export interface GameState {
 
 export const initialState: GameState = {
     status: 'notInGame',
-    gameId: '',
+    game_id: 0,
     deck: {
         id: 0,
         name: '',
@@ -51,7 +54,7 @@ export const initialState: GameState = {
         purchase_price: ''
     },
     isHost: false,
-    accessCode: '',
+    access_code: '',
     players: [],
     currentQuestionIndex: 0,
     currentHostName: '',
@@ -62,25 +65,12 @@ export const initialState: GameState = {
     playerId: 0
 }
 
-// TODO: change the error handling here
-export const createGame = createAsyncThunk(
-    'game/create',
-    async (deckId: number, thunkApi) => {
-        try {
-            const response = await api.post('/games/create', { deckId } as CreateGameRequest)
-            return response.data;
-        } catch (e) {
-            return thunkApi.rejectWithValue('error')
-        }
-
-    }
-)
 
 export const gameSlice = createSlice({
     name: "game",
     initialState,
     reducers: {
-        leaveGame: () => {
+        clearGame: () => {
             return initialState
         },
         setGameStatus: (state, action) => {
@@ -92,37 +82,34 @@ export const gameSlice = createSlice({
         setPlayerName: (state, action) => {
             state.playerName = action.payload;
         },
-        setAccessCode: (state, action) => {
-            state.accessCode = action.payload;
-        },
+
         initialRequest: (state, action) => {
-            state.accessCode = action.payload;
+            state.access_code = action.payload;
             state.status = 'choosingName';
+        },
+        createGame: (state, action) => {
+            state.access_code = action.payload.access_code
+            state.game_id = action.payload.game_id
+            state.isHost = true
+            state.status = 'gameCreateSuccess'
         }
     },
-    extraReducers: (builder) => {
-        // builder.addCase(createGame.fulfilled, (state, action) => {
-        //     state.accessCode = action.payload.accessCode
-        //     state.isHost = true
-        //     state.deck = action.payload.deck
-        //     state.status = 'choosingName'
-        // })
-    }
 })
 
 export const {
-    setAccessCode,
     setPlayerName,
     initialRequest,
     setGameStatus,
-    leaveGame,
-    setGameDeck
+    clearGame,
+    setGameDeck,
+    createGame
 } = gameSlice.actions;
 
 // selectors
 export const selectPlayerName = (state: RootState) => state.game.playerName;
+export const selectIsHost = (state: RootState) => state.game.isHost;
 export const selectGameStatus = (state: RootState) => state.game.status;
-export const selectAccessCode = (state: RootState) => state.game.accessCode;
+export const selectAccessCode = (state: RootState) => state.game.access_code;
 export const selectGameDeck = (state: RootState) => state.game.deck;
 
 export default gameSlice.reducer;

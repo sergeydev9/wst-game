@@ -161,7 +161,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
      *
      * @returns {id: number, access_code: string}
      */
-    pgm.createFunction('create_game', [{ mode: 'IN', type: 'integer', name: 'd_id' }, { mode: 'IN', type: 'integer', name: 'h_id' }], { returns: 'table(id integer, access_code varchar(10))', language: 'plpgsql' }, `
+    pgm.createFunction('create_game', [{ mode: 'IN', type: 'integer', name: 'h_id' }, { mode: 'IN', type: 'integer', name: 'd_id' }], { returns: 'table(id integer, access_code varchar(10))', language: 'plpgsql' }, `
     BEGIN
         CREATE TEMP SEQUENCE IF NOT EXISTS counter START 1;
         RETURN QUERY

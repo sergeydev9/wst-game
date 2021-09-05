@@ -21,7 +21,7 @@ const JoinGame: React.FC = () => {
         }),
         onSubmit: values => {
             dispatch(initialRequest(values.accessCode))
-            history.push(`/join?access_code=${values.accessCode}`)
+            history.push(`/x/${values.accessCode}`)
         }
     })
 
