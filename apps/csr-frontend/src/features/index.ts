@@ -15,7 +15,11 @@ export {
   default as modalReducer,
   closeModalsThunk,
   setFullModal,
-  selectFullModalFactory
+  selectFullModalFactory,
+  setMessageContent,
+  setMessageType,
+  selectMessageContent,
+  selectMessageType
 } from './modal/modalSlice';
 export { default as gameReducer, selectGameDeck, createGame, selectIsHost, setGameStatus, selectAccessCode } from './game/gameSlice';
 export { default as decksReducer, clearSelectedDeck } from './decks/deckSlice';
@@ -31,4 +35,5 @@ export { default as CheckoutModal } from './cart/CheckoutModal';
 export { default as CreditCardForm } from './cart/CreditCardForm';
 export { default as RedeemCredits } from './cart/RedeemCredits';
 export { default as Loading } from './loading/Loading';
+export { default as FlashMessage } from './modal/FlashMessage';
 export * from './choose-name/chooseNameSlice';

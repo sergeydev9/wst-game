@@ -6,8 +6,10 @@ import Modal from 'react-modal';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
+
 // local imports
 import App from "./app/app";
+import { FlashMessage } from './features'
 import { store } from "./app/store";
 import "./styles.css";
 import '@fontsource/nunito/400.css';

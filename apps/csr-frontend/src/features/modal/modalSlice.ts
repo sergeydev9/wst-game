@@ -21,15 +21,22 @@ export type FullModal = "createAccount"
     | "guestAccountRedirect"
     | ""
 
+export type MessageType = ''
+    | "error"
+    | "playerJoined"
+
+
 export interface ModalState {
-    fullModal: FullModal
-    messageModal: string
+    fullModal: FullModal;
+    messageType: MessageType;
+    messageContent: string;
 
 }
 
 export const initialState: ModalState = {
     fullModal: '',
-    messageModal: ''
+    messageType: '',
+    messageContent: ''
 }
 
 export const closeModalsThunk = createAsyncThunk(
@@ -55,12 +62,28 @@ export const modalSlice = createSlice({
         // only 1 modal can be open at a time
         setFullModal: (state, action) => {
             state.fullModal = action.payload
+        },
+        setMessageType: (state, action) => {
+            state.messageType = action.payload
+        },
+        setMessageContent: (state, action) => {
+            state.messageContent = action.payload
+        },
+        clearMessage: (state) => {
+            state.messageType = ''
+            state.messageContent = ''
         }
+
+
+
+
     }
 })
 
-export const { setFullModal } = modalSlice.actions
+export const { setFullModal, setMessageType, setMessageContent, clearMessage } = modalSlice.actions;
 export const selectFullModal = (state: RootState) => state.modals.fullModal;
-export const selectFullModalFactory = (modal: FullModal) => createSelector(selectFullModal, (fullModal) => fullModal === modal)
+export const selectFullModalFactory = (modal: FullModal) => createSelector(selectFullModal, (fullModal) => fullModal === modal);
+export const selectMessageType = (state: RootState) => state.modals.messageType;
+export const selectMessageContent = (state: RootState) => state.modals.messageContent;
 
-export default modalSlice.reducer
+export default modalSlice.reducer;

@@ -4,7 +4,7 @@ import { api } from '../../api'
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { isLoggedIn, selectIsGuest } from '../auth/authSlice';
 import { createGame, setGameStatus, setGameDeck } from '../game/gameSlice';
-import { setFullModal } from '../modal/modalSlice';
+import { setFullModal, setMessageContent } from '../modal/modalSlice';
 import { addToCart } from '../cart/cartSlice';
 import { clearSelectedDeck } from '..';
 import { useHistory } from 'react-router';
@@ -59,17 +59,22 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
         }
     }
 
-    let handler: (e: React.MouseEvent) => void;
-    if (isOwned) {
-        handler = () => {
-            // if user is logged in and deck is owned or free, create game, else send to auth
-            loggedIn ? initializeGameCreate() : dispatch(setFullModal('preGameAuth'))
-        }
-    } else {
-        handler = () => {
-            loggedIn ? addToCartThenGoToCheckout() : addToCartThenGoToAuth()
-        }
+    const handler = () => {
+        dispatch(setMessageContent('I am an error'))
+        dispatch(setFullModal(''))
     }
+
+    // let handler: (e: React.MouseEvent) => void;
+    // if (isOwned) {
+    //     handler = () => {
+    //         // if user is logged in and deck is owned or free, create game, else send to auth
+    //         loggedIn ? initializeGameCreate() : dispatch(setFullModal('preGameAuth'))
+    //     }
+    // } else {
+    //     handler = () => {
+    //         loggedIn ? addToCartThenGoToCheckout() : addToCartThenGoToAuth()
+    //     }
+    // }
     return (
         loggedIn ? <Button type="button" onClick={handler}>{buttonText}</Button> : <Button type="button" onClick={handler}>{buttonText}</Button>
     )

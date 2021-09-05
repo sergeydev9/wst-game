@@ -5,7 +5,8 @@ import {
     setFullModal,
     clearSelectedDeck,
     selectFullModalFactory,
-    Loading
+    Loading,
+
 } from '../../features';
 import { Modal, NoFlexBox, } from '@whosaidtrue/ui';
 
@@ -41,7 +42,7 @@ const Decks: React.FC = () => {
             <DeckSelection />
 
             {/* Deck Details */}
-            <Modal
+            {isDetailsOpen && <Modal
                 isOpen={isDetailsOpen}
                 onRequestClose={closeDetails}
                 shouldCloseOnOverlayClick={true}>
@@ -50,10 +51,10 @@ const Decks: React.FC = () => {
                         <DeckDetailsModal />
                     </Suspense>
                 </NoFlexBox>
-            </Modal>
+            </Modal>}
 
             {/* Guest Account Redirect */}
-            <Modal
+            {isGuestRedirectOpen && <Modal
                 isOpen={isGuestRedirectOpen}
                 onRequestClose={closeDetails}
                 shouldCloseOnOverlayClick={true}>
@@ -63,10 +64,10 @@ const Decks: React.FC = () => {
                     </Suspense>
                 </NoFlexBox>
             </Modal>
-
+            }
 
             {/* Choose Payment Method */}
-            <Modal
+            {isChoosePaymentOpen && <Modal
                 isOpen={isChoosePaymentOpen}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
@@ -75,10 +76,10 @@ const Decks: React.FC = () => {
                         <CheckoutModal />
                     </Suspense>
                 </NoFlexBox>
-            </Modal>
+            </Modal>}
 
             {/* Credit card */}
-            <Modal
+            {isCardPaymentOpen && <Modal
                 isOpen={isCardPaymentOpen}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
@@ -88,9 +89,10 @@ const Decks: React.FC = () => {
                     </Suspense>
                 </NoFlexBox>
             </Modal>
+            }
 
             {/* Free Deck Credit */}
-            <Modal
+            {isDeckCreditOpen && <Modal
                 isOpen={isDeckCreditOpen}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
@@ -99,10 +101,10 @@ const Decks: React.FC = () => {
                         <RedeemCredits />
                     </Suspense>
                 </NoFlexBox>
-            </Modal>
+            </Modal>}
 
             {/* pre-game auth (user isn't logged and tries to start a game with a free deck)*/}
-            <Modal
+            {isPreGameAuthOpen && <Modal
                 isOpen={isPreGameAuthOpen}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
@@ -111,7 +113,7 @@ const Decks: React.FC = () => {
                         <PreGameAuth />
                     </Suspense>
                 </NoFlexBox>
-            </Modal>
+            </Modal>}
         </>
     )
 }

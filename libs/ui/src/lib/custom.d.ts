@@ -7,3 +7,4 @@ declare module "*.svg" {
 }
 
 declare module '*.webp'; // enable url-loader
+declare module "*.png"

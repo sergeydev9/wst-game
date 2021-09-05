@@ -12,7 +12,7 @@ import { enhancer } from "addon-redux";
 import jwt_decode, { JwtPayload } from "jwt-decode";
 
 
-const enhancers = process.env.NODE_ENV === 'production' ? [] : [enhancer]; // add storybook enhancer if not in prod environment
+const enhancers = process.env.NODE_ENV === 'development' ? [enhancer] : []; // add storybook enhancer if not in prod environment
 
 const stored = localStorage.getItem('wstState')
 let persistedState;

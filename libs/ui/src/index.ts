@@ -32,4 +32,6 @@ export { default as NoFlexBox } from './lib/no-flex-box/NoFlexBox';
 export { default as DeckDetails } from './lib/deck-details/DeckDetails';
 export { default as PaymentMethodSelect } from './lib/payment-method-select/PaymentMethodSelect';
 export { default as InviteLinks } from './lib/invite/Invite'
+export { default as Messages, FlashMessageModalProps } from './lib/messages/Messages'
+
 export * from './lib/typography/Typography';
