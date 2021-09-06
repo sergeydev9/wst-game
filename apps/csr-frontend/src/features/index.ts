@@ -19,9 +19,17 @@ export {
   setMessageContent,
   setMessageType,
   selectMessageContent,
-  selectMessageType
+  selectMessageType,
+  selectIsPersistent
 } from './modal/modalSlice';
-export { default as gameReducer, selectGameDeck, createGame, selectIsHost, setGameStatus, selectAccessCode } from './game/gameSlice';
+export {
+  default as gameReducer,
+  selectGameDeck,
+  createGame,
+  selectIsHost,
+  setGameStatus,
+  selectAccessCode
+} from './game/gameSlice';
 export { default as decksReducer, clearSelectedDeck } from './decks/deckSlice';
 export { default as AuthForm } from './auth/AuthForm';
 export { default as Login } from './auth/Login';

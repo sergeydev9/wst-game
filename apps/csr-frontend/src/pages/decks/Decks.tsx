@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
     DeckSelection,
@@ -6,7 +6,8 @@ import {
     clearSelectedDeck,
     selectFullModalFactory,
     Loading,
-
+    selectMessageType,
+    selectMessageContent
 } from '../../features';
 import { Modal, NoFlexBox, } from '@whosaidtrue/ui';
 
@@ -40,7 +41,6 @@ const Decks: React.FC = () => {
     return (
         <>
             <DeckSelection />
-
             {/* Deck Details */}
             {isDetailsOpen && <Modal
                 isOpen={isDetailsOpen}
@@ -114,6 +114,9 @@ const Decks: React.FC = () => {
                     </Suspense>
                 </NoFlexBox>
             </Modal>}
+
+            {/* error modal */}
+            { }
         </>
     )
 }

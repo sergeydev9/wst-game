@@ -65,6 +65,14 @@ export const initialState: GameState = {
     playerId: 0
 }
 
+export const sendEndGameSignal = createAsyncThunk(
+    'game/sendEndGameSignal',
+    async (_, thunkApi) => {
+        // TODO: finish
+        console.log('game over')
+    }
+)
+
 
 export const gameSlice = createSlice({
     name: "game",

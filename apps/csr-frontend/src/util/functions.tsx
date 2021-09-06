@@ -1,8 +1,7 @@
 import jwt from 'jwt-decode';
-import { DeckCard } from '@whosaidtrue/ui'
 import { TokenPayload } from '@whosaidtrue/api-interfaces';
-import { Deck } from '@whosaidtrue/app-interfaces';
 
+// This just makes it so the type doesn't have to be re-specified every time
 export const decodeUserToken = (token: string): { user: TokenPayload } => {
     return jwt(token)
 }

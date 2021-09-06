@@ -57,6 +57,7 @@ module.exports = {
                 'basic-gray': '#827991',
                 'light-gray': '#F9F9F9',
                 'green-base': '#2E6B2E',
+                'destructive': 'rgba(167, 11, 0, 1)',
                 'green-subtle-stroke': '#DBF0DB',
                 'green-subtle-fill': '#F8FCF8',
                 'red-base': '#8F3D3D',
@@ -72,6 +73,26 @@ module.exports = {
             },
             ringColor: {
                 'primary': '#5D5FEF'
+            },
+            keyframes: {
+                grow: {
+                    '0%': {transform: 'scale(0)'},
+                    '50%': {transform: 'scale(0.5)'},
+                    '100%': {transform: 'scale(1)'}
+                },
+                shrink: {
+                    '0%': {transform: 'scale(0)'},
+                    '5%': { transoform: 'scale(0.5)'},
+                    '10%': { transform: 'scale(1)'},
+                    '90%': { transform: 'scale(1)'},
+                    '95%': { transoform: 'scale(0.5)'},
+                    '100%': {transform: 'scale(0)'}
+                }
+            },
+            animation: {
+                grow: 'grow 75ms ease-in-out',
+                shrink: 'shrink 2s ease-in-out'
+
             }
         },
         fontFamily: {

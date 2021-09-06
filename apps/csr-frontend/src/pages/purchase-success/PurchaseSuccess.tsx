@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Title1, Box, DeckCard, Button } from "@whosaidtrue/ui"
-import popper from './party-popper-emoji.png';
+import popper from '../../assets/party-popper-emoji.png';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectGameDeck } from '../../features'
 const PurchaseSuccess: React.FC = () => {

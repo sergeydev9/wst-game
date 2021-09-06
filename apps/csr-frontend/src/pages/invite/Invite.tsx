@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { NoFlexBox, Button, InviteLinks } from '@whosaidtrue/ui';
+import { NoFlexBox, Button, InviteLinks, Title1, Title3 } from '@whosaidtrue/ui';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectAccessCode, setGameStatus, selectIsHost } from '../../features';
 import { useHistory } from "react-router";
@@ -28,6 +28,9 @@ const Invite: React.FC = () => {
     }
     return (
         <NoFlexBox className="w-max mx-auto text-basic-black text-center pb-16">
+
+            <Title1 className="mb-8">Invite Players</Title1>
+            <Title3 className="mb-8">Tell Players to Enter Game Code at WhoSaidTrue.com</Title3>
             <InviteLinks accessCode={accessCode}>
                 <Button type="button" onClick={goToChooseName} >Choose Your Player Name</Button>
             </InviteLinks>

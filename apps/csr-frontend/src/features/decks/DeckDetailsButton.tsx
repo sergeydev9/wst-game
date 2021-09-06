@@ -4,9 +4,9 @@ import { api } from '../../api'
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { isLoggedIn, selectIsGuest } from '../auth/authSlice';
 import { createGame, setGameStatus, setGameDeck } from '../game/gameSlice';
-import { setFullModal, setMessageContent } from '../modal/modalSlice';
+import { setFullModal, showError } from '../modal/modalSlice';
 import { addToCart } from '../cart/cartSlice';
-import { clearSelectedDeck } from '..';
+import { clearSelectedDeck } from '../decks/deckSlice';
 import { useHistory } from 'react-router';
 import { CreateGameRequest, CreateGameResponse } from '@whosaidtrue/api-interfaces';
 
@@ -52,32 +52,30 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
             dispatch(setGameDeck(deck))
             history.push(`/game/invite`)
         } catch (e) {
-            // TODO: add error message modal
             console.error(e)
+            dispatch(showError('An error occured while creating the game'))
             dispatch(setGameStatus('gameCreateError'))
             history.push('/')
         }
     }
 
-    const handler = () => {
-        dispatch(setMessageContent('I am an error'))
-        dispatch(setFullModal(''))
+    let handler: (e: React.MouseEvent) => void;
+    if (isOwned) {
+        handler = () => {
+            // if user is logged in and deck is owned or free, create game, else send to auth
+            loggedIn ? initializeGameCreate() : dispatch(setFullModal('preGameAuth'))
+        }
+    } else {
+        handler = () => {
+            loggedIn ? addToCartThenGoToCheckout() : addToCartThenGoToAuth()
+        }
     }
-
-    // let handler: (e: React.MouseEvent) => void;
-    // if (isOwned) {
-    //     handler = () => {
-    //         // if user is logged in and deck is owned or free, create game, else send to auth
-    //         loggedIn ? initializeGameCreate() : dispatch(setFullModal('preGameAuth'))
-    //     }
-    // } else {
-    //     handler = () => {
-    //         loggedIn ? addToCartThenGoToCheckout() : addToCartThenGoToAuth()
-    //     }
-    // }
     return (
-        loggedIn ? <Button type="button" onClick={handler}>{buttonText}</Button> : <Button type="button" onClick={handler}>{buttonText}</Button>
+        loggedIn ? <Button type="button" onClick={handler}>{buttonText}</Button> :
+            <Button type="button" onClick={handler}>{buttonText}</Button>
     )
+
+
 
 }
 

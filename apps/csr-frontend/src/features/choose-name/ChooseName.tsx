@@ -65,7 +65,6 @@ const ChooseName: React.FC = () => {
         dispatch(setCurrentNameOptions());
     }
 
-
     return (
         <Box boxstyle='white' className="w-max mx-auto px-8 py-10">
             <Title1 className="text-basic-black mx-8">Choose Your Player Name</Title1>

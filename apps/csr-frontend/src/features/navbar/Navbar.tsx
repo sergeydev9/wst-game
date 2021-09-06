@@ -10,11 +10,12 @@ const NavBar: React.FC = () => {
     const gameCode = useAppSelector(selectAccessCode);
     const playerName = useAppSelector(selectPlayerName);
     const location = useLocation();
+    const inGame = (playerName || gameCode)
 
     return (
-        <nav className={`w-full flex flex-row justify-between mb-20 items-center ${location.pathname === '/' ? 'bg-transparent' : 'bg-purple-subtle-fill'} rounded-b-3xl overscroll-contain h-20 px-5`}>
+        <nav className={`w-full flex flex-row justify-between mb-20 items-center ${location.pathname === '/' && !inGame ? 'bg-transparent' : 'bg-purple-subtle-fill'} rounded-b-3xl overscroll-contain h-20 px-5`}>
             <Link to="/"><NavLogo /></Link>
-            {(playerName || gameCode) ? <InGameNav /> : <LargeNav />}
+            {inGame ? <InGameNav /> : <LargeNav />}
         </nav>
     )
 }

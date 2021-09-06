@@ -18,6 +18,9 @@ export type FullModal = "createAccount"
     | "removedFromGame"
     | "freeCreditAward"
     | "gameOptions"
+    | "confirmEndGame"
+    | "removePlayers"
+    | "confirmLeaveGame"
     | "guestAccountRedirect"
     | ""
 
@@ -30,13 +33,15 @@ export interface ModalState {
     fullModal: FullModal;
     messageType: MessageType;
     messageContent: string;
+    isPersistent: boolean;
 
 }
 
 export const initialState: ModalState = {
     fullModal: '',
     messageType: '',
-    messageContent: ''
+    messageContent: '',
+    isPersistent: false
 }
 
 export const closeModalsThunk = createAsyncThunk(
@@ -69,21 +74,24 @@ export const modalSlice = createSlice({
         setMessageContent: (state, action) => {
             state.messageContent = action.payload
         },
+        showError: (state, action) => {
+            state.isPersistent = false;
+            state.messageType = 'error';
+            state.messageContent = action.payload;
+        },
         clearMessage: (state) => {
             state.messageType = ''
             state.messageContent = ''
+            state.isPersistent = false
         }
-
-
-
-
     }
 })
 
-export const { setFullModal, setMessageType, setMessageContent, clearMessage } = modalSlice.actions;
+export const { setFullModal, setMessageType, setMessageContent, clearMessage, showError } = modalSlice.actions;
 export const selectFullModal = (state: RootState) => state.modals.fullModal;
 export const selectFullModalFactory = (modal: FullModal) => createSelector(selectFullModal, (fullModal) => fullModal === modal);
 export const selectMessageType = (state: RootState) => state.modals.messageType;
 export const selectMessageContent = (state: RootState) => state.modals.messageContent;
+export const selectIsPersistent = (state: RootState) => state.modals.isPersistent;
 
 export default modalSlice.reducer;
