@@ -49,11 +49,7 @@ class GameService {
     }
     const game: IGame = gameResult.rows[0];
 
-    const hostResult = await gamesDao.getHost(game.id);
-    if (hostResult.rowCount !== 1) {
-      throw new Error(`Game ${code} has no host`);
-    }
-    const host: IGamePlayer = hostResult.rows[0];
+    const host: IGamePlayer = (await gamesDao.getHost(game.id)).rows[0];
 
     // TODO: gamesDao.getQuestions(gameRow.id)
     const questions: IQuestion[] = [
