@@ -26,7 +26,7 @@ Run `nx build my-app` to build the project. The build artifacts will be stored i
 
 ## api
 
-The api app requires a running database. Start up postgres by running `docker compose -f docker/docker-compose.yml up`. Once the database is up and running, start the api server by running `nx serve api`.
+The api app requires a running database. Start up postgres by running `docker compose up`. Once the database is up and running, start the api server by running `nx serve api`.
 
 ### Envirnment Variables
 
@@ -46,7 +46,7 @@ The api reads from the following env variables:
 
 These can be changed for local dev in `.local.env`
 
-**warning** Values in `.local.env` must match values in `docker/docker-compose.yml`
+**warning** Values in `.local.env` must match values in `docker-compose.yml`
 
 ## Database
 
