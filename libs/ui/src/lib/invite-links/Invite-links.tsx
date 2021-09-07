@@ -12,7 +12,8 @@ flex
 flex-row
 self-stretch
 items-center
-gap-12
+gap-3
+md:gap-12
 p-4
 justify-end
 bg-white-ish
@@ -35,18 +36,18 @@ const Invite: React.FC<InviteProps> = ({ accessCode, children }) => {
     }
 
     return (
-        <div className="px-20 mt-8">
-            <Box boxstyle="purple-subtle" className="gap-8 p-4 w-max mb-8 mx-auto">
+        <div className="md:px-20 mt-8">
+            <Box boxstyle="purple-subtle" className="gap-8 p-2 sm:p-4 w-min sm:w-max mb-8 mx-auto">
                 <Headline>Share Game Code</Headline>
                 <InnerBox>
                     <Title1>{accessCode}</Title1>
                     <Button buttonStyle="inline" $secondary onClick={copyCode}>Copy</Button>
                 </InnerBox>
                 <InnerBox>
-                    <BodySmall>whosaidtrue.com/x/{accessCode}</BodySmall>
+                    <span className="sm:text-body-small text-xs">whosaidtrue.com/x/{accessCode}</span>
                     <Button buttonStyle="inline" $secondary type="button" onClick={copyUrl}>Copy</Button>
                 </InnerBox>
-                <div className="flex flex-row p-4 bg-white-ish rounded-2xl justify-center self-stretch gap-12">
+                <div className="flex flex-row p-4 bg-white-ish rounded-2xl justify-center self-stretch gap-3 md:gap-12">
                     <Headline>Share via:</Headline>
                     <div className="flex flex-row gap-4">
                         <IoMdMail className={iconClass} />

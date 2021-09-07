@@ -40,9 +40,22 @@ const InGameNav: React.FC = () => {
 
             {/* Game Options */}
             {isGameOptionsOpen && <Modal isOpen={isGameOptionsOpen} onRequestClose={close}>
-                <NoFlexBox>
+                <div className={`
+                    bg-white-ish
+                    border-0
+                    rounded-3xl
+                    px-2
+                    py-2
+                    sm:py-6
+                    sm:px-8
+                    filter
+                    drop-shadow-card
+                    text-center
+                    sm:w-28rem
+                    md:w-40rem
+                    `}>
                     <GameOptionsModal />
-                </NoFlexBox>
+                </div>
             </Modal>}
 
 

@@ -19,7 +19,7 @@ const GameOptionsModal: React.FC = () => {
     }
     return (
         <>
-            <Title1 className="text-center mt-1 mb-10">Game Options</Title1>
+            <Title1 className="mt-1 mb-10">Game Options</Title1>
             <InviteLinks accessCode={accessCode}>
                 {isHost ? <HostGameOptionsButtons /> :
                     <button
