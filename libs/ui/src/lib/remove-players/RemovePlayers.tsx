@@ -9,7 +9,7 @@ export interface RemovePlayerProps {
 
 const RemovePlayers: React.FC<RemovePlayerProps> = ({ children, onChange }) => {
     return (
-        <Box boxstyle="white" className="text-basic-black md:w-28rem gap-10 pt-6 pb-14 px-8">
+        <Box boxstyle="white" className="text-basic-black md:w-28rem gap-10 pt-7 pb-14 px-8">
             <Title1 className="text-center">Remove Players</Title1>
             <h2 className="text-xl text-center ">They can rejoin later by re-entering the game code.</h2>
             <div className="flex flex-col gap-4 w-full">

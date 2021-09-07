@@ -7,6 +7,7 @@ import { setFullModal, selectFullModalFactory } from '../modal/modalSlice';
 import GameOptionsModal from '../game/GameOptionsModal';
 
 const ConfirmEndGameModal = lazy(() => import('../game/ConfirmEndGameModal'));
+const RemovePlayersModal = lazy(() => import('../game/RemovePlayersModal'));
 const ReportAnIssueModal = lazy(() => import('../modal/ReportAnIssueModal'));
 const ConfirmRemovePlayerModal = lazy(() => import('../game/ConfirmRemovePlayerModal'));
 
@@ -77,14 +78,11 @@ const InGameNav: React.FC = () => {
                 </NoFlexBox>
             </Modal>}
 
-
             {/* Remove Players */}
             {isRemovePlayersOpen && <Modal isOpen={isRemovePlayersOpen} onRequestClose={close}>
-                <NoFlexBox>
-                    <Suspense fallback={<Loading />}>
-                        <ConfirmEndGameModal />
-                    </Suspense>
-                </NoFlexBox>
+                <Suspense fallback={<Loading />}>
+                    <RemovePlayersModal />
+                </Suspense>
             </Modal>}
 
             {/* Confirm Remove Player */}

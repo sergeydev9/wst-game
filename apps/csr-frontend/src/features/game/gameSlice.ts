@@ -20,6 +20,11 @@ type GameStatus = 'notInGame'
 
 type JoinRequestStatus = 'idle' | 'accepted' | 'rejected' | 'awaitingResponse' | 'error'
 
+export interface PlayerRef {
+    id: number;
+    name: string;
+}
+
 export interface GameState {
     status: GameStatus;
     game_id: number;
@@ -28,7 +33,7 @@ export interface GameState {
     targetId: number;
     isHost: boolean;
     currentHostName: string;
-    players: string[];
+    players: PlayerRef[];
     currentQuestionIndex: number;
     access_code: string;
     playerId: number;
@@ -80,7 +85,7 @@ export const sendRemovePlayerSignal = createAsyncThunk(
     'game/sendRemovePlayerSignal',
     async (playerId: number, thunkApi) => {
         // TODO: finish
-        console.log('kick')
+        console.log(`kick player :${playerId}`)
     }
 )
 
@@ -114,6 +119,12 @@ export const gameSlice = createSlice({
             state.targetName = '';
             state.targetId = 0;
         },
+        addPlayer: (state, action) => {
+            state.players = [...state.players, action.payload];
+        },
+        removePlayer: (state, action) => {
+            state.players = state.players.filter(p => p.id !== action.payload)
+        },
         createGame: (state, action) => {
             state.access_code = action.payload.access_code
             state.game_id = action.payload.game_id
@@ -131,7 +142,9 @@ export const {
     setGameDeck,
     createGame,
     setTarget,
-    clearTarget
+    clearTarget,
+    addPlayer,
+    removePlayer
 } = gameSlice.actions;
 
 // selectors
@@ -141,6 +154,7 @@ export const selectGameStatus = (state: RootState) => state.game.status;
 export const selectAccessCode = (state: RootState) => state.game.access_code;
 export const selectGameDeck = (state: RootState) => state.game.deck;
 export const selectTargetName = (state: RootState) => state.game.targetName;
-export const selectTargetId = (state: RootState) => state.game.targetId
+export const selectTargetId = (state: RootState) => state.game.targetId;
+export const selectPlayers = (state: RootState) => state.game.players
 
 export default gameSlice.reducer;
