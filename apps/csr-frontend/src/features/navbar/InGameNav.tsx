@@ -5,8 +5,10 @@ import { selectPlayerName, selectAccessCode } from '../game/gameSlice';
 import { Button, Modal, NoFlexBox, Box } from '@whosaidtrue/ui';
 import { setFullModal, selectFullModalFactory } from '../modal/modalSlice';
 import GameOptionsModal from '../game/GameOptionsModal';
-const ConfirmEndGameModal = lazy(() => import('../game/ConfirmEndGameModal'))
-const ReportAnIssueModal = lazy(() => import('../modal/ReportAnIssueModal'))
+
+const ConfirmEndGameModal = lazy(() => import('../game/ConfirmEndGameModal'));
+const ReportAnIssueModal = lazy(() => import('../modal/ReportAnIssueModal'));
+const ConfirmRemovePlayerModal = lazy(() => import('../game/ConfirmRemovePlayerModal'));
 
 const InGameNav: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -16,6 +18,7 @@ const InGameNav: React.FC = () => {
     const isRemovePlayersOpen = useAppSelector(selectFullModalFactory('removePlayers'))
     const isRemovedNotificationOpen = useAppSelector(selectFullModalFactory('removedFromGame'))
     const isReportAnIssueOpen = useAppSelector(selectFullModalFactory('reportAnIssue'))
+    const isConfirmRemovePlayerOpen = useAppSelector(selectFullModalFactory('confirmRemovePlayer'))
 
 
     const name = useAppSelector(selectPlayerName);
@@ -67,6 +70,15 @@ const InGameNav: React.FC = () => {
                 <NoFlexBox>
                     <Suspense fallback={<Loading />}>
                         <ConfirmEndGameModal />
+                    </Suspense>
+                </NoFlexBox>
+            </Modal>}
+
+            {/* Confirm Remove Player */}
+            {isConfirmRemovePlayerOpen && <Modal isOpen={isConfirmRemovePlayerOpen} onRequestClose={close}>
+                <NoFlexBox className="text-basic-black text-center sm:w-28rem md:w-40rem">
+                    <Suspense fallback={<Loading />}>
+                        <ConfirmRemovePlayerModal />
                     </Suspense>
                 </NoFlexBox>
             </Modal>}

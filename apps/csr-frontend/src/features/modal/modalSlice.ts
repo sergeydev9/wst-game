@@ -23,6 +23,7 @@ export type FullModal = "createAccount"
     | "confirmLeaveGame"
     | "guestAccountRedirect"
     | "reportAnIssue"
+    | "confirmRemovePlayer"
     | ""
 
 export type MessageType = ''

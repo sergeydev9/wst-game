@@ -29,7 +29,7 @@ const Home: React.FC = () => {
     <div className="grid grid-cols-6 gap-y-16 gap-x-8 items-center container mx-auto px-4 md:px-24">
 
       {/* logo group */}
-      <Logo className="col-span-6 lg:col-span-2 row-span-1 lg:w-full lg:h-full" />
+      <Logo className="col-span-6 lg:col-span-2 row-span-1 w-full h-full" />
       <div className="row-span-1 col-span-6 lg:col-span-4 text-center">
         <LargeTitle className="text-true-white mb-8">Can you guess how many of your friends...</LargeTitle>
         <Box boxstyle='white' className="py-6 px-12" $dropShadow><Title1 className="text-purple-base">binge watched an entire season of a show in a weekend?</Title1></Box>
