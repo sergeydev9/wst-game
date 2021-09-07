@@ -5,6 +5,7 @@ import { NameObject } from "@whosaidtrue/app-interfaces";
 export interface ChooseNameState {
     remainingNameOptions: NameObject[]; // remainining options
     rerolls: number;
+    seen: NameObject[];
     currentNameOptions: NameObject[]; // name options currently being shown. Max 3
 }
 
@@ -12,9 +13,8 @@ export const initialState: ChooseNameState = {
     remainingNameOptions: [],
     rerolls: 0,
     currentNameOptions: [],
+    seen: []
 }
-
-
 
 export const chooseNameSlice = createSlice({
     name: 'chooseName',
@@ -33,6 +33,7 @@ export const chooseNameSlice = createSlice({
             state.currentNameOptions = newCurrent // First 3 remainingOptions are the new current options.
             state.remainingNameOptions = newRemaining;
             state.rerolls = Math.floor(newRemaining.length / 3);
+            state.seen = [...state.seen, ...newCurrent]
         }
     }
 });
@@ -43,6 +44,7 @@ export const { setCurrentNameOptions, setRemainingNameOptions } = chooseNameSlic
 // selectors
 export const selectNameRerolls = (state: RootState) => state.chooseName.rerolls;
 export const selectCurrentNameOptions = (state: RootState) => state.chooseName.currentNameOptions;
+export const selectSeen = (state: RootState) => state.chooseName.seen;
 
 
 export const chooseNameReducer = chooseNameSlice.reducer;

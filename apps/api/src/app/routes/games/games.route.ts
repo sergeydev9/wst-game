@@ -1,10 +1,11 @@
 import { Request, Response, Router } from 'express';
 import { passport } from '@whosaidtrue/middleware';
-import { deckId } from '@whosaidtrue/validation'
+import { deckId, accessCodeQuery } from '@whosaidtrue/validation'
 import { logger } from '@whosaidtrue/logger';
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
 import { games } from '../../db';
-import { CreateGameRequest, TokenPayload, CreateGameResponse } from '@whosaidtrue/api-interfaces';
+import { CreateGameRequest, TokenPayload, CreateGameResponse, AccessCodeQuery, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
+import { RequestHandler } from 'passport-strategy/node_modules/@types/express';
 
 const router = Router();
 
@@ -36,4 +37,27 @@ router.post('/create', [...deckId], passport.authenticate('jwt', { session: fals
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
+
+/**
+ * Get status of a game from access_code.
+ * This route is used when a user first tries to join a game/choose their name.
+ *
+ * Return 404 if game doesn't exist. Else return status.
+ */
+
+const statusHandler: RequestHandler<unknown, unknown, unknown, AccessCodeQuery> = async (req, res) => {
+    const { access_code } = req.query as AccessCodeQuery;
+
+    try {
+        const { rows } = await games.getByAccessCode(access_code)
+        if (!rows.length) {
+            res.status(404).send('Could not find an ongoing game with that access_code')
+        } else {
+            res.status(200).json({ status: rows[0].status } as StatusRequestResponse)
+        }
+    } catch (e) {
+        res.status(500).send(ERROR_MESSAGES.unexpected)
+    }
+}
+router.get('/status', [...accessCodeQuery], statusHandler)
 export default router;

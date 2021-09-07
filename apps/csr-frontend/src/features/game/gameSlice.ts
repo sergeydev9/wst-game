@@ -46,7 +46,7 @@ export interface GameState {
 export const initialState: GameState = {
     status: 'notInGame',
     game_id: 0,
-    targetName: '',
+    targetName: '', // for player remvoval. Store name here since remoal happens accross several modal components
     targetId: 0,
     deck: {
         id: 0,
