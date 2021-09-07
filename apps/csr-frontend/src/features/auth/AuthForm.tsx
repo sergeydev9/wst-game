@@ -19,7 +19,7 @@ import { selectAuthError, setErrorThunk, clearError } from './authSlice';
 import { Link } from 'react-router-dom';
 import { setFullModal } from '../modal/modalSlice';
 import { clearCart } from '../cart/cartSlice';
-import { clear } from '../decks/deckSlice';
+import { clearDecks } from '../decks/deckSlice';
 
 export interface AuthFormProps {
     endpoint: string;
@@ -83,7 +83,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
     const clearCartAndDetails = () => {
         dispatch(setFullModal(''))
         dispatch(clearCart())
-        dispatch(clear())
+        dispatch(clearDecks())
     }
     // render
     return (

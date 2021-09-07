@@ -1,6 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { NameObject } from "@whosaidtrue/app-interfaces";
+import { api } from "../../api";
+import { NameChoiceReport } from "@whosaidtrue/api-interfaces";
 
 export interface ChooseNameState {
     remainingNameOptions: NameObject[]; // remainining options
@@ -15,6 +17,17 @@ export const initialState: ChooseNameState = {
     currentNameOptions: [],
     seen: []
 }
+
+export const sendReport = createAsyncThunk(
+    'chooseName/sendNameReport',
+    async (report: NameChoiceReport) => {
+        return api.post('/names/report', report).then(res => {
+            return
+        }).catch(e => {
+            return // fail silently
+        })
+    }
+)
 
 export const chooseNameSlice = createSlice({
     name: 'chooseName',
@@ -34,7 +47,7 @@ export const chooseNameSlice = createSlice({
             state.remainingNameOptions = newRemaining;
             state.rerolls = Math.floor(newRemaining.length / 3);
             state.seen = [...state.seen, ...newCurrent]
-        }
+        },
     }
 });
 

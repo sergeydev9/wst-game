@@ -1,4 +1,4 @@
-import { Deck, NameObject } from '@whosaidtrue/app-interfaces';
+import { Deck, NameObject, PlayerRef, GameStatus } from '@whosaidtrue/app-interfaces';
 
 /**
  * user
@@ -89,6 +89,26 @@ export interface AccessCodeQuery {
 export interface StatusRequestResponse {
   status: string;
 }
+
+export interface JoinGameRequest {
+  access_code: string;
+  name: string;
+}
+
+export interface JoinGameResponse {
+  status: GameStatus;
+  gameToken: string;
+  game_id: number;
+  deck: Deck;
+  totalQuestions: number;
+  currentHostName: string;
+  players: PlayerRef[];
+  currentQuestionIndex: number;
+  access_code: string;
+  playerId: number;
+  playerName: string;
+}
+
 /**
  * orders
  */

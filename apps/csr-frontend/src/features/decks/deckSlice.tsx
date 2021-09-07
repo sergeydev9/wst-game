@@ -57,7 +57,7 @@ export const deckSlice = createSlice({
     name: 'decks',
     initialState,
     reducers: {
-        clear: () => {
+        clearDecks: () => {
             return initialState;
         },
         setSfw: (state, action) => {
@@ -103,7 +103,7 @@ export const deckSlice = createSlice({
 
 // actions
 export const {
-    clear,
+    clearDecks,
     removeRating,
     addRating,
     setSfw,

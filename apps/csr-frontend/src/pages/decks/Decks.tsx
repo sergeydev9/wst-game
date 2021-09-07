@@ -6,10 +6,9 @@ import {
     clearSelectedDeck,
     selectFullModalFactory,
     Loading,
-    selectMessageType,
-    selectMessageContent
 } from '../../features';
 import { Modal, NoFlexBox, } from '@whosaidtrue/ui';
+import { clearDecks } from '../../features/decks/deckSlice';
 
 // Lazy load modals
 const CreditCardForm = lazy(() => import('../../features/cart/CreditCardForm'));
@@ -22,12 +21,21 @@ const GuestRedirect = lazy(() => import('../../features/auth/GuestAccountRedirec
 
 const Decks: React.FC = () => {
     const dispatch = useAppDispatch();
+
+    // what modal is open
     const isDetailsOpen = useAppSelector(selectFullModalFactory('deckDetails'))
     const isChoosePaymentOpen = useAppSelector(selectFullModalFactory('choosePaymentMethod'))
     const isCardPaymentOpen = useAppSelector(selectFullModalFactory('cardPurchase'))
     const isDeckCreditOpen = useAppSelector(selectFullModalFactory('freeCreditPurchase'))
     const isPreGameAuthOpen = useAppSelector(selectFullModalFactory('preGameAuth'))
     const isGuestRedirectOpen = useAppSelector(selectFullModalFactory('guestAccountRedirect'))
+
+    // clear state when unmount
+    useEffect(() => {
+        return () => {
+            dispatch(clearDecks())
+        }
+    }, [dispatch])
 
     const closeDetails = () => {
         dispatch(setFullModal(''))
@@ -114,9 +122,6 @@ const Decks: React.FC = () => {
                     </Suspense>
                 </NoFlexBox>
             </Modal>}
-
-            {/* error modal */}
-            { }
         </>
     )
 }

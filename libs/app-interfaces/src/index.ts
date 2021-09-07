@@ -12,6 +12,26 @@ export type DeckStatus = 'active' | 'inactive' | 'pending';
 export type AnswerValue = 'true' | 'false' | 'pass';
 export type UserRole = 'user' | 'admin';
 
+export type GameStatus = 'lobby'
+    | 'inProgress'
+    | 'postGame'
+    | 'finished'
+
+// TODO: clean up statuses that don't get used
+/**
+ * Status of game for the user on front end.
+ */
+export type UserGameStatus = 'notInGame'
+    | 'gameCreateSuccess'
+    | 'gameCreateError'
+    | 'connecting'
+    | 'removed'
+    | 'disconnected'
+    | 'gameCreateError'
+    | 'choosingName'
+    & GameStatus
+
+
 /**
  * type of objects for insertOne functions is always going to be the
  * type of the object minus id, created_at and updated_at columns.
@@ -63,6 +83,11 @@ export interface DeckSelectionOptions {
 }
 export interface UserDeckSelectionOptions extends DeckSelectionOptions {
     userId: number;
+}
+
+export interface PlayerRef {
+    id: number;
+    name: string;
 }
 
 export interface UserDetailsUpdate {

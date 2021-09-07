@@ -1,34 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Deck } from '@whosaidtrue/app-interfaces';
+import { Deck, UserGameStatus, PlayerRef } from '@whosaidtrue/app-interfaces';
 import { api } from '../../api';
 
 // local imports
 import { RootState } from "../../app/store";
 
-// TODO: clean up statuses that don't get used
-type GameStatus = 'notInGame'
-    | "gameCreateSuccess"
-    | "gameCreateError"
-    | "connecting"
-    | "removed"
-    | "lobby"
-    | "playing"
-    | "postGame"
-    | "disconnected"
-    | "gameCreateError"
-    | "choosingName"
-
-type JoinRequestStatus = 'idle' | 'accepted' | 'rejected' | 'awaitingResponse' | 'error'
-
-export interface PlayerRef {
-    id: number;
-    name: string;
-}
-
 export interface GameState {
-    status: GameStatus;
+    status: UserGameStatus;
+    gameToken: string,
     game_id: number;
     deck: Deck;
+    totalQuestions: number;
     targetName: string;
     targetId: number;
     isHost: boolean;
@@ -38,13 +20,12 @@ export interface GameState {
     access_code: string;
     playerId: number;
     playerName: string;
-    hasJoined: boolean;
-    joinRequestStatus: JoinRequestStatus;
-    joinRequestError: string;
+
 }
 
 export const initialState: GameState = {
     status: 'notInGame',
+    gameToken: '',
     game_id: 0,
     targetName: '', // for player remvoval. Store name here since remoal happens accross several modal components
     targetId: 0,
@@ -61,15 +42,13 @@ export const initialState: GameState = {
         thumbnail_url: '',
         purchase_price: ''
     },
+    totalQuestions: 0,
     isHost: false,
     access_code: '',
     players: [],
     currentQuestionIndex: 0,
     currentHostName: '',
     playerName: '',
-    hasJoined: false,
-    joinRequestStatus: 'idle',
-    joinRequestError: '',
     playerId: 0
 }
 
@@ -85,10 +64,9 @@ export const sendRemovePlayerSignal = createAsyncThunk(
     'game/sendRemovePlayerSignal',
     async (playerId: number, thunkApi) => {
         // TODO: finish
-        console.log(`kick player :${playerId}`)
+        console.log(`kick player: ${playerId}`)
     }
 )
-
 
 export const gameSlice = createSlice({
     name: "game",
@@ -109,7 +87,7 @@ export const gameSlice = createSlice({
 
         initialRequest: (state, action) => {
             state.access_code = action.payload;
-            state.status = 'choosingName';
+            state.status = 'choosingName' as UserGameStatus;
         },
         setTarget: (state, action) => {
             state.targetName = action.payload.name;
@@ -130,8 +108,35 @@ export const gameSlice = createSlice({
             state.game_id = action.payload.game_id
             state.isHost = true
             state.status = 'gameCreateSuccess'
+        },
+        joinGame: (state, action) => {
+            const {
+                status,
+                game_id,
+                deck,
+                totalQuestions,
+                currentHostName,
+                players,
+                currentQuestionIndex,
+                access_code,
+                playerId,
+                player_name,
+                gameToken
+            } = action.payload;
+
+            state.status = status;
+            state.gameToken = gameToken;
+            state.game_id = game_id;
+            state.deck = deck;
+            state.totalQuestions = totalQuestions;
+            state.currentHostName = currentHostName;
+            state.players = players;
+            state.currentQuestionIndex = currentQuestionIndex;
+            state.access_code = access_code;
+            state.playerId = playerId;
+            state.playerName = player_name
         }
-    },
+    }
 })
 
 export const {
@@ -144,7 +149,8 @@ export const {
     setTarget,
     clearTarget,
     addPlayer,
-    removePlayer
+    removePlayer,
+    joinGame
 } = gameSlice.actions;
 
 // selectors

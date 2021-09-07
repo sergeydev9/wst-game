@@ -1,12 +1,15 @@
 import { useEffect } from 'react';
+import { useHistory, useParams } from 'react-router';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
     selectNameRerolls,
     setRemainingNameOptions,
     setCurrentNameOptions,
-    selectCurrentNameOptions
+    selectCurrentNameOptions,
+    selectSeen,
+    sendReport
 } from './chooseNameSlice';
-import { setGameStatus } from '../game/gameSlice';
+import { setGameStatus, clearGame, joinGame } from '../game/gameSlice';
 import {
     Button,
     RerollNamesButton,
@@ -17,38 +20,70 @@ import {
     Title1
 } from '@whosaidtrue/ui';
 import { NameObject } from '@whosaidtrue/app-interfaces';
-import { NameRequestResponse } from '@whosaidtrue/api-interfaces';
+import { NameRequestResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
+import { showError } from '../modal/modalSlice';
 
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
+    const { access_code } = useParams<{ access_code: string }>()
+    const history = useHistory();
     const names = useAppSelector(selectCurrentNameOptions);
     const rerolls = useAppSelector(selectNameRerolls);
+    const seen = useAppSelector(selectSeen)
 
     // get a batch of 6 names when user first arrives
     useEffect(() => {
         dispatch(setGameStatus('choosingName'));
 
-        // TODO: check url params for a code, and redirect/wipe game state if absent. Need to find out
-        // what kind of messages should be displayed.
+        // redirect if no access_code
+        if (!access_code) {
+            dispatch(showError('Access code not found'))
+            history.push('/')
+        }
 
-        // get names from server
+
         (async () => {
+            // check game status
+            try {
+                const statusResponse = await api.get<StatusRequestResponse>(`/games/status?access_code=${access_code}`)
+                dispatch(setGameStatus(statusResponse.status))
+            } catch (e) {
+                dispatch(showError('Could not find the game you were looking for'))
+                dispatch(clearGame())
+                history.push('/')
+            }
+            // get name options
             try {
                 const response = await api.get<NameRequestResponse>('/names')
                 dispatch(setRemainingNameOptions(response.data.names)) // populate total name pool
                 dispatch(setCurrentNameOptions()) // set initial set of options and remove them from pool
             } catch (e) {
-                // TODO: figure out error handling
-                console.error(e)
-                dispatch(setGameStatus('notInGame'))
+                history.push('/')
+                dispatch(clearGame())
             }
         })()
-    }, [])
-    const chooseName = (name: NameObject) => {
-        // TODO: find out what the interface with the socket server will be.
+    }, [dispatch, history, access_code])
+
+    const join = async (name: string) => {
+
+        api.post('/games/join', { access_code, name }).then(result => {
+            dispatch(joinGame(result.data))
+            history.push('/game')
+        }).catch(e => {
+            if (e.status === 401) {
+                dispatch(showError('That name is no longer available. Please select another'))
+            } else {
+                dispatch(showError('An error occurred while attempting to join game'))
+                history.push('/')
+            }
+        })
+    }
+
+    const chooseName = (nameObj: NameObject) => {
+        dispatch(sendReport({ chosen: nameObj.id, seen: seen.map(n => n.id) }))
         return (e: React.MouseEvent) => {
-            e.preventDefault();
+            join(nameObj.name)
         }
     }
 
