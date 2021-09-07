@@ -16,7 +16,7 @@ class Player extends EventEmitter {
   }
 
   public isHost() {
-    return this.game.deckRow.id == this.playerId;
+    return this.game.hostRow.id == this.playerId;
   }
 
   public getAnswer(questionNumber: number)
