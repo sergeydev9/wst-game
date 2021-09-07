@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateGameRequest, CreateGameResponse } from "@whosaidtrue/api-interfaces";
 import { Deck } from '@whosaidtrue/app-interfaces';
 import { api } from '../../api';
 
