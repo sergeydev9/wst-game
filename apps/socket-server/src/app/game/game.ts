@@ -84,10 +84,6 @@ class Game extends EventEmitter {
   }
 
   public joinWaitingRoom(player: Player) {
-    if (!this.checkName(player)) {
-      throw new Error(`Sorry! The name '${player.name}' is already taken, game: ${this.gameRow.access_code}`);
-    }
-
     if (player.clientStatus !== 'connected') {
       throw new Error('Not connected, game: ' + this.gameRow.access_code);
     }
@@ -106,13 +102,6 @@ class Game extends EventEmitter {
 
     player.gameStatus = 'waiting';
     this.readerOrder.push(player);
-  }
-
-  public checkName(player: Player) {
-    return !this.players
-        .filter(p => p != player)
-        .map(p => p.name)
-        .includes(player.name);
   }
 
   public currentQuestion() {
