@@ -65,11 +65,7 @@ class GameService {
       {id: 1, text: 'Text 10', text_for_guess: 'Test for guess 10', follow_up: 'Follow up 10'} as IQuestion,
     ];
 
-    const deckResult = await decksDao.getDetails(game.deck_id);
-    const deck: IDeck = deckResult.rows[0];
-
-
-    const gameInstance = new Game(game, host, deck, questions);
+    const gameInstance = new Game(game, host, questions);
 
     this.games[code] = gameInstance;
     return gameInstance;
@@ -320,7 +316,6 @@ class GameService {
         current_players: game.getConnectedPlayers().map(p => p.name),
         total_questions: game.questions.length,
         current_question: game.questionNumber,
-        deck_id: game.deckRow.id
       }
     };
   }

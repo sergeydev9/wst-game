@@ -74,7 +74,6 @@ export interface GameState extends WebsocketMessage {
     current_players: string[],
     total_questions: number,
     current_question: number,
-    deck_id: number,
   }
 }
 

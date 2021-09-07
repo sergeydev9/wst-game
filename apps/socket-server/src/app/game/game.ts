@@ -3,7 +3,6 @@ import Player, {GameStatus} from "./player";
 
 import {
   AnswerValue,
-  Deck as IDeck,
   Game as IGame,
   GamePlayer as IGamePlayer,
   Question as IQuestion,
@@ -25,7 +24,6 @@ export type GameQuestion = {
 class Game extends EventEmitter {
   public readonly gameRow: IGame;
   public readonly hostRow: IGamePlayer;
-  public readonly deckRow: IDeck;
 
   public readonly players: Player[] = [];
 
@@ -38,11 +36,10 @@ class Game extends EventEmitter {
   public reader: Player;
   public readonly readerOrder: Player[] = [];
 
-  constructor(game: IGame, host: IGamePlayer, deck: IDeck, questions: IQuestion[]) {
+  constructor(game: IGame, host: IGamePlayer, questions: IQuestion[]) {
     super();
     this.gameRow = game;
     this.hostRow = host;
-    this.deckRow = deck;
 
     questions.forEach(q => {
       const gameQuestion: GameQuestion = {
