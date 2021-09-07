@@ -27,7 +27,7 @@ const Invite: React.FC = () => {
         dispatch(setGameStatus('choosingName'));
     }
     return (
-        <NoFlexBox className="w-max mx-auto text-basic-black text-center pb-16">
+        <NoFlexBox className="md:w-max mx-2 md:mx-auto text-basic-black text-center pb-16">
 
             <Title1 className="mb-8">Invite Players</Title1>
             <Title3 className="mb-8">Tell Players to Enter Game Code at WhoSaidTrue.com</Title3>

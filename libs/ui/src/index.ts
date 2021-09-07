@@ -33,5 +33,8 @@ export { default as DeckDetails } from './lib/deck-details/DeckDetails';
 export { default as PaymentMethodSelect } from './lib/payment-method-select/PaymentMethodSelect';
 export { default as InviteLinks } from './lib/invite-links/Invite-links'
 export { default as MessageModal } from './lib/messages/Messages'
+export { default as RemovePlayers } from './lib/remove-players/RemovePlayers';
+export { default as RemovePlayersRow } from './lib/remove-players/RemovePlayersRow';
+
 
 export * from './lib/typography/Typography';
