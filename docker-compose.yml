@@ -7,7 +7,7 @@ services:
     image: postgres:11
     container_name: postgres
     env_file:
-      - ../.local.env
+      - .local.env
     restart: 'always'
     ports:
       - '5432:5432'
