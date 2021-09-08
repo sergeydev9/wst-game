@@ -11,4 +11,10 @@ import styles from 'react-responsive-carousel/lib/styles/carousel.min.css';
 
 export const parameters = {
     controls: { expanded: true },
-};
+        backgrounds: {
+          values: [
+            { name: 'purple', value: '#411872' },
+          ],
+          default: 'purple'
+        },
+    }
