@@ -7,7 +7,6 @@ import { logger } from '@whosaidtrue/logger';
 
 const router = Router();
 
-// TODO: write tests for this
 router.get('/', async (req: Request, res: Response) => {
     try {
         const { rows } = await names.getChoices(6)
@@ -20,7 +19,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.patch('/report', [...validateNameReport], async (req: Request, res: Response) => {
     const { seen, chosen } = req.body as NameChoiceReport;
     try {
-        await names.reportChoices(seen, chosen);
+        await Promise.all(names.reportChoices(seen, chosen));
     } catch (e) {
         logger.error(e)
     } finally {

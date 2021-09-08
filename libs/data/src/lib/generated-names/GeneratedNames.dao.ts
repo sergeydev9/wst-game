@@ -43,14 +43,18 @@ class GeneratedNames extends Dao {
         return this.pool.query(query);
     }
 
-    //TODO: finish. Need to write function still
-    public reportChoices(seen: number[], chosen: number): Promise<QueryResult> {
-        const query = {
-            text: `record_name_selection($1, $2)`,
-            values: [seen, chosen]
+    public reportChoices(seen: number[], chosen: number): Promise<QueryResult>[] {
+        const seenQuery = {
+            text: `UPDATE generated_names SET times_displayed = times_displayed + 1 WHERE id = ANY($1)`,
+            values: [[...seen, chosen]]
         }
 
-        return this.pool.query(query)
+        const chosenQuery = {
+            text: 'UPDATE generated_names SET times_chosen = times_chosen + 1 WHERE id = $1',
+            values: [chosen]
+        }
+
+        return [this.pool.query(seenQuery), this.pool.query(chosenQuery)]
     }
 }
 

@@ -43,7 +43,7 @@ const insertNames = (num: number, numNotClean?: number) => {
     }
 
     return {
-        text: format('INSERT INTO generated_names (name, clean) VALUES %L', input),
+        text: format('INSERT INTO generated_names (name, clean) VALUES %L RETURNING id', input),
     }
 }
 
