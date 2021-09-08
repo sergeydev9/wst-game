@@ -3,9 +3,8 @@ import { Application } from 'express';
 import { mocked } from 'ts-jest/utils';
 
 import App from '../../App';
-import jwt from 'jsonwebtoken';
 import { games } from '../../db';
-import { signUserPayload, signGameToken } from '@whosaidtrue/middleware';
+import { signUserPayload } from '@whosaidtrue/middleware';
 import { QueryResult } from 'pg';
 import { Deck } from '@whosaidtrue/app-interfaces';
 
@@ -13,7 +12,6 @@ jest.mock('../../db');
 jest.mock('jsonwebtoken')
 
 const mockedGames = mocked(games, true);
-const mockedJwt = mocked(jwt, true);
 
 
 describe('games routes', () => {

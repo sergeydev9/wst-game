@@ -16,19 +16,6 @@ module.exports = async ({ config, mode }) => {
     ? config.resolve.plugins.push(tsPaths)
     : (config.resolve.plugins = [tsPaths]);
 
-  // Found this here: https://github.com/nrwl/nx/issues/2859
-  // And copied the part of the solution that made it work
-
-  // const svgRuleIndex = config.module.rules.findIndex((rule) => {
-  //   const { test } = rule;
-
-  //   if(test){
-  //     return test.toString().startsWith('/\\.(svg|ico');
-  //   } else 
-  // });
-  // config.module.rules[svgRuleIndex].test =
-  //   /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|cur|ani|pdf)(\?.*)?$/;
-
   config.module.rules.push({
     test: /\.css$/,
     use: [
@@ -40,17 +27,6 @@ module.exports = async ({ config, mode }) => {
       }
     ],
   })
-
-  config.module.rules.push(
-    {
-      test: /\.(png|jpe?g|gif|webp)$/,
-      loader: require.resolve('url-loader'),
-      options: {
-        limit: 100000, // 100kB
-        name: '[name].[hash:7].[ext]',
-      },
-    }
-  );
 
   return config;
 };

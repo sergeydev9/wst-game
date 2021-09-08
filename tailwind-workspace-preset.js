@@ -18,6 +18,7 @@ module.exports = {
             width: {
                 'p99': '99%', // custom width for buttons. Full width breaks the style.
                 '40rem': '40rem',
+                '52rem': '52rem',
                 '28rem': '28rem'
             },
 
