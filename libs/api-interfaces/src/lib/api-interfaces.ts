@@ -1,4 +1,4 @@
-import { Deck, NameObject, PlayerRef, GameStatus } from '@whosaidtrue/app-interfaces';
+import { Deck, NameObject, PlayerRef, GameStatus, MovieRating } from '@whosaidtrue/app-interfaces';
 
 /**
  * user
@@ -99,7 +99,11 @@ export interface JoinGameResponse {
   status: GameStatus;
   gameToken: string;
   game_id: number;
-  deck: Deck;
+  deckName: string;
+  deckId: number;
+  deckMovieRating: MovieRating;
+  deckSFW: boolean;
+  deckDescription: string;
   totalQuestions: number;
   currentHostName: string;
   players: PlayerRef[];
@@ -112,7 +116,6 @@ export interface JoinGameResponse {
 /**
  * orders
  */
-
 export interface BuyWithCreditsRequest {
   deckId: number
 }

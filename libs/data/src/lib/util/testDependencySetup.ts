@@ -16,7 +16,7 @@ import GamePlayers from "../game-players/GamePlayers.dao";
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
 import Users from '../users/Users.dao';
 
-const random = () => (Math.random() + 1).toString(36).substring(7); // prevent name collisions
+const random = () => (Math.random() + 1).toString(36).substring(8); // prevent name collisions
 /**
  * Insert a deck
  *

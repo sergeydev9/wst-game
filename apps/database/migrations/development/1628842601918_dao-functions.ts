@@ -163,7 +163,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
      */
     pgm.createFunction('create_game', [{ mode: 'IN', type: 'integer', name: 'h_id' }, { mode: 'IN', type: 'integer', name: 'd_id' }], { returns: 'table(id integer, access_code varchar(10))', language: 'plpgsql' }, `
     BEGIN
-        CREATE TEMP SEQUENCE IF NOT EXISTS counter START 1;
         RETURN QUERY
         WITH
         d_questions AS ( --get all active questions for the deck
@@ -174,15 +173,16 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             VALUES (encode(gen_random_bytes(3), 'hex'), 'lobby', d_id, h_id)
             RETURNING games.id, games.access_code
         ), ins AS (
-            INSERT INTO game_questions (question_sequence_index, game_id, question_id)
-            SELECT nextval('counter'), new_game.id, d_questions.id
+            INSERT INTO game_questions (game_id, question_id)
+            SELECT new_game.id, d_questions.id
             FROM d_questions
             CROSS JOIN new_game
         )
-        SELECT * FROM new_game;
-        ALTER SEQUENCE counter RESTART WITH 1;
+        SELECT * from new_game;
     END;
     `)
+
+
 }
 // export async function down(pgm: MigrationBuilder): Promise<void> {
 // }

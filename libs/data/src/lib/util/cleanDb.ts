@@ -12,17 +12,17 @@ import { Pool } from 'pg';
 export function cleanDb(pool: Pool) {
 
     const promises = [
-        pool.query('DELETE FROM orders WHERE id > 0'),
-        pool.query(`DELETE FROM decks WHERE id > 0`),
-        pool.query(`DELETE FROM users WHERE id > 0`),
-        pool.query(`DELETE FROM user_decks WHERE id > 0`),
-        pool.query(`DELETE FROM games WHERE id > 0`),
-        pool.query(`DELETE FROM questions WHERE id > 0`),
-        pool.query(`DELETE FROM game_questions WHERE id > 0`),
-        pool.query(`DELETE FROM game_players WHERE id > 0`),
-        pool.query(`DELETE FROM game_answers WHERE id > 0`),
-        pool.query(`DELETE FROM generated_names WHERE id > 0`),
-        pool.query(`DELETE FROM reset_codes WHERE id > 0`),
+        pool.query('TRUNCATE orders CASCADE'),
+        pool.query(`TRUNCATE decks CASCADE`),
+        pool.query(`TRUNCATE users CASCADE`),
+        pool.query(`TRUNCATE user_decks CASCADE`),
+        pool.query(`TRUNCATE games CASCADE`),
+        pool.query(`TRUNCATE questions CASCADE`),
+        pool.query(`TRUNCATE game_questions CASCADE`),
+        pool.query(`TRUNCATE game_players CASCADE`),
+        pool.query(`TRUNCATE game_answers CASCADE`),
+        pool.query(`TRUNCATE generated_names CASCADE`),
+        pool.query(`TRUNCATE reset_codes CASCADE`),
     ];
 
     return Promise.all(promises);

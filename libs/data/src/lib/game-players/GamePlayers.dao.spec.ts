@@ -75,7 +75,7 @@ describe('GamePlayers', () => {
 
         it('should succeed if same name, different game', async () => {
             // create a second game
-            const access_code = 'gameplayertest'
+            const access_code = '123456'
             const gameResult = await games.insertOne({ ...TEST_GAMES[0], deck_id, access_code });
 
 

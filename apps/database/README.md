@@ -164,6 +164,7 @@ id | integer | no | yes
 access_code | varchar(10) | yes | yes
 status | varchar(100) | no | no
 total_questions | smallint | no | no | 0
+current_question_index | smallint | no | no | 1
 host_player_name | varchar(200) | yes | no
 host_id | integer | yes | no | | users | SET NULL
 deck_id | integer | no | no | | decks | SET NULL

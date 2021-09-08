@@ -39,7 +39,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         question_deck_credits: { type: 'smallint', notNull: true, default: 0 },
         test_account: { type: 'boolean', notNull: true, default: false },
         notifications: { type: 'boolean', notNull: true, default: false },
-        reset_code: { type: 'varchar(4)', notNull: false },
         created_at: {
             type: 'timestamptz',
             notNull: true,
@@ -87,6 +86,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.createTable('games', {
         id: 'id',
         total_questions: { type: 'smallint', notNull: true, default: 0 },
+        current_question_index: { type: 'smallint', notNull: true, default: 1 },
         access_code: { type: 'varchar(10)', notNull: false, unique: true },
         status: { type: 'varchar(100)', notNull: true }, // TODO: create custom type? what are the possible values?
         deck_id: { type: 'integer', notNull: false, references: 'decks', onDelete: 'SET NULL' },
@@ -444,10 +444,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         level: 'ROW',
         function: 'update_updated_at_column',
     })
-
-    /**
-     * Other triggers
-     */
 
     /**
     * ======================================

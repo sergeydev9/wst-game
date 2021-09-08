@@ -1,5 +1,5 @@
 import { Pool, QueryResult } from 'pg';
-import { IInsertGame } from '@whosaidtrue/app-interfaces';
+import { GameStatus, IInsertGame } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
 class Games extends Dao {
@@ -109,17 +109,136 @@ class Games extends Dao {
      * @return {id: number, access_code: string}
      * @memberof Games
      */
-    public create(userId: number, deckId: number): Promise<QueryResult> {
-        const query = {
-            text: 'SELECT * FROM create_game($1, $2)',
-            values: [userId, deckId]
+    public async create(userId: number, deckId: number): Promise<QueryResult> {
+
+        const client = await this.pool.connect();
+        try {
+
+            // create the game and questions.
+            const createGameQuery = {
+                text: 'SELECT * FROM create_game($1, $2)',
+                values: [userId, deckId]
+            }
+            const gameResult = await client.query(createGameQuery);
+
+            // count the questions and update the total on the game row
+            const setTotalQuestions = {
+                text: 'UPDATE games SET total_questions = (SELECT count(id) FROM game_questions WHERE game_questions.game_id = $1) WHERE games.id = $1',
+                values: [gameResult.rows[0].id]
+            }
+
+            await client.query(setTotalQuestions)
+            await client.query('COMMIT')
+            return gameResult;
+        } catch (e) {
+            await client.query('ROLLBACK')
+            throw e
+        } finally {
+            client.release()
         }
-        return this.pool.query(query)
+
+
     }
 
-    // public gameStateById(gameId: number): Promise<QueryResult> {}
 
-    // public gameStateByAccessCode(code: string): Promise<QueryResult> {}
+    public gameStatusByAccessCode(code: string): Promise<QueryResult> {
+        const query = {
+            text: 'SELECT status FROM games WHERE access_code = $1',
+            values: [code]
+        }
+        return this.pool.query(query);
+    }
+
+    /**
+     * Call this method when a player is joining a game for the first time only.
+     *
+     * Will throw error if a game_player already exists with the specified name, and
+     * the same game.
+     *
+     * @param access_code game access code
+     * @param name name the player is trying to join as
+     * @param userId (optional) if user has id, pass it here to associate game player id with user id.
+     *
+     */
+    public async join(access_code: string, name: string, userId?: number) {
+        // start transaction
+        const client = await this.pool.connect();
+
+        try {
+            await client.query('BEGIN')
+            let hostName: string;
+            let isHost = false;
+
+            // get game
+            const getGameQuery = {
+                text: 'SELECT id, deck_id, host_id, status, host_player_name, current_question_index, total_questions FROM games WHERE games.access_code = $1',
+                values: [access_code]
+            }
+            const gameResult = await client.query(getGameQuery);
+            const game = gameResult.rows[0];
+
+            // Throw if access code invalid
+            if (!game) {
+                throw new Error('Game not found');
+            }
+
+            // Create game player using name and game id.
+            const createPlayerQuery = {
+                text: 'INSERT INTO game_players (game_id, player_name, user_id) VALUES ($1, $2, $3) RETURNING game_players.id',
+                values: [game.id, name, userId]
+            }
+            const createPlayerResult = await client.query(createPlayerQuery);
+            hostName = game.host_player_name;
+
+            // if user is host, set host name to new player name.
+            // Game is created before host technically joins it.
+            // This is an unfortunate side effect of name choice being put
+            // AFTER game creation in the design.
+            if (userId && (userId === game.host_id) && (name !== game.host_player_name)) {
+                const updateGameHostQuery = {
+                    text: `UPDATE games SET host_player_name = $1 WHERE games.id = $2`,
+                    values: [name, game.id]
+                }
+                await client.query(updateGameHostQuery);
+                hostName = name;
+                isHost = true;
+            }
+
+            // get list of other players
+            const getPlayerListQuery = {
+                text: `SELECT id, player_name FROM game_players WHERE game_players.game_id = $1`,
+                values: [game.id]
+            }
+            const playersResult = await client.query(getPlayerListQuery);
+
+            // get deck info
+            const getDeckQuery = {
+                text: 'SELECT id, name, movie_rating, sfw, description, sort_order, clean, age_rating, status, thumbnail_url, purchase_price FROM decks WHERE id = $1',
+                values: [game.deck_id]
+            }
+            const deckResult = await client.query(getDeckQuery);
+            await client.query('COMMIT')
+
+            return {
+                status: game.status as GameStatus,
+                game_id: game.id,
+                deck: deckResult.rows[0],
+                currentQuestionIndex: game.current_question_index,
+                currentHostName: hostName,
+                access_code,
+                isHost,
+                players: playersResult.rows,
+                playerId: createPlayerResult.rows[0].id,
+                playerName: name,
+                totalQuestions: game.total_questions
+            }
+        } catch (e) {
+            await client.query('ROLLBACK')
+            throw e
+        } finally {
+            client.release()
+        }
+    }
 
     // public getScoreboard(gameId: number) { }
 }

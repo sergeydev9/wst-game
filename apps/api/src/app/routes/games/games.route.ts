@@ -1,17 +1,43 @@
 import { Request, Response, Router } from 'express';
 import { passport } from '@whosaidtrue/middleware';
+import jwt from 'jsonwebtoken';
+import { ExtractJwt } from 'passport-jwt';
 import { deckId, accessCodeQuery } from '@whosaidtrue/validation'
 import { logger } from '@whosaidtrue/logger';
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
 import { games } from '../../db';
-import { CreateGameRequest, TokenPayload, CreateGameResponse, AccessCodeQuery, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
+import {
+    CreateGameRequest,
+    TokenPayload,
+    CreateGameResponse,
+    AccessCodeQuery,
+    StatusRequestResponse,
+    JoinGameRequest
+} from '@whosaidtrue/api-interfaces';
 import { RequestHandler } from 'passport-strategy/node_modules/@types/express';
 
 const router = Router();
 
-// TODO finish
 router.post('/join', async (req: Request, res: Response) => {
-    const id = req.query.access_code;
+    // Check header for token
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+
+    let id: number;
+    // if there is a token, verify it and extract user id
+    if (token) {
+        try {
+            const { user } = jwt.verify(token, process.env.JWT_SECRET) as { user: TokenPayload }
+            id = user.id;
+            //  eslint-disable-next-line
+        } catch (_) { }  // fail silently if token invalid
+    }
+
+
+    // try {
+    //     const { rows } = await games.join
+    // }
+
+
 })
 
 /**
@@ -49,7 +75,7 @@ const statusHandler: RequestHandler<unknown, unknown, unknown, AccessCodeQuery> 
     const { access_code } = req.query as AccessCodeQuery;
 
     try {
-        const { rows } = await games.getByAccessCode(access_code)
+        const { rows } = await games.gameStatusByAccessCode(access_code)
         if (!rows.length) {
             res.status(404).send('Could not find an ongoing game with that access_code')
         } else {
