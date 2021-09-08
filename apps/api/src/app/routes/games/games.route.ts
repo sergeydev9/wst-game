@@ -40,15 +40,13 @@ router.post('/join', [...joinGame], async (req: Request, res: Response) => {
         const gameToken = signGameToken(playerId, playerName, isHost, gameId); // put game info in signed token
         res.status(201).json({ ...result, gameToken } as JoinGameResponse)
     } catch (e) {
-        if (e == new Error('Game not found')) {
+        if (e.message === 'Game not found') {
             res.status(404).send('Game not found')
         } else {
+            logger.error(e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
-
     }
-
-
 })
 
 /**

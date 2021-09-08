@@ -3,13 +3,18 @@ import { Application } from 'express';
 import { mocked } from 'ts-jest/utils';
 
 import App from '../../App';
+import jwt from 'jsonwebtoken';
 import { games } from '../../db';
-import { signUserPayload } from '@whosaidtrue/middleware';
+import { signUserPayload, signGameToken } from '@whosaidtrue/middleware';
 import { QueryResult } from 'pg';
+import { Deck } from '@whosaidtrue/app-interfaces';
 
 jest.mock('../../db');
+jest.mock('jsonwebtoken')
 
 const mockedGames = mocked(games, true);
+const mockedJwt = mocked(jwt, true);
+
 
 describe('games routes', () => {
     let app: Application;
@@ -117,6 +122,61 @@ describe('games routes', () => {
                 .expect(200)
 
             expect(body.status).toEqual('test123')
+        })
+    })
+
+    describe('[POST] /join', () => {
+
+        it('should return 422 if no access_code', done => {
+            supertest(app)
+                .post('/games/join')
+                .send({ name: 'name' })
+                .expect(422, done)
+        })
+
+        it('should return 422 if no name', done => {
+            supertest(app)
+                .post('/games/join')
+                .send({ access_code: '123abb' })
+                .expect(422, done)
+        })
+
+        it('should respond with 404 if game not found', done => {
+            mockedGames.join.mockRejectedValue(new Error('Game not found'))
+            supertest(app)
+                .post('/games/join')
+                .send({ access_code: '123abb', name: 'name' })
+                .expect(404, done)
+        })
+
+        it('should respond with 500 if db throws', done => {
+            mockedGames.join.mockRejectedValue({})
+            supertest(app)
+                .post('/games/join')
+                .send({ access_code: '123abb', name: 'name' })
+                .expect(500, done)
+        })
+
+        it('should respond with 201 if success', done => {
+            mockedGames.join.mockResolvedValue({
+                playerId: 1,
+                playerName: 'name',
+                players: [],
+                gameId: 2,
+                access_code: '12345',
+                totalQuestions: 9,
+                deck: {} as Deck,
+                status: 'finished',
+                isHost: false,
+                currentHostName: 'hostname',
+                currentQuestionIndex: 1
+            })
+
+            supertest(app)
+                .post('/games/join')
+                .send({ access_code: '123abb', name: 'name' })
+                .expect('Content-Type', /json/)
+                .expect(201, done)
         })
     })
 })
