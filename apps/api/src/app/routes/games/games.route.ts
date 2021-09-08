@@ -1,8 +1,8 @@
-import { Request, Response, Router } from 'express';
-import { passport } from '@whosaidtrue/middleware';
+import { Request, Response, Router, RequestHandler } from 'express';
+import { passport, signGameToken } from '@whosaidtrue/middleware';
 import jwt from 'jsonwebtoken';
 import { ExtractJwt } from 'passport-jwt';
-import { deckId, accessCodeQuery } from '@whosaidtrue/validation'
+import { deckId, accessCodeQuery, joinGame } from '@whosaidtrue/validation'
 import { logger } from '@whosaidtrue/logger';
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
 import { games } from '../../db';
@@ -12,13 +12,15 @@ import {
     CreateGameResponse,
     AccessCodeQuery,
     StatusRequestResponse,
-    JoinGameRequest
+    JoinGameRequest,
+    JoinGameResponse
 } from '@whosaidtrue/api-interfaces';
-import { RequestHandler } from 'passport-strategy/node_modules/@types/express';
 
 const router = Router();
 
-router.post('/join', async (req: Request, res: Response) => {
+router.post('/join', [...joinGame], async (req: Request, res: Response) => {
+
+    const { access_code, name } = req.body as JoinGameRequest;
     // Check header for token
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
 
@@ -32,10 +34,19 @@ router.post('/join', async (req: Request, res: Response) => {
         } catch (_) { }  // fail silently if token invalid
     }
 
+    try {
+        const result = await games.join(access_code, name, id);
+        const { playerId, playerName, gameId, isHost } = result;
+        const gameToken = signGameToken(playerId, playerName, isHost, gameId); // put game info in signed token
+        res.status(201).json({ ...result, gameToken } as JoinGameResponse)
+    } catch (e) {
+        if (e == new Error('Game not found')) {
+            res.status(404).send('Game not found')
+        } else {
+            res.status(500).send(ERROR_MESSAGES.unexpected)
+        }
 
-    // try {
-    //     const { rows } = await games.join
-    // }
+    }
 
 
 })

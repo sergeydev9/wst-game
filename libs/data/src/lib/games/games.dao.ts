@@ -1,5 +1,5 @@
 import { Pool, QueryResult } from 'pg';
-import { GameStatus, IInsertGame } from '@whosaidtrue/app-interfaces';
+import { Deck, GameStatus, IInsertGame, PlayerRef } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
 class Games extends Dao {
@@ -221,15 +221,15 @@ class Games extends Dao {
 
             return {
                 status: game.status as GameStatus,
-                game_id: game.id,
-                deck: deckResult.rows[0],
+                gameId: game.id,
+                deck: deckResult.rows[0] as Deck,
                 currentQuestionIndex: game.current_question_index,
-                currentHostName: hostName,
+                currentHostName: hostName as string,
                 access_code,
                 isHost,
-                players: playersResult.rows,
+                players: playersResult.rows as PlayerRef[],
                 playerId: createPlayerResult.rows[0].id,
-                playerName: name,
+                playerName: name as string,
                 totalQuestions: game.total_questions
             }
         } catch (e) {

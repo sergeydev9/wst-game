@@ -12,10 +12,10 @@ export default new Strategy(options, async (payload, done) => {
         // yes, payload could just be sent through.
         // This is made explicit for documentation purposes.
         const requestData = {
-            player_id: payload.player_id,
-            player_name: payload.player_name,
-            user_id: payload.user_id,
-            game_id: payload.game_id,
+            playerId: payload.playerId,
+            playerName: payload.playerName,
+            userId: payload.userId,
+            gameId: payload.gameId,
             isHost: payload.isHost
         }
         return done(null, requestData)

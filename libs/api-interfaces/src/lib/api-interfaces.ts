@@ -98,12 +98,8 @@ export interface JoinGameRequest {
 export interface JoinGameResponse {
   status: GameStatus;
   gameToken: string;
-  game_id: number;
-  deckName: string;
-  deckId: number;
-  deckMovieRating: MovieRating;
-  deckSFW: boolean;
-  deckDescription: string;
+  gameId: number;
+  deck: Deck;
   totalQuestions: number;
   currentHostName: string;
   players: PlayerRef[];
