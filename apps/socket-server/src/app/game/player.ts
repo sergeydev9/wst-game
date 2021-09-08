@@ -6,7 +6,7 @@ export type GameStatus = 'new' | 'waiting' | 'playing';
 class Player extends EventEmitter {
   public name?: string;
 
-  public clientStatus: 'connected' | 'disconnected' = 'disconnected';
+  public isActive: boolean;
   public gameStatus: GameStatus = 'new';
 
   public constructor(

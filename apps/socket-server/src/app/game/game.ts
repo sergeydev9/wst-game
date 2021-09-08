@@ -52,38 +52,24 @@ class Game extends EventEmitter {
     });
   }
 
-  public getConnectedPlayers(status?: GameStatus) {
+  public getActivePlayers(status?: GameStatus) {
     if (status) {
-      this.getConnected().filter(p => p.gameStatus === status);
+      this.players.filter(p => p.isActive && p.gameStatus === status);
     }
-    return this.getConnected();
-  }
-
-  private getConnected() {
-    return this.players.filter(p => p.clientStatus === 'connected');
-  }
-
-  public emitAll(event, message: any) {
-    this.getConnectedPlayers().forEach(p => p.emit(event, message));
-  }
-
-  public emitAllExcept(exclude: Player, message: any) {
-    this.getConnectedPlayers()
-        .filter(p => p != exclude)
-        .forEach(p => p.emit('message', message));
+    return this.players.filter(p => p.isActive);
   }
 
   public joinWaitingRoom(player: Player) {
-    if (player.clientStatus !== 'connected') {
-      throw new Error('Not connected, game: ' + this.gameRow.access_code);
+    if (!player.isActive) {
+      throw new Error('Player not active, game: ' + this.gameRow.access_code);
     }
 
     if (!this.players.includes(player)) {
-      throw new Error('Not in game: ' + this.gameRow.access_code);
+      throw new Error('Player not in game: ' + this.gameRow.access_code);
     }
 
     if (player.gameStatus === 'waiting') {
-      throw new Error('Already in waiting room, game: ' + this.gameRow.access_code);
+      throw new Error('Player already in waiting room, game: ' + this.gameRow.access_code);
     }
 
     if (!player.name) {
@@ -112,12 +98,12 @@ class Game extends EventEmitter {
     }
 
     // move all players from waiting room to active
-    this.getConnectedPlayers('waiting').forEach(p => p.gameStatus = 'playing');
+    this.getActivePlayers('waiting').forEach(p => p.gameStatus = 'playing');
 
     this.questionNumber++;
     const nextQuestion = this.getQuestion(this.questionNumber);
     nextQuestion.reader = this.readerForQuestion(this.questionNumber);
-    nextQuestion.players = [...this.getConnectedPlayers('playing')];
+    nextQuestion.players = [...this.getActivePlayers('playing')];
 
     return nextQuestion;
   }

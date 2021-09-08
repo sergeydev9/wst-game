@@ -21,19 +21,18 @@ class WebsocketClient extends EventEmitter {
     this.player = player;
     this.gameService = gameService;
 
-    this.player.on('message', message => {
-      console.debug('player message', message);
-      this.sendMessage(message);
-    });
-
-    ws.on('message', data => {
-      console.debug('ws message', data);
-      this.handleMessage(data);
-    });
+    // main glue connecting websocket to player
+    this.player.on('message', this.sendMessage);
+    ws.on('message', this.handleMessage);
 
     ws.on('close', (code, reason) => {
       console.warn('ws close', code, reason);
+
       this.gameService.disconnectPlayer(this.player);
+
+      // no longer react to player messages
+      ws.off('message', this.sendMessage);
+
       this.emit('close');
     });
 

@@ -85,11 +85,11 @@ class GameService {
 
     // don't allow multiple connections
     // TODO: disconnect the other player instead?
-    if (player.clientStatus === 'connected') {
-      throw new Error("Already Connected");
+    if (player.isActive) {
+      throw new Error("Player already active. No duplicate players allowed.");
     }
 
-    player.clientStatus = 'connected';
+    player.isActive = true;
     return player;
   }
 
@@ -108,7 +108,7 @@ class GameService {
 
   public disconnectPlayer(player: Player) {
 
-    player.clientStatus = 'disconnected';
+    player.isActive = false;
 
     const msg: PlayerLeftGame = {
       event: 'PlayerLeftGame',
@@ -119,7 +119,7 @@ class GameService {
         is_host: player.isHost(),
       },
     };
-    player.game.emitAll('message', msg);
+    player.game.getActivePlayers().forEach(p => p.emit('message', msg));
 
 
     if (player.isHost()) {
@@ -134,12 +134,12 @@ class GameService {
       game.host = player;
     }
 
-    player.clientStatus = 'connected';
+    player.isActive = true;
     game.joinWaitingRoom(player);
 
 
-    // player joined
-    const msg: PlayerJoinedGame = {
+
+    const joinedMsg: PlayerJoinedGame = {
       event: 'PlayerJoinedGame',
       status: "ok",
       payload: {
@@ -147,12 +147,22 @@ class GameService {
         is_host: player.isHost(),
       },
     };
-    game.emitAllExcept(player, msg);
+    const gameStateMsg = this.getGameState(game);
+    game.getActivePlayers()
+        .forEach(p => {
+          // let everyone else know player joined
+          if (p != player) {
+            p.emit('message', joinedMsg)
+          }
+
+          // everyone gets the new game state
+          p.emit('message', gameStateMsg)
+
+        });
 
     if (game.questionNumber > 0) {
       player.emit('message', this.getQuestionState(player, game.questionNumber));
     }
-    game.emitAll('message', this.getGameState(game));
   }
 
   public hostNextQuestion(game: Game, player: Player) {
@@ -163,8 +173,11 @@ class GameService {
       throw new Error('No more questions gameRow over.');
     }
 
-    game.getConnectedPlayers().forEach(p => p.emit('message', this.getQuestionState(p, game.questionNumber)));
-    game.emitAll('message', this.getGameState(game));
+    const gameStateMsg = this.getGameState(game);
+    game.getActivePlayers().forEach(p => {
+      p.emit('message', this.getQuestionState(p, game.questionNumber));
+      p.emit('message', gameStateMsg);
+    });
   }
 
   public async submitAnswerPart1(game: Game, player: Player, data: any) {
@@ -203,7 +216,7 @@ class GameService {
     };
     await answersDao.submit(answerRow);
 
-    game.getConnectedPlayers().forEach(p => p.emit('message', this.getQuestionState(p, data.questionNumber)));
+    game.getActivePlayers().forEach(p => p.emit('message', this.getQuestionState(p, data.questionNumber)));
 
     // auto-advance to results
     const finished = this.countFinishedAnswers(question);
@@ -259,7 +272,7 @@ class GameService {
   }
 
   private showResults(game: Game) {
-    game.getConnectedPlayers().forEach(player => {
+    game.getActivePlayers().forEach(player => {
       const msg = this.getResultState(game.questionNumber, player);
       player.emit('message', msg);
     });
@@ -268,7 +281,7 @@ class GameService {
   public hostShowScores(game: Game, player: Player) {
     this.requireHostAction(player);
 
-    game.getConnectedPlayers().forEach(player => {
+    game.getActivePlayers().forEach(player => {
       const msg = this.getScoreState(game.questionNumber, player);
       player.emit('message', msg);
     });
@@ -277,7 +290,7 @@ class GameService {
   public hostShowFinalScores(game: Game, player: Player) {
     this.requireHostAction(player);
 
-    game.getConnectedPlayers().forEach(player => {
+    game.getActivePlayers().forEach(player => {
       const msg = this.getScoreState(game.questionNumber, player);
 
       // final scores has extra fun facts
@@ -312,7 +325,7 @@ class GameService {
         game_id: game.gameRow.id,
         host_id: game.hostRow.id,
         status: game.status,
-        current_players: game.getConnectedPlayers().map(p => p.name),
+        current_players: game.getActivePlayers().map(p => p.name),
         total_questions: game.questions.length,
         current_question: game.questionNumber,
       }
