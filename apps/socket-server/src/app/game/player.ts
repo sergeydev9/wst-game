@@ -41,9 +41,6 @@ class Player extends EventEmitter {
     };
   }
 
-  public notify(message: any) {
-    this.emit('message', message);
-  }
 }
 
 export default Player;

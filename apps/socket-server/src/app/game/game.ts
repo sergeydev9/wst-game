@@ -63,24 +63,14 @@ class Game extends EventEmitter {
     return this.players.filter(p => p.clientStatus === 'connected');
   }
 
-  public notifyAll(message: any) {
-    this.getConnectedPlayers().forEach(p => p.notify(message));
+  public emitAll(event, message: any) {
+    this.getConnectedPlayers().forEach(p => p.emit(event, message));
   }
 
-  public notifyAllExcept(exclude: Player, message: any) {
+  public emitAllExcept(exclude: Player, message: any) {
     this.getConnectedPlayers()
         .filter(p => p != exclude)
-        .forEach(p => p.notify(message));
-  }
-
-  public notifyWaiting(message: any) {
-    this.getConnectedPlayers('waiting')
-        .forEach(p => p.notify(message));
-  }
-
-  public notifyPlaying(message: any) {
-    this.getConnectedPlayers('playing')
-        .forEach(p => p.notify(message));
+        .forEach(p => p.emit('message', message));
   }
 
   public joinWaitingRoom(player: Player) {

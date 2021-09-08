@@ -3,14 +3,13 @@ import Player from "../game/player";
 
 import {
   AnswerValue,
-  Deck as IDeck,
   Game as IGame,
   GamePlayer as IGamePlayer,
   IInsertAnwser,
   Question as IQuestion
 } from '@whosaidtrue/app-interfaces';
 
-import {answersDao, decksDao, gamesDao} from '../db';
+import {answersDao, gamesDao} from '../db';
 
 import {
   FunFact,
@@ -120,7 +119,7 @@ class GameService {
         is_host: player.isHost(),
       },
     };
-    player.game.notifyAll(msg);
+    player.game.emitAll('message', msg);
 
 
     if (player.isHost()) {
@@ -148,12 +147,12 @@ class GameService {
         is_host: player.isHost(),
       },
     };
-    game.notifyAllExcept(player, msg);
+    game.emitAllExcept(player, msg);
 
     if (game.questionNumber > 0) {
-      player.notify(this.getQuestionState(player, game.questionNumber));
+      player.emit('message', this.getQuestionState(player, game.questionNumber));
     }
-    game.notifyAll(this.getGameState(game));
+    game.emitAll('message', this.getGameState(game));
   }
 
   public hostNextQuestion(game: Game, player: Player) {
@@ -164,8 +163,8 @@ class GameService {
       throw new Error('No more questions gameRow over.');
     }
 
-    game.getConnectedPlayers().forEach(p => p.notify(this.getQuestionState(p, game.questionNumber)));
-    game.notifyAll(this.getGameState(game));
+    game.getConnectedPlayers().forEach(p => p.emit('message', this.getQuestionState(p, game.questionNumber)));
+    game.emitAll('message', this.getGameState(game));
   }
 
   public async submitAnswerPart1(game: Game, player: Player, data: any) {
@@ -180,7 +179,7 @@ class GameService {
     answer.answer = data.answer;
     answer.state = 'part-2';
 
-    player.notify(this.getQuestionState(player, data.questionNumber));
+    player.emit('message', this.getQuestionState(player, data.questionNumber));
   }
 
   public async submitAnswerPart2(game: Game, player: Player, data: any) {
@@ -204,7 +203,7 @@ class GameService {
     };
     await answersDao.submit(answerRow);
 
-    game.getConnectedPlayers().forEach(p => p.notify(this.getQuestionState(p, data.questionNumber)));
+    game.getConnectedPlayers().forEach(p => p.emit('message', this.getQuestionState(p, data.questionNumber)));
 
     // auto-advance to results
     const finished = this.countFinishedAnswers(question);
@@ -262,7 +261,7 @@ class GameService {
   private showResults(game: Game) {
     game.getConnectedPlayers().forEach(player => {
       const msg = this.getResultState(game.questionNumber, player);
-      player.notify(msg);
+      player.emit('message', msg);
     });
   }
 
@@ -271,7 +270,7 @@ class GameService {
 
     game.getConnectedPlayers().forEach(player => {
       const msg = this.getScoreState(game.questionNumber, player);
-      player.notify(msg);
+      player.emit('message', msg);
     });
   }
 
@@ -283,7 +282,7 @@ class GameService {
 
       // final scores has extra fun facts
       msg.payload.fun_facts = this.getFunFacts(player);
-      player.notify(msg);
+      player.emit('message', msg);
     });
   }
 
