@@ -1,5 +1,5 @@
 import MethodSelection from './PaymentMethodSelect';
-import RadioInput from '../inputs/radio-input/RadioInput';
+import RadioInput from '../../inputs/radio-input/RadioInput';
 
 export default {
     component: MethodSelection,

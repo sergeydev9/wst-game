@@ -6,6 +6,9 @@ export interface ModalProps extends Modal.Props {
     onRequestClose: () => void;
 }
 
+/**
+ * React modal component used to display all full screen modal components.
+ */
 const WstModal: React.FC<ModalProps> = ({ children, onRequestClose, ...rest }) => {
     return (
         <Modal onRequestClose={onRequestClose} {...rest} >

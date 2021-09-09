@@ -1,5 +1,5 @@
-import Box from '../containers/box/Box';
-import { Headline } from '../typography/Typography';
+import Box from '../../containers/box/Box';
+import { Headline } from '../../typography/Typography';
 
 const DeckFilterBox: React.FC = ({ children }) => {
     return (

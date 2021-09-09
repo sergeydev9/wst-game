@@ -1,4 +1,4 @@
-import FooterLinks from "../footer-links/FooterLinks";
+import FooterLinks from "./footer-links/FooterLinks";
 import Foot from "./Footer";
 import Socials from "../social-media-links/SocialMediaLinks";
 import { Headline } from "../typography/Typography";
