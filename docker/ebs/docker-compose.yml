@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+
+  api:
+    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/api:20210830-bf659d3
+    restart: always
+    env_file:
+      - .env
+      - .ebs.env
+    environment:
+      - PORT=4000
+    ports:
+      - 4000:4000
+
+  socket-server:
+    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/api:20210830-bf659d3
+    restart: always
+    env_file:
+      - .env
+      - .ebs.env
+    environment:
+      - PORT=4001
+    ports:
+      - 4001:4001

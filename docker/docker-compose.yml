@@ -7,13 +7,13 @@ services:
     image: postgres:11
     container_name: postgres
     env_file:
-      - .local.env
+      - .docker.env
     restart: 'always'
     ports:
       - '5432:5432'
     volumes:
       - data:/var/lib/postgresql/data
-      - ./apps/database/dev:/usr/local/dev # Used to facilitate running sql files from host. See database README
+      - ../apps/database/dev:/usr/local/dev # Used to facilitate running sql files from host. See database README
   
   # PGADMIN
   pgadmin:

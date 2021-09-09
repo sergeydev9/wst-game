@@ -134,6 +134,8 @@ export interface Game {
     status: string;
     deck_id: number;
     start_date?: Date;
+    host_name: string;
+    host_id: number;
     end_date?: Date;
     created_at?: Date;
     updated_at?: Date
@@ -201,6 +203,7 @@ export interface GamePlayer {
     id: number;
     player_name: string;
     game_id: number;
+    user_id: number;    // TODO: add to schema
     created_at?: Date;
     updated_at?: Date;
 }

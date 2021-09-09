@@ -11,17 +11,11 @@ class WebsocketService {
     this.gameService = gameService;
   }
 
-  public handle(ws: WebSocket, gameCode: string, playerId: string) {
+  public async handle(ws: WebSocket, gameCode: string, playerId: number) {
     try {
+      console.log("WebsocketService.handle");
 
-      // TODO: switch to gameService.findGame()
-      const game = this.gameService.devOnlyFindOrCreateGame(gameCode);
-
-      if (!game) {
-        throw Error('Invalid game pin.');
-      }
-
-      const player = this.gameService.createPlayer(playerId, game);
+      const player = await this.gameService.connectPlayer(playerId, gameCode);
       const client = new WebsocketClient(ws, player, this.gameService);
 
       client.on('close', () => this.onDisconnected(client));
@@ -32,7 +26,7 @@ class WebsocketService {
         event: 'GameConnected',
         success: true,
         message: 'Welcome! Please pick a name.',
-        data: {gameCode: player.game.code, playerId: playerId}
+        data: {gameCode: player.game.gameRow.access_code, playerId: playerId}
       }));
     } catch (e) {
       console.error(e);

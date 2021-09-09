@@ -1,7 +1,6 @@
 import { IInsertQuestion } from '@whosaidtrue/app-interfaces';
-import { Pool } from 'pg';
+import {Pool} from 'pg';
 import Dao from '../base.dao';
-
 
 
 class Question extends Dao {

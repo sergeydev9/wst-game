@@ -18,21 +18,11 @@ class GameController {
     }
   };
 
-  public createGame = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const game = await this.gameService.createGame(req.params.code);
-
-      res.status(201).json({ game: { code: game.code }, message: 'created' });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  public connectGameWs = async (ws: WebSocket, req: Request, next: NextFunction) => {
+  public joinGameWs = async (ws: WebSocket, req: Request, next: NextFunction) => {
     try {
       const gameCode = req.params.code;
-      const playerId = req.params.guid
-      console.log(`connectGameWs gameCode: ${gameCode}, playerId: ${playerId}`);
+      const playerId = parseInt(req.params.guid);
+      console.log(`joinGameWs gameCode: ${gameCode}, playerId: ${playerId}`);
 
       this.websocketService.handle(ws, gameCode, playerId);
     } catch (error) {

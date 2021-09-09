@@ -1,39 +1,33 @@
 import {EventEmitter} from "events";
-import Player from "./player";
+import Player, {GameStatus} from "./player";
 
-// TODO: temp type defs, will probably replace with db models
-type GameQuestion = {
-  text: string;
-  followUp: string;
-  type: string;
+import {
+  AnswerValue,
+  Game as IGame,
+  User as IUser,
+  Question as IQuestion,
+} from '@whosaidtrue/app-interfaces';
+import {PlayerScore} from "@whosaidtrue/api-interfaces";
+
+export type GameQuestion = {
+  questionRow: IQuestion;
   reader?: Player;
   players: Player[];
   answers: {
     player: Player;
-    answer?: 'true' | 'false' | 'pass';
+    state: 'part-1' | 'part-2' | 'finished';
+    answer?: AnswerValue
     guess?: number;
   }[];
 };
 
-type DeckQuestion = {
-  text: string;
-  type: string;
-}
-
-type Deck = {
-  name: string;
-  questions: DeckQuestion[];
-};
-
-
 class Game extends EventEmitter {
-  public readonly code: string;
-  public readonly deck: Deck;
-  public readonly connected: Player[] = [];
-  public readonly disconnected: Player[] = [];
-  public readonly waiting: Player[] = [];
-  public readonly active: Player[] = [];
+  public readonly gameRow: IGame;
+  public readonly hostRow: IUser;
 
+  public readonly players: Player[] = [];
+
+  public status: 'lobby' | 'pre-lobby' | 'playing' | 'post-game' | 'finished' | 'error' = 'lobby';
   public host: Player;
 
   public questionNumber = 0;
@@ -42,16 +36,14 @@ class Game extends EventEmitter {
   public reader: Player;
   public readonly readerOrder: Player[] = [];
 
-  constructor(code: string, deck: Deck) {
+  constructor(game: IGame, host: IUser, questions: IQuestion[]) {
     super();
-    this.code = code;
-    this.deck = deck;
+    this.gameRow = game;
+    this.hostRow = host;
 
-    deck.questions.forEach(deckQuestion => {
+    questions.forEach(q => {
       const gameQuestion: GameQuestion = {
-        text: deckQuestion.text,
-        followUp: 'What was the show?', // TODO
-        type: deckQuestion.type,
+        questionRow: q,
         reader: null,
         players: [],
         answers: []
@@ -60,59 +52,36 @@ class Game extends EventEmitter {
     });
   }
 
-  public notifyAll(message: any) {
-    this.connected.forEach(p => p.notify(message));
-  }
-
-  public emitConnected(event: string, message: any) {
-    this.connected.forEach(p => p.emit(event, message));
-  }
-
-  public notifyWaiting(message: any) {
-    this.waiting.forEach(p => p.notify(message));
-  }
-
-  public emitWaiting(event: string, message: any) {
-    this.waiting.forEach(p => p.emit(event, message));
-  }
-
-  public notifyActive(message: any) {
-    this.active.forEach(p => p.notify(message));
-  }
-
-  public emitActive(event: string, message: any) {
-    this.active.forEach(p => p.emit(event, message));
+  public getActivePlayers(status?: GameStatus) {
+    if (status) {
+      this.players.filter(p => p.isActive && p.gameStatus === status);
+    }
+    return this.players.filter(p => p.isActive);
   }
 
   public joinWaitingRoom(player: Player) {
-    if (!this.connected.includes(player)) {
-      throw new Error('Not connected, game: ' + this.code);
+    if (!player.isActive) {
+      throw new Error('Player not active, game: ' + this.gameRow.access_code);
     }
 
-    if (this.disconnected.includes(player)) {
-      throw new Error('Disconnected, game: ' + this.code);
+    if (!this.players.includes(player)) {
+      throw new Error('Player not in game: ' + this.gameRow.access_code);
     }
 
-    if (this.waiting.includes(player)) {
-      throw new Error('Already in waiting room, game: ' + this.code);
+    if (player.gameStatus === 'waiting') {
+      throw new Error('Player already in waiting room, game: ' + this.gameRow.access_code);
     }
 
     if (!player.name) {
-      throw new Error('Please pick a name, game: ' + this.code);
+      throw new Error('Please pick a name, game: ' + this.gameRow.access_code);
     }
 
-    this.waiting.push(player);
+    player.gameStatus = 'waiting';
     this.readerOrder.push(player);
-
-    // remove from active
-    const index = this.active.indexOf(player);
-    if (index > -1) {
-      this.active.splice(index, 1);
-    }
   }
 
-  public checkName(name: string) {
-    return !this.connected.map(p => p.name).includes(name);
+  public currentQuestion() {
+    return this.getQuestion(this.questionNumber);
   }
 
   public getQuestion(question: number) {
@@ -129,13 +98,12 @@ class Game extends EventEmitter {
     }
 
     // move all players from waiting room to active
-    this.active.push(...this.waiting);
-    this.waiting.splice(0, this.waiting.length);
+    this.getActivePlayers('waiting').forEach(p => p.gameStatus = 'playing');
 
     this.questionNumber++;
     const nextQuestion = this.getQuestion(this.questionNumber);
     nextQuestion.reader = this.readerForQuestion(this.questionNumber);
-    nextQuestion.players =  [...this.active];
+    nextQuestion.players = [...this.getActivePlayers('playing')];
 
     return nextQuestion;
   }
@@ -144,51 +112,79 @@ class Game extends EventEmitter {
     return this.questionNumber == this.questions.length;
   }
 
-  public questionResults(question: number) {
-    if (question < 1 || question > this.questions.length) {
-      throw new Error(`Invalid question ${question}, valid: 1-${this.questions.length}`);
+  public questionResults(questionNumber: number, player: Player) {
+    if (questionNumber < 1 || questionNumber > this.questions.length) {
+      throw new Error(`Invalid question ${questionNumber}, valid: 1-${this.questions.length}`);
     }
 
-    const q = this.questions[question - 1];
-    const groupTrueCount = q.answers.filter(a => a.answer === 'true').length;
+    const question = this.questions[questionNumber - 1];
+    const correctAnswer = question.answers.filter(a => a.answer === 'true').length;
+    const answer = player.getAnswer(questionNumber);
 
     return {
-      followUp: q.followUp,
-      playersCount: q.players.length,
-      groupTrueCount: groupTrueCount,
-      groupPercent: groupTrueCount / q.players.length,
-      globalPercent: 0.5, // TODO: global stats from db
+      question_number: questionNumber,
+      question_total: this.questions.length,
+
+      result: answer.guess,
+      result_text: question.questionRow.text_for_guess,
+      follow_up_text: question.questionRow.follow_up,
+
+      your_group_percent: correctAnswer / question.players.length,
+      all_players_percent: 0.5, // TODO: global stats from db
     };
   }
 
-  public currentScore() {
-    // TODO: implement scores
+  public getCurrentScores(questionNumber: number, player: Player): PlayerScore[] {
+    // TODO: calculate scores
     return [
       {
-        place: 1,
-        playerName: 'Jane the Bin',
-        points: 11500,
+        player_id: 1,
+        player_name: 'Mystic Raccoon',
+        current_rank: 1,
+        current_score: 12000,
+        previous_rank: 1,
+        previous_score: 12000,
       },
       {
-        place: 2,
-        playerName: 'John Doe',
-        points: 9430,
+        player_id: 2,
+        player_name: 'Chuffed Caterpillar',
+        current_rank: 2,
+        current_score: 11000,
+        previous_rank: 4,
+        previous_score: 9000,
       },
       {
-        place: 3,
-        playerName: 'Exotic Animal',
-        points: 9430,
+        player_id: 3,
+        player_name: 'Massive Rodent',
+        current_rank: 3,
+        current_score: 10000,
+        previous_rank: 3,
+        previous_score: 10000,
       },
       {
-        place: 4,
-        playerName: 'Mystic Raccoon',
-        points: 8970,
+        player_id: 4,
+        player_name: 'Psycho Giraffe',
+        current_rank: 4,
+        current_score: 9000,
+        previous_rank: 1,
+        previous_score: 9000,
       },
       {
-        place: 5,
-        playerName: 'Game Name',
-        points: 5500,
+        player_id: 5,
+        player_name: 'Angelic Nerd',
+        current_rank: 5,
+        current_score: 8000,
+        previous_rank: 5,
+        previous_score: 8000,
       },
+      {
+        player_id: player.playerId,
+        player_name: player.name,
+        current_rank: 8,
+        current_score: 7000,
+        previous_rank: 8,
+        previous_score: 7000,
+      }
     ];
   }
 
