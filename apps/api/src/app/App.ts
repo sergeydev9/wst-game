@@ -11,7 +11,7 @@ import { logger } from '@whosaidtrue/logger';
 // TODO: Make it crash if it can't connect to database
 class App {
     public readonly app = express();
-    private readonly port = process.env.PORT || 4000;
+    private readonly port = process.env.PORT || 3000;
 
     constructor() {
         this.initializeMiddlewares();
