@@ -7,7 +7,7 @@ export default tw.input<TextInputProps>`
         form-input
         w-full
         px-3
-        py-4
+        py-3
         placeholder-basic-gray
         text-sm
         rounded-xl
