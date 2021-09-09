@@ -28,12 +28,12 @@ This depends on the root `docker-compose.yml` that runs postgres.
 
 To start:
 ```bash
-docker compose -f docker-compose.yml -f docker/docker-compose.web.yml up -d
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.web.yml up -d
 ```
 
 To stop:
 ```bash
-docker compose -f docker-compose.yml -f docker/docker-compose.web.yml stop
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.web.yml stop
 ```
 
 Note: The postgres database will need to be setup on first run. See (apps/database/README.md) for more details.
