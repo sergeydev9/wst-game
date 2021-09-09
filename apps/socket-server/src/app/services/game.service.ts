@@ -4,12 +4,13 @@ import Player from "../game/player";
 import {
   AnswerValue,
   Game as IGame,
+  User as IUser,
   GamePlayer as IGamePlayer,
   IInsertAnwser,
   Question as IQuestion
 } from '@whosaidtrue/app-interfaces';
 
-import {answersDao, gamesDao} from '../db';
+import {answersDao, gamePlayersDao, gamesDao, usersDao} from '../db';
 
 import {
   FunFact,
@@ -48,7 +49,7 @@ class GameService {
     }
     const game: IGame = gameResult.rows[0];
 
-    const host: IGamePlayer = (await gamesDao.getHost(game.id)).rows[0];
+    const host: IUser = (await usersDao.getById(game.host_id)).rows[0];
 
     // TODO: gamesDao.getQuestions(gameRow.id)
     const questions: IQuestion[] = [
@@ -99,7 +100,13 @@ class GameService {
     let player = game.players.find(p => p.playerId == playerId);
 
     if (!player) {
-      player = new Player(playerId, game);
+      const playerResult = (await gamePlayersDao.getById(playerId))
+      if (playerResult.rowCount < 1) {
+        throw new Error(`Player ID ${playerId} not found`);
+      }
+
+      const userId = playerResult.rows[0].user_id;
+      player = new Player(userId, playerId, game);
       game.players.push(player);
     }
 
@@ -130,7 +137,7 @@ class GameService {
   public joinGame(player: Player, playerName: string) {
     const game = player.game;
     player.name = playerName;
-    if (game.hostRow.id == player.playerId) {
+    if (player.isHost()) {
       game.host = player;
     }
 

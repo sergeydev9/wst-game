@@ -134,6 +134,8 @@ export interface Game {
     status: string;
     deck_id: number;
     start_date?: Date;
+    host_name: string;
+    host_id: number;
     end_date?: Date;
     created_at?: Date;
     updated_at?: Date

@@ -10,13 +10,14 @@ class Player extends EventEmitter {
   public gameStatus: GameStatus = 'new';
 
   public constructor(
+      public readonly userId: number,
       public readonly playerId: number,
       public readonly game: Game) {
     super();
   }
 
   public isHost() {
-    return this.game.hostRow.id == this.playerId;
+    return this.game.hostRow.id == this.userId;
   }
 
   public getAnswer(questionNumber: number)
