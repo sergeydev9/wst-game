@@ -3,7 +3,12 @@ import InputLabel from "../input-label/InputLabel";
 
 export default {
     component: SelectDropdownComponent,
-    title: 'Inputs/Select Dropdown'
+    title: 'Inputs/Select Dropdown',
+    parameters: {
+        backgrounds: {
+            default: 'white'
+        }
+    }
 }
 
 export const SelectDropdown = () => {

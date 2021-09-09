@@ -1,7 +1,4 @@
-import tw from 'tailwind-styled-components';
 import Box from './box/Box';
-
-
 
 export interface ModalContentProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
     $narrow?: boolean

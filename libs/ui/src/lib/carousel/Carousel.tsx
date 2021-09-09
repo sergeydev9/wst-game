@@ -37,7 +37,7 @@ const Carousel: React.FC<CarouselProps> = ({ title, children }) => {
         <Box boxstyle="white" className="text-basic-black py-6">
             <Title3 className="mb-4">{title}</Title3>
             <Crsl
-                className="leading-7 text-body-small font-semibold"
+                className="leading-7 text-body-small select-none font-semibold"
                 showStatus={false}
                 showIndicators={false}
                 showThumbs={false}

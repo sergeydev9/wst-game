@@ -5,8 +5,8 @@ import tw from "tailwind-styled-components";
 export default tw.select`
     form-select
     w-full
-    px-4
-    py-4
+    px-3
+    py-3
     border-purple-subtle-stroke
     bg-purple-subtle-fill
     rounded-xl

@@ -5,6 +5,7 @@ export default tw.input`
     text-purple-base
     bg-purple-subtle-fill
     cursor-pointer
+    select-none
     w-8
     h-8
     border-1

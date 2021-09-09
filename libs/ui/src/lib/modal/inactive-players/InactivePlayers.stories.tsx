@@ -6,7 +6,6 @@ export default {
     title: 'Modals/Inactive Players'
 }
 
-
 export const InactivePlayers = () => (
     <InactivePlayersComponent numNoAnswer={2} cancelHandler={() => null} confirmHandler={() => null} >
         <RemovePlayerListItem removeHandler={() => null} label="Mystic Raccoon (disconnected)" />

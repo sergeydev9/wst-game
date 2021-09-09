@@ -16,6 +16,11 @@ export default {
             type: 'boolean',
             default: false
         }
+    },
+    parameters: {
+        backgrounds: {
+            default: 'white'
+        }
     }
 } as Meta;
 
