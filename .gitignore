@@ -15,7 +15,6 @@
 # dependencies
 /node_modules
 
-.local.env
 # IDEs and editors
 /.idea
 .project
@@ -49,4 +48,3 @@ Thumbs.db
 /apps/static-frontend/node_modules
 /apps/static-frontend/public
 /apps/static-frontend/.cache
-.local.env
