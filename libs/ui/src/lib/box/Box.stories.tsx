@@ -8,10 +8,19 @@ export default {
     component: BoxComponent,
     title: "Page Sections/Box",
     argTypes: {
-        $light: {
-            name: '$light',
+        boxStyle: {
+            name: 'boxStyle',
+            type: 'select',
+            description: 'Selects the box style',
+            table: {
+                type: { summary: 'string', details: '"white" | "light-gray" | "purple-subtle"' },
+            },
+            options: ['white', 'light-gray', 'purple-subtle']
+        },
+        $dropShadow: {
+            name: '$dropShadow',
             type: 'boolean',
-            description: 'Toggle between the two box styles',
+            description: 'Adds a light drop shadow to the box',
             default: false,
             table: {
                 type: { summary: 'boolean' },
@@ -43,8 +52,9 @@ const VerticalTemplate: Story<BoxProps> = (args) => {
 export const VerticalBox = VerticalTemplate.bind({});
 
 VerticalBox.args = {
-    $light: false,
-    $horizontal: false
+    boxStyle: 'purple-subtle',
+    $horizontal: false,
+    $dropShadow: false
 }
 
 const HorizontalTemplate: Story<BoxProps> = (args) => {
@@ -59,6 +69,7 @@ const HorizontalTemplate: Story<BoxProps> = (args) => {
 export const HorizontalBox = HorizontalTemplate.bind({})
 
 HorizontalBox.args = {
-    $light: false,
-    $horizontal: true
+    boxStyle: 'purple-subtle',
+    $horizontal: true,
+    $dropShadow: false
 }

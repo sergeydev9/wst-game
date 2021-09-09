@@ -16,7 +16,7 @@ import GamePlayers from "../game-players/GamePlayers.dao";
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
 import Users from '../users/Users.dao';
 
-const random = () => (Math.random() + 1).toString(36).substring(7); // prevent name collisions
+const random = () => (Math.random() + 1).toString(36).substring(8); // prevent name collisions
 /**
  * Insert a deck
  *
@@ -64,17 +64,12 @@ export async function setupGame(pool: Pool, accessCode?: string) {
  * @param {number} [numQuestions=1]
  * @return {{deck_id: number, question_ids: number[]}}
  */
-export async function setupQuestion(pool: Pool, numQuestions = 1, deckId?: number): Promise<{ deck_id: number, question_ids: number[] }> {
+export async function setupQuestion(pool: Pool, numQuestions = 1, inputDeckId?: number): Promise<{ deck_id: number, question_ids: number[] }> {
     const questions = new Questions(pool);
-    let deck_id: number;
     const question_ids = []
 
     // if no deckId input, generate one.
-    if (!deckId) {
-        deckId = await setupOneDeck(pool)
-    } else {
-        deck_id = deckId;
-    }
+    const deck_id = inputDeckId ? inputDeckId : await setupOneDeck(pool)
 
     // create set of qestions using deck id
     for (const question of testQuestions(numQuestions, deck_id)) {
@@ -109,7 +104,7 @@ export async function setupDecks(pool: Pool, totalDecks: number, numRating?: num
     let count = 0
 
     for (const [index, deck] of [...testDecks(totalDecks)].entries()) {
-        let { age_rating } = deck;
+        let { age_rating, } = deck;
         const { name, sort_order, sfw, movie_rating, purchase_price, status, description, clean } = deck;
 
         // set numRating decks to have ageRating
@@ -119,6 +114,7 @@ export async function setupDecks(pool: Pool, totalDecks: number, numRating?: num
             age_rating = ageRating;
             count++
         }
+
 
         decks.push([name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean]);
     }

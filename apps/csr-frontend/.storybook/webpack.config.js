@@ -49,7 +49,7 @@ module.exports = async ({ config, mode }) => {
         limit: 10000, // 10kB
         name: '[name].[hash:7].[ext]',
       },
-    },
+    }
     // {
     //   test: /\.svg$/,
     //   oneOf: [

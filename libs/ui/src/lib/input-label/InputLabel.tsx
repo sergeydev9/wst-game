@@ -1,7 +1,8 @@
 import tw from "tailwind-styled-components";
-import { LabelBig } from '../typography/Typography';
 
-export default tw(LabelBig)`
+export default tw.label`
+    text-body-small
+    font-bold
     block
     mb-2
     `

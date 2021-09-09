@@ -14,12 +14,12 @@ import insertQuestions from './questions.seed';
 
     try {
         // seed names
-        const namesResult = await insertNames(pool, 2000)
-        console.log(`Inserted ${namesResult.rowCount} names into the generated_names table`)
+        const namesResult = await insertNames(pool, 500)
+        namesResult.rows.length ? console.log(`Inserted ${namesResult.rowCount} names into the generated_names table`) : null
 
         // seed decks
         const decksResult = await insertDecks(pool, 30)
-        console.log(`Inserted ${decksResult.rowCount} rows into the decks table`)
+        decksResult.rows.length ? console.log(`Inserted ${decksResult.rowCount} rows into the decks table`) : null
 
         //seed 9 questions for every deck
         const questionPromises = decksResult.rows.map((res) => {

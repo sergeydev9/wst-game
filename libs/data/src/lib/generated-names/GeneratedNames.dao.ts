@@ -1,4 +1,5 @@
 import { Pool, QueryResult } from 'pg';
+import { NameObject } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
 export interface NameChoice {
@@ -33,13 +34,27 @@ class GeneratedNames extends Dao {
      * @return {*}  {Promise<QueryResult>}
      * @memberof GeneratedNames
      */
-    public async getChoices(num: number, clean = false): Promise<QueryResult> {
+    public getChoices(num: number, clean = false): Promise<QueryResult> {
         const query = {
             text: 'SELECT * FROM get_name_choices($1, $2)',
             values: [num, clean]
         }
 
         return this.pool.query(query);
+    }
+
+    public reportChoices(seen: number[], chosen: number): Promise<QueryResult>[] {
+        const seenQuery = {
+            text: `UPDATE generated_names SET times_displayed = times_displayed + 1 WHERE id = ANY($1)`,
+            values: [[...seen, chosen]]
+        }
+
+        const chosenQuery = {
+            text: 'UPDATE generated_names SET times_chosen = times_chosen + 1 WHERE id = $1',
+            values: [chosen]
+        }
+
+        return [this.pool.query(seenQuery), this.pool.query(chosenQuery)]
     }
 }
 

@@ -1,9 +1,11 @@
 import tw from "tailwind-styled-components";
-
-export default tw.textarea`
+export interface TextAreaProps {
+    $hasError?: boolean;
+}
+export default tw.textarea<TextAreaProps>`
     form-textarea
-    border-subtle-stroke
-    bg-subtle-primary
+    ${(p) => p.$hasError ? 'bg-red-subtle-fill border-red-base shadow-error' : 'bg-purple-subtle-fill border-purple-base'}
+    bg-purple-subtle-fill
     text-sm
     rounded-xl
     w-full

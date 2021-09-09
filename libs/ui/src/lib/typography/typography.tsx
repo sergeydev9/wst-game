@@ -54,12 +54,10 @@ export const Headline = tw.h4`
 
 export const LabelBig = tw.label`
     text-label-big
-    font-roboto
     font-medium
 `
 
 export const LabelSmall = tw.label`
     text-label-small
-    font-roboto
     font-medium
 `

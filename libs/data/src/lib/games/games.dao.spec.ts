@@ -1,46 +1,78 @@
 import { Pool } from 'pg';
 import { TEST_DB_CONNECTION } from '../util/testDbConnection';
 import { cleanDb } from '../util/cleanDb';
-import { setupGame, setupGamePlayer, setupQuestion } from '../util/testDependencySetup';
+import { setupGame, setupGamePlayer, setupOneDeck, setupQuestion } from '../util/testDependencySetup';
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
 import Games from './Games.dao';
 import Questions from '../questions/Questions.dao';
 import GamePlayers from '../game-players/GamePlayers.dao';
+import Users from '../users/Users.dao';
 
 describe('Games', () => {
     let pool: Pool;
     let games: Games;
+    let users: Users;
     let players: GamePlayers;
-    let game_id: number;
-    let deck_id: number;
-    let player_id: number;
-    const access_code = 'ABCDE'
+    let userId: number;
+    let deckId: number;
 
     beforeAll(async () => {
         pool = new Pool(TEST_DB_CONNECTION);
         games = new Games(pool);
         players = new GamePlayers(pool);
+        users = new Users(pool);
     })
 
     beforeEach(async () => {
         await cleanDb(pool);
-        [player_id, game_id, deck_id] = await setupGamePlayer(pool);
+        // save a deck, some questions, and a user.
+        deckId = await setupOneDeck(pool);
+        await setupQuestion(pool, 9, deckId)
+        const userResult = await users.register('email@test.com', 'password123')
+        userId = userResult.rows[0].id;
+
+
     })
 
     afterAll(() => {
         pool.end()
     })
 
+    describe('create', () => {
 
+        it('should insert a new game row', async () => {
+            const { rows } = await games.create(userId, deckId);
+
+            expect(rows.length).toEqual(1);
+            expect(rows[0].id).toBeDefined()
+            expect(rows[0].access_code).toBeDefined()
+        })
+
+        it('should create 9 game_questions for the game', async () => {
+            const gameRes = await games.create(userId, deckId);
+
+            const getQuesetions = {
+                text: 'SELECT * FROM game_questions WHERE game_questions.game_id = $1',
+                values: [gameRes.rows[0].id]
+            }
+
+            const { rows } = await pool.query(getQuesetions);
+            expect(rows.length).toEqual(9)
+        })
+
+        it('should have 9 in total_questions column', async () => {
+            const gameRes = await games.create(userId, deckId);
+            const { rows } = await games.getById(gameRes.rows[0].id)
+            expect(rows[0].total_questions).toEqual(9)
+        })
+    })
 
     describe('getByAccessCode', () => {
 
-        beforeEach(async () => {
-            await setupGame(pool, access_code);
-        })
-
         it('should return a game  object if game exists', async () => {
-            const { rows } = await games.getByAccessCode(access_code)
+            const gameRes = await games.create(userId, deckId);
+
+            const { rows } = await games.getByAccessCode(gameRes.rows[0].access_code)
             expect(rows.length).toEqual(1)
         })
 
@@ -50,67 +82,12 @@ describe('Games', () => {
         })
     })
 
-    describe('setHost', () => {
-
-        it('should insert a new game_host record', async () => {
-            const { rows } = await games.setHost(game_id, player_id);
-            expect(rows[0].id).toBeDefined();
-        })
-
-        it('should delete the old host when a new one is created', async () => {
-            // get host for game query
-            const query = {
-                text: 'SELECT * FROM game_hosts WHERE game_id = $1',
-                values: [game_id]
-            }
-
-            // set initial player as host
-            await games.setHost(game_id, player_id);
-            const result1 = await pool.query(query);
-
-            // initial player is only host
-            expect(result1.rows.length).toEqual(1);
-            expect(result1.rows[0].game_player_id).toEqual(player_id)
-
-            // create second player and assign to same game
-            const { rows } = await players.insertOne({ ...TEST_GAME_PLAYERS[1], game_id });
-            const secondPlayer = rows[0]
-
-            // set second player as host
-            await games.setHost(game_id, secondPlayer.id);
-
-            // get host for game
-            const actual = await pool.query(query);
-
-            // there is only 1 host, and it's the second player.
-            expect(actual.rows.length).toEqual(1);
-            expect(actual.rows[0].game_player_id).toEqual(secondPlayer.id)
-        })
-    })
-
-    describe('getHost', () => {
-
-        it('should retrieve correct host', async () => {
-            // insert host
-            const { rows } = await games.setHost(game_id, player_id);
-            const hostId = rows[0].id;
-
-            // get host
-            const actual = await games.getHost(game_id);
-            const host = actual.rows[0];
-
-            // data from get host should match
-            expect(host.id).toEqual(player_id);
-            expect(host.player_name).toBeDefined();
-        })
-
-    })
-
     describe('setStartDate', () => {
 
         it('should set the end date of a game', async () => {
+            const gameRes = await games.create(userId, deckId);
             const date = new Date();
-            const { rows } = await games.setStartDate(game_id, date);
+            const { rows } = await games.setStartDate(gameRes.rows[0].id, date);
 
             // game should have start_date equal to input
             expect(rows[0].start_date).toEqual(date);
@@ -120,41 +97,77 @@ describe('Games', () => {
     describe('setEndDate', () => {
 
         it('should set the end date of a game', async () => {
+            const gameRes = await games.create(userId, deckId);
             const date = new Date();
-            const { rows } = await games.setEndDate(game_id, date);
+            const { rows } = await games.setEndDate(gameRes.rows[0].id, date);
 
             // game should have end_date equal to input
             expect(rows[0].end_date).toEqual(date);
         })
     })
 
-    // TODO: finish implementation in DB
-    // describe('getQuestions', () => {
+    describe('gameStatusByAccessCode', () => {
 
-    //     beforeEach(async () => {
-    //         // insert 5 game questions and add them to the game
-    //         await setupQuestion(pool, 5, deck_id);
-    //     })
+        it("should return status'lobby ", async () => {
+            const gameRes = await games.create(userId, deckId);
 
-    //     it('should return 5 game questions', async () => {
-    //         const { rows } = await games.getQuestions(game_id);
-    //         expect(rows.length).toEqual(5);
-    //     })
+            const { rows } = await games.gameStatusByAccessCode(gameRes.rows[0].access_code);
 
-    // })
+            expect(rows[0].status).toEqual('lobby')
+        })
+    })
 
-    // describe('create', () => {
+    describe('join', () => {
 
-    //     it('should insert a new game row', async () => {
-    //         const { access_code, status } = TEST_GAMES[0];
-    //         const { rows } = await games.insertOne({ access_code, status });
-    //         expect(rows.length).toEqual(1);
-    //     })
-    // })
+        it('should return complete game state with player id and player name, and the new host name correctly set', async () => {
+            const gameRes = await games.create(userId, deckId);
+            const actual = await games.join(gameRes.rows[0].access_code, 'Test Name', userId)
 
-    // describe('gameStateById')
+            expect(actual.status).toEqual('lobby');
+            expect(actual.isHost).toEqual(true);
+            expect(actual.deck).toBeDefined();
+            expect(actual.game_id).toBeDefined();
+            expect(actual.players.length).toEqual(1);
+            expect(actual.access_code).toEqual(gameRes.rows[0].access_code);
+            expect(actual.currentHostName).toEqual('Test Name');
+            expect(actual.currentQuestionIndex).toEqual(1);
+            expect(actual.totalQuestions).toEqual(9);
+            expect(actual.playerId).toBeDefined();
+        })
 
-    // describe('gameStateByAccessCode')
+        it('should throw if access code is wrong', async () => {
+            await games.create(userId, deckId);
+
+            try {
+                await games.join('wrongcode', 'Test Name', userId)
+
+            } catch (e) {
+                expect(e).toEqual(new Error('Game not found'))
+            }
+        })
+
+        it('should return complete game state with player id and player name, but no new host set if player not host', async () => {
+
+            const userResult = await users.register('email2@test.com', 'password1323')
+            const secondUserId = userResult.rows[0].id;
+            const gameRes = await games.create(userId, deckId);
+            const actual = await games.join(gameRes.rows[0].access_code, 'Test Name', secondUserId)
+
+            expect(actual.status).toEqual('lobby');
+            expect(actual.isHost).toEqual(false);
+            expect(actual.deck).toBeDefined();
+            expect(actual.game_id).toBeDefined();
+            expect(actual.players.length).toEqual(1);
+            expect(actual.access_code).toEqual(gameRes.rows[0].access_code);
+            expect(actual.currentHostName).not.toEqual('Test Name');
+            expect(actual.currentQuestionIndex).toEqual(1);
+            expect(actual.totalQuestions).toEqual(9);
+            expect(actual.playerId).toBeDefined();
+
+
+        })
+
+    })
 
     // describe('gameStateByPlayerId')
 

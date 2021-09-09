@@ -1,2 +1,3 @@
-export { default as passport } from './lib/authentication/jwtStrategy';
-export { default as signUserPayload } from './lib/authentication/signUserPayload';
+export { default as passport } from './lib/jwtStrategy';
+export { default as gameHeaderPass } from './lib/gameHeaderStrategy';
+export * from './lib/signTokens';

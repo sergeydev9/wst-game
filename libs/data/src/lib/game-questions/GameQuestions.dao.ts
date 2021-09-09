@@ -6,7 +6,7 @@ class GameQuestions extends Dao {
         super(pool, 'game_questions')
     }
 
-    public async generate(gameId: number, numQuestions?: number): Promise<QueryResult> {
+    public generate(gameId: number, numQuestions?: number): Promise<QueryResult> {
         const query = {
             text: 'SELECT * from generate_game_questions($1, $2)',
             values: [gameId, numQuestions]

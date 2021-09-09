@@ -6,6 +6,13 @@ const path = require('path');
 rootMain.stories.push(
   ...['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)']
 );
+rootMain.addons.push(...[ "@storybook/addon-events",
+"@storybook/addon-actions",
+'storybook-axios/register',
+'storybook-formik/register',
+])
+
+rootMain.addons.push('addon-redux')
 
 rootMain.addons.push({
   name: '@storybook/addon-storysource',
@@ -21,6 +28,7 @@ rootMain.addons.push({
       },
     ],
   },
+
 });
 
 module.exports = rootMain;

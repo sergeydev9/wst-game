@@ -1,6 +1,3 @@
-import React from 'react';
-
-
 /**
  * Used for label/input pairs. Applies text-left so that label
  * isn't moved to the center when placed in a text-center
@@ -9,8 +6,8 @@ import React from 'react';
  * @param {*} { children }
  * @return {*}
  */
-const FormGroup: React.FC = ({ children }) => {
-    return <div className="text-left">{children}</div>
+const FormGroup: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = ({ children }) => {
+    return <div className="text-left mb-4">{children}</div>
 }
 
 export default FormGroup;

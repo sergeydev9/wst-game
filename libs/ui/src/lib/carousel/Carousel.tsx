@@ -5,20 +5,20 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel as Crsl } from "react-responsive-carousel"
 
 import Box from '../box/Box';
+import { Title3 } from '../typography/Typography';
+import { IRenderArrow } from '@whosaidtrue/app-interfaces';
 
-export interface CarouselProps {
-    title: React.ReactElement;
+export interface CarouselProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
+    title: string;
 }
 
-interface IRenderArrow {
-    (clickHandler: () => void, hasNext: boolean, label: string): React.ReactNode
-}
+
 
 const Carousel: React.FC<CarouselProps> = ({ title, children }) => {
 
     // use inline css for more fine grained control than tailwind provides.
     const arrowStyles: CSSProperties = {
-        zIndex: 2,
+        zIndex: 1,
         width: 30,
     };
 
@@ -34,10 +34,10 @@ const Carousel: React.FC<CarouselProps> = ({ title, children }) => {
     )
 
     return (
-        <Box>
-            {title}
+        <Box boxstyle="white" className="text-basic-black py-6">
+            <Title3 className="mb-4">{title}</Title3>
             <Crsl
-                className="font-body-large mt-4 leading-8"
+                className="leading-7 text-body-small font-semibold"
                 showStatus={false}
                 showIndicators={false}
                 showThumbs={false}

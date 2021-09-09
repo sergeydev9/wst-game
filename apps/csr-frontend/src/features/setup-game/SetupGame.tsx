@@ -1,12 +1,19 @@
 import { Title1, Button } from '@whosaidtrue/ui';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 const SetUpGame: React.FC = () => {
+    const history = useHistory();
+
+    const handler = () => {
+        history.push('/decks')
+    }
     return (
-        <section className="flex flex-col gap-4 items-center">
-            <Title1>Set Up a Game</Title1>
-            <p>Create a new game for your group</p>
-            <Button>Create Game</Button>
+        <section className="text-center w-full h-full py-8 px-6">
+            <Title1 className="mb-7">Host a Game</Title1>
+            <div className="flex justify-center">
+                <Button type="button" onClick={handler}>Get Started!</Button>
+            </div>
         </section>
     )
 }

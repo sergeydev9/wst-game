@@ -1,14 +1,21 @@
 import App from './app/App'
 import { pool } from './app/db'
+import { logger } from '@whosaidtrue/logger';
 
 const app = new App();
 
 app.listen();
 
+// test db connection, end process if db unreachable
+(async () => {
+    try {
+        await pool.connect();
+    } catch {
+        logger.fatal('Database unreachable. Exiting node process')
+        process.exit(1);
+    }
+
+})();
+
 // no dangling connections
-process.on('beforeExit', () => pool.end())
 process.on('exit', () => pool.end())
-process.on('uncaughtException', () => pool.end())
-process.on('SIGINT', () => pool.end())
-process.on('SIGQUIT', () => pool.end())
-process.on('SIGTERM', () => pool.end())

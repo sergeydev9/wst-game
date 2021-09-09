@@ -26,10 +26,7 @@ const Template = () => {
         )
     })
 
-
-    const title = <Title3>Overheard on Who Said True?</Title3>
-
-    return <StoryCarousel title={title}>{helper(stories)}</StoryCarousel>
+    return <StoryCarousel title={'Overheard on Who Said True?'}>{helper(stories)}</StoryCarousel>
 }
 
 export const Carousel = Template.bind({})

@@ -1,2 +1,3 @@
 import { query } from 'express-validator'
-export const deckDetails = [query('deck_id').isNumeric()]
+import validate from './validate'
+export const deckDetails = [query('deck_id').isNumeric(), validate]

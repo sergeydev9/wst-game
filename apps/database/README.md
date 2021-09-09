@@ -129,12 +129,11 @@ The following is a comprehensive list of the current list of tables in the Datab
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
 email | varchar(1000) | no | yes
-password | varchar(1000) | no | no
+password | varchar(1000) | yes | no
 roles | user_role[] | no | no |
 question_deck_credits | smallint | no | no | 0
 test_account | boolean | no | no | false
 notifiactions | boolean | no | no | false
-password_reset_code | varchar(4) | yes | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
@@ -143,7 +142,7 @@ updated_at | timestamptz | no | no | now()
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-name | varchar(200) | no | yes
+name | varchar(1000) | no | yes
 sort_order | smallint | no | no
 clean | boolean | no | no
 age_rating | smallint | no | no
@@ -162,8 +161,12 @@ updated_at | timestamptz | no | no | now()
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-access_code | varchar(200) | yes | yes
+access_code | varchar(10) | yes | yes
 status | varchar(100) | no | no
+total_questions | smallint | no | no | 0
+current_question_index | smallint | no | no | 1
+host_player_name | varchar(200) | yes | no
+host_id | integer | yes | no | | users | SET NULL
 deck_id | integer | no | no | | decks | SET NULL
 start_date | timestamptz | yes | no
 end_date | timestamptz | yes | no
@@ -194,13 +197,14 @@ game_id | integer | no | no | | games | CASCADE
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
-### **game_users**
+### **user_question_ratings**
 
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-user_id | integer | no | no | | users | CASCADE
-game_id | integer | no | no | | games | CASCADE
+question_id | integer | no | no | | decks | CASCADE
+user_id | integer | yes | no | | orders | SET NULL
+rating | user_rating | no | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
@@ -213,16 +217,6 @@ question_sequence_index | smallint | no | no
 question_id | integer | yes | no | | questions | SET_NULL
 reader_id | integer | yes | no | | game_players | SET_NULL
 game_id | integer | no | no | | games | CASCADE
-created_at | timestamptz | no | no | now()
-updated_at | timestamptz | no | no | now()
-
-### **game_hosts**
-
-| Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
----| --- | --- | --- | --- | --- | ---
-id | integer | no | yes
-game_id | integer | no | yes | | games | CASCADE
-player_id | integer | no | no || game_players | CASCADE
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
@@ -280,19 +274,20 @@ updated_at | timestamptz | no | no | now()
 id | integer | no | yes
 user_id | integer | yes | no | | users | SET NULL
 deck_id | integer | yes | no | | decks | SET NULL
-purchase_price | money | no | no
-fulfilled_on | timestamptz | yes | no
+status: | varchar(100) | no
+credits_used | boolean | no | no | false
+charge_data: | jsonb | yes
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
-### **user_question_ratings**
+### **reset_codes**
 
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-question_id | integer | no | no | | decks | CASCADE
-user_id | integer | yes | no | | orders | SET NULL
-rating | user_rating | no | no
+user_id | integer | yes | no | | users | SET NULL
+user_email | varchar(1000) | no | yes
+code: | text | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
@@ -305,7 +300,7 @@ Some custom types have been created to improve database performance. Column stha
 ---|---
 deck_status | "active", "inactive", "pending"
 question_status | "active", "inactive", "poll"
-user_role | "admin", "user"
+user_role | "admin", "user", "guest", "test"
 answer_value | "true", "false", "pass"
 user_rating | "great", "bad"
 
@@ -349,27 +344,32 @@ SELECT * FROM user_owned_decks(USER_ID)
 - *parameters:* user_id
 - *returns:* List of Decks.
 
-Returns all decks that the specified user does NOT own.
+Returns all decks that the specified user does NOT own, and that have a purchase price
+greater than 0 (free decks are counted as 'owned' in the UI)
 
 ```sql
 SELECT * FROM user_owned_decks(USER_ID)
 ```
 
-### get_game_host
+### delete_reset_codes
 
-- *parameters:* game_id
-- *returns:* id, player_name
+- *parameters:* none
+- *returns:* void
 
-Get player info for game host.
+Delete all password reset codes older than 1 day.
+Call this function from an exteranl cron job.
 
-```sql
-SELECT * FROM get_game_host(GAME_ID)
-```
+### upsert_reset_code
 
-### delete_host_for_game
+- *parameters:* u_email varchar(1000), r_code varchar(4)
+- *returns:* id integer
 
-Deletes any existing game_host rows with the same game_id as the row being inserted.
-Cannot be called directly. Only returns a trigger function.
+Saves encrypted password reset code for a user with the given email, and
+returns the user's id.
+
+If the user already has a reset code, replaces old code with new value.
+
+If the user doesn't exist, returns an empty array.
 
 ### get_name_choices
 
@@ -394,13 +394,6 @@ Sets the updated_at column of modified rows to the current time if and only if t
 
 Every table has a copy of this trigger. It runs after every update operation.
 
-### **delete_host**
-
-- *function:* delete_host_for_game
-
-When a new host is added to the game_hosts table, any existing hosts with the same game_id are deleted.
-This ensures a game only ever has 1 host.
-
 ## Indexes
 
 ----
@@ -410,15 +403,17 @@ Multi-column unique indexes prevent two rows from having the same set of values 
 
 The following is a comprehensive list of the current database indexes:
 
-**single unique columns have an implied index, and are not listed here*
+**single unique columns (e.g. users.email, reset_codes.user_email ) have an implied index, and are not listed here*
 
 table | columns | unique
 |---|---|---
 | game_questions | game_id, question_sequence_index | yes
 | game_players | game_id, player_name | yes
+| game_players | user_id | yes
 | game_answers | question_id | no
 | questions | deck_id | no
 | user_decks | user_id deck_id | yes
+| decks | purchase_price | no
 
 ## Extensions
 
@@ -439,6 +434,16 @@ Enabled extensions:
 ### active_decks
 
 Returns all decks that have the value `active` in the `status` column. Returns all columns.
+
+### free_decks
+
+eturns all decks that have the value `active` in the `status` column.
+and a purchase price of `0`. Returns only columns meant for public display.
+
+### not_free_decks
+
+eturns all decks that have the value `active` in the `status` column.
+and a purchase price above `0`. Returns only columns meant for public display.
 
 ### active_questions
 

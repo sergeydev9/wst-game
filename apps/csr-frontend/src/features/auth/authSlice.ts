@@ -1,17 +1,22 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
-// local imports
-import { history } from "../../app/hooks";
-import { ROUTES } from "../../util/constants";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import login, { LoginResponse } from "./authAPI";
+import { api } from '../../api';
 
 export interface AuthState {
-  status: "loggedOut" | "loggedIn" | "loading" | "failed";
+  loggedIn: boolean;
+  isGuest: boolean;
   token: string;
-  userId: string;
+  id: number;
   email: string;
-  errorMessage: string;
+  roles: string[];
+  deckCredits: number;
+  authError: string;
+  fetchDetailsError: string;
+  updateError: string;
+}
+
+export interface UserDetailsUpdate {
+  email: string;
 }
 
 export interface logInProps {
@@ -19,26 +24,63 @@ export interface logInProps {
   password: string;
 }
 
+export interface LoginActionPayload {
+  token: string,
+  id: number,
+  email: string,
+  roles: string[]
+}
+
 export const initialState: AuthState = {
-  status: "loggedOut",
-  token: "",
-  userId: "",
-  errorMessage: "",
-  email: "",
+  loggedIn: false,
+  isGuest: false,
+  roles: [],
+  token: '',
+  id: 0,
+  deckCredits: 0,
+  email: '',
+  authError: '',
+  fetchDetailsError: '',
+  updateError: ''
 };
 
-export const logInThunk = createAsyncThunk<LoginResponse, logInProps, { rejectValue: string }>(
-  "auth/login",
-  async ({ email, password }, { rejectWithValue }) => {
-    try {
-      const response = await login(email, password);
-      return (await response.json()) as LoginResponse;
-    } catch (e) {
-      // TODO: Look over this logic. May want to display different messages for server error or authentication failure.
-      return rejectWithValue("login failed");
-    }
+export const setErrorThunk = createAsyncThunk("auth/setErrorThunk",
+  async (errorMessage: string, thunkAPI) => {
+    // display error
+    thunkAPI.dispatch(setError(errorMessage))
+
+    //clear error after 5 seconds
+    setTimeout(() => thunkAPI.dispatch(clearError()), 2000)
+
   }
-);
+)
+
+// TODO: use details endpoint to retrieve notifications when that feature gets added.
+export const fetchDetails = createAsyncThunk('auth/fetchDetails',
+  async (_, { rejectWithValue, dispatch }) => {
+
+    return api.get('/user/details').then(response => {
+      return response.data
+    }).catch(e => {
+      setTimeout(() => dispatch(clearError()), 2000)
+      return rejectWithValue(e.response.data)
+    })
+
+  }
+)
+
+export const updateAccount = createAsyncThunk<UserDetailsUpdate, { email: string }>('auth/updateAccount',
+  async ({ email }, { rejectWithValue, dispatch }) => {
+
+    return api.patch('/user/update', { email }).then(response => {
+      return response.data
+    }).catch(e => {
+      setTimeout(() => dispatch(clearError()), 2000)
+      return rejectWithValue(e.response.data)
+    })
+
+  }
+)
 
 export const authSlice = createSlice({
   name: "auth",
@@ -47,36 +89,66 @@ export const authSlice = createSlice({
     logout: () => {
       return initialState;
     },
+    login: (state, action: PayloadAction<LoginActionPayload>) => {
+      const { token, email, id, roles } = action.payload
+
+      if (roles.some(role => role === 'guest')) {
+        state.isGuest = true;
+      }
+      state.token = token;
+      state.email = email;
+      state.id = id;
+      state.roles = roles;
+      state.loggedIn = true
+    },
+    setError: (state, action) => {
+      state.authError = action.payload
+    },
+    clearError: (state) => {
+      state.authError = '';
+      state.fetchDetailsError = '';
+      state.updateError = ''
+    }
   },
+
   extraReducers: (builder) => {
-    // pending
-    builder.addCase(logInThunk.pending, (state: AuthState) => {
-      state.status = "loading";
-    });
+    builder.addCase(fetchDetails.fulfilled, (state, action) => {
+      state.deckCredits = action.payload.question_deck_credits;
+    })
+    builder.addCase(fetchDetails.rejected, (state, action) => {
+      state.deckCredits = 0;
+      if (typeof action.payload === 'string') {
+        state.updateError = action.payload
 
-    //fail
-    builder.addCase(logInThunk.rejected, (state: AuthState, action) => {
-      state.status = "failed";
-      state.errorMessage = action.payload as string;
-      state.token = "";
-      state.userId = "";
-    });
-    // success
-    builder.addCase(logInThunk.fulfilled, (state: AuthState, { payload }) => {
-      if (!payload) throw new Error("no payload received");
-      state.status = "loggedIn";
-      state.errorMessage = "";
-      state.email = payload.user.email;
-      state.userId = payload.user.id;
-      state.token = payload.token;
+      } else {
+        state.updateError = 'An unexpected error has occured while retrieving account details. Please try again later.'
+      }
+    })
 
-      // nav to home on login success
-      history.push(ROUTES.home);
-    });
-  },
+    builder.addCase(updateAccount.fulfilled, (state, action) => {
+      state.email = action.payload.email
+    })
+    builder.addCase(updateAccount.rejected, (state, action) => {
+      if (typeof action.payload === 'string') {
+        state.updateError = action.payload
+
+      } else {
+        state.updateError = 'An unexpected error has occured while updating account. Please try again later.'
+      }
+    })
+  }
 });
 
+export const { login, logout, setError, clearError } = authSlice.actions;
+
 export const selectAuthToken = (state: RootState) => state.auth.token;
-export const selectAuthStatus = (state: RootState) => state.auth.status;
+export const isLoggedIn = (state: RootState) => state.auth.loggedIn;
+export const selectDeckCredits = (state: RootState) => state.auth.deckCredits;
+export const selectEmail = (state: RootState) => state.auth.email;
+export const selectAuthError = (state: RootState) => state.auth.authError;
+export const selectDetailsError = (state: RootState) => state.auth.fetchDetailsError;
+export const selectUpdateError = (state: RootState) => state.auth.updateError;
+export const selectRoles = (state: RootState) => state.auth.roles;
+export const selectIsGuest = (state: RootState) => state.auth.isGuest;
 
 export default authSlice.reducer;

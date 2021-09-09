@@ -16,7 +16,7 @@ class Decks extends Dao {
      * @return {*}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async getDetails(id: number): Promise<QueryResult> {
+    public getDetails(id: number): Promise<QueryResult> {
         const query = {
             text: 'SELECT id, name, sort_order, clean, age_rating, movie_rating, sfw, status, description, purchase_price, example_question, thumbnail_url FROM active_decks WHERE id = $1',
             values: [id]
@@ -24,7 +24,7 @@ class Decks extends Dao {
         return this.pool.query(query);
     }
 
-    public async insertOne(deck: IInsertDeck): Promise<QueryResult> {
+    public insertOne(deck: IInsertDeck): Promise<QueryResult> {
         const {
             name,
             sort_order,
@@ -77,7 +77,7 @@ class Decks extends Dao {
      * @return {*}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async getByMovieRating(movieRating: MovieRating): Promise<QueryResult> {
+    public getByMovieRating(movieRating: MovieRating): Promise<QueryResult> {
         const query = {
             text: `SELECT (
                 id,
@@ -105,7 +105,7 @@ class Decks extends Dao {
      * @return {*}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async lessThanAgeRating(ageRating: number): Promise<QueryResult> {
+    public lessThanAgeRating(ageRating: number): Promise<QueryResult> {
         const query = {
             text: `SELECT (
                 id,
@@ -134,9 +134,9 @@ class Decks extends Dao {
      * @return {*}
      * @memberof Decks
      */
-    public async getUserDecks(userId: number): Promise<QueryResult> {
+    public getUserDecks(userId: number): Promise<QueryResult> {
         const query = {
-            text: 'SELECT * from user_owned_decks($1)',
+            text: 'SELECT * from user_owned_decks($1) UNION ALL (SELECT * FROM free_decks)',
             values: [userId]
         }
         return this.pool.query(query);
@@ -155,7 +155,7 @@ class Decks extends Dao {
      * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async getNotOwned(userId: number): Promise<QueryResult> {
+    public getNotOwned(userId: number): Promise<QueryResult> {
         const query = {
             text: 'SELECT * from user_not_owned_decks($1)',
             values: [userId]
@@ -180,7 +180,7 @@ class Decks extends Dao {
      * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async userDeckSelection(options: UserDeckSelectionOptions): Promise<QueryResult> {
+    public userDeckSelection(options: UserDeckSelectionOptions): Promise<QueryResult> {
         const { userId, pageNumber, pageSize, ageRating } = options;
 
         let queryString: string;
@@ -205,6 +205,8 @@ class Decks extends Dao {
      * Call this method when someone that doesn't have an account
      * needs to be shown some decks.
      *
+     * Only returns decks with purchase price > 0.
+     *
      * options:
      *  - pageNumber: sets the number of decks to skip
      *
@@ -217,16 +219,16 @@ class Decks extends Dao {
      * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async deckSelection(options: DeckSelectionOptions): Promise<QueryResult> {
+    public guestDeckSelection(options: DeckSelectionOptions): Promise<QueryResult> {
         const { pageNumber, pageSize, ageRating } = options;
 
         let queryString: string;
         let valueArray: number[];
         if (!ageRating) {
-            queryString = `SELECT * from active_decks ORDER BY id OFFSET $1 LIMIT $2`
+            queryString = `SELECT * from not_free_decks ORDER BY id OFFSET $1 LIMIT $2`
             valueArray = [pageNumber * pageSize, pageSize]
         } else {
-            queryString = `SELECT * from active_decks WHERE active_decks.age_rating < $3 ORDER BY id OFFSET $1 LIMIT $2`
+            queryString = `SELECT * from not_free_decks WHERE not_free_decks.age_rating < $3 ORDER BY id OFFSET $1 LIMIT $2`
             valueArray = [pageNumber * pageSize, pageSize, ageRating]
         }
 
@@ -238,6 +240,13 @@ class Decks extends Dao {
         return this.pool.query(query)
     }
 
+    /**
+     * Get all free decks.
+     */
+    public getFreeDecks(): Promise<QueryResult> {
+        return this.pool.query('SELECT * FROM free_decks')
+    }
+
 
     /**
      * Get all active questions for specified deck.
@@ -246,7 +255,7 @@ class Decks extends Dao {
      * @return {Question[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public async getQuestions(deckId: number): Promise<QueryResult> {
+    public getQuestions(deckId: number): Promise<QueryResult> {
         const query = {
             text: 'SELECT * from active_questions AS questions WHERE questions.deck_id = $1',
             values: [deckId]
@@ -259,7 +268,7 @@ class Decks extends Dao {
      *
      * THIS IS A TEMPORARY FAKE IMPLEMENTATION.
      */
-    public async purchase(deckId: number, userId: number, purchase_price: string): Promise<QueryResult> {
+    public purchase(deckId: number, userId: number, purchase_price: string): Promise<QueryResult> {
 
         const query = {
             text: 'INSERT INTO orders (deck_id, user_id, fulfilled_on, purchase_price) VALUES ($1, $2, $3, $4) returning id',
@@ -267,8 +276,7 @@ class Decks extends Dao {
         }
         return this.pool.query(query)
     }
-    // TODO: need this?
-    // public async checkIfUserOwns(deckId: number): Promise<QueryResult> {}
+
 
 }
 

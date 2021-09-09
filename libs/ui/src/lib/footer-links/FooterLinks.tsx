@@ -9,6 +9,8 @@ export default tw.section`
     gap-6
     sm:gap-12
     sm:flex-row
-    text-primary
+    text-headline
+    font-bold
+    text-purple-base
     py-2
 `

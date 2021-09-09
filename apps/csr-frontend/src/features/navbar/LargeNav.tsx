@@ -1,29 +1,19 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectAuthStatus } from '../auth/authSlice';
+import { Link, useLocation } from 'react-router-dom';
+import { useAppSelector } from '../../app/hooks';
+import { isLoggedIn } from '../auth/authSlice';
+import { Button } from '@whosaidtrue/ui';
+import GuestButtons from './GuestButtons';
 
-import { DropShadowButton } from '@whosaidtrue/ui';
-import { ROUTES } from "../../util/constants";
 
-const unauthenticatedButtons = () => (
-    <>
-        <DropShadowButton buttonstyle="solid">Login</DropShadowButton>
-        <DropShadowButton buttonstyle="border-light">Create Account</DropShadowButton>
-    </>
-)
 
 const LargeNav: React.FC = () => {
+    const loggedIn = useAppSelector(isLoggedIn);
+    const location = useLocation();
 
-    const loggedIn = useSelector(selectAuthStatus);
-
-    const linkClass = "text-primary"
     return (
-        <nav className="hidden md:flex md:flex-row font-bold text-body-small md:justify-end gap-8 h-full items-center">
-            <NavLink to="/who-said-true-school" className={linkClass}>Who Said true For Schools</NavLink>
-            <NavLink to="/how-to-play" className={linkClass}>How to Play</NavLink>
-            <NavLink to={ROUTES.contactUs} className={linkClass}>Contact Us</NavLink>
-            {loggedIn === "loggedIn" ? <DropShadowButton buttonstyle="border-thick">My Account</DropShadowButton> : unauthenticatedButtons()}
+        <nav className="flex flex-row font-bold text-body-small justify-end gap-6 h-full items-center">
+            <Link to="/who-said-true-school" className={location.pathname === '/' ? 'text-white-ish' : 'text-purple-base'}>Who Said true For Schools</Link>
+            {loggedIn ? <Button type="button" buttonStyle='small' $secondary ><Link to='/account'>My Account </Link></Button> : <GuestButtons />}
         </nav>
     )
 }

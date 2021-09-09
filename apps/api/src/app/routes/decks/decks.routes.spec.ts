@@ -12,8 +12,7 @@ import { signUserPayload } from '@whosaidtrue/middleware';
 const mockedDecks = mocked(decks, true)
 jest.mock('../../db')
 
-
-describe('/decks routes', () => {
+describe('decks routes', () => {
     let app: Application;
 
     beforeAll(() => {
@@ -23,12 +22,44 @@ describe('/decks routes', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     })
-
-    describe('[GET] /decks?id=', () => {
-
-    })
-
+    /** DEV_NOTE
+     * These tests are fairly specific to the implementation.
+     * Should maybe replace these with a broader integration test
+     * at some point in the future when it makes sense to do so.
+     */
     describe('[GET] /selection', () => {
+
+        it('should have owned and notOwned attributes in successful response if logged in', async () => {
+            mockedDecks.getUserDecks.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.userDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+
+            // create valid token
+            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+            const result = await supertest(app)
+                .get('/decks/selection')
+                .set('Authorization', `Bearer ${token}`)
+                .expect('Content-Type', /json/)
+                .expect(200)
+
+            expect(result.body.owned).toBeDefined()
+            expect(result.body.notOwned).toBeDefined()
+
+        })
+
+        it('should have owned and notOwned attributes in successful response if not logged in', async () => {
+            mockedDecks.guestDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.getFreeDecks.mockResolvedValue({ rows: [] } as QueryResult)
+
+
+            const result = await supertest(app)
+                .get('/decks/selection')
+                .expect('Content-Type', /json/)
+                .expect(200)
+
+            expect(result.body.owned).toBeDefined()
+            expect(result.body.notOwned).toBeDefined()
+
+        })
 
         it('should get user decks if there is a valid token in header', async () => {
             mockedDecks.getUserDecks.mockResolvedValue({ rows: [] } as QueryResult)
@@ -47,20 +78,21 @@ describe('/decks routes', () => {
         })
 
         it('should get guest decks if no token', async () => {
-            mockedDecks.deckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.guestDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.getFreeDecks.mockResolvedValue({ rows: [] } as QueryResult)
 
             await supertest(app)
                 .get('/decks/selection')
                 .expect('Content-Type', /json/)
                 .expect(200)
 
-
             expect(mockedDecks.getUserDecks).not.toBeCalled();
-            expect(mockedDecks.deckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
+            expect(mockedDecks.guestDeckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
         })
 
         it('should get guest decks if bad token', async () => {
-            mockedDecks.deckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.guestDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.getFreeDecks.mockResolvedValue({ rows: [] } as QueryResult)
 
             const token = jwt.sign('bad', 'token')
             await supertest(app)
@@ -69,9 +101,8 @@ describe('/decks routes', () => {
                 .expect('Content-Type', /json/)
                 .expect(200)
 
-
             expect(mockedDecks.getUserDecks).not.toBeCalled();
-            expect(mockedDecks.deckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
+            expect(mockedDecks.guestDeckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
         })
     })
 

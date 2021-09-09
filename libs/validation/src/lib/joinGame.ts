@@ -1,2 +1,3 @@
-import { query } from 'express-validator';
-export const joinGame = [query('access_code').isString().isLength({ min: 7 })]
+import { body } from 'express-validator';
+import validate from './validate';
+export const joinGame = [body('access_code').isString().isLength({ min: 6, max: 6 }), body('name').isString(), validate]

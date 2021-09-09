@@ -1,13 +1,14 @@
 import tw from "tailwind-styled-components";
 
-export default tw.input`
+export interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> { $border?: boolean, $hasError?: boolean }
+export default tw.input<TextInputProps>`
+        ${(p) => p.$border && !p.$hasError ? 'border-purple-base' : ''}
+        ${(p) => p.$hasError ? 'bg-red-subtle-fill border-red-base shadow-error' : 'bg-purple-subtle-fill'}
         form-input
         w-full
         px-3
         py-4
-        placeholder-gray-400
-        border-subtle-stroke
-        bg-subtle-primary
+        placeholder-basic-gray
         text-sm
         rounded-xl
     `;

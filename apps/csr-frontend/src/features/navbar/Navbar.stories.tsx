@@ -1,29 +1,37 @@
 import Nav from './Navbar';
-import authReducer from '../auth/authSlice';
-import { routerDecorator, createStore, storeDecorator } from '@whosaidtrue/util';
+import { routerDecorator } from '@whosaidtrue/util';
 import { withReactContext } from 'storybook-react-context';
 import { Story as StoryType, Meta } from "@storybook/react";
 import { ARG_REDUX_PATH } from 'addon-redux';
 
-const store = createStore([{ reducer: authReducer, key: 'auth' }]);
-
 export default {
     component: Nav,
     title: 'Sections/Navbar',
-    decorators: [withReactContext, routerDecorator, storeDecorator(store)],
+    decorators: [withReactContext, routerDecorator],
     argTypes: {
         loggedIn: {
             [ARG_REDUX_PATH]: 'auth.status',
-            control: {
-                type: 'select',
-                options: ["loggedIn", "loggedOut", "loading", "failed"]
+            table: {
+                disable: true
             }
-        }
+        },
+        inGame: {
+            [ARG_REDUX_PATH]: 'game.status',
+            table: {
+                disable: true
+            }
+        },
+        playerName: {
+            [ARG_REDUX_PATH]: 'game.playerName',
+            table: {
+                disable: true
+            }
+        },
     }
 
 } as Meta;
 
-const Template: StoryType = (args) => {
+const Template: StoryType = () => {
     return <Nav />
 
 }
@@ -31,11 +39,19 @@ const Template: StoryType = (args) => {
 export const LoggedIn = Template.bind({})
 
 LoggedIn.args = {
-    loggedIn: "loggedIn"
+    loggedIn: "loggedIn",
 }
 
-export const loggedOut = Template.bind({})
+export const LoggedOut = Template.bind({})
 
-loggedOut.args = {
-    loggedIn: "loggedOut"
+LoggedOut.args = {
+    loggedIn: "loggedOut",
+}
+
+export const InGame = Template.bind({})
+
+InGame.args = {
+    loggedIn: "loggedIn",
+    inGame: "playing",
+    playerName: 'Mystic Tycoon'
 }

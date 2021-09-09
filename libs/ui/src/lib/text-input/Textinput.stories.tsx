@@ -1,11 +1,18 @@
-import Input from "./TextInput";
-import { Meta } from "@storybook/react";
+import Input, { TextInputProps } from "./TextInput";
+import { Meta, Story } from "@storybook/react";
 
 export default {
     component: Input,
     title: "Inputs/Text Input",
     argTypes: {
-        light: {
+        $border: {
+            name: '$border',
+            type: 'boolean',
+            default: true
+
+        },
+        error: {
+            name: 'error',
             type: 'boolean',
             default: false
         }
@@ -13,4 +20,9 @@ export default {
 } as Meta;
 
 
-export const TextInput = () => <Input type="text" placeholder="4 letter game code" />
+export const TextInput: Story<TextInputProps> = (args) => <div className="w-56"><Input {...args} type="text" placeholder="4 letter game code" /></div>
+
+TextInput.args = {
+    $border: true,
+    error: false
+}

@@ -12,8 +12,8 @@ abstract class Dao {
 
     public async getById(id: number) {
         const query = {
-            text: `SELECT * FROM $2 WHERE id = $1`,
-            values: [id, this.tableName]
+            text: `SELECT * FROM ${this.tableName} WHERE id = $1`,
+            values: [id]
         }
         return this._pool.query(query);
     }

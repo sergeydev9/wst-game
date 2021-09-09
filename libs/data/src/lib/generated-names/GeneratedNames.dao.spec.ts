@@ -23,8 +23,20 @@ describe('GeneratedNames', () => {
     })
 
     describe('reportChoices', () => {
+        let nameIds: number[];
+
+        beforeEach(async () => {
+            const { rows } = await pool.query(insertNamesQuery(30))
+            nameIds = rows.map(el => el.id)
+        })
+
         it('should successfully report a set of choices', async () => {
-            //TODO: finish
+            const chosen = nameIds.pop();
+            await Promise.all(names.reportChoices(nameIds, chosen));
+
+            const { rows } = await pool.query('SELECT times_chosen, times_displayed FROM generated_names WHERE id = $1', [chosen])
+            expect(rows[0].times_displayed).toEqual(1);
+            expect(rows[0].times_chosen).toEqual(1);
         })
     })
 

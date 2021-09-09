@@ -5,11 +5,32 @@ export interface UserStory {
     lines: string[];
 }
 
+export type RequestStatus = 'idle' | 'loading';
 export type QuestionStatus = 'active' | 'inactive' | 'poll';
 export type UserRating = 'great' | 'bad';
 export type DeckStatus = 'active' | 'inactive' | 'pending';
 export type AnswerValue = 'true' | 'false' | 'pass';
 export type UserRole = 'user' | 'admin';
+
+export type GameStatus = 'lobby'
+    | 'inProgress'
+    | 'postGame'
+    | 'finished'
+
+// TODO: clean up statuses that don't get used
+/**
+ * Status of game for the user on front end.
+ */
+export type UserGameStatus = 'notInGame'
+    | 'gameCreateSuccess'
+    | 'gameCreateError'
+    | 'connecting'
+    | 'removed'
+    | 'disconnected'
+    | 'gameCreateError'
+    | 'choosingName'
+    & GameStatus
+
 
 /**
  * type of objects for insertOne functions is always going to be the
@@ -21,26 +42,39 @@ export type Insert<T> = Omit<T, 'id' | 'created_at' | 'updated_at'>;
 /**
  * Type used to define the movie rating column on decks
  */
-export type MovieRating = 'G' | 'PG' | 'PG-13' | 'R' //TODO: check what actual possible values are.
+export type MovieRating = "G" | "PG" | "PG-13" | "R" //TODO: check what actual possible values are.
+
 
 /**
  * This type is a union of the names of the theme colors. Used to type variables that must
  * be one of the theme's color options
  */
-export type ThemeColor = 'primary'
-    | 'subtle-stroke'
-    | 'subtle-primary'
-    | 'subtle-bg'
-    | 'basic-black'
+export type ThemeColor = 'purple-light'
+    | 'purple-base'
+    | 'purple-dark'
+    | 'purple-gradient'
+    | 'purple-subtle-fill'
+    | 'purple-subtle-stroke'
+    | 'purple-card-bg'
+    | 'yellow-base'
+    | 'yellow-dark'
+    | 'blue-base'
     | 'white-ish'
     | 'true-white'
+    | 'basic-black'
+    | 'basic-gray'
+    | 'light-gray'
     | 'green-base'
     | 'green-subtle-stroke'
-    | 'green-subtle'
+    | 'green-subtle-fill'
     | 'red-base'
     | 'red-subtle-stroke'
-    | 'red-subtle'
-    | 'red-light';
+    | 'red-subtle-fill'
+    | 'red-light'
+
+export interface IRenderArrow {
+    (clickHandler: () => void, hasNext: boolean, label: string): React.ReactNode
+}
 
 export interface DeckSelectionOptions {
     pageSize: number;
@@ -49,6 +83,21 @@ export interface DeckSelectionOptions {
 }
 export interface UserDeckSelectionOptions extends DeckSelectionOptions {
     userId: number;
+}
+
+export interface PlayerRef {
+    id: number;
+    name: string;
+}
+
+export interface UserDetailsUpdate {
+    email: string
+}
+
+export interface NameObject {
+    name: string;
+    id: number;
+    clean: boolean
 }
 
 export interface User {

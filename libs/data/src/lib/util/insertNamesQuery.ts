@@ -11,11 +11,11 @@ import generateName from './generateName';
  *
  * @param {number} num
  */
-const insertNames = (num: number, numNotClean: number) => {
+const insertNames = (num: number, numNotClean?: number) => {
     let count = num;
 
     // prevent bad inputs
-    if (numNotClean > num) {
+    if (numNotClean && numNotClean > num) {
         throw new Error('numClean must be less than total')
     }
 
@@ -35,7 +35,7 @@ const insertNames = (num: number, numNotClean: number) => {
     for (const name of names.values()) {
 
         let clean = true
-        if (dirtyCount < numNotClean) {
+        if (numNotClean && dirtyCount < numNotClean) {
             clean = false
             dirtyCount++
         }
@@ -43,7 +43,7 @@ const insertNames = (num: number, numNotClean: number) => {
     }
 
     return {
-        text: format('INSERT INTO generated_names (name, clean) VALUES %L', input),
+        text: format('INSERT INTO generated_names (name, clean) VALUES %L RETURNING id', input),
     }
 }
 
