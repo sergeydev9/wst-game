@@ -23,7 +23,7 @@ const TrueOrFalseBox: React.FC<TrueOrFalseBoxProps> = ({ isReader, submitHandler
             </div>
 
             {hasPasses && (
-                <div className="w-full sm:px-4 md:w-96">
+                <div className="w-full sm:px-4 lg:w-96">
                     <Button type="button" onClick={() => submitHandler('pass')}>Pass (1 per game)</Button>
                 </div>
             )}

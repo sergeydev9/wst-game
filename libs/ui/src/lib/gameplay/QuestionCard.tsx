@@ -18,7 +18,6 @@ select-none
 mt-9
 md:mt-12
 lg:w-40rem
-md:w-full
 sm:w-28rem
 mx-auto
 `

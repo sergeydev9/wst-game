@@ -2,9 +2,10 @@ import tw from 'tailwind-styled-components';
 import { useState } from 'react';
 import Box from "../box/Box";
 import WideBox from "../wide-box/WideBox";
+import GameCardFooter from '../gameplay/GameCardFooter';
+import WhileYouWereWaiting from '../while-you-were-waiting/WhileYouWereWaiting';
 import PlayerName from "./PlayerName";
 import hourglass from './hourglass.png';
-import fencer from './fencer.png';
 
 export interface LobbyProps {
     footerMessage: string;
@@ -14,25 +15,6 @@ export interface LobbyProps {
     handlerFactory: (name: string) => React.MouseEventHandler;
     showMoreHandler: React.MouseEventHandler;
 }
-
-const Footer = tw.div`
-bg-yellow-base
-absolute
-bottom-0
-left-0
-right-0
-px-2
-rounded-b-3xl
-py-2
-md:py-5
-text-center
-text-md
-sm:text-lg
-font-black
-flex
-items-center
-justify-center
-`
 
 const ShowHide = tw.span`
 text-blue-base
@@ -73,14 +55,8 @@ const Lobby: React.FC<LobbyProps> = ({ otherPlayers, footerMessage, playerName, 
                 {nameHelper()}
                 {showingAll && <ShowHide key={playerNum} onClick={toggle}>Hide</ShowHide>}
             </div>
-            <Box boxstyle="purple-subtle" className="md:text-2xl sm:text-xl text-lg sm:py-6 sm:px-4 py-4 px-4 md:py-8 md:px-6 mx-auto mt-4 mb-20 w-max">
-                <span>While you were waiting:</span>
-                <div>
-                    <span className="font-bold inline-block">&#8220;tis but a flesh wound!&#8221;</span>
-                    <img className="inline-block ml-1" src={fencer} alt="fencer" width='25px' height='25px' />
-                </div>
-            </Box>
-            <Footer>{footerMessage}</Footer>
+            <WhileYouWereWaiting className="mt-4" />
+            <GameCardFooter>{footerMessage}</GameCardFooter>
         </WideBox>
     )
 }
