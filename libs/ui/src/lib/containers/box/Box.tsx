@@ -2,7 +2,7 @@ import tw from "tailwind-styled-components"
 
 export type BoxStyle = 'white' | 'light-gray' | 'purple-subtle';
 
-export interface BoxProps {
+export interface BoxProps extends Record<string, unknown> {
     boxstyle: BoxStyle;
     $horizontal?: boolean;
     $dropShadow?: boolean;
@@ -11,7 +11,7 @@ export interface BoxProps {
 const styleHelper = (style: BoxStyle) => {
     switch (style) {
         case 'white':
-            return "bg-white-ish border-0"
+            return "bg-white border-0"
         case 'light-gray':
             return "bg-light-gray border-0"
         case 'purple-subtle':

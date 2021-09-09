@@ -1,7 +1,7 @@
 import { HiOutlineSearch } from '@react-icons/all-files/hi/HiOutlineSearch';
+import ModalContent from '../../containers/ModalContent';
 import { Title1 } from '../../typography/Typography';
 import FormGroup from '../../inputs/form-group/FormGroup';
-import Box from '../../containers/box/Box';
 
 export interface RemovePlayerProps {
     onChange: React.ChangeEventHandler<HTMLInputElement>;
@@ -9,7 +9,7 @@ export interface RemovePlayerProps {
 
 const RemovePlayers: React.FC<RemovePlayerProps> = ({ children, onChange }) => {
     return (
-        <Box boxstyle="white" className="text-basic-black md:w-28rem gap-10 pt-7 pb-14 px-8">
+        <ModalContent $narrow>
             <Title1 className="text-center">Remove Players</Title1>
             <h2 className="text-xl text-center ">They can rejoin later by re-entering the game code.</h2>
             <div className="flex flex-col gap-4 w-full">
@@ -33,7 +33,7 @@ const RemovePlayers: React.FC<RemovePlayerProps> = ({ children, onChange }) => {
                 {children}
             </div>
 
-        </Box >
+        </ModalContent>
     )
 }
 
