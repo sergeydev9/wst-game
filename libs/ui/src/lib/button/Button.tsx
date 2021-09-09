@@ -41,7 +41,7 @@ const DefaultButton = tw.button<ChildProps>`
     font-label-big
     font-bold
     m-btn
-    py-3
+    py-2
     px-9
     rounded-full
     active:bg-blue-base
