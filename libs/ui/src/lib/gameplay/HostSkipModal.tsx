@@ -25,7 +25,6 @@ gap-1
 md:gap-4
 text-basic-black
 p-3
-
 text-sm
 `
 

@@ -1,4 +1,5 @@
 import DeckCard from './DeckCard';
+import placeholder from '../../assets/placeholder.svg'
 
 export default {
     component: DeckCard,
@@ -7,5 +8,5 @@ export default {
 
 
 export const Deck = () => {
-    return <DeckCard thumbnailUrl="./placeholder.svg" name="In your 20s" movieRating="PG-13" />
+    return <DeckCard thumbnailUrl={placeholder as string} name="In your 20s" movieRating="PG-13" />
 }
