@@ -18,41 +18,43 @@ top-full
 
 const labels = (max: number) => {
 
+    // DEV_NOTE: This commented code implements the original design with dividers and labels.
+    // The design isn't feasible due to the fact that the number of players isn't known ahead of time,
     // if number divisible by 6, show 6 labels, else 4
-    if (max % 6 === 0) {
-        return (<>
-            <LabelBase className="left-0">0</LabelBase>
-            <LabelBase style={{ left: `16.6666%`, }}>{max / 6}</LabelBase>
-            <Divider className="z-10 absolute top-0" style={{ left: 'calc(16.6666%)' }} width="4px" height="30px" />
+    // if (max % 6 === 0) {
+    //     return (<>
+    //         <LabelBase className="left-0">0</LabelBase>
+    //         <LabelBase style={{ left: `16.6666%`, }}>{max / 6}</LabelBase>
+    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(16.6666%)' }} width="4px" height="30px" />
 
-            <LabelBase style={{ left: `33.3333%` }}>{2 * max / 6}</LabelBase>
-            <Divider className="z-10 absolute top-0" style={{ left: 'calc(33.3333% )' }} width="4px" height="30px" />
+    //         <LabelBase style={{ left: `33.3333%` }}>{2 * max / 6}</LabelBase>
+    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(33.3333% )' }} width="4px" height="30px" />
 
-            <LabelBase style={{ left: `50%` }}>{3 * max / 6}</LabelBase>
-            <Divider className="z-10 absolute top-0" style={{ left: 'calc(50%)' }} width="4px" height="30px" />
+    //         <LabelBase style={{ left: `50%` }}>{3 * max / 6}</LabelBase>
+    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(50%)' }} width="4px" height="30px" />
 
-            <LabelBase style={{ left: `66.6666%` }}>{4 * max / 6}</LabelBase>
-            <Divider className="z-10 absolute top-0" style={{ left: 'calc(66.6666%)' }} width="4px" height="30px" />
+    //         <LabelBase style={{ left: `66.6666%` }}>{4 * max / 6}</LabelBase>
+    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(66.6666%)' }} width="4px" height="30px" />
 
-            <LabelBase style={{ left: `83.3333%` }}>{5 * max / 6}</LabelBase>
-            <Divider className="z-10 absolute top-0" style={{ left: 'calc(83.3333% )' }} width="4px" height="30px" />
+    //         <LabelBase style={{ left: `83.3333%` }}>{5 * max / 6}</LabelBase>
+    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(83.3333% )' }} width="4px" height="30px" />
 
-            <LabelBase className="right-0">{max}</LabelBase>
-        </>
-        )
-    } else {
-        return (<>
-            <LabelBase className="left-0">0</LabelBase>
-            <LabelBase className="left-1/4">{Math.round(max / 4)}</LabelBase>
-            <Divider className="z-10 absolute top-0" style={{ left: 'calc(25%)' }} width="4px" height="30px" />
-            <LabelBase className="left-2/4">{Math.round(2 * max / 4)}</LabelBase>
-            <Divider className="z-10 absolute top-0" style={{ left: 'calc(50% )' }} width="4px" height="30px" />
-            <LabelBase className="left-3/4">{Math.round(3 * max / 4)}</LabelBase>
-            <Divider className="z-10 absolute top-0" style={{ left: 'calc(75%)' }} width="4px" height="30px" />
-            <LabelBase className="right-0">{max}</LabelBase>
-        </>
-        )
-    }
+    //         <LabelBase className="right-0">{max}</LabelBase>
+    //     </>
+    //     )
+    // } else {
+    //     return (<>
+    //         <LabelBase className="left-0">0</LabelBase>
+    //         <LabelBase className="left-1/4">{Math.round(max / 4)}</LabelBase>
+    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(25%)' }} width="4px" height="30px" />
+    //         <LabelBase className="left-2/4">{Math.round(2 * max / 4)}</LabelBase>
+    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(50% )' }} width="4px" height="30px" />
+    //         <LabelBase className="left-3/4">{Math.round(3 * max / 4)}</LabelBase>
+    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(75%)' }} width="4px" height="30px" />
+    //         <LabelBase className="right-0">{max}</LabelBase>
+    //     </>
+    //     )
+    // }
 }
 
 const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
