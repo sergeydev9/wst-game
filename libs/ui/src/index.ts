@@ -37,7 +37,7 @@ export { default as RemovePlayers } from './lib/remove-players/RemovePlayers';
 export { default as RemovePlayersRow } from './lib/remove-players/RemovePlayersRow';
 export { default as WideBox } from './lib/wide-box/WideBox';
 export { default as Lobby } from './lib/lobby/Lobby';
-export { default as HostActions } from './lib/host-actions/HostActions'
+export { default as HostActions } from './lib/gameplay/HostActions'
 
 
 export * from './lib/typography/Typography';

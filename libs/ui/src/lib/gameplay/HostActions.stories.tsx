@@ -3,7 +3,7 @@ import Button from '../button/Button';
 
 export default {
     component: HostActionsComponent,
-    title: 'Page Sections/Host Actions'
+    title: 'Gameplay/Host Actions'
 }
 
 export const HostActions = () => (

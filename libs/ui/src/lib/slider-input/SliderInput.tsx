@@ -76,9 +76,7 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
     const coverChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
 
         setTooltipVisible(true)
-
         const timer = setTimeout(() => setTooltipVisible(false), 600)
-
         setTimer(timer)
 
         // send value up to parent handler
@@ -90,8 +88,8 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
 
     return (
         <div className="w-full relative select-none mx-2">
-            {/* dark purple cover */}
-            <div className="sl-prpl-cover" style={{ width: `${offset < 35 ? offset + 5 : offset}%` }}></div>
+            {/* dark purple cover. Offset is off because when it's low it gets out of sync with the thumb */}
+            <div className="sl-prpl-cover" style={{ width: `${offset < 35 ? offset + 3 : offset}%` }}></div>
             {/*light purple background*/}
             <div className="sl-backgrnd"></div>
             {/*tooltip*/}

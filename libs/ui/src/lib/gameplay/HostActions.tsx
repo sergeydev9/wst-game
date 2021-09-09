@@ -22,6 +22,7 @@ const HostActions: React.FC<HostActionsProps> = ({ actionText, children }) => {
             right-1/2
             transform
             -translate-x-1/2
+            select-none
             `}>
             <h4 className="font-black text-lg mt-3">Host Actions</h4>
             <span className="font-semibold">{actionText}</span>
