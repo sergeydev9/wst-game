@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { RootState } from '../app/store';
 
-// TODO: Add xsrf and get url from env
+// TODO: Add xsrf
 export const api = axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.NX_API_BASEURL,
     timeout: 1500,
 })
 
