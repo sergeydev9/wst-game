@@ -7,6 +7,7 @@ class Player extends EventEmitter {
   public name?: string;
 
   public isActive: boolean;
+  public hostOverride: boolean;
   public gameStatus: GameStatus = 'new';
 
   public constructor(
@@ -17,7 +18,10 @@ class Player extends EventEmitter {
   }
 
   public isHost() {
-    return this.game.hostRow.id == this.userId;
+    if (this.game.hostRow && this.userId) {
+      return this.game.hostRow.id == this.userId;
+    }
+    return this.hostOverride;
   }
 
   public getAnswer(questionNumber: number)

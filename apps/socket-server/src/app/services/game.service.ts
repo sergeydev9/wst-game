@@ -43,11 +43,10 @@ class GameService {
       throw new Error(`Game ${code} already exists`);
     }
 
-    const gameResult = await gamesDao.getByAccessCode(code);
-    if (gameResult.rowCount !== 1) {
+    const game = (await gamesDao.getByAccessCode(code)).rows[0];
+    if (!game) {
       throw new Error(`Game ${code} not found`);
     }
-    const game: IGame = gameResult.rows[0];
 
     const host: IUser = (await usersDao.getById(game.host_id)).rows[0];
 
@@ -100,13 +99,12 @@ class GameService {
     let player = game.players.find(p => p.playerId == playerId);
 
     if (!player) {
-      const playerResult = (await gamePlayersDao.getById(playerId))
-      if (playerResult.rowCount < 1) {
+      const playerRow: IGamePlayer = (await gamePlayersDao.getById(playerId)).rows[0];
+      if (!playerRow) {
         throw new Error(`Player ID ${playerId} not found`);
       }
 
-      const userId = playerResult.rows[0].user_id;
-      player = new Player(userId, playerId, game);
+      player = new Player(playerRow.user_id, playerId, game);
       game.players.push(player);
     }
 
@@ -330,7 +328,7 @@ class GameService {
       status: "ok",
       payload: {
         game_id: game.gameRow.id,
-        host_id: game.hostRow.id,
+        host_id: game.hostRow?.id,
         status: game.status,
         current_players: game.getActivePlayers().map(p => p.name),
         total_questions: game.questions.length,

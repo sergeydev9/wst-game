@@ -73,6 +73,12 @@ class WebsocketClient extends EventEmitter {
       const game = this.player.game;
 
       switch (message.event) {
+        case 'HostJoinGame':
+
+          this.player.hostOverride = true;
+          await this.gameService.joinGame(this.player, (message as PlayerJoinGame).payload.player_name);
+          break;
+
         case 'PlayerJoinGame': // -> PlayerJoinedGame
 
           await this.gameService.joinGame(this.player, (message as PlayerJoinGame).payload.player_name);

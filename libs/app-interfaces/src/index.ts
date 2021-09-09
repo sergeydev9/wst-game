@@ -203,6 +203,7 @@ export interface GamePlayer {
     id: number;
     player_name: string;
     game_id: number;
+    user_id: number;    // TODO: add to schema
     created_at?: Date;
     updated_at?: Date;
 }
