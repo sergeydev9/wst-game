@@ -15,8 +15,9 @@ rounded-3xl
 filter
 drop-shadow-card
 select-none
-mt-14
-lg:w-52rem
+mt-9
+md:mt-12
+lg:w-40rem
 md:w-full
 sm:w-28rem
 mx-auto
