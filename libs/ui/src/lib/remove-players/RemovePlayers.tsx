@@ -1,7 +1,7 @@
 import { HiOutlineSearch } from '@react-icons/all-files/hi/HiOutlineSearch';
 import { Title1 } from '../typography/Typography';
-import FormGroup from '../form-group/FormGroup';
-import Box from '../box/Box';
+import FormGroup from '../inputs/form-group/FormGroup';
+import Box from '../containers/box/Box';
 
 export interface RemovePlayerProps {
     onChange: React.ChangeEventHandler<HTMLInputElement>;

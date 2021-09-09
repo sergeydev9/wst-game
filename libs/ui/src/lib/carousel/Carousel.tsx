@@ -4,7 +4,7 @@ import { BsCaretRightFill } from '@react-icons/all-files/bs/BsCaretRightFill';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel as Crsl } from "react-responsive-carousel"
 
-import Box from '../box/Box';
+import Box from '../containers/box/Box';
 import { Title3 } from '../typography/Typography';
 import { IRenderArrow } from '@whosaidtrue/app-interfaces';
 

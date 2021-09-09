@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Button from '../button/Button';
-import SliderInput from '../slider-input/SliderInput';
+import SliderInput from '../inputs/slider-input/SliderInput';
 import GameContentCard from './GameContentCard';
 import QuestionContent from './QuestionContent';
 

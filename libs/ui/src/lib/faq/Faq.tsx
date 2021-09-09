@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FaAngleRight } from '@react-icons/all-files/fa/FaAngleRight';
 import { Title3 } from '../typography/Typography';
-import Box from '../box/Box';
+import Box from '../containers/box/Box';
 import React from 'react';
 
 export interface FaqProps {

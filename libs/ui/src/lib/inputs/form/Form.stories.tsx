@@ -1,9 +1,9 @@
 import FormComponent from './Form';
-import { Title1 } from '../typography/Typography';
-import Box from '../box/Box';
+import { Title1 } from '../../typography/Typography';
+import Box from '../../containers/box/Box';
 import InputLabel from '../input-label/InputLabel';
 import TextInput from '../text-input/TextInput';
-import Button from '../button/Button';
+import Button from '../../button/Button';
 
 export default {
     component: FormComponent,
@@ -12,7 +12,7 @@ export default {
 
 export const Form = () => {
     return (
-        <Box boxStyle='light-gray'>
+        <Box boxstyle='light-gray'>
             <FormComponent>
                 <Title1>Play as Guest Host</Title1>
                 <div className="text-left">
@@ -20,7 +20,7 @@ export const Form = () => {
                     <TextInput $border />
                 </div>
 
-                <Button fontSize="label-big">Continue</Button>
+                <Button>Continue</Button>
             </FormComponent>
         </Box>
     )

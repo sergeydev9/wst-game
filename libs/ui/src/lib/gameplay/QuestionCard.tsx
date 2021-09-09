@@ -1,5 +1,5 @@
 import tw from 'tailwind-styled-components';
-import WideBox from '../wide-box/WideBox';
+import WideBox from '../containers/wide-box/WideBox';
 import React from 'react';
 
 export interface QuestionCardProps {

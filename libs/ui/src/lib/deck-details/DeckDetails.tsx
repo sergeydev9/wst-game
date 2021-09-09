@@ -1,6 +1,6 @@
 import { MovieRating } from '@whosaidtrue/app-interfaces';
 import tw from 'tailwind-styled-components';
-import Box from '../box/Box';
+import Box from '../containers/box/Box';
 import { Title3, Headline } from '../typography/Typography';
 
 export interface DetailsProps {

@@ -1,6 +1,6 @@
 import BoxComponent, { BoxProps } from './Box';
-import { LargeTitle } from '../typography/Typography';
-import Button from '../button/Button';
+import { LargeTitle } from '../../typography/Typography';
+import Button from '../../button/Button';
 import { Story, Meta } from '@storybook/react';
 
 
@@ -52,7 +52,7 @@ const VerticalTemplate: Story<BoxProps> = (args) => {
 export const VerticalBox = VerticalTemplate.bind({});
 
 VerticalBox.args = {
-    boxStyle: 'purple-subtle',
+    boxstyle: 'purple-subtle',
     $horizontal: false,
     $dropShadow: false
 }
@@ -69,7 +69,7 @@ const HorizontalTemplate: Story<BoxProps> = (args) => {
 export const HorizontalBox = HorizontalTemplate.bind({})
 
 HorizontalBox.args = {
-    boxStyle: 'purple-subtle',
+    boxstyle: 'purple-subtle',
     $horizontal: true,
     $dropShadow: false
 }

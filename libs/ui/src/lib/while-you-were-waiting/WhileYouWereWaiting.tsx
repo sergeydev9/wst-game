@@ -1,4 +1,4 @@
-import Box from '../box/Box';
+import Box from '../containers/box/Box';
 import fencer from './fencer.png';
 
 const WhileYouWereWaiting: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {

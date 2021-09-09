@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '../button/Button';
+import Button from '../Button';
 import { ImSpinner11 } from '@react-icons/all-files/im/ImSpinner11';
 
 

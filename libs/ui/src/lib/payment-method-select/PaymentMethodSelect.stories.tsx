@@ -1,5 +1,5 @@
 import MethodSelection from './PaymentMethodSelect';
-import RadioInput from '../radio-input/RadioInput';
+import RadioInput from '../inputs/radio-input/RadioInput';
 
 export default {
     component: MethodSelection,
@@ -7,7 +7,7 @@ export default {
 }
 
 export const PaymentMethodSelection = () => (
-    <MethodSelection submitCallback={(e) => e.preventDefault()} googleAvailable={true} appleAvailable={true} hasCredits={true} >
+    <MethodSelection setValue={() => null} onSubmit={(e) => e.preventDefault()} googleAvailable={true} appleAvailable={true} hasCredits={true} >
 
     </MethodSelection>
 )

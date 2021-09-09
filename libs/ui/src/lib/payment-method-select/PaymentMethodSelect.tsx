@@ -4,7 +4,7 @@ import { ReactComponent as NavLogo } from '../nav-logo/logo.svg';
 import { ReactComponent as AppleMark } from './Apple_Pay_Mark.svg';
 import { ReactComponent as GoogleMark } from './gpay_mark.svg';
 import { ReactComponent as PayPal } from './PayPal.svg';
-import RadioInput from '../radio-input/RadioInput';
+import RadioInput from '../inputs/radio-input/RadioInput';
 import { Title1, BodyMedium } from '../typography/Typography';
 import Button from '../button/Button'
 

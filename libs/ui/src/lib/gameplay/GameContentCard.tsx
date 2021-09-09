@@ -1,4 +1,4 @@
-import Box from '../box/Box';
+import Box from '../containers/box/Box';
 
 const GameContentCard: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = ({ children, ...rest }) => {
 

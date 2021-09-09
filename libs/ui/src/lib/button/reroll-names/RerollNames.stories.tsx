@@ -1,4 +1,4 @@
-import RerollButtonComponent, { RerollButtonProps } from "./RerollNamesButton";
+import RerollButtonComponent, { RerollButtonProps } from "./RerollNames";
 import { Story, Meta } from "@storybook/react";
 
 export default {
