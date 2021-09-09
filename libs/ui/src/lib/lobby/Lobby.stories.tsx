@@ -3,7 +3,7 @@ import { Story } from '@storybook/react'
 
 export default {
     component: LobbyComponent,
-    title: 'Page Sections/Lobby'
+    title: 'Gameplay/Lobby'
 }
 
 const Template: Story<LobbyProps> = (args) => (

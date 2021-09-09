@@ -68,6 +68,7 @@ module.exports = {
             },
             dropShadow: {
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
+                'card-container': '0 0 0.6rem #E4E4F7',
                 'light': '0 0 0.6rem #EBEBF9',
                 'mid': '0 0 0.6rem #ACADEB',
                 'card': '0 0 32px #893FE2'
@@ -94,20 +95,20 @@ module.exports = {
                 grow: 'grow 75ms ease-in-out',
                 shrink: 'shrink 2s ease-in-out'
 
-            }
+            },
+            boxShadow: {
+                'active-yellow': 'inset 0px 2px #C17C10',
+                'active-blue': 'inset 0px 2px #084AB8',
+                'yellow': '0px 2px 0px #C17C10',
+                'blue-base': '0px 2px 0px #0F69FF',
+                'blue': '0px 2px 0px #084AB8',
+                'error': '0px 0px 24px #F6E8E8'
+            },
         },
         fontFamily: {
             'sans': ['Nunito'],
             'roboto': ['Roboto']
-        },
-        boxShadow: {
-            'active-yellow': 'inset 0px 2px #C17C10',
-            'active-blue': 'inset 0px 2px #084AB8',
-            'yellow': '0px 2px 0px #C17C10',
-            'blue-base': '0px 2px 0px #0F69FF',
-            'blue': '0px 2px 0px #084AB8',
-            'error': '0px 0px 24px #F6E8E8'
-        },
+        }
     },
     variants: {
         extend: {

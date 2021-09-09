@@ -2,8 +2,8 @@ import QuestionCard from './QuestionCard';
 import TrueOrFalseBox from './TrueOrFalseBox';
 
 export default {
-    component: QuestionCard,
-    title: 'Cards/Question'
+    component: TrueOrFalseBox,
+    title: 'Gameplay/True or False'
 }
 
 export const IsReader = () => (

@@ -1,4 +1,4 @@
-import Box from '../box/Box';
+import GameContentCard from './GameContentCard';
 import QuestionContent from './QuestionContent';
 import Button from '../button/Button';
 
@@ -10,7 +10,7 @@ export interface TrueOrFalseBoxProps {
 }
 const TrueOrFalseBox: React.FC<TrueOrFalseBoxProps> = ({ isReader, submitHandler, hasPasses, text }) => {
     return (
-        <Box boxstyle="purple-subtle" className="p-3 md:p-6">
+        <GameContentCard>
             {(isReader ? <QuestionContent text={text} headline='Read This Out Loud:' /> :
                 <QuestionContent text='Another player will read this question to the whole group' headline="Listen up!" />)}
             <div className="mb-3 flex flex-row gap-2 w-full">
@@ -22,9 +22,13 @@ const TrueOrFalseBox: React.FC<TrueOrFalseBoxProps> = ({ isReader, submitHandler
                 </div>
             </div>
 
-            {hasPasses && <div className="w-full sm:px-4 md:w-96"><Button type="button" onClick={() => submitHandler('pass')}>Pass (1 per game)</Button></div>}
+            {hasPasses && (
+                <div className="w-full sm:px-4 md:w-96">
+                    <Button type="button" onClick={() => submitHandler('pass')}>Pass (1 per game)</Button>
+                </div>
+            )}
 
-        </Box>
+        </GameContentCard>
     )
 
 }
