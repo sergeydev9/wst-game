@@ -5,8 +5,8 @@ export default {
     component: TextAreaInput,
     title: 'Inputs/Text Area',
     argTypes: {
-        error: {
-            name: 'error',
+        $hasError: {
+            name: '$hasError',
             type: 'boolean',
             default: false
         }
@@ -16,5 +16,5 @@ export default {
 export const TextArea: Story<TextAreaProps> = (args) => <div className="w-64"><TextAreaInput {...args} /></div>
 
 TextArea.args = {
-    error: false
+    $hasError: false
 }

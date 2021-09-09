@@ -11,8 +11,8 @@ export default {
             default: true
 
         },
-        error: {
-            name: 'error',
+        $hasError: {
+            name: '$hasError',
             type: 'boolean',
             default: false
         }
@@ -24,5 +24,5 @@ export const TextInput: Story<TextInputProps> = (args) => <div className="w-56">
 
 TextInput.args = {
     $border: true,
-    error: false
+    $hasError: false
 }
