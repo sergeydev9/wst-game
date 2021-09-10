@@ -1,21 +1,29 @@
+import { useState } from 'react';
+import { FaAngleDown } from '@react-icons/all-files/fa/FaAngleDown';
+
 export interface HostActionsProps {
-    actionText: string
+    actionText?: string;
+    required?: boolean
 }
 
-const HostActions: React.FC<HostActionsProps> = ({ actionText, children }) => {
+const HostActions: React.FC<HostActionsProps> = ({ actionText, children, required = false }) => {
+
+    const [open, setOpen] = useState(required);
+
     return (
         <section className={`
+            bottom-0
             text-basic-black
             text-center
-            fixed bottom-0
+            fixed
             rounded-t-3xl
-            pb-10
+            pb-5
             bg-purple-subtle-fill
             flex
             flex-col
             gap-4
             w-11/12
-            md:w-max
+            md:w-96
             pt-2
             px-3
             left-1/2
@@ -23,9 +31,16 @@ const HostActions: React.FC<HostActionsProps> = ({ actionText, children }) => {
             transform
             -translate-x-1/2
             select-none
+            transition
+            duration-200
+            ease-in
+            ${!open && 'tranform translate-y-host-action'}
             `}>
-            <h4 className="font-black text-lg mt-3">Host Actions</h4>
-            <span className="font-semibold">{actionText}</span>
+            <div>
+                <h4 className="font-black text-lg mt-3 inline-block mr-1">Host Actions</h4>
+                {!required && <FaAngleDown onClick={() => setOpen(!open)} className={`${open && 'transform rotate-180'} transition duration-200 linear inline-block text-3xl font-light cursor-pointer`} />}
+            </div>
+            {actionText && <span className="font-semibold">{actionText}</span>}
             {children}
         </section>
 

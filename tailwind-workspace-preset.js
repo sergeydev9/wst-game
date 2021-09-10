@@ -9,9 +9,9 @@ module.exports = {
                 'height':'height'
             },
             translate: {
-                'extra': '-115%'
+                'extra': '-115%',
+                'host-action': 'calc(100% - 4rem)'
             },
-
             margin: {
                 'btn': '0.1rem'
             },
