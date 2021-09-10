@@ -61,9 +61,9 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
     const listHelper = () => {
         const sorted = scores.sort((p1, p2) => p1.rank >= p2.rank ? 1 : -1)
 
-        return sorted.map(p => {
+        return sorted.map((p, i) => {
             return (
-                <li className={`
+                <li key={i} className={`
                 ${scoreClass}
                 border-b
                 border-purple-subtle-stroke
