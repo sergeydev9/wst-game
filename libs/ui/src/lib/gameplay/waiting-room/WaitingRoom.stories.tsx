@@ -1,4 +1,4 @@
-import QuestionCard from "./QuestionCard";
+import QuestionCard from "../QuestionCard";
 import WaitingRoomComponent from "./WaitingRoom";
 
 export default {

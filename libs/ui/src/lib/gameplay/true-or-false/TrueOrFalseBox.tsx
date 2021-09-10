@@ -1,6 +1,6 @@
-import GameContentCard from './GameContentCard';
-import QuestionContent from './QuestionContent';
-import Button from '../button/Button';
+import GameContentCard from '../GameContentCard';
+import QuestionContent from '../QuestionContent';
+import Button from '../../button/Button';
 
 export interface TrueOrFalseBoxProps {
     isReader: boolean;

@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import Button from '../button/Button';
-import SliderInput from '../inputs/slider/SliderInput';
-import GameContentCard from './GameContentCard';
-import QuestionContent from './QuestionContent';
+import Button from '../../button/Button';
+import SliderInput from '../../inputs/slider/SliderInput';
+import GameContentCard from '../GameContentCard';
+import QuestionContent from '../QuestionContent';
 
 export interface NumberTrueGuessProps {
     submitHandler: (value: number) => void;

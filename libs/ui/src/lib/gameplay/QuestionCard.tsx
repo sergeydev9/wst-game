@@ -1,5 +1,4 @@
 import tw from 'tailwind-styled-components';
-import WideBox from '../containers/wide-box/WideBox';
 import React from 'react';
 
 export interface QuestionCardProps {
@@ -25,7 +24,7 @@ mx-auto
 const Body = tw.div`
 p-3
 sm:p-6
-md:p-10
+lg:p-10
 `
 
 const Top = tw.div`
@@ -33,14 +32,14 @@ w-full
 bg-purple-subtle-fill
  text-basic-black
  text-center
- font-black
+ font-bold
  border-b
  border-purple-subtle-stroke
  flex
  flex-col
  justify-center
- text-lg
- md:text-xl
+ text-md
+ md:text-lg
  items-center
  rounded-t-3xl
  h-16

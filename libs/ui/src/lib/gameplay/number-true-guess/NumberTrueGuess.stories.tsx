@@ -1,4 +1,4 @@
-import QuestionCard from './QuestionCard';
+import QuestionCard from '../QuestionCard';
 import NumberTrueGuessComponent from './NumberTrueGuess';
 
 export default {

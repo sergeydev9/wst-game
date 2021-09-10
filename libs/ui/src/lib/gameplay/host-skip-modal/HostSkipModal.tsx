@@ -1,5 +1,5 @@
 import tw from 'tailwind-styled-components';
-import Button from '../button/Button';
+import Button from '../../button/Button';
 import loudspeaker from './loudspeaker.png';
 
 export interface HostSkipModalProps {

@@ -67,6 +67,7 @@ module.exports = {
                 'red-light': '#A70B00'
             },
             dropShadow: {
+                'yellow-base': '0 0 0.45rem #F2AB3C',
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
                 'card-container': '0 0 0.6rem #E4E4F7',
                 'light': '0 0 0.6rem #EBEBF9',

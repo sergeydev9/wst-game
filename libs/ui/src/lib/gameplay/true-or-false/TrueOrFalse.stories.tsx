@@ -1,4 +1,4 @@
-import QuestionCard from './QuestionCard';
+import QuestionCard from '../QuestionCard';
 import TrueOrFalseBox from './TrueOrFalseBox';
 
 export default {

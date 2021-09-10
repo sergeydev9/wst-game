@@ -1,6 +1,6 @@
-import GameContentCard from "./GameContentCard";
-import GameCardFooter from './GameCardFooter';
-import WhileYouWereWaiting from "../while-you-were-waiting/WhileYouWereWaiting";
+import GameContentCard from "../GameContentCard";
+import GameCardFooter from '../GameCardFooter';
+import WhileYouWereWaiting from "../../while-you-were-waiting/WhileYouWereWaiting";
 
 export interface WaitingRoomProps {
     guessValue: number;
