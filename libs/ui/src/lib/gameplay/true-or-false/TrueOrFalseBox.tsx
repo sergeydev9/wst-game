@@ -15,16 +15,16 @@ const TrueOrFalseBox: React.FC<TrueOrFalseBoxProps> = ({ isReader, submitHandler
                 <QuestionContent text='Another player will read this question to the whole group' headline="Listen up!" />)}
             <div className="mb-3 flex flex-row gap-2 w-full">
                 <div className="w-full">
-                    <Button buttonStyle="big-text" type="button" onClick={() => submitHandler('true')}>True</Button>
+                    <Button type="button" onClick={() => submitHandler('true')}>True</Button>
                 </div>
                 <div className="w-full">
-                    <Button buttonStyle="big-text" type="button" onClick={() => submitHandler('false')}>False</Button>
+                    <Button type="button" onClick={() => submitHandler('false')}>False</Button>
                 </div>
             </div>
 
             {hasPasses && (
                 <div className="w-full sm:px-4 lg:w-96">
-                    <Button buttonStyle="big-text" type="button" onClick={() => submitHandler('pass')}>Pass (1 per game)</Button>
+                    <Button type="button" onClick={() => submitHandler('pass')}>Pass (1 per game)</Button>
                 </div>
             )}
 

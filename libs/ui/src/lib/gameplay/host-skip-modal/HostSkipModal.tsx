@@ -1,6 +1,6 @@
 import tw from 'tailwind-styled-components';
 import Button from '../../button/Button';
-import loudspeaker from './loudspeaker.png';
+import loudspeaker from '../../assets/loudspeaker.png';
 
 export interface HostSkipModalProps {
     clickHandler: () => void;

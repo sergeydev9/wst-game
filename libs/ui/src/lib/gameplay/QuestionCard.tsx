@@ -24,7 +24,13 @@ mx-auto
 const Body = tw.div`
 p-3
 sm:p-6
-lg:p-10
+flex
+flex-col
+gap-6
+lg:pl-10
+lg:pr-10
+lg:pb-10
+lg:pt-6
 `
 
 const Top = tw.div`

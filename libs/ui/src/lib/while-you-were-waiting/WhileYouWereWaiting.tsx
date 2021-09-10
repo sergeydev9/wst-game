@@ -3,7 +3,7 @@ import fencer from './fencer.png';
 
 const WhileYouWereWaiting: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     return (
-        <Box boxstyle="purple-subtle" className="md:text-2xl sm:text-xl text-lg sm:py-6 sm:px-4 py-4 px-4 md:py-8 mt-8 md:px-6 mx-auto mb-14 w-max">
+        <Box boxstyle="purple-subtle" className="md:text-2xl sm:text-xl text-lg sm:py-6 sm:px-4 p-4 md:py-8 mt-2 md:px-6 mx-auto mb-12 w-max">
             <span>While you were waiting:</span>
             <div>
                 <span className="font-bold inline-block">&#8220;tis but a flesh wound!&#8221;</span>

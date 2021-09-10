@@ -67,7 +67,9 @@ module.exports = {
                 'red-light': '#A70B00'
             },
             dropShadow: {
+                'pie': '0 0 0.45rem rgba(126, 54, 198, 0.2)',
                 'yellow-base': '0 0 0.45rem #F2AB3C',
+                'purple-light': '0 0 0.45rem #914FD2',
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
                 'card-container': '0 0 0.6rem #E4E4F7',
                 'light': '0 0 0.6rem #EBEBF9',
@@ -98,6 +100,7 @@ module.exports = {
 
             },
             boxShadow: {
+                'rating-button': '0px 4px 0px #BDABE3',
                 'active-yellow': 'inset 0px 2px #C17C10',
                 'active-blue': 'inset 0px 2px #084AB8',
                 'yellow': '0px 2px 0px #C17C10',

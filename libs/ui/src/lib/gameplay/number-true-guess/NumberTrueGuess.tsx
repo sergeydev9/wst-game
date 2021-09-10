@@ -31,7 +31,7 @@ const NumberTrueGuess: React.FC<NumberTrueGuessProps> = ({ submitHandler, questi
                     <SliderInput max={totalPlayers} changeHandler={valueHandler} />
                 </div>
             </GameContentCard>
-            <div className={`my-6 w-52 mx-auto ${!isChanged && 'opacity-40 pointer-events-none'}`}>
+            <div className={`w-52 mx-auto ${!isChanged && 'opacity-40 pointer-events-none'}`}>
                 <Button disabled={!isChanged} onClick={() => submitHandler(value)} type="button">Submit</Button>
             </div>
 

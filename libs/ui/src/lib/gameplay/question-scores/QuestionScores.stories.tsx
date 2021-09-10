@@ -1,10 +1,10 @@
-import QuestionResultsComponent from './QuestionResults';
+import QuestionResultsComponent from './QuestionScores';
 import QuestionCard from '../QuestionCard';
 import ScoreBoard, { PlayerScore } from '../scoreboard/Scoreboard';
 
 export default {
     component: QuestionResultsComponent,
-    title: 'Gameplay/Question Results'
+    title: 'Gameplay/Question Scores'
 }
 
 const scores: PlayerScore[] = [

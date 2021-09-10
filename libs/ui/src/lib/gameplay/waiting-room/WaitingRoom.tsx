@@ -11,9 +11,9 @@ export interface WaitingRoomProps {
 const WaitingRoom: React.FC<WaitingRoomProps> = ({ guessValue, questionText, totalPlayers, numberHaveGuessed }) => {
     return (
         <>
-            <h2 className="text-basic-black font-black text-xl md:text-2xl text-center mb-8">You Guessed...</h2>
+            <h2 className="text-basic-black font-black text-xl md:text-2xl text-center">You Guessed...</h2>
             <GameContentCard>
-                <h1 className="text-basic-black font-black text-2xl md:text-3xl text-center mb-1">{guessValue > 0 ? guessValue : 'None'} of the players</h1>
+                <h1 className="text-basic-black font-black text-2xl md:text-3xl text-center">{guessValue > 0 ? guessValue : 'None'} of the players</h1>
                 <h3 className="text-center md:text-2xl text-xl text-basic-black font-semibold">{questionText}</h3>
             </GameContentCard>
             <WhileYouWereWaiting />
