@@ -3,9 +3,9 @@ const app = new App();
 
 // need to setup express-ws (handled in App) before loading routes
 // https://www.npmjs.com/package/express-ws
-import IndexRoute from "./app/routes/index.route";
-import GameRoute from "./app/routes/game.route";
-app.initializeRoutes([new IndexRoute().router, new GameRoute().router]);
+// import IndexRoute from "./app/routes/index.route";
+// import GameRoute from "./app/routes/game.route";
+// app.initializeRoutes([new IndexRoute().router, new GameRoute().router]);
 
 app.listen();
 
