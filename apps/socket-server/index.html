@@ -23,7 +23,15 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io();
+    var socket = io({
+        auth: {
+            jwtToken: "abd.123.defr"
+        }
+    });
+
+    socket.on("connect_error", () => {
+        console.log("connect_error");
+    });
 
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');

@@ -7,6 +7,7 @@ import {logger} from '@whosaidtrue/logger';
 
 import http from 'http';
 import {Server, Socket} from "socket.io";
+import {ExtendedError} from "socket.io/dist/namespace";
 
 
 class App {
@@ -35,6 +36,22 @@ class App {
         this.app.get('/', (req, res) => {
             res.sendFile(__dirname + '/index.html');
         });
+
+        // auth example: https://socket.io/docs/v3/middlewares/
+        this.io.use((socket, next) => {
+            const jwtToken = socket.handshake.auth.jwtToken;
+            console.log("jwtToken: ", jwtToken);
+
+            let err: ExtendedError;
+            if (jwtToken != 'abc.123.def') {
+                console.log("error");
+                err = new Error("not authorized") as ExtendedError;
+                err.data = { content: "Please retry later" }; // additional details
+            }
+
+            next(err);
+        });
+
         this.io.on("connection", (socket: Socket) => {
             socket.on('chat message', (msg) => {
                 console.log('message: ' + msg);
