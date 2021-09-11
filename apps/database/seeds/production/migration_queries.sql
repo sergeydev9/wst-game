@@ -61,7 +61,7 @@ select
     Answer_Game_PIN,
     count(*) as c
 from game_players
-full join answers on Answer_Player_ID = Game_Player_ID
+         full join answers on Answer_Player_ID = Game_Player_ID
 group by Answer_Question_ID, Answer_Game_PIN, Game_Player_Unique_ID
 order by count(*) desc, Answer_Game_PIN
 ;
@@ -73,14 +73,14 @@ alter table game_players add column migration_new_game_player_id int(11) NOT NUL
 
 DROP TEMPORARY TABLE IF EXISTS temp_game_players;
 CREATE TEMPORARY TABLE temp_game_players
-select 
+select
     Game_Player_ID,
     Game_Player_Unique_ID
 from game_players
 group by Game_Player_Unique_ID
 ;
 
-select * from temp_game_players; 
+select * from temp_game_players;
 
 -- looks good we have a one-to-one mapping of Game_Player_ID -> Game_Player_Unique_ID
 -- lets use this mapping for the new migration_new_game_player_id
@@ -89,12 +89,12 @@ CREATE INDEX idx1 ON temp_game_players (Game_Player_Unique_ID);
 CREATE INDEX idx2 ON game_players (Game_Player_Unique_ID);
 
 update game_players
-join temp_game_players on temp_game_players.Game_Player_Unique_ID = game_players.Game_Player_Unique_ID
+    join temp_game_players on temp_game_players.Game_Player_Unique_ID = game_players.Game_Player_Unique_ID
 set game_players.migration_new_game_player_id = temp_game_players.Game_Player_ID
 ;
 
 -- check
-select 
+select
     Game_Player_ID,
     Game_Player_Unique_ID,
     migration_new_game_player_id
@@ -110,7 +110,7 @@ limit 10
 
 select *
 from game_players
-join (
+         join (
     select
         Game_Player_Unique_ID,
         IF(Game_Player_Name is null, concat("no name ", migration_new_game_player_id), Game_Player_Name) as player_name,
@@ -125,30 +125,30 @@ join (
 
 -- ignore these (run query multiple times until 0 rows affected
 update game_players
-join (
-    select
-        Game_Player_ID,
-        IF(Game_Player_Name is null, concat("no name ", migration_new_game_player_id), Game_Player_Name) as player_name,
-        count(*) as c
-    from game_players
-    where migration_ignore = false
-    group by Game_Player_Game_PIN, LOWER(player_name)
-    having count(*) > 1
-) t on game_players.Game_Player_ID = t.Game_Player_ID
+    join (
+        select
+            Game_Player_ID,
+            IF(Game_Player_Name is null, concat("no name ", migration_new_game_player_id), Game_Player_Name) as player_name,
+            count(*) as c
+        from game_players
+        where migration_ignore = false
+        group by Game_Player_Game_PIN, LOWER(player_name)
+        having count(*) > 1
+    ) t on game_players.Game_Player_ID = t.Game_Player_ID
 set migration_ignore = true
 ;
 
 
--- EXPORT QUERY table: game_players 
-select 
+-- EXPORT QUERY table: game_players
+select
     migration_new_game_player_id as id,
     Game_ID as game_id,
-    null as user_id,                                    -- TODO: confirm there's no way to get this mapping
+    null as user_id,
     IF(Game_Player_Name is null or Game_Player_Name = '', concat("no name ", migration_new_game_player_id), Game_Player_Name) as player_name,
     Game_Player_Create_Dt as created_at,
     Game_Player_Last_Update_Dt as updated_at
 from game_players
-join games on Game_PIN = Game_Player_Game_PIN
+         join games on Game_PIN = Game_Player_Game_PIN
 where game_players.migration_ignore = false
 group by migration_new_game_player_id
 ;
@@ -187,9 +187,9 @@ group by migration_new_game_player_id
 select count(*)
 from answers
 where Answer_Player_ID not in (select Game_Player_ID from game_players where migration_ignore = false)
-or Answer_Game_PIN not in (select Game_PIN from games)
-or Answer_Question_ID not in (select Question_ID from questions)
-or Answer_Question_ID not in (select Game_Question_Question_ID from game_questions where migration_ignore = false)
+   or Answer_Game_PIN not in (select Game_PIN from games)
+   or Answer_Question_ID not in (select Question_ID from questions)
+   or Answer_Question_ID not in (select Game_Question_Question_ID from game_questions where migration_ignore = false)
 ; -- 4388
 
 -- ignore these
@@ -199,9 +199,9 @@ alter table answers add column migration_ignore bool default false;
 update answers
 set migration_ignore = true
 where Answer_Player_ID not in (select Game_Player_ID from game_players where migration_ignore = false)
-or Answer_Game_PIN not in (select Game_PIN from games)
-or Answer_Question_ID not in (select Question_ID from questions)
-or Answer_Question_ID not in (select Game_Question_Question_ID from game_questions where migration_ignore = false)
+   or Answer_Game_PIN not in (select Game_PIN from games)
+   or Answer_Question_ID not in (select Question_ID from questions)
+   or Answer_Question_ID not in (select Game_Question_Question_ID from game_questions where migration_ignore = false)
 ;
 
 select count(*) from answers where migration_ignore = true; -- 4388 looks good
@@ -217,49 +217,49 @@ CREATE INDEX idx8 ON game_questions (Game_Question_Game_PIN);
 
 
 -- double check the counts
-select 
+select
     count(*)
 from answers
-join games on Game_PIN = Answer_Game_PIN
-join game_players on Game_Player_ID = Answer_Player_ID
-join game_questions on Game_Question_Question_ID = Answer_Question_ID and Game_Question_Game_PIN = Answer_Game_PIN
+         join games on Game_PIN = Answer_Game_PIN
+         join game_players on Game_Player_ID = Answer_Player_ID
+         join game_questions on Game_Question_Question_ID = Answer_Question_ID and Game_Question_Game_PIN = Answer_Game_PIN
 where answers.migration_ignore = false
-and game_players.migration_ignore = false
-and game_questions.migration_ignore = false
+  and game_players.migration_ignore = false
+  and game_questions.migration_ignore = false
 ; -- 246226
 
-select 
+select
     count(*)
 from answers
-where answers.migration_ignore = false 
+where answers.migration_ignore = false
 ; -- 246526
 
 -- the large join has less rows than just the answers talbe which makes sense
 
 
--- EXPORT QUERY table: game_answers 
-select 
+-- EXPORT QUERY table: game_answers
+select
     Answer_ID as id,
-    Game_Question_ID as game_question_id,                           -- > game_questions (Game_Question_Question_ID = Answer_Question_ID)
+    Game_Question_ID as game_question_id,                          -- > game_questions (Game_Question_Question_ID = Answer_Question_ID)
     Game_ID as game_id,                                            -- > games (Game_PIN = Answer_Game_PIN)
     migration_new_game_player_id as game_player_id,                -- > game_players
     CASE
         WHEN Answer_Result = 'T' THEN 'true'
         WHEN Answer_Result = 'F' THEN 'false'
-        ELSE 'pass'         
-    END as value,
+        ELSE 'pass'
+        END as value,
     Answer_Number_True_Guess as number_true_guess,
-    Game_Player_Score as score,                                     -- TODO: do we want this?
+    Game_Player_Score as score,
     Answer_Question_ID as question_id,                              -- > questions
     Answer_Create_Dt as created_at,
     Answer_Last_Update_Dt as updated_at
 from answers
-join games on Game_PIN = Answer_Game_PIN
-join game_players on Game_Player_ID = Answer_Player_ID
-join game_questions on Game_Question_Question_ID = Answer_Question_ID and Game_Question_Game_PIN = Answer_Game_PIN
-where answers.migration_ignore = false 
-and game_players.migration_ignore = false
-and game_questions.migration_ignore = false
+         join games on Game_PIN = Answer_Game_PIN
+         join game_players on Game_Player_ID = Answer_Player_ID
+         join game_questions on Game_Question_Question_ID = Answer_Question_ID and Game_Question_Game_PIN = Answer_Game_PIN
+where answers.migration_ignore = false
+  and game_players.migration_ignore = false
+  and game_questions.migration_ignore = false
 ; -- 246043
 
 
@@ -281,7 +281,7 @@ and game_questions.migration_ignore = false
     PRIMARY KEY ("id")
 ); */
 
--- TODO: confirm we don't have any questions listed in more than one deck.
+-- confirm we don't have any questions listed in more than one deck.
 -- if we do additional work will be needed to dedup
 select *
 from deck_questions
@@ -292,12 +292,12 @@ having count(*) > 1;
 -- confirm the questions --> decks relationship is valid
 select *
 from questions
-join deck_questions on Deck_Question_Question_ID = Question_ID
+         join deck_questions on Deck_Question_Question_ID = Question_ID
 where Deck_Question_Deck_ID not in (select Deck_ID from decks)
 ;
 
 -- note: question 543 has quotes and sometimes has issues importing with csv, just import it separately
--- EXPORT QUERY table: questions 
+-- EXPORT QUERY table: questions
 select
     Question_ID as id,
     Question_Text as text,
@@ -306,10 +306,10 @@ select
     Deck_Question_Deck_ID as deck_id,                           -- > decks
     Question_Rating as age_rating,
     LOWER(Question_Status) as status,
-    IF(Deck_Question_Create_Dt is null, now(),  Deck_Question_Create_Dt) as created_at,
-    IF(Deck_Question_Last_Update_Dt is null, now(),  Deck_Question_Last_Update_Dt) as updated_at
+    IF(Deck_Question_Create_Dt is null, '2011-11-11 11:11:11',  Deck_Question_Create_Dt) as created_at,
+    IF(Deck_Question_Last_Update_Dt is null, '2011-11-11 11:11:11',  Deck_Question_Last_Update_Dt) as updated_at
 from questions
-left join deck_questions on Deck_Question_Question_ID = Question_ID
+         left join deck_questions on Deck_Question_Question_ID = Question_ID
 order by id
 ; -- 578
 
@@ -336,27 +336,27 @@ order by id
     PRIMARY KEY ("id")
 ); */
 
--- EXPORT QUERY table: decks 
+-- EXPORT QUERY table: decks
 select
     Deck_ID as id,
     Deck_Name as name,
     Deck_Sort_Order as sort_order,
     IF(Deck_Clean = "Y", TRUE, FALSE) as clean,
     CASE
-        WHEN Deck_Age_Rating = 'All Ages' THEN 0
-        WHEN Deck_Age_Rating = '11 to 14' THEN 15
-        WHEN Deck_Age_Rating = '13 to 17 yrs.' THEN 15
-        WHEN Deck_Age_Rating = '15 to 17' THEN 15
-        WHEN Deck_Age_Rating = '18 and Older' THEN 18
-        ELSE 'Unknown'  
-    END as age_rating,  
+        WHEN Deck_Age_Rating = 'All Ages' THEN 0  		-- > All Ages
+        WHEN Deck_Age_Rating = '11 to 14' THEN 11 		-- > 11 to 14
+        WHEN Deck_Age_Rating = '13 to 17 yrs.' THEN 15  -- > 15 to 17
+        WHEN Deck_Age_Rating = '15 to 17' THEN 15       -- > 15 to 17
+        WHEN Deck_Age_Rating = '18 and Older' THEN 18 	-- > 18 and Older
+        ELSE 'Unknown'
+        END as age_rating,
     Deck_Movie_Rating as movie_rating,
     IF(Deck_SFW = "Y", TRUE, FALSE) as sfw,
     LOWER(Deck_Status) as status,
     Deck_Desc as description,
     IF(Deck_Original_Price > 0, Deck_Original_Price, 0) as purchase_price,
-    null as example_question,                           -- TODO: where does this data come from?
-    null as thumbnail_url,                          -- TODO: default deck image?
+    null as example_question,                           -- TODO: where does this data come from? Brian to create this column and populate it
+    null as thumbnail_url,                          	-- ok as null, will add images later
     Deck_Create_Dt as created_at,
     Deck_Last_Update_Dt as updated_at
 from decks
@@ -388,7 +388,7 @@ from decks
 select count(*)
 from game_questions
 where Game_Question_Game_PIN not in (select Game_PIN from games)            -- 3212
-or Game_Question_Question_ID not in (select Question_ID from questions);    -- 6
+   or Game_Question_Question_ID not in (select Question_ID from questions);    -- 6
 
 -- total 3218, ignore these
 
@@ -396,8 +396,8 @@ alter table game_questions add column migration_ignore bool default false;
 
 update game_questions
 set migration_ignore = true
-where Game_Question_Game_PIN not in (select Game_PIN from games) 
-or Game_Question_Question_ID not in (select Question_ID from questions);
+where Game_Question_Game_PIN not in (select Game_PIN from games)
+   or Game_Question_Question_ID not in (select Question_ID from questions);
 ;
 
 select count(*) from game_questions where migration_ignore = true; -- 3218 looks good
@@ -409,18 +409,18 @@ CREATE INDEX idx12 ON game_players (Game_Player_Reader_No);
 CREATE INDEX idx13 ON game_questions (migration_ignore);
 
 -- check if we can get the reader_id through the Game_Player_Reader_No = Game_Question_Seq_No
-select * 
+select *
 from game_questions
-left join game_players on Game_Player_Game_PIN = Game_Question_Game_PIN and Game_Player_Reader_No = Game_Question_Seq_No
+         left join game_players on Game_Player_Game_PIN = Game_Question_Game_PIN and Game_Player_Reader_No = Game_Question_Seq_No
 where Game_Question_Game_PIN = 'NTMM'
-and Game_Player_Reader_No is null 
+  and Game_Player_Reader_No is null
 ;
 
 -- check duplicate game_id, question_sequence_index
 select *
 from game_questions
-join games on Game_PIN = Game_Question_Game_PIN
-join questions on Question_ID = Game_Question_Question_ID
+         join games on Game_PIN = Game_Question_Game_PIN
+         join questions on Question_ID = Game_Question_Question_ID
 group by Game_PIN, Game_Question_Seq_No
 having count(*) > 1;
 
@@ -436,25 +436,24 @@ select * from game_questions where Game_Question_Game_PIN in ('QLFK', 'XBZM')
 update game_questions
 set migration_ignore = true
 where Game_Question_Game_PIN in ('QLFK', 'XBZM')
-and Game_Question_Create_Dt < '2020-01-01'
+  and Game_Question_Create_Dt < '2020-01-01'
 ;
 
 
--- EXPORT QUERY table: game_questions 
+-- EXPORT QUERY table: game_questions
 select
     Game_Question_ID as id,
     Game_Question_Question_ID as question_id,                       -- > questions
     Game_Question_Seq_No as question_sequence_index,
     Game_ID as game_id,                                             -- > games
-    null as reader_id,                                            -- > game_players TODO: do we want this?
+    null as reader_id,                                              -- >  ok as null per Brian
     Game_Question_Create_Dt as created_at,
     Game_Question_Last_Update_Dt as updated_at
 from game_questions
-join games on Game_PIN = Game_Question_Game_PIN
-join questions on Question_ID = Game_Question_Question_ID
--- left join game_players on Game_Player_Game_PIN = Game_Question_Game_PIN and Game_Player_Reader_No = Game_Question_Seq_No
+         join games on Game_PIN = Game_Question_Game_PIN
+         join questions on Question_ID = Game_Question_Question_ID
 where game_questions.migration_ignore = false
-and games.migration_ignore = false
+  and games.migration_ignore = false
 ; -- 153616
 
 
@@ -486,7 +485,7 @@ where Game_Deck_ID not in (select Deck_ID from decks)
 
 select count(*)
 from games
-where Game_PIN not in (select Game_Player_Game_PIN from game_players) 
+where Game_PIN not in (select Game_Player_Game_PIN from game_players)
 ; -- 4208 games w/o players
 
 -- it's okay that there is missing data, we still want the games
@@ -498,19 +497,20 @@ from games
 group by Game_PIN
 order by c desc;
 
-select * from games where Game_PIN in ('BINT', 'ARSE', 'BARF');
+/* select * from games where Game_PIN in ('BINT', 'ARSE', 'BARF');
 
 select * from answers where Answer_Game_PIN in ('BINT', 'ARSE', 'BARF');
 select * from game_players where Game_Player_Game_PIN in ('BINT', 'ARSE', 'BARF');
-select * from game_questions where Game_Question_Game_PIN in ('BINT', 'ARSE', 'BARF');
+select * from game_questions where Game_Question_Game_PIN in ('BINT', 'ARSE', 'BARF'); */
 
 -- ignore these
 
 alter table games add column migration_ignore bool default false;
 
-update games
+-- TODO: brian to clean up prod db
+/* update games
 set migration_ignore = true
-where Game_PIN in ('BINT', 'ARSE', 'BARF');
+where Game_PIN in ('BINT', 'ARSE', 'BARF'); */
 
 select count(*) from games where migration_ignore = true; -- 6 looks good
 
@@ -518,25 +518,53 @@ select count(*) from games where migration_ignore = true; -- 6 looks good
 CREATE INDEX idx14 ON game_players (Game_Player_Game_Creator);
 
 
-
--- EXPORT QUERY table: games 
+-- EXPORT QUERY table: games
 select
     Game_ID as id,
-    Game_PIN as access_code,
-    "" as status,
-    IF(Game_Deck_ID > 0, Game_Deck_ID, NULL) as deck_id,        -- > decks
-    null as start_date,                                         -- > TODO: same as created_at?
-    null as host_name,                                              -- TODO: use Game_Player_Name
-    null as host_id,                                                -- > users: TODO: can't get this data since no game_player --> user relationship
-    null as end_date,                                               -- > TODO: same as updated_at?
-    IF(Game_Create_Dt is not null, Game_Create_Dt, NOW()) as created_at,
-    IF(Game_Last_Update_Dt is not null, Game_Last_Update_Dt, NOW())  as updated_at
+    concat(Game_PIN) as access_code,
+    "legacy" as status,
+    IF(Game_Deck_ID > 0, Game_Deck_ID, NULL) as deck_id,        										-- > decks
+    IF(Game_Create_Dt is not null, Game_Create_Dt, '2011-11-11 11:11:11') as start_date,
+    null as host_name,
+    null as host_id,                                                							-- TODO: convince Andriy to change this to a game_players
+    IF(Game_Last_Update_Dt is not null, Game_Last_Update_Dt, '2011-11-11 11:11:11') as end_date,
+    IF(Game_Create_Dt is not null, Game_Create_Dt, '2011-11-11 11:11:11') as created_at,
+    IF(Game_Last_Update_Dt is not null, Game_Last_Update_Dt, '2011-11-11 11:11:11')  as updated_at
 from games
-left join decks on Deck_ID = Game_Deck_ID
+         left join decks on Deck_ID = Game_Deck_ID
 -- left join game_players on Game_Player_Game_PIN = Game_PIN and Game_Player_Game_Creator = 'YES'
-where migration_ignore = false
+-- where games.migration_ignore = false not needed anymore due to prod data fixed
+where Game_Deck_ID = 0
 group by Game_ID
 ; -- 16176
+
+-- TODO: list of bad words as special case
+
+-- TODO: create a user record for any game where Game_Email is not null
+-- email -> email
+-- id auto-generated
+-- password = null
+-- roles = [user]
+-- question_deck_credits = 0
+-- test_account = false
+-- notifications = false (future)
+-- reset_code = null
+-- created_at, updated_at -> match game?
+
+/* CREATE TABLE "public"."users" (
+    "id" int4 NOT NULL DEFAULT nextval('users_id_seq'::regclass),
+    "email" varchar(1000) NOT NULL,
+    "password" varchar(1000),
+    "roles" _user_role NOT NULL,
+    "question_deck_credits" int2 NOT NULL DEFAULT 0,
+    "test_account" bool NOT NULL DEFAULT false,
+    "notifications" bool NOT NULL DEFAULT false,
+    "reset_code" varchar(4),
+    "created_at" timestamptz NOT NULL DEFAULT now(),
+    "updated_at" timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY ("id")
+); */
+
 
 
 -- -----------------------------------------------------------------------
@@ -553,7 +581,7 @@ group by Game_ID
     PRIMARY KEY ("id")
 ); */
 
--- EXPORT QUERY table: playernames 
+-- EXPORT QUERY table: playernames
 select
     Playername_ID as id,
     Playername_Name as name,
@@ -570,30 +598,4 @@ group by name
 -- -----------------------------------------------------------------------
 -- users
 
-/* CREATE TABLE "public"."users" (
-    "id" int4 NOT NULL DEFAULT nextval('users_id_seq'::regclass),
-    "email" varchar(1000) NOT NULL,
-    "password" varchar(1000) NOT NULL,
-    "roles" _user_role NOT NULL,
-    "question_deck_credits" int2 NOT NULL DEFAULT 0,
-    "test_account" bool NOT NULL DEFAULT false,
-    "notifications" bool NOT NULL DEFAULT false,
-    "password_reset_code" text,
-    "created_at" timestamptz NOT NULL DEFAULT now(),
-    "updated_at" timestamptz NOT NULL DEFAULT now(),
-    PRIMARY KEY ("id")
-); */
-
-select 
-    User_ID as id,
-    User_Email as email,
-    User_Password as password,
-    IF(User_Security_Level = 1, "{user,admin}", '{user}') as roles,
---  asdf as question_deck_credits,
-    IF(User_Test_Account = "Y", TRUE, FALSE) as test_account,
---  asdf as notifications,
---  asdf as password_reset_code,
-    User_Create_Dt as created_at,
-    User_Last_Update_Dt as updated_at
-from users;
-
+-- no data in old prod but will auto-create game host accounts
