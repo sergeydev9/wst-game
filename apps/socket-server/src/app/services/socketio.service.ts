@@ -17,16 +17,17 @@ class SocketioService {
 
       const player = await this.gameService.connectPlayer(playerId, gameCode);
       socket.join(socket.data.gameCode);
+      const sendMessage = msg => socket.to(socket.data.gameCode).emit(msg.event, msg);
 
       const msg: WebsocketMessage = {
         event: 'GameConnected',
         status: 'success',
         payload: {gameCode: player.game.gameRow.access_code, playerId: player.playerId}
       };
-      socket.to(socket.data.gameCode).emit(msg.event, msg);
+      sendMessage(msg);
 
       // socket <--> player glue
-      const sendMessage = msg => socket.emit(msg.event, msg);
+
       player.on('message', sendMessage);
       this.handleGameEvents(player, socket);
 
