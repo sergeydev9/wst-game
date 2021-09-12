@@ -27,7 +27,6 @@ class SocketioService {
       sendMessage(msg);
 
       // socket <--> player glue
-
       player.on('message', sendMessage);
       this.handleGameEvents(player, socket);
 
