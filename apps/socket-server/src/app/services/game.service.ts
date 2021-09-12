@@ -170,28 +170,28 @@ class GameService {
     }
   }
 
-  public hostNextQuestion(game: Game, player: Player) {
+  public hostNextQuestion(player: Player) {
     this.requireHostAction(player);
 
-    const q = game.nextQuestion();
+    const q = player.game.nextQuestion();
     if (q == null) {
       throw new Error('No more questions gameRow over.');
     }
 
-    const gameStateMsg = this.getGameState(game);
-    game.getActivePlayers().forEach(p => {
-      p.emit('message', this.getQuestionState(p, game.questionNumber));
+    const gameStateMsg = this.getGameState(player.game);
+    player.game.getActivePlayers().forEach(p => {
+      p.emit('message', this.getQuestionState(p, player.game.questionNumber));
       p.emit('message', gameStateMsg);
     });
   }
 
-  public async submitAnswerPart1(game: Game, player: Player, data: any) {
-    this.requireCurrentQuestion(game, data.questionNumber);
+  public async submitAnswerPart1(player: Player, data: any) {
+    this.requireCurrentQuestion(player.game, data.questionNumber);
 
     const answer = player.getAnswer(data.questionNumber);
     this.requireAnswerState(answer, 'part-1');
 
-    const question = game.getQuestion(data.questionNumber);
+    const question = player.game.getQuestion(data.questionNumber);
     this.requireValidAnswer(question, data.answer);
 
     answer.answer = data.answer;
@@ -200,13 +200,13 @@ class GameService {
     player.emit('message', this.getQuestionState(player, data.questionNumber));
   }
 
-  public async submitAnswerPart2(game: Game, player: Player, data: any) {
-    this.requireCurrentQuestion(game, data.questionNumber);
+  public async submitAnswerPart2(player: Player, data: any) {
+    this.requireCurrentQuestion(player.game, data.questionNumber);
 
     const answer = player.getAnswer(data.questionNumber);
     this.requireAnswerState(answer, 'part-2');
 
-    const question = game.getQuestion(data.questionNumber);
+    const question = player.game.getQuestion(data.questionNumber);
     this.requireValidGuess(question, data.guess);
 
     answer.guess = data.guess;
@@ -215,19 +215,19 @@ class GameService {
     const answerRow: IInsertAnwser = {
       game_player_id: player.playerId,
       game_question_id: question.questionRow.id,
-      game_id: game.gameRow.id,
+      game_id: player.game.gameRow.id,
       value: answer.answer,
       number_true_guess: answer.guess,
     };
     await answersDao.submit(answerRow);
 
-    game.getActivePlayers().forEach(p => p.emit('message', this.getQuestionState(p, data.questionNumber)));
+    player.game.getActivePlayers().forEach(p => p.emit('message', this.getQuestionState(p, data.questionNumber)));
 
     // auto-advance to results
     const finished = this.countFinishedAnswers(question);
     if (finished >= question.players.length) {
-      console.log(`auto advance to results game: ${game.gameRow.access_code}, question: ${game.questionNumber}`);
-      this.showResults(game);
+      console.log(`auto advance to results game: ${player.game.gameRow.access_code}, question: ${player.game.questionNumber}`);
+      this.showResults(player.game);
     }
   }
 
@@ -270,10 +270,10 @@ class GameService {
     return question.answers.filter(a => a.answer == 'true').length;
   }
 
-  public hostShowResults(game: Game, player: Player) {
+  public hostShowResults(player: Player) {
     this.requireHostAction(player);
 
-    this.showResults(game);
+    this.showResults(player.game);
   }
 
   private showResults(game: Game) {
@@ -283,20 +283,20 @@ class GameService {
     });
   }
 
-  public hostShowScores(game: Game, player: Player) {
+  public hostShowScores(player: Player) {
     this.requireHostAction(player);
 
-    game.getActivePlayers().forEach(player => {
-      const msg = this.getScoreState(game.questionNumber, player);
+    player.game.getActivePlayers().forEach(player => {
+      const msg = this.getScoreState(player.game.questionNumber, player);
       player.emit('message', msg);
     });
   }
 
-  public hostShowFinalScores(game: Game, player: Player) {
+  public hostShowFinalScores(player: Player) {
     this.requireHostAction(player);
 
-    game.getActivePlayers().forEach(player => {
-      const msg = this.getScoreState(game.questionNumber, player);
+    player.game.getActivePlayers().forEach(player => {
+      const msg = this.getScoreState(player.game.questionNumber, player);
 
       // final scores has extra fun facts
       msg.payload.fun_facts = this.getFunFacts(player);

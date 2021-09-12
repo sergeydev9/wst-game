@@ -78,30 +78,30 @@ class SocketioService {
 
     socket.on('NextQuestion', async data => {
       if (player.game.isFinalQuestion()) {
-        await this.gameService.hostShowFinalScores(game, player);
+        await this.gameService.hostShowFinalScores(player);
       } else {
-        await this.gameService.hostNextQuestion(game, player);
+        await this.gameService.hostNextQuestion(player);
       }
     });
 
     socket.on('AnswerPart1', async data => {
-      await this.gameService.submitAnswerPart1(game, player, data.payload);
+      await this.gameService.submitAnswerPart1(player, data.payload);
     });
 
     socket.on('AnswerPart2', async data => {
-      await this.gameService.submitAnswerPart2(game, player, data.payload);
+      await this.gameService.submitAnswerPart2(player, data.payload);
     });
 
     socket.on('ShowResults', async data => {
-      await this.gameService.hostShowResults(game, player);
+      await this.gameService.hostShowResults(player);
     });
 
     socket.on('ShowScores', async data => {
-      await this.gameService.hostShowScores(game, player);
+      await this.gameService.hostShowScores(player);
     });
 
     socket.on('ShowFinalScores', async data => {
-      await this.gameService.hostShowFinalScores(game, player);
+      await this.gameService.hostShowFinalScores(player);
     });
   };
 
