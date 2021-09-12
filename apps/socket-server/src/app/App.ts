@@ -27,33 +27,21 @@ class App {
 
     constructor() {
         this.initializeMiddlewares();
+        this.initializeRoutes();
         this.initializeSocket();
     }
 
-    public initializeRoutes(routes: express.Router[]) {
-        routes.forEach(route => {
-            this.app.use('/', route);
+    public initializeRoutes() {
+        this.app.get('/', (req, res) => {
+            res.send("WhoSaidTrue Socket Server v1.0");
+            res.sendStatus(200);
+        });
+        this.app.get('/test', (req, res) => {
+            res.sendFile(__dirname + '/test.html');
         });
     }
 
     public initializeSocket() {
-        this.app.get('/', (req, res) => {
-            res.sendFile(__dirname + '/index.html');
-        });
-
-        // auth example: https://socket.io/docs/v3/middlewares/
-        this.io.use((socket, next) => {
-            const token = socket.handshake.auth.token;
-            console.log("token: ", token);
-
-            // TODO: implement JWT middleware
-
-            socket.data.gameCode = token.game_code;
-            socket.data.playerId = token.player_id;
-
-            next();
-        });
-
         this.io.on("connection", async (socket: Socket) => {
             console.log("connection", socket.id);
             await this.socketService.handle(socket);
@@ -72,6 +60,18 @@ class App {
         if (process.env.NODE_ENV != "production") {
             this.disableSecurityForDevelopment()
         }
+
+        // TODO: implement JWT middleware
+        // auth example: https://socket.io/docs/v3/middlewares/
+        this.io.use((socket, next) => {
+            const token = socket.handshake.auth.token;
+            console.log("token: ", token);
+
+            socket.data.gameCode = token.game_code;
+            socket.data.playerId = token.player_id;
+
+            next();
+        });
     }
 
     private disableSecurityForDevelopment() {
