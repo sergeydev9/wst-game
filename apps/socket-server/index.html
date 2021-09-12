@@ -25,7 +25,10 @@
 <script>
     var socket = io({
         auth: {
-            jwtToken: "abd.123.defr"
+            token: {
+                player_id: 743,
+                game_code: 'ABCD'
+            }
         }
     });
 
@@ -39,15 +42,17 @@
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        if (input.value) {
-            socket.emit('chat message', input.value);
+        var msg = JSON.parse(input.value);
+
+        if (msg && msg.event) {
+            socket.emit(msg.event, msg);
             input.value = '';
         }
     });
 
-    socket.on('chat message', function(msg) {
+    socket.onAny(function(...msg) {
         var item = document.createElement('li');
-        item.textContent = msg;
+        item.textContent = msg[0] + ":" + JSON.stringify(msg[1]);
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
     });

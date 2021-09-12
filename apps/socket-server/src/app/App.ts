@@ -7,7 +7,8 @@ import {logger} from '@whosaidtrue/logger';
 
 import http from 'http';
 import {Server, Socket} from "socket.io";
-import {ExtendedError} from "socket.io/dist/namespace";
+import SocketioService from "./services/socketio.service";
+import GameService from "./services/game.service";
 
 
 class App {
@@ -20,6 +21,9 @@ class App {
         }
     });
     private readonly port = process.env.PORT || 4001;
+
+    private readonly gameService = new GameService();
+    private readonly socketService = new SocketioService(this.gameService);
 
     constructor() {
         this.initializeMiddlewares();
@@ -39,45 +43,20 @@ class App {
 
         // auth example: https://socket.io/docs/v3/middlewares/
         this.io.use((socket, next) => {
-            const jwtToken = socket.handshake.auth.jwtToken;
-            console.log("jwtToken: ", jwtToken);
+            const token = socket.handshake.auth.token;
+            console.log("token: ", token);
 
-            let err: ExtendedError;
-            if (jwtToken != 'abc.123.def') {
-                console.log("error");
-                err = new Error("not authorized") as ExtendedError;
-                err.data = { content: "Please retry later" }; // additional details
-            }
+            // TODO: implement JWT middleware
 
-            next(err);
+            socket.data.gameCode = token.game_code;
+            socket.data.playerId = token.player_id;
+
+            next();
         });
 
-        this.io.on("connection", (socket: Socket) => {
-            socket.on('chat message', (msg) => {
-                console.log('message: ' + msg);
-                this.io.emit('chat message', msg);
-            });
-            socket.onAny((event, ...args) => {
-                console.log(event, args);
-            });
-            socket.on("error", (err) => {
-                console.log("error", err);
-            });
-            socket.conn.on("upgrade", () => {
-                console.log("upgrade", socket.id);
-            });
-            socket.on("disconnecting", (reason) => {
-                console.log("disconnecting", reason);
-            });
-            socket.on("disconnect", (reason) => {
-                console.log("disconnect", reason);
-            });
-            socket.on("connect", (reason) => {
-                console.log("connect", reason);
-            });
-            socket.on("connect_error", (reason) => {
-                console.log("connect_error", reason);
-            });
+        this.io.on("connection", async (socket: Socket) => {
+            console.log("connection", socket.id);
+            await this.socketService.handle(socket);
         });
     }
 

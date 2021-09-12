@@ -7,9 +7,10 @@ the game server over Websockets.
 
 Run `nx serve socket-server`
 
-Connect to `ws://127.0.0.1:4001/game/:code/player/:guid`
+Connect to `http://localhost:4001/socket.io`
 
-## Websocket Messages
+
+## Messages Structure
 
 The websocket message types are defined in libs/api-interfaces/src/lib/ws-interfaces.ts
 
@@ -24,6 +25,7 @@ The top-level message structure is
 	}
 }
 ````
+
 
 ### Server Messages
 
@@ -65,10 +67,18 @@ On successful connection the first message should be `PlayerJoinGame` or `HostJo
 
 ## Debugging
 
-To debug the Websocket messages you can use https://websocketking.com.
+To debug the Socket.io messages you can use https://amritb.github.io/socketio-client-tool.
 
-To ensure everything is running connect to `ws://127.0.0.1:4001:/game/echo` and send any message.
+Example config:
 
-To test game logic connect to `ws://127.0.0.1:4001/game/AAAA/player/1234` and send some 
-messages from the *Client messages* section above.  You can use multiple connections to 
-test multi-player communication
+```json
+{
+  "path": "/socket.io", 
+  "forceNew": true, 
+  "reconnectionAttempts": 3, 
+  "timeout": 2000,
+  "auth": {
+    "token": "$JWT_TOKEN"
+  }
+}
+```

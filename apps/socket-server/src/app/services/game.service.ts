@@ -70,7 +70,7 @@ class GameService {
     return gameInstance;
   }
 
-  public async connectPlayer(playerId: number, gameCode: string) {
+  public async connectPlayer(playerId: number, gameCode: string): Promise<Player> {
     if (!this.locks[gameCode]) {
       this.locks[gameCode] = new Mutex();
     }
