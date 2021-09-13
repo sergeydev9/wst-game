@@ -38,6 +38,12 @@ describe('Games', () => {
         pool.end()
     })
 
+    describe('hooks', () => {
+        it('should run without errors', async () => {
+            return;
+        })
+    })
+
     describe('create', () => {
 
         it('should insert a new game row', async () => {
