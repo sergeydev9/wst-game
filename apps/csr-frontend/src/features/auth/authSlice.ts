@@ -44,16 +44,6 @@ export const initialState: AuthState = {
   updateError: ''
 };
 
-export const setErrorThunk = createAsyncThunk("auth/setErrorThunk",
-  async (errorMessage: string, thunkAPI) => {
-    // display error
-    thunkAPI.dispatch(setError(errorMessage))
-
-    //clear error after 5 seconds
-    setTimeout(() => thunkAPI.dispatch(clearError()), 2000)
-
-  }
-)
 
 // TODO: use details endpoint to retrieve notifications when that feature gets added.
 export const fetchDetails = createAsyncThunk('auth/fetchDetails',

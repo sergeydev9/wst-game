@@ -15,9 +15,9 @@ import {
     Title2
 } from "@whosaidtrue/ui";
 import { api } from '../../api';
-import { selectAuthError, setErrorThunk, clearError } from './authSlice';
+import { selectAuthError, clearError } from './authSlice';
 import { Link } from 'react-router-dom';
-import { setFullModal } from '../modal/modalSlice';
+import { setFullModal, showError } from '../modal/modalSlice';
 import { clearCart } from '../cart/cartSlice';
 import { clearDecks } from '../decks/deckSlice';
 
@@ -68,10 +68,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
             }).catch(e => {
                 const { status, data } = e.response
                 if ((status === 422 || status === 401) && data) {
-                    dispatch(setErrorThunk(e.response.data as string))
+                    if (status === 401) {
+                        dispatch(showError("Invalid Credentials"))
+                    } else {
+                        dispatch(showError(data))
+                    }
                 } else {
                     // manually set message to avoid accidentallly printing a cryptic error message on unexpected error.
-                    dispatch(setErrorThunk('An unknown error has occurred, please try again later'))
+                    dispatch(showError('An unknown error has occurred, please try again later'))
                     console.error(e)
                 }
             })

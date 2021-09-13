@@ -6,5 +6,5 @@ export default tw.form`
     text-center
     justify-center
     gap-6
-    w-96
+    md:w-96
 `

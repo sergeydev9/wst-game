@@ -1,4 +1,4 @@
-import { Deck, NameObject, PlayerRef, GameStatus, MovieRating } from '@whosaidtrue/app-interfaces';
+import { Deck, NameObject, PlayerRef, GameStatus } from '@whosaidtrue/app-interfaces';
 
 /**
  * user
