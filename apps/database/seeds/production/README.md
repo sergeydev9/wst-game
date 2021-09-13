@@ -14,7 +14,7 @@ The results of the queries were exported to CSV files and then imported into the
  - questions ( -> decks)
    -- change deck_id is_nullable=YES
  - users
- - games ( -> decks, users)
+ - games ( -> decks, users, game_players)
  - game_players ( -> games, users)
  - game_questions ( -> game_players, questions, games)
  - game_question_543 (this is on it's own since CSV import was breaking due to quotes)

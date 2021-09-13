@@ -473,17 +473,21 @@ where game_questions.migration_ignore = false
 
 /* CREATE TABLE "public"."games" (
     "id" int4 NOT NULL DEFAULT nextval('games_id_seq'::regclass),
-    "access_code" varchar(200),
+    "total_questions" int2 NOT NULL DEFAULT 0,
+    "current_question_index" int2 NOT NULL DEFAULT 1,
+    "access_code" varchar(10),
     "status" varchar(100) NOT NULL,
     "deck_id" int4,
     "start_date" timestamptz,
-    "host_name" varchar(200),
+    "host_player_id" int4,
+    "host_player_name" varchar(200),
     "host_id" int4,
     "end_date" timestamptz,
     "created_at" timestamptz NOT NULL DEFAULT now(),
     "updated_at" timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT "games_deck_id_fkey" FOREIGN KEY ("deck_id") REFERENCES "public"."decks"("id") ON DELETE SET NULL,
     CONSTRAINT "games_host_id_fkey" FOREIGN KEY ("host_id") REFERENCES "public"."users"("id") ON DELETE SET NULL,
+    CONSTRAINT "games_fk_host_player_id" FOREIGN KEY ("host_player_id") REFERENCES "public"."game_players"("id") ON DELETE SET NULL,
     PRIMARY KEY ("id")
 ); */
 
@@ -529,7 +533,7 @@ select count(*) from games where migration_ignore = true; -- 6 looks good
 
 -- create a user record for games where Game_Email is not null so we don't lose these
 
-delete from users;
+delete from users; -- this is ok since this table isn't used yet
 ALTER TABLE users AUTO_INCREMENT = 1;
 CREATE UNIQUE INDEX idx15 ON users (User_Email);
 
@@ -559,8 +563,9 @@ select
     "legacy" as status,
     IF(Game_Deck_ID > 0, Game_Deck_ID, NULL) as deck_id,        										-- > decks
     IF(Game_Create_Dt is not null, Game_Create_Dt, '2011-11-11 11:11:11') as start_date,
-    Game_Player_Name as host_name,
-    User_ID as host_user_id,
+    migration_new_game_player_id as host_player_id,
+    Game_Player_Name as host_player_name,
+    User_ID as host_id,
     Game_Player_ID as host_player_id,
     IF(Game_Last_Update_Dt is not null, Game_Last_Update_Dt, '2011-11-11 11:11:11') as end_date,
     IF(Game_Create_Dt is not null, Game_Create_Dt, '2011-11-11 11:11:11') as created_at,
@@ -609,12 +614,11 @@ group by name
 /* CREATE TABLE "public"."users" (
     "id" int4 NOT NULL DEFAULT nextval('users_id_seq'::regclass),
     "email" varchar(1000) NOT NULL,
-    "password" varchar(1000) NOT NULL,
+    "password" varchar(1000),
     "roles" _user_role NOT NULL,
     "question_deck_credits" int2 NOT NULL DEFAULT 0,
     "test_account" bool NOT NULL DEFAULT false,
     "notifications" bool NOT NULL DEFAULT false,
-    "password_reset_code" text,
     "created_at" timestamptz NOT NULL DEFAULT now(),
     "updated_at" timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY ("id")
@@ -626,9 +630,8 @@ select
     null as password,
     '{user}' as roles,
     0 as question_deck_credits,
-    IF(User_Test_Account = "Y", TRUE, FALSE) as test_account,
-    null as notifications,
-    null as password_reset_code,
+    false test_account,
+    false as notifications,
     User_Create_Dt as created_at,
     User_Last_Update_Dt as updated_at
 from users;
