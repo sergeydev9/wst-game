@@ -439,6 +439,17 @@ where Game_Question_Game_PIN in ('QLFK', 'XBZM')
   and Game_Question_Create_Dt < '2020-01-01'
 ;
 
+-- check
+select
+    Game_Question_ID,
+    Game_Question_Seq_No,
+    Game_Question_Create_Dt,
+    migration_ignore
+from game_questions
+where Game_Question_Game_PIN in ('QLFK', 'XBZM')
+;
+
+
 
 -- EXPORT QUERY table: game_questions
 select
@@ -453,7 +464,6 @@ from game_questions
          join games on Game_PIN = Game_Question_Game_PIN
          join questions on Question_ID = Game_Question_Question_ID
 where game_questions.migration_ignore = false
-  and games.migration_ignore = false
 ; -- 153616
 
 
@@ -497,26 +507,50 @@ from games
 group by Game_PIN
 order by c desc;
 
-/* select * from games where Game_PIN in ('BINT', 'ARSE', 'BARF');
+/* OBSOLETE since duplicate game pins fixed in source data
+
+select * from games where Game_PIN in ('BINT', 'ARSE', 'BARF');
 
 select * from answers where Answer_Game_PIN in ('BINT', 'ARSE', 'BARF');
 select * from game_players where Game_Player_Game_PIN in ('BINT', 'ARSE', 'BARF');
-select * from game_questions where Game_Question_Game_PIN in ('BINT', 'ARSE', 'BARF'); */
+select * from game_questions where Game_Question_Game_PIN in ('BINT', 'ARSE', 'BARF');
 
 -- ignore these
 
-alter table games add column migration_ignore bool default false;
+-- alter table games add column migration_ignore bool default false;
 
 -- TODO: brian to clean up prod db
-/* update games
+update games
 set migration_ignore = true
-where Game_PIN in ('BINT', 'ARSE', 'BARF'); */
+where Game_PIN in ('BINT', 'ARSE', 'BARF');
 
 select count(*) from games where migration_ignore = true; -- 6 looks good
+*/
+
+-- create a user record for games where Game_Email is not null so we don't lose these
+
+delete from users;
+ALTER TABLE users AUTO_INCREMENT = 1;
+CREATE UNIQUE INDEX idx15 ON users (User_Email);
+
+insert into users (User_Email, User_Password, User_Create_Dt, User_Last_Update_Dt)
+select
+    trim(coalesce(Game_Email, '')) as Game_Email,
+    '' as User_Password,
+    Game_Create_Dt as User_Create_Dt,
+    Game_Create_Dt as User_Last_Update_Dt
+from games
+where trim(coalesce(Game_Email, '')) <> ''
+group by Game_Email
+order by Game_Create_Dt asc
+;
 
 
 CREATE INDEX idx14 ON game_players (Game_Player_Game_Creator);
-
+CREATE INDEX idx16 ON games (Game_Deck_ID);
+CREATE INDEX idx17 ON games (Game_Email);
+CREATE INDEX idx18 ON game_players (Game_Player_Game_PIN);
+CREATE INDEX idx19 ON game_players (Game_Player_Game_Creator);
 
 -- EXPORT QUERY table: games
 select
@@ -525,45 +559,18 @@ select
     "legacy" as status,
     IF(Game_Deck_ID > 0, Game_Deck_ID, NULL) as deck_id,        										-- > decks
     IF(Game_Create_Dt is not null, Game_Create_Dt, '2011-11-11 11:11:11') as start_date,
-    null as host_name,
-    null as host_id,                                                							-- TODO: convince Andriy to change this to a game_players
+    Game_Player_Name as host_name,
+    User_ID as host_user_id,
+    Game_Player_ID as host_player_id,
     IF(Game_Last_Update_Dt is not null, Game_Last_Update_Dt, '2011-11-11 11:11:11') as end_date,
     IF(Game_Create_Dt is not null, Game_Create_Dt, '2011-11-11 11:11:11') as created_at,
     IF(Game_Last_Update_Dt is not null, Game_Last_Update_Dt, '2011-11-11 11:11:11')  as updated_at
 from games
          left join decks on Deck_ID = Game_Deck_ID
--- left join game_players on Game_Player_Game_PIN = Game_PIN and Game_Player_Game_Creator = 'YES'
--- where games.migration_ignore = false not needed anymore due to prod data fixed
-where Game_Deck_ID = 0
+         left join game_players on Game_Player_Game_PIN = Game_PIN and Game_Player_Game_Creator = 'YES' -- can't pick first game player, example WTHM
+         left join users on User_Email = Game_Email
 group by Game_ID
 ; -- 16176
-
--- TODO: list of bad words as special case
-
--- TODO: create a user record for any game where Game_Email is not null
--- email -> email
--- id auto-generated
--- password = null
--- roles = [user]
--- question_deck_credits = 0
--- test_account = false
--- notifications = false (future)
--- reset_code = null
--- created_at, updated_at -> match game?
-
-/* CREATE TABLE "public"."users" (
-    "id" int4 NOT NULL DEFAULT nextval('users_id_seq'::regclass),
-    "email" varchar(1000) NOT NULL,
-    "password" varchar(1000),
-    "roles" _user_role NOT NULL,
-    "question_deck_credits" int2 NOT NULL DEFAULT 0,
-    "test_account" bool NOT NULL DEFAULT false,
-    "notifications" bool NOT NULL DEFAULT false,
-    "reset_code" varchar(4),
-    "created_at" timestamptz NOT NULL DEFAULT now(),
-    "updated_at" timestamptz NOT NULL DEFAULT now(),
-    PRIMARY KEY ("id")
-); */
 
 
 
@@ -595,7 +602,33 @@ group by name
 ; -- 38980
 
 
+
 -- -----------------------------------------------------------------------
 -- users
 
--- no data in old prod but will auto-create game host accounts
+/* CREATE TABLE "public"."users" (
+    "id" int4 NOT NULL DEFAULT nextval('users_id_seq'::regclass),
+    "email" varchar(1000) NOT NULL,
+    "password" varchar(1000) NOT NULL,
+    "roles" _user_role NOT NULL,
+    "question_deck_credits" int2 NOT NULL DEFAULT 0,
+    "test_account" bool NOT NULL DEFAULT false,
+    "notifications" bool NOT NULL DEFAULT false,
+    "password_reset_code" text,
+    "created_at" timestamptz NOT NULL DEFAULT now(),
+    "updated_at" timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY ("id")
+); */
+
+select
+    User_ID as id,
+    User_Email as email,
+    null as password,
+    '{user}' as roles,
+    0 as question_deck_credits,
+    IF(User_Test_Account = "Y", TRUE, FALSE) as test_account,
+    null as notifications,
+    null as password_reset_code,
+    User_Create_Dt as created_at,
+    User_Last_Update_Dt as updated_at
+from users;
