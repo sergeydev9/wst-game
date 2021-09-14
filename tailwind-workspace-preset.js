@@ -21,6 +21,10 @@ module.exports = {
                 '52rem': '52rem',
                 '28rem': '28rem'
             },
+            height: {
+                '32rem': '32rem',
+                '36rem': '36rem'
+            },
 
             fontSize: {
                 'large-title': ['42px', { letterSpacing: '-0.02em', lineHeight: '48px' }],
