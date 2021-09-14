@@ -29,7 +29,7 @@ flex-col
 gap-6
 lg:pl-10
 lg:pr-10
-lg:pb-10
+lg:pb-14
 lg:pt-6
 `
 

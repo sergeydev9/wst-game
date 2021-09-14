@@ -76,11 +76,11 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
         })
     }
     return (
-        <div className="bg-purple-subtle-fill rounded-3xl w-full p-1 sm:p-3">
+        <div className="bg-purple-subtle-fill rounded-3xl w-full p-1 sm:p-3 mb-2">
             <ul className='bg-purple-card-bg rounded-3xl border border-purple-subtle-stroke filter drop-shadow-subtle-stroke'>
                 {listHelper()}
             </ul>
-            <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mb-8 mt-4`}>
+            <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mt-4 mb-2`}>
                 <span>{currentPlayerScore.rank}</span>
                 <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.name} (You) {diffHelper(currentPlayerScore.rankDiff)}</span>
                 <span>{currentPlayerScore.points.toLocaleString('en-US')}</span>
