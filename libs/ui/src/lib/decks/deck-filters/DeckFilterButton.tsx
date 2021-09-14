@@ -1,6 +1,6 @@
 import tw from 'tailwind-styled-components';
 
-export interface FilterButtonProps {
+export interface FilterButtonProps extends Record<string, unknown> {
     selected: boolean
 }
 export default tw.button<FilterButtonProps>`
