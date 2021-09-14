@@ -10,6 +10,7 @@ module.exports = {
             },
             translate: {
                 'extra': '-115%',
+                '110': '110%',
                 'host-action': 'calc(100% - 4rem)'
             },
             margin: {

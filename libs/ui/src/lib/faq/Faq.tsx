@@ -6,10 +6,10 @@ import React from 'react';
 
 export interface FaqProps {
     question: string,
-    answer: string
+
 }
 
-const Faq: React.FC<FaqProps> = ({ question, answer }) => {
+const Faq: React.FC<FaqProps> = ({ question, children }) => {
     const [open, setOpen] = useState(false)
 
     const clickHandler = (e: React.MouseEvent) => {
@@ -17,7 +17,7 @@ const Faq: React.FC<FaqProps> = ({ question, answer }) => {
     }
 
     return (
-        <Box boxstyle="white" className='text-basic-black py-6 px-16 relative'>
+        <Box boxstyle="white" className='text-basic-black py-6 px-16 relative select-none'>
             <Title3 className="bg-white-ish z-10">{question}</Title3>
             <FaAngleRight onClick={clickHandler} className={`
             top-5
@@ -35,7 +35,7 @@ const Faq: React.FC<FaqProps> = ({ question, answer }) => {
             motion-reduce:transition-none
             motion-reduce:transform-none
             ${open ? 'block' : 'hidden'}
-            `}>{answer}</Title3>
+            `}>{children}</Title3>
         </Box>
     )
 }
