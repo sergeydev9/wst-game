@@ -15,7 +15,9 @@ The results of the queries were exported to CSV files and then imported into the
    -- change deck_id is_nullable=YES
  - users
  - games ( -> decks, users, game_players)
+   -- remove fk games.host_player_id
  - game_players ( -> games, users)
+   -- add fk fk games.host_player_id on delete set null
  - game_questions ( -> game_players, questions, games)
  - game_question_543 (this is on it's own since CSV import was breaking due to quotes)
  - game_answers ( -> game_questions, game_players, games, questions)

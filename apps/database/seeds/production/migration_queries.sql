@@ -47,7 +47,7 @@ set migration_ignore = true
 where Game_Player_Game_PIN not in (select Game_PIN from games);
 ;
 
-select count(*) from game_players where migration_ignore = false; -- 387 looks good
+select count(*) from game_players where migration_ignore = true; -- 387 looks good
 
 
 -- looks like there can be multiple game_player rows that represent the same player via Game_Player_Unique_ID
@@ -75,7 +75,8 @@ DROP TEMPORARY TABLE IF EXISTS temp_game_players;
 CREATE TEMPORARY TABLE temp_game_players
 select
     Game_Player_ID,
-    Game_Player_Unique_ID
+    Game_Player_Unique_ID,
+    Game_Player_Game_PIN
 from game_players
 group by Game_Player_Unique_ID
 ;
@@ -90,6 +91,7 @@ CREATE INDEX idx2 ON game_players (Game_Player_Unique_ID);
 
 update game_players
     join temp_game_players on temp_game_players.Game_Player_Unique_ID = game_players.Game_Player_Unique_ID
+        and temp_game_players.Game_Player_Game_PIN = game_players.Game_Player_Game_PIN
 set game_players.migration_new_game_player_id = temp_game_players.Game_Player_ID
 ;
 
@@ -112,14 +114,61 @@ select *
 from game_players
          join (
     select
-        Game_Player_Unique_ID,
+        migration_new_game_player_id,
         IF(Game_Player_Name is null, concat("no name ", migration_new_game_player_id), Game_Player_Name) as player_name,
         count(*) as c
     from game_players
-    where migration_ignore = false
     group by Game_Player_Game_PIN, LOWER(player_name)
     having count(*) > 1
-) t on game_players.Game_Player_Unique_ID = t.Game_Player_Unique_ID
+) t on game_players.migration_new_game_player_id = t.migration_new_game_player_id
+;
+
+
+DROP TEMPORARY TABLE temp_duplicate_game_player_pins;
+CREATE TEMPORARY TABLE temp_duplicate_game_player_pins
+select
+    *,
+    IF(Game_Player_Name is null, concat("no name ", migration_new_game_player_id), Game_Player_Name) as player_name,
+    count(*) as c
+from game_players
+group by Game_Player_Game_PIN, LOWER(player_name)
+having count(*) > 1
+;
+select * from game_players where Game_Player_Name = 'Josh';
+
+select * from temp_duplicate_game_player_pins where Game_Player_ID = 42424;
+
+-- ignore all dups
+update game_players
+    join temp_duplicate_game_player_pins
+    on temp_duplicate_game_player_pins.migration_new_game_player_id = game_players.migration_new_game_player_id
+        and temp_duplicate_game_player_pins.Game_Player_Game_PIN = game_players.Game_Player_Game_PIN
+set game_players.migration_ignore = true
+;
+
+-- but keep the first player ID
+select
+    game_players.*
+from game_players
+         join temp_duplicate_game_player_pins
+              on temp_duplicate_game_player_pins.Game_Player_ID = game_players.Game_Player_ID
+                  and temp_duplicate_game_player_pins.Game_Player_Game_PIN = game_players.Game_Player_Game_PIN
+order by game_players.Game_Player_ID
+;
+
+update game_players
+    join temp_duplicate_game_player_pins
+    on temp_duplicate_game_player_pins.Game_Player_ID = game_players.Game_Player_ID
+        and temp_duplicate_game_player_pins.Game_Player_Game_PIN = game_players.Game_Player_Game_PIN
+set game_players.migration_ignore = false
+;
+
+select game_players.*
+from game_players
+         join temp_duplicate_game_player_pins
+              on temp_duplicate_game_player_pins.migration_new_game_player_id = game_players.migration_new_game_player_id
+                  and temp_duplicate_game_player_pins.Game_Player_Game_PIN = game_players.Game_Player_Game_PIN
+order by Game_Player_Game_PIN
 ;
 
 
@@ -138,17 +187,34 @@ update game_players
 set migration_ignore = true
 ;
 
+-- check
+select *
+from game_players
+         join (
+    select
+        IF(Game_Player_Name is null, concat("no name ", migration_new_game_player_id), Game_Player_Name) as player_name,
+        count(*) as c
+    from game_players
+    where migration_ignore = false
+    group by Game_Player_Game_PIN, LOWER(player_name)
+    having count(*) > 1
+) t on game_players.Game_Player_Name = t.player_name
+;
+
+select * from game_players where Game_Player_Name in ("Josh");
+
 
 -- EXPORT QUERY table: game_players
 select
     migration_new_game_player_id as id,
     Game_ID as game_id,
-    null as user_id,
+    User_ID as user_id,
     IF(Game_Player_Name is null or Game_Player_Name = '', concat("no name ", migration_new_game_player_id), Game_Player_Name) as player_name,
     Game_Player_Create_Dt as created_at,
     Game_Player_Last_Update_Dt as updated_at
 from game_players
          join games on Game_PIN = Game_Player_Game_PIN
+         left join users on User_Email = Game_Email
 where game_players.migration_ignore = false
 group by migration_new_game_player_id
 ;
@@ -566,13 +632,12 @@ select
     migration_new_game_player_id as host_player_id,
     Game_Player_Name as host_player_name,
     User_ID as host_id,
-    Game_Player_ID as host_player_id,
     IF(Game_Last_Update_Dt is not null, Game_Last_Update_Dt, '2011-11-11 11:11:11') as end_date,
     IF(Game_Create_Dt is not null, Game_Create_Dt, '2011-11-11 11:11:11') as created_at,
     IF(Game_Last_Update_Dt is not null, Game_Last_Update_Dt, '2011-11-11 11:11:11')  as updated_at
 from games
          left join decks on Deck_ID = Game_Deck_ID
-         left join game_players on Game_Player_Game_PIN = Game_PIN and Game_Player_Game_Creator = 'YES' -- can't pick first game player, example WTHM
+         left join game_players on Game_Player_Game_PIN = Game_PIN and Game_Player_Game_Creator = 'YES' and game_players.migration_ignore = false -- can't pick first game player, example WTHM
          left join users on User_Email = Game_Email
 group by Game_ID
 ; -- 16176
