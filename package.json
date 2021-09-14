@@ -32,6 +32,12 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help"
   },
+  "jest":{
+    "transform": {
+      ".+\\.(styl|less|sass|scss|png|jpg|ttf|woff|woff2|svg)$": "jest-transform-stub"
+    }
+  },
+
   "private": true,
   "dependencies": {
     "@fontsource/nunito": "^4.5.0",
@@ -187,6 +193,7 @@
     "eslint-plugin-react": "7.23.1",
     "eslint-plugin-react-hooks": "4.2.0",
     "jest": "27.0.3",
+    "jest-transform-stub": "^2.0.0",
     "mini-css-extract-plugin": "^1.6.0",
     "msw": "^0.33.2",
     "msw-storybook-addon": "^1.2.0",

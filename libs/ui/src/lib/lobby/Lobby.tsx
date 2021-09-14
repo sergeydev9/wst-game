@@ -1,6 +1,5 @@
 import tw from 'tailwind-styled-components';
 import { useState } from 'react';
-import Box from "../containers/box/Box";
 import WideBox from "../containers/wide-box/WideBox";
 import GameCardFooter from '../gameplay/GameCardFooter';
 import WhileYouWereWaiting from '../while-you-were-waiting/WhileYouWereWaiting';

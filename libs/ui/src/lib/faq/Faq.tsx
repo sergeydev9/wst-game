@@ -9,8 +9,6 @@ export interface FaqProps {
     answer: string
 }
 
-
-
 const Faq: React.FC<FaqProps> = ({ question, answer }) => {
     const [open, setOpen] = useState(false)
 

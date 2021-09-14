@@ -1,5 +1,6 @@
 declare module "*.svg" {
     import * as React from 'react';
+    const content: any;
     export default any; // this lets you use url-loader if you need to
     const ReactComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
 
