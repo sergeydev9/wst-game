@@ -85,6 +85,13 @@ export interface UserDeckSelectionOptions extends DeckSelectionOptions {
     userId: number;
 }
 
+export interface PlayerScore {
+    rank: number;
+    name: string;
+    points: number;
+    rankDiff: number;
+}
+
 export interface PlayerRef {
     id: number;
     name: string;

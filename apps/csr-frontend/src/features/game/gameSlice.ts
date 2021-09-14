@@ -7,6 +7,7 @@ import { RootState } from "../../app/store";
 
 export interface GameState {
     status: UserGameStatus;
+    hasPassed: boolean;
     gameToken: string,
     game_id: number;
     deck: Deck;
@@ -16,7 +17,6 @@ export interface GameState {
     isHost: boolean;
     currentHostName: string;
     players: PlayerRef[];
-    currentQuestionIndex: number;
     access_code: string;
     playerId: number;
     playerName: string;
@@ -26,6 +26,7 @@ export interface GameState {
 export const initialState: GameState = {
     status: 'notInGame',
     gameToken: '',
+    hasPassed: false,
     game_id: 0,
     targetName: '', // for player remvoval. Store name here since remoal happens accross several modal components
     targetId: 0,
@@ -46,7 +47,6 @@ export const initialState: GameState = {
     isHost: false,
     access_code: '',
     players: [],
-    currentQuestionIndex: 0,
     currentHostName: '',
     playerName: '',
     playerId: 0
@@ -117,7 +117,6 @@ export const gameSlice = createSlice({
                 totalQuestions,
                 currentHostName,
                 players,
-                currentQuestionIndex,
                 access_code,
                 playerId,
                 player_name,
@@ -131,7 +130,6 @@ export const gameSlice = createSlice({
             state.totalQuestions = totalQuestions;
             state.currentHostName = currentHostName;
             state.players = players;
-            state.currentQuestionIndex = currentQuestionIndex;
             state.access_code = access_code;
             state.playerId = playerId;
             state.playerName = player_name

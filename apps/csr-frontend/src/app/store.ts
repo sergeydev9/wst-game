@@ -6,11 +6,12 @@ import {
     modalReducer,
     decksReducer,
     resetPasswordReducer,
-    cartReducer
+    cartReducer,
+    currentQuestionReducer,
+    hostReducer
 } from "../features";
 import { enhancer } from "addon-redux";
 import jwt_decode, { JwtPayload } from "jwt-decode";
-
 
 const enhancers = process.env.NODE_ENV === 'development' ? [enhancer] : []; // add storybook enhancer if not in prod environment
 
@@ -42,7 +43,9 @@ export const store = configureStore({
         modals: modalReducer,
         decks: decksReducer,
         resetPassword: resetPasswordReducer,
-        cart: cartReducer
+        cart: cartReducer,
+        currentQuestion: currentQuestionReducer,
+        host: hostReducer
     },
     preloadedState: persistedState,
     enhancers

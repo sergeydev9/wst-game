@@ -1,14 +1,9 @@
 import tw from 'tailwind-styled-components';
+import { PlayerScore } from '@whosaidtrue/app-interfaces';
 import { RiArrowUpLine } from '@react-icons/all-files/ri/RiArrowUpLine';
 import { RiArrowDownLine } from '@react-icons/all-files/ri/RiArrowDownLine';
 
 
-export interface PlayerScore {
-    rank: number;
-    name: string;
-    points: number;
-    rankDiff: number;
-}
 
 export interface ScoreBoardProps {
     scores: PlayerScore[];

@@ -43,5 +43,7 @@ export { default as CheckoutModal } from './cart/CheckoutModal';
 export { default as CreditCardForm } from './cart/CreditCardForm';
 export { default as RedeemCredits } from './cart/RedeemCredits';
 export { default as Loading } from './loading/Loading';
+export { default as currentQuestionReducer } from './current-question/currentQuestionSlice';
 export { default as FlashMessage } from './modal/FlashMessage';
+export { default as hostReducer } from './host/hostSlice';
 export * from './choose-name/chooseNameSlice';

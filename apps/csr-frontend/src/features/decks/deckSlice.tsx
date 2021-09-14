@@ -3,6 +3,7 @@ import { RootState } from "../../app/store";
 import { DeckSelectionResponse } from "@whosaidtrue/api-interfaces";
 import { Deck, MovieRating, RequestStatus } from "@whosaidtrue/app-interfaces";
 import { api } from '../../api';
+import { showError } from "../modal/modalSlice";
 
 
 export interface DeckState {
@@ -41,15 +42,16 @@ export const initialState: DeckState = {
 
 export const getDeckSelection = createAsyncThunk(
     'decks/getSelection',
-    async (_, { rejectWithValue }) => {
-        let response;
-        try {
-            response = await api.get<DeckSelectionResponse>('/decks/selection');
-            return response.data as DeckSelectionResponse
+    async (_, { rejectWithValue, dispatch }) => {
+        return api.get<DeckSelectionResponse>('/decks/selection').then(res => {
+            return res.data
+        })
+            .catch(e => {
+                console.error(e)
+                dispatch(showError("Oops, something went wrong. Please try again later."))
+                return rejectWithValue(e.response)
+            })
 
-        } catch (e) {
-            return rejectWithValue(e)
-        }
     }
 )
 
@@ -119,7 +121,7 @@ export const selectNotOwned = (state: RootState) => state.decks.notOwned
 export const getSelectedDeck = (state: RootState) => state.decks.selectedDeck
 export const selectIsOwned = (state: RootState) => state.decks.isSelectedOwned
 
-export const movieFilteredtNotOwned = createSelector(selectNotOwned, selectMovieRatingFilters, (decks, filters) => {
+export const movieFilteredNotOwned = createSelector(selectNotOwned, selectMovieRatingFilters, (decks, filters) => {
     // if no filters have been selected, return all decks
     if (filters.length === 4) {
         return decks
@@ -132,17 +134,17 @@ export const movieFilteredtNotOwned = createSelector(selectNotOwned, selectMovie
 
 });
 
-export const movieFilteredtOwned = createSelector(selectOwned, selectMovieRatingFilters, (decks, filters) => {
+export const movieFilteredOwned = createSelector(selectOwned, selectMovieRatingFilters, (decks, filters) => {
     return decks.filter(deck => {
         return filters.some(rating => rating === deck.movie_rating)
     })
 });
 
-export const filteredNotOwned = createSelector(movieFilteredtNotOwned, selectSfwOnly, (decks, sfwOnly) => {
+export const filteredNotOwned = createSelector(movieFilteredNotOwned, selectSfwOnly, (decks, sfwOnly) => {
     return decks.filter(deck => deck.sfw === sfwOnly || deck.sfw === true)
 })
 
-export const filteredOwned = createSelector(movieFilteredtOwned, selectSfwOnly, (decks, sfwOnly) => {
+export const filteredOwned = createSelector(movieFilteredOwned, selectSfwOnly, (decks, sfwOnly) => {
     return decks.filter(deck => deck.sfw === sfwOnly || deck.sfw === true)
 })
 // default
