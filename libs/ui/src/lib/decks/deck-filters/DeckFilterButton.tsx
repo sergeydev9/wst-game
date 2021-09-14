@@ -6,6 +6,7 @@ export interface FilterButtonProps {
 export default tw.button<FilterButtonProps>`
     rounded-full
     border-2
+    cursor-pointer
     font-semibold
     hover:bg-basic-black
     hover:text-true-white
