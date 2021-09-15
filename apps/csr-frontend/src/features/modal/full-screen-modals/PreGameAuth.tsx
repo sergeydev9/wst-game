@@ -1,16 +1,16 @@
 import { useHistory } from 'react-router';
 import * as Yup from 'yup';
-import { api } from '../../api'
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { AuthForm } from '../../features'
+import { api } from '../../../api'
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { AuthForm } from '../..'
 import { TextInput, Headline, FormGroup, InputLabel, ErrorText, Button, Divider, Title2 } from "@whosaidtrue/ui";
-import { setFullModal, } from '../modal/modalSlice';
+import { setFullModal, } from '../modalSlice';
 import { useFormik } from 'formik';
-import { setGameDeck, createGame } from '../game/gameSlice';
-import { clearCart, selectCartDeck } from '../cart/cartSlice';
+import { setGameDeck, createGame } from '../../game/gameSlice';
+import { clearCart, selectCartDeck } from '../../cart/cartSlice';
 import { AuthenticationResponse } from '@whosaidtrue/api-interfaces';
-import { decodeUserToken } from '../../util/functions';
-import { login } from './authSlice';
+import { decodeUserToken } from '../../../util/functions';
+import { login } from '../../auth/authSlice';
 
 const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     const history = useHistory()

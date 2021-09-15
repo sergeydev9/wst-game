@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { Title1, Button, BodyMedium } from '@whosaidtrue/ui';
-import { selectIsHost, sendEndGameSignal } from './gameSlice';
-import { setFullModal } from '..';
+import { selectIsHost, sendEndGameSignal } from '../../game/gameSlice';
+import { setFullModal } from '../..';
 
 const ConfirmEndGameModal: React.FC = () => {
     const dispatch = useAppDispatch()

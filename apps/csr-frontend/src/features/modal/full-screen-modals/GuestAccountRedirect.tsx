@@ -1,7 +1,7 @@
 import { Button, Box, Title3, BodySmall } from "@whosaidtrue/ui"
 import { useHistory } from "react-router"
-import { setFullModal } from ".."
-import { useAppDispatch } from "../../app/hooks"
+import { setFullModal } from "../.."
+import { useAppDispatch } from "../../../app/hooks"
 
 const GuestAccountRedirect = () => {
     const history = useHistory()

@@ -91,7 +91,6 @@ export const modalSlice = createSlice({
 
 export const { setFullModal, setMessageType, setMessageContent, clearMessage, showError } = modalSlice.actions;
 export const selectFullModal = (state: RootState) => state.modals.fullModal;
-export const selectFullModalFactory = (modal: FullModal) => createSelector(selectFullModal, (fullModal) => fullModal === modal);
 export const selectMessageType = (state: RootState) => state.modals.messageType;
 export const selectMessageContent = (state: RootState) => state.modals.messageContent;
 export const selectIsPersistent = (state: RootState) => state.modals.isPersistent;

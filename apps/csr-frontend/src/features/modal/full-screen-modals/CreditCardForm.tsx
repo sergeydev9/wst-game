@@ -1,8 +1,8 @@
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { Button, Title1 } from '@whosaidtrue/ui'
-import { useAppSelector } from '../../app/hooks';
-import { getSelectedDeck } from '../decks/deckSlice';
-import cards from './US_standard.webp';
+import { useAppSelector } from '../../../app/hooks';
+import { getSelectedDeck } from '../../decks/deckSlice';
+import cards from '../../../assets/US_standard.webp';
 
 const CreditCardForm: React.FC = () => {
     const stripe = useStripe();

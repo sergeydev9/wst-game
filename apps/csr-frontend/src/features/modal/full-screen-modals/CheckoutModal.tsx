@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { PaymentRequest } from '@stripe/stripe-js'
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { PaymentMethodSelect } from '@whosaidtrue/ui';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { selectDeckCredits } from '../auth/authSlice';
-import { setFullModal } from '../modal/modalSlice';
-import { getSelectedDeck } from '../decks/deckSlice';
+import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { selectDeckCredits } from '../../auth/authSlice';
+import { setFullModal } from '../../modal/modalSlice';
+import { getSelectedDeck } from '../../decks/deckSlice';
 
 
 const CheckoutModal: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {

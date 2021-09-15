@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { api } from '../../api';
+import { api } from '../../../api';
 import { Title1, Button } from "@whosaidtrue/ui"
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { setFullModal } from "../modal/modalSlice";
-import { clearCart, selectCartDeck, selectDeckId } from "./cartSlice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks"
+import { setFullModal } from "../modalSlice";
+import { clearCart, selectCartDeck, selectDeckId } from "../../cart/cartSlice";
 import { useHistory } from 'react-router';
-import { setGameDeck } from '../game/gameSlice';
+import { setGameDeck } from '../../game/gameSlice';
 
 const CreditPurchase: React.FC = () => {
     const dispatch = useAppDispatch()

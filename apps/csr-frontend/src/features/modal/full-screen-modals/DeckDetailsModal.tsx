@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { isLoggedIn, selectDeckCredits } from '../auth/authSlice';
+import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { isLoggedIn, selectDeckCredits } from '../../auth/authSlice';
 import { DeckDetails, Title1, Headline } from '@whosaidtrue/ui';
-import { getSelectedDeck, selectIsOwned } from './deckSlice';
-import { fetchDetails } from '../auth/authSlice';
-import { setFullModal } from '../modal/modalSlice';
+import { getSelectedDeck, selectIsOwned } from '../../decks/deckSlice';
+import { fetchDetails } from '../../auth/authSlice';
+import { setFullModal } from '../../modal/modalSlice';
 import DeckDetailsButton from './DeckDetailsButton';
 
 const DeckDetailsModal: React.FC = () => {

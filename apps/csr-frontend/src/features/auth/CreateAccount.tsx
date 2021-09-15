@@ -2,11 +2,11 @@ import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { Headline } from "@whosaidtrue/ui";
-import { closeModalsThunk, setFullModal, selectFullModalFactory } from '../modal/modalSlice';
+import { closeModalsThunk, setFullModal, selectFullModal } from '../modal/modalSlice';
 import AuthForm from './AuthForm';
 
 const CreateAccount: React.FC = () => {
-    const isModal = useAppSelector(selectFullModalFactory('createAccount'))
+    const isModal = useAppSelector(selectFullModal) === 'createAccount'
 
     const history = useHistory();
     const dispatch = useAppDispatch();

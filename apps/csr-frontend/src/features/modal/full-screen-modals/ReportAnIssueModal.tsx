@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import { setFullModal } from "..";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { setFullModal } from "../..";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { Title1, FormGroup, InputLabel, ErrorText, TextInput, TextArea, Button } from "@whosaidtrue/ui";
 
 

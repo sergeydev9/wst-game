@@ -1,12 +1,12 @@
 import { Deck } from '@whosaidtrue/app-interfaces'
 import { Button } from '@whosaidtrue/ui';
-import { api } from '../../api'
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { isLoggedIn, selectIsGuest } from '../auth/authSlice';
-import { createGame, setGameStatus, setGameDeck } from '../game/gameSlice';
-import { setFullModal, showError } from '../modal/modalSlice';
-import { addToCart } from '../cart/cartSlice';
-import { clearSelectedDeck } from '../decks/deckSlice';
+import { api } from '../../../api'
+import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { isLoggedIn, selectIsGuest } from '../../auth/authSlice';
+import { createGame, setGameStatus, setGameDeck } from '../../game/gameSlice';
+import { setFullModal, showError } from '../modalSlice';
+import { addToCart } from '../../cart/cartSlice';
+import { clearSelectedDeck } from '../../decks/deckSlice';
 import { useHistory } from 'react-router';
 import { CreateGameRequest, CreateGameResponse } from '@whosaidtrue/api-interfaces';
 

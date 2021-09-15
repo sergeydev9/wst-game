@@ -1,8 +1,8 @@
 import { useState, } from 'react';
 import { RemovePlayers, RemovePlayersRow } from "@whosaidtrue/ui";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectPlayers, setTarget } from "./gameSlice";
-import { setFullModal } from '..';
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { selectPlayers, setTarget } from "../../game/gameSlice";
+import { setFullModal } from '../..';
 
 const RemovePlayersModal: React.FC = () => {
     const dispatch = useAppDispatch();
