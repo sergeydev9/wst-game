@@ -6,10 +6,6 @@ import { Button, Modal, NoFlexBox, Box } from '@whosaidtrue/ui';
 import { setFullModal } from '../modal/modalSlice';
 import GameOptionsModal from '../modal/full-screen-modals/GameOptionsModal';
 
-const ConfirmEndGameModal = lazy(() => import('../modal/full-screen-modals/ConfirmEndGameModal'));
-const RemovePlayersModal = lazy(() => import('../modal/full-screen-modals/RemovePlayersModal'));
-const ReportAnIssueModal = lazy(() => import('../modal/full-screen-modals/ReportAnIssueModal'));
-const ConfirmRemovePlayerModal = lazy(() => import('../modal/full-screen-modals/ConfirmRemovePlayerModal'));
 
 const InGameNav: React.FC = () => {
     const dispatch = useAppDispatch();

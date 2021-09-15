@@ -1,6 +1,6 @@
-import ModalContent from '../../containers/ModalContent';
-import Button from '../../button/Button';
-import { Title1 } from '../../typography/Typography';
+import ModalContent from '../containers/ModalContent';
+import Button from '../button/Button';
+import { Title1 } from '../typography/Typography';
 
 export interface InactivePlayersProps {
     numNoAnswer: number;

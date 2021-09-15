@@ -1,6 +1,6 @@
-import ModalContent from '../../containers/ModalContent';
-import Button from '../../button/Button';
-import { Title1, BodyMedium } from '../../typography/Typography';
+import ModalContent from '../containers/ModalContent';
+import Button from '../button/Button';
+import { Title1, BodyMedium } from '../typography/Typography';
 
 export interface ConfirmModalProps {
     confirm: () => void;

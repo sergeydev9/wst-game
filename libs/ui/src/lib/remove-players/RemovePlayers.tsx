@@ -1,7 +1,7 @@
 import { HiOutlineSearch } from '@react-icons/all-files/hi/HiOutlineSearch';
-import ModalContent from '../../containers/ModalContent';
-import { Title1 } from '../../typography/Typography';
-import FormGroup from '../../inputs/form-group/FormGroup';
+import ModalContent from '../containers/ModalContent';
+import { Title1 } from '../typography/Typography';
+import FormGroup from '../inputs/form-group/FormGroup';
 
 export interface RemovePlayerProps {
     onChange: React.ChangeEventHandler<HTMLInputElement>;

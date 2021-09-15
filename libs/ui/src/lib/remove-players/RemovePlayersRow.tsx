@@ -1,5 +1,5 @@
-import Button from '../../button/Button';
-import { Headline } from '../../typography/Typography';
+import Button from '../button/Button';
+import { Headline } from '../typography/Typography';
 
 export interface RemovePlayerRowProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
     name: string;

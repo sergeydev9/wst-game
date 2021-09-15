@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { Modal, NoFlexBox } from '@whosaidtrue/ui';
+import { Modal, NoFlexBox, Box } from '@whosaidtrue/ui';
 import { selectFullModal, setFullModal } from "../modalSlice";
 import Loading from '../../loading/Loading';
 
@@ -12,10 +12,12 @@ const RedeemCredits = lazy(() => import('./RedeemCredits'));
 const PreGameAuth = lazy(() => import('./PreGameAuth'));
 const GuestRedirect = lazy(() => import('./GuestAccountRedirect'));
 const Login = lazy(() => import('../../auth/Login'));
-const CreateAccount = lazy(() => import('../../auth/CreateAccount'))
-
-
-
+const CreateAccount = lazy(() => import('../../auth/CreateAccount'));
+const ConfirmEndGameModal = lazy(() => import('./ConfirmEndGameModal'));
+const RemovePlayersModal = lazy(() => import('./RemovePlayersModal'));
+const ReportAnIssueModal = lazy(() => import('./ReportAnIssueModal'));
+const ConfirmRemovePlayerModal = lazy(() => import('./ConfirmRemovePlayerModal'));
+const GameOptionsModal = lazy(() => import('./GameOptionsModal'));
 
 const FullScreenModalController = () => {
     const dispatch = useAppDispatch();
@@ -27,7 +29,6 @@ const FullScreenModalController = () => {
 
     return (
         <>
-
             {/* Deck Details */}
             {currentModal === 'deckDetails' && <Modal
                 isOpen={currentModal === 'deckDetails'}
@@ -120,88 +121,82 @@ const FullScreenModalController = () => {
                         </Suspense>
                     </NoFlexBox>
                 </Modal>}
+
+
+            {/* Game Options */}
+            {currentModal === 'gameOptions' && <Modal isOpen={currentModal === 'gameOptions'} onRequestClose={close}>
+                <div className={`
+                    bg-white-ish
+                    border-0
+                    rounded-3xl
+                    px-2
+                    py-2
+                    sm:py-6
+                    sm:px-8
+                    filter
+                    drop-shadow-card
+                    text-center
+                    sm:w-28rem
+                    md:w-40rem
+                    `}>
+                    <GameOptionsModal />
+                </div>
+            </Modal>}
+
+
+            {/* Confirm Leave Game */}
+            {currentModal === 'confirmLeaveGame' && <Modal isOpen={currentModal === 'confirmLeaveGame'} onRequestClose={close}>
+                <NoFlexBox>
+                    <Suspense fallback={<Loading />}>
+                        <ConfirmEndGameModal />
+                    </Suspense>
+                </NoFlexBox>
+            </Modal>}
+
+            {/* Confirm End Game */}
+            {currentModal === 'confirmEndGame' && <Modal isOpen={currentModal === 'confirmEndGame'} onRequestClose={close}>
+                <NoFlexBox>
+                    <Suspense fallback={<Loading />}>
+                        <ConfirmEndGameModal />
+                    </Suspense>
+                </NoFlexBox>
+            </Modal>}
+
+            {/* Remove Players */}
+            {currentModal === 'removePlayers' && <Modal isOpen={currentModal === 'removePlayers'} onRequestClose={close}>
+                <Suspense fallback={<Loading />}>
+                    <RemovePlayersModal />
+                </Suspense>
+            </Modal>}
+
+            {/* Confirm Remove Player */}
+            {currentModal === 'confirmRemovePlayer' && <Modal isOpen={currentModal === 'confirmRemovePlayer'} onRequestClose={close}>
+                <NoFlexBox className="text-basic-black text-center sm:w-28rem md:w-40rem">
+                    <Suspense fallback={<Loading />}>
+                        <ConfirmRemovePlayerModal />
+                    </Suspense>
+                </NoFlexBox>
+            </Modal>}
+
+            {/* Removed From Game Notification */}
+            {currentModal === 'removedFromGame' && <Modal isOpen={currentModal === 'removedFromGame'} onRequestClose={close}>
+                <NoFlexBox>
+                    <Suspense fallback={<Loading />}>
+                        <ConfirmEndGameModal />
+                    </Suspense>
+                </NoFlexBox>
+            </Modal>}
+
+            {/* Report an issue */}
+            {currentModal === 'reportAnIssue' && <Modal isOpen={currentModal === 'reportAnIssue'} onRequestClose={close}>
+                <Box boxstyle="white" className="w-28rem">
+                    <Suspense fallback={<Loading />}>
+                        <ReportAnIssueModal />
+                    </Suspense>
+                </Box>
+            </Modal>}
         </>
-
-
-
-
-
     )
 }
 
 export default FullScreenModalController;
-
-
-
-            // {/* Game Options */}
-            // {isGameOptionsOpen && <Modal isOpen={isGameOptionsOpen} onRequestClose={close}>
-            //     <div className={`
-            //         bg-white-ish
-            //         border-0
-            //         rounded-3xl
-            //         px-2
-            //         py-2
-            //         sm:py-6
-            //         sm:px-8
-            //         filter
-            //         drop-shadow-card
-            //         text-center
-            //         sm:w-28rem
-            //         md:w-40rem
-            //         `}>
-            //         <GameOptionsModal />
-            //     </div>
-            // </Modal>}
-
-
-            // {/* Confirm Leave Game */}
-            // {isConfirmLeaveGameOpen && <Modal isOpen={isConfirmLeaveGameOpen} onRequestClose={close}>
-            //     <NoFlexBox>
-            //         <Suspense fallback={<Loading />}>
-            //             <ConfirmEndGameModal />
-            //         </Suspense>
-            //     </NoFlexBox>
-            // </Modal>}
-
-            // {/* Confirm End Game */}
-            // {isConfirmEndGameOpen && <Modal isOpen={isConfirmEndGameOpen} onRequestClose={close}>
-            //     <NoFlexBox>
-            //         <Suspense fallback={<Loading />}>
-            //             <ConfirmEndGameModal />
-            //         </Suspense>
-            //     </NoFlexBox>
-            // </Modal>}
-
-            // {/* Remove Players */}
-            // {isRemovePlayersOpen && <Modal isOpen={isRemovePlayersOpen} onRequestClose={close}>
-            //     <Suspense fallback={<Loading />}>
-            //         <RemovePlayersModal />
-            //     </Suspense>
-            // </Modal>}
-
-            // {/* Confirm Remove Player */}
-            // {isConfirmRemovePlayerOpen && <Modal isOpen={isConfirmRemovePlayerOpen} onRequestClose={close}>
-            //     <NoFlexBox className="text-basic-black text-center sm:w-28rem md:w-40rem">
-            //         <Suspense fallback={<Loading />}>
-            //             <ConfirmRemovePlayerModal />
-            //         </Suspense>
-            //     </NoFlexBox>
-            // </Modal>}
-
-            // {/* Removed From Game Notification */}
-            // {isRemovedNotificationOpen && <Modal isOpen={isRemovedNotificationOpen} onRequestClose={close}>
-            //     <NoFlexBox>
-            //         <Suspense fallback={<Loading />}>
-            //             <ConfirmEndGameModal />
-            //         </Suspense>
-            //     </NoFlexBox>
-            // </Modal>}
-
-            // {/* Report an issue */}
-            // {isReportAnIssueOpen && <Modal isOpen={isReportAnIssueOpen} onRequestClose={close}>
-            //     <Box boxstyle="white" className="w-28rem">
-            //         <Suspense fallback={<Loading />}>
-            //             <ReportAnIssueModal />
-            //         </Suspense>
-            //     </Box>
-            // </Modal>}
