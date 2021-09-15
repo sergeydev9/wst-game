@@ -1,4 +1,5 @@
 import { Pool, QueryResult } from 'pg';
+import format from 'pg-format';
 import { Deck, GameStatus, IInsertGame, PlayerRef } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
@@ -234,6 +235,47 @@ class Games extends Dao {
             }
         } catch (e) {
             await client.query('ROLLBACK')
+            throw e
+        } finally {
+            client.release()
+        }
+    }
+
+    /**
+     * Call this method to start a new question for a
+     *
+     * Will throw error if a game_player already exists with the specified name, and
+     * the same game.
+     *
+     * @param access_code game access code
+     * @param name name the player is trying to join as
+     * @param userId (optional) if user has id, pass it here to associate game player id with user id.
+     *
+     */
+    public async startQuestion(gameId: number, gameQuestionId: number, playerIds: number[]): Promise<QueryResult> {
+
+        const answers = playerIds.map(playerId => [gameQuestionId, gameId, playerId]);
+
+        const client = await this.pool.connect();
+        try {
+
+            const answersQuery = format(`INSERT INTO game_answers (game_question_id, game_id, game_player_id) VALUES %L RETURNING id`, answers);
+            const gamesQuery = {
+                text: `UPDATE games
+                    SET current_question_index = game_questions.question_sequence_index
+                    FROM game_questions
+                    WHERE game_questions.id = $1`,
+                values: [gameQuestionId]
+            };
+
+            // TODO: fix create_game() db function to set game_questions.question_sequence_index
+            //  error: null value in column "current_question_index" violates not-null constraint
+            //await client.query(gamesQuery);
+            const answersRes = await client.query(answersQuery);
+            await client.query('COMMIT');
+            return answersRes;
+        } catch (e) {
+            await client.query('ROLLBACK');
             throw e
         } finally {
             client.release()

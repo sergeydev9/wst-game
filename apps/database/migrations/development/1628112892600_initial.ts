@@ -232,8 +232,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: true,
             onDelete: 'CASCADE',
         },
-        value: { type: 'answer_value', notNull: true }, // custom type
-        number_true_guess: { type: 'smallint', notNull: true },
+        value: { type: 'answer_value', notNull: false }, // custom type
+        number_true_guess: { type: 'smallint', notNull: false },
         score: { type: 'integer', notNull: false },
         question_id: { type: 'integer', notNull: false, references: 'questions', onDelete: 'SET NULL' },
         created_at: {
