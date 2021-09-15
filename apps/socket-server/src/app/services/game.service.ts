@@ -1,5 +1,6 @@
 import Game, {GameQuestion} from "../game/game";
 import Player from "../game/player";
+import NodeCache from "node-cache";
 
 import {
   AnswerValue,
@@ -26,12 +27,17 @@ import {Mutex} from 'async-mutex';
 
 
 class GameService {
-  private games = {};
+
+  private cache = new NodeCache({
+      useClones: false,         // TODO false
+      stdTTL: 1 * 24 * 60 * 60, // 1 day
+      checkperiod: 1 * 60 * 60, // 1 hour
+  });
   private locks = {};
 
   private async getGame(code: string): Promise<Game> {
-    if (this.games[code]) {
-      return this.games[code];
+    if (this.cache.has(code)) {
+      return this.cache.get(code);
     }
 
     return this.createGame(code);
@@ -39,7 +45,7 @@ class GameService {
 
   private async createGame(code: string): Promise<Game> {
 
-    if (this.games[code]) {
+    if (this.cache.has(code)) {
       throw new Error(`Game ${code} already exists`);
     }
 
@@ -66,7 +72,7 @@ class GameService {
 
     const gameInstance = new Game(game, host, questions);
 
-    this.games[code] = gameInstance;
+    this.cache.set(code, gameInstance)
     return gameInstance;
   }
 
@@ -317,7 +323,7 @@ class GameService {
         secondary_text: q.questionRow.text_for_guess,
         question_sequence_index: player.game.questionNumber,
         number_pending_answers: q.players.length - this.countFinishedAnswers(q),
-        reader_name: q.reader.name,
+        reader_name: q.reader?.name,
       }
     };
   }

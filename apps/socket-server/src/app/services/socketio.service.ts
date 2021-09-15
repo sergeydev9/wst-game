@@ -64,7 +64,7 @@ class SocketioService {
 
     // debug
     socket.onAny((event, msg) => {
-      console.log(event, msg);
+      console.log(`game: ${game.gameRow.access_code}, player:${player.playerId},`, event, msg);
     });
 
     socket.on('HostJoinGame', async data => {
