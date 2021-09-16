@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
 import { api } from '../../../api';
 import { Title1, Button } from "@whosaidtrue/ui"
 import { useAppDispatch, useAppSelector } from "../../../app/hooks"
-import { setFullModal } from "../modalSlice";
-import { clearCart, selectCartDeck, selectDeckId } from "../../cart/cartSlice";
+import { setFullModal, showError } from "../modalSlice";
+import { clearCart, selectCartDeck } from "../../cart/cartSlice";
 import { useHistory } from 'react-router';
 import { setGameDeck } from '../../game/gameSlice';
 
@@ -19,8 +18,8 @@ const CreditPurchase: React.FC = () => {
             dispatch(setGameDeck(cartDeck))
             history.push('/purchase-success')
         }).catch(e => {
-            // TODO: add a flash message error display
-            console.error(e)
+            dispatch(showError('Oops, something went wrong. Please try again later.'))
+            dispatch(setFullModal(''))
         })
     }
 

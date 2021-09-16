@@ -2,7 +2,7 @@ import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { Headline } from "@whosaidtrue/ui";
-import { closeModalsThunk, setFullModal, selectFullModal } from '../modal/modalSlice';
+import { setFullModal, selectFullModal } from '../modal/modalSlice';
 import AuthForm from './AuthForm';
 
 const CreateAccount: React.FC = () => {
@@ -13,13 +13,15 @@ const CreateAccount: React.FC = () => {
 
 
     const close = () => {
-        dispatch(closeModalsThunk())
+        dispatch(setFullModal(''))
     }
 
     // stay in current location if creating from modal
     const successHandler = () => {
         if (!isModal) {
             history.push('/')
+        } else {
+            dispatch(setFullModal(''))
         }
     }
 

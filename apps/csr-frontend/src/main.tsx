@@ -5,11 +5,10 @@ import { Provider } from "react-redux";
 import Modal from 'react-modal';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 // local imports
 import App from "./app/app";
-import { FlashMessage } from './features'
 import { store } from "./app/store";
 import "./styles.css";
 import '@fontsource/nunito/400.css';
@@ -20,7 +19,6 @@ import '@fontsource/roboto/500.css';
 
 const stripePromise = loadStripe(process.env.NX_STRIPE_KEY || 'pk_test_6pRNASCoBOKtIshFeQd4XMUh');
 
-
 Modal.setAppElement('#root');
 Modal.defaultStyles = {};
 
@@ -28,9 +26,11 @@ Modal.defaultStyles = {};
 ReactDOM.render(
   <StrictMode>
     <Elements stripe={stripePromise}>
-      <Provider store={store}>
-        <App />
-      </Provider>
+      <PayPalScriptProvider options={{ "client-id": process.env.NX_PAYPAL_ID || "test", currency: "USD" }}>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </ PayPalScriptProvider>
     </Elements>
   </StrictMode>,
   document.getElementById("root")

@@ -1,6 +1,5 @@
-import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { clearError } from "../auth/authSlice";
 
 
 export type FullModal = "createAccount"
@@ -10,10 +9,7 @@ export type FullModal = "createAccount"
     | "changePassword"
     | "choosePaymentMethod"
     | "freeCreditPurchase"
-    | "cardPurchase"
-    | "payPal"
-    | "applePay"
-    | "googlePay"
+    | "checkout"
     | "purchaseSuccess"
     | "removedFromGame"
     | "freeCreditAward"
@@ -46,20 +42,6 @@ export const initialState: ModalState = {
     isPersistent: false
 }
 
-export const closeModalsThunk = createAsyncThunk(
-    'modals/closeThunk',
-    async (_, thunkAPI) => {
-        const state = thunkAPI.getState() as RootState
-
-        // if there is an item in the cart, open checkout
-        if (state.cart?.status !== 'noItem') {
-            thunkAPI.dispatch(setFullModal('choosePaymentMethod'))
-        }
-        thunkAPI.dispatch(clearError());
-        thunkAPI.dispatch(setFullModal(''))
-    }
-)
-
 export const modalSlice = createSlice({
     name: 'modals',
     initialState,
@@ -89,7 +71,13 @@ export const modalSlice = createSlice({
     }
 })
 
-export const { setFullModal, setMessageType, setMessageContent, clearMessage, showError } = modalSlice.actions;
+export const {
+    setFullModal,
+    setMessageType,
+    setMessageContent,
+    clearMessage,
+    showError
+} = modalSlice.actions;
 export const selectFullModal = (state: RootState) => state.modals.fullModal;
 export const selectMessageType = (state: RootState) => state.modals.messageType;
 export const selectMessageContent = (state: RootState) => state.modals.messageContent;

@@ -1,14 +1,14 @@
-import { Deck } from '@whosaidtrue/app-interfaces'
+import { Deck } from '@whosaidtrue/app-interfaces';
+import { CreateGameRequest, CreateGameResponse } from '@whosaidtrue/api-interfaces';
 import { Button } from '@whosaidtrue/ui';
 import { api } from '../../../api'
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import { isLoggedIn, selectIsGuest } from '../../auth/authSlice';
+import { isLoggedIn, selectIsGuest, selectDeckCredits } from '../../auth/authSlice';
 import { createGame, setGameStatus, setGameDeck } from '../../game/gameSlice';
 import { setFullModal, showError } from '../modalSlice';
 import { addToCart } from '../../cart/cartSlice';
 import { clearSelectedDeck } from '../../decks/deckSlice';
 import { useHistory } from 'react-router';
-import { CreateGameRequest, CreateGameResponse } from '@whosaidtrue/api-interfaces';
 
 export interface DeckDetailsButtonProps {
     deck: Deck;
@@ -18,6 +18,7 @@ export interface DeckDetailsButtonProps {
 const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) => {
     const dispatch = useAppDispatch();
     const history = useHistory();
+    const hasCredits = useAppSelector(selectDeckCredits)
     const loggedIn = useAppSelector(isLoggedIn)
     const isGuest = useAppSelector(selectIsGuest);
     const buttonText = isOwned ? 'Play Deck' : deck.purchase_price
@@ -39,7 +40,15 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
         } else {
             // go to cart if signed in and not guest
             dispatch(addToCart(deck))
-            dispatch(setFullModal("choosePaymentMethod"))
+
+            // if user has credits, go to choose method
+            if (hasCredits > 0) {
+                dispatch(setFullModal("choosePaymentMethod"))
+
+                // else go straight to checkout
+            } else {
+                dispatch(setFullModal("checkout"))
+            }
         }
     }
 

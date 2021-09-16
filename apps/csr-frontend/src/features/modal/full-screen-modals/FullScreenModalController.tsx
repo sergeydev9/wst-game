@@ -5,8 +5,8 @@ import { selectFullModal, setFullModal } from "../modalSlice";
 import Loading from '../../loading/Loading';
 
 // Lazy load modals
-const CreditCardForm = lazy(() => import('./CreditCardForm'));
-const CheckoutModal = lazy(() => import('./CheckoutModal'));
+const Checkout = lazy(() => import('./Checkout'));
+const ChoosePaymentMethod = lazy(() => import('./ChoosePaymentMethod'));
 const DeckDetailsModal = lazy(() => import('./DeckDetailsModal'));
 const RedeemCredits = lazy(() => import('./RedeemCredits'));
 const PreGameAuth = lazy(() => import('./PreGameAuth'));
@@ -19,6 +19,12 @@ const ReportAnIssueModal = lazy(() => import('./ReportAnIssueModal'));
 const ConfirmRemovePlayerModal = lazy(() => import('./ConfirmRemovePlayerModal'));
 const GameOptionsModal = lazy(() => import('./GameOptionsModal'));
 
+/**
+ * All full screen modals render from here. This makes it possible to
+ * open and close modals without having to re-render other components
+ * in the current page.
+ *
+ */
 const FullScreenModalController = () => {
     const dispatch = useAppDispatch();
     const currentModal = useAppSelector(selectFullModal);
@@ -27,6 +33,9 @@ const FullScreenModalController = () => {
         dispatch(setFullModal(''))
     }
 
+    //TODO: Re-do the styling here to use the ModalContent ui component
+    // instead of Box or NoFlexBox containers. See
+    // remove players modal for an example.
     return (
         <>
             {/* Deck Details */}
@@ -59,27 +68,25 @@ const FullScreenModalController = () => {
                 isOpen={currentModal === 'choosePaymentMethod'}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={true}>
-                <NoFlexBox className="w-80 pt-7 md:w-28rem" >
-                    <Suspense fallback={<Loading />}>
-                        <CheckoutModal />
-                    </Suspense>
-                </NoFlexBox>
+                <Suspense fallback={<Loading />}>
+                    <ChoosePaymentMethod />
+                </Suspense>
             </Modal>}
 
             {/* Credit card */}
-            {currentModal === 'cardPurchase' && <Modal
-                isOpen={currentModal === 'cardPurchase'}
+            {currentModal === 'checkout' && <Modal
+                isOpen={currentModal === 'checkout'}
                 onRequestClose={close}
-                shouldCloseOnOverlayClick={true}>
+                shouldCloseOnOverlayClick={false}>
                 <NoFlexBox className="w-80 md:w-28rem">
                     <Suspense fallback={<Loading />}>
-                        <CreditCardForm />
+                        <Checkout />
                     </Suspense>
                 </NoFlexBox>
             </Modal>
             }
 
-            {/* Free Deck Credit Purchase*/}
+            {/* Free Deck Credit Purchase confirm*/}
             {currentModal === 'freeCreditPurchase' && <Modal
                 isOpen={currentModal === 'freeCreditPurchase'}
                 onRequestClose={close}

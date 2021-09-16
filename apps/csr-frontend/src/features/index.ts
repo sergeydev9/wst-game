@@ -13,7 +13,6 @@ export {
 } from "./auth/authSlice";
 export {
   default as modalReducer,
-  closeModalsThunk,
   setFullModal,
   setMessageContent,
   setMessageType,
