@@ -91,7 +91,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
     }
     // render
     return (
-        <form className="flex flex-col gap-3" onSubmit={formik.handleSubmit}>
+        <form className="w-full" onSubmit={formik.handleSubmit}>
             {/* title */}
             {$smallTitle ? <Title2 className="text-center mb-3">{title}</Title2> : <LargeTitle className="text-center mb-3">{title}</LargeTitle>}
 

@@ -112,7 +112,7 @@ const FullScreenModalController = () => {
             {currentModal === 'createAccount' &&
                 <Modal isOpen={currentModal === 'createAccount'}
                     onRequestClose={close}>
-                    <ModalContent>
+                    <ModalContent $narrow>
                         <Suspense fallback={<Loading />}>
                             <CreateAccount />
                         </Suspense>
