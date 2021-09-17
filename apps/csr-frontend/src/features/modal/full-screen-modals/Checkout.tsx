@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { PaymentIntent, PaymentRequest, StripeCardElement } from '@stripe/stripe-js';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { PaymentIntent, PaymentRequest, StripeCardElement, StripeCardElementChangeEvent } from '@stripe/stripe-js';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { CardElement, PaymentRequestButtonElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { Button, Title1 } from '@whosaidtrue/ui'
@@ -15,13 +15,14 @@ const Checkout: React.FC = () => {
     const stripe = useStripe();
     const history = useHistory();
     const elements = useElements();
-    const [error, setError] = useState('');
+    const [ready, setReady] = useState(false);
     const [price, setPrice] = useState(0);
     const [processing, setProcessing] = useState(false);
     const [clientSecret, setClientSecret] = useState<string | null>(null);
     const [paymentRequest, setPaymentRequest] = useState<PaymentRequest | null>(null);
     const dispatch = useAppDispatch();
     const deck = useAppSelector(selectCartDeck);
+    const elemRef = useRef(null)
 
 
     // on successful purchase
@@ -46,6 +47,15 @@ const Checkout: React.FC = () => {
             dispatch(showError('Oops, something went wrong!'))
             dispatch(setFullModal(''));
         })
+
+        if (elements) {
+            const cardElement = elements.getElement(CardElement);
+            cardElement?.on('change', (e) => {
+
+                e.complete ? setReady(true) : setReady(false)
+
+            })
+        }
 
 
 
@@ -114,7 +124,7 @@ const Checkout: React.FC = () => {
 
 
 
-    }, [dispatch, deck])
+    }, [dispatch, deck, elements])
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -159,12 +169,6 @@ const Checkout: React.FC = () => {
 
     };
 
-    const handleChange = async (event: any) => {
-        // Listen for changes in the CardElement
-        // and display any errors as the customer types their card details
-        setError(event.error ? event.error.message : "");
-    };
-
 
     return (
         <form onSubmit={handleSubmit}>
@@ -178,7 +182,7 @@ const Checkout: React.FC = () => {
                 }
             }} />} */}
             <img src={cards} alt='credit card logos' className="mb-16 mt-8 w-2/3 mx-auto" />
-            <CardElement onChange={handleChange} options={{
+            <CardElement options={{
                 hidePostalCode: true,
                 classes: {
                     base: `px-3
@@ -194,7 +198,7 @@ const Checkout: React.FC = () => {
 
                 }
             }} />
-            <Button type="submit" disabled={!stripe || processing || error !== ''}>
+            <Button type="submit" className={`${!ready && 'opacity-40 pointer-events-none'}`} disabled={!stripe}>
                 Pay {deck.purchase_price}
             </Button>
             <PayPalButtons

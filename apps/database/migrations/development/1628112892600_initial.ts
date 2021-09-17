@@ -452,7 +452,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     */
     pgm.createIndex('game_questions', ['game_id', 'question_sequence_index'], { unique: true });
     pgm.createIndex('game_players', ['game_id', 'player_name'], { unique: true });
-    pgm.createIndex('game_players', 'user_id', { unique: true }) // help look up players by user
+    pgm.createIndex('game_players', 'user_id') // help look up players by user
     pgm.createIndex('game_answers', 'question_id');
     pgm.createIndex('questions', 'deck_id');
     pgm.createIndex('user_decks', ['user_id', 'deck_id']); // speed up finding a user's decks
