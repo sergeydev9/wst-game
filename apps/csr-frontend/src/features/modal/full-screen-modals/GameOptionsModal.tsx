@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { Title1, InviteLinks, Headline } from '@whosaidtrue/ui';
+import { Title1, InviteLinks, Headline, ModalContent } from '@whosaidtrue/ui';
 
 import { clearGame, selectAccessCode, selectIsHost } from '../../game/gameSlice';
 import HostGameOptionsButtons from '../../game/HostGameOptionsButtons';
@@ -18,7 +18,7 @@ const GameOptionsModal: React.FC = () => {
         history.push('/')
     }
     return (
-        <>
+        <ModalContent>
             <Title1 className="mt-1 mb-10">Game Options</Title1>
             <InviteLinks accessCode={accessCode}>
                 {isHost ? <HostGameOptionsButtons /> :
@@ -30,7 +30,7 @@ const GameOptionsModal: React.FC = () => {
                 <Headline className="text-purple-light underline text-center my-8"><Link to="/contact-us">Submit a Question</Link></Headline>
                 <Headline onClick={() => dispatch(setFullModal('reportAnIssue'))} className="text-purple-light underline text-center cursor-pointer my-8">Report an issue</Headline>
             </InviteLinks>
-        </>)
+        </ModalContent>)
 }
 
 export default GameOptionsModal;

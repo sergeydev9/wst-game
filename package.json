@@ -41,6 +41,7 @@
   "dependencies": {
     "@fontsource/nunito": "^4.5.0",
     "@fontsource/roboto": "^4.5.0",
+    "@paypal/checkout-server-sdk": "^1.0.2",
     "@paypal/react-paypal-js": "^7.3.3",
     "@react-icons/all-files": "^4.1.0",
     "@reduxjs/toolkit": "^1.6.1",

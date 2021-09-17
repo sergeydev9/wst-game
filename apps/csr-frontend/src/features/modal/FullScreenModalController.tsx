@@ -1,23 +1,23 @@
 import { Suspense, lazy } from 'react';
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Modal, NoFlexBox, Box } from '@whosaidtrue/ui';
-import { selectFullModal, setFullModal } from "../modalSlice";
-import Loading from '../../loading/Loading';
+import { selectFullModal, setFullModal } from "./modalSlice";
+import Loading from '../loading/Loading';
 
 // Lazy load modals
-const Checkout = lazy(() => import('./Checkout'));
-const ChoosePaymentMethod = lazy(() => import('./ChoosePaymentMethod'));
-const DeckDetailsModal = lazy(() => import('./DeckDetailsModal'));
-const RedeemCredits = lazy(() => import('./RedeemCredits'));
-const PreGameAuth = lazy(() => import('./PreGameAuth'));
-const GuestRedirect = lazy(() => import('./GuestAccountRedirect'));
-const Login = lazy(() => import('../../auth/Login'));
-const CreateAccount = lazy(() => import('../../auth/CreateAccount'));
-const ConfirmEndGameModal = lazy(() => import('./ConfirmEndGameModal'));
-const RemovePlayersModal = lazy(() => import('./RemovePlayersModal'));
-const ReportAnIssueModal = lazy(() => import('./ReportAnIssueModal'));
-const ConfirmRemovePlayerModal = lazy(() => import('./ConfirmRemovePlayerModal'));
-const GameOptionsModal = lazy(() => import('./GameOptionsModal'));
+const Checkout = lazy(() => import('./full-screen-modals/Checkout'));
+const ChoosePaymentMethod = lazy(() => import('./full-screen-modals/ChoosePaymentMethod'));
+const DeckDetailsModal = lazy(() => import('./full-screen-modals/DeckDetailsModal'));
+const RedeemCredits = lazy(() => import('./full-screen-modals/RedeemCredits'));
+const PreGameAuth = lazy(() => import('./full-screen-modals/PreGameAuth'));
+const GuestRedirect = lazy(() => import('./full-screen-modals/GuestAccountRedirect'));
+const Login = lazy(() => import('../auth/Login'));
+const CreateAccount = lazy(() => import('../auth/CreateAccount'));
+const ConfirmEndGameModal = lazy(() => import('./full-screen-modals/ConfirmEndGameModal'));
+const RemovePlayersModal = lazy(() => import('./full-screen-modals/RemovePlayersModal'));
+const ReportAnIssueModal = lazy(() => import('./full-screen-modals/ReportAnIssueModal'));
+const ConfirmRemovePlayerModal = lazy(() => import('./full-screen-modals/ConfirmRemovePlayerModal'));
+const GameOptionsModal = lazy(() => import('./full-screen-modals/GameOptionsModal'));
 
 /**
  * All full screen modals render from here. This makes it possible to
@@ -130,22 +130,9 @@ const FullScreenModalController = () => {
 
             {/* Game Options */}
             {currentModal === 'gameOptions' && <Modal isOpen={currentModal === 'gameOptions'} onRequestClose={close}>
-                <div className={`
-                    bg-white-ish
-                    border-0
-                    rounded-3xl
-                    px-2
-                    py-2
-                    sm:py-6
-                    sm:px-8
-                    filter
-                    drop-shadow-card
-                    text-center
-                    sm:w-28rem
-                    md:w-40rem
-                    `}>
+                <Suspense fallback={<Loading />}>
                     <GameOptionsModal />
-                </div>
+                </Suspense>
             </Modal>}
 
 

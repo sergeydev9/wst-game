@@ -41,6 +41,6 @@ export { default as cartReducer } from './cart/cartSlice';
 export { default as Loading } from './loading/Loading';
 export { default as currentQuestionReducer } from './current-question/currentQuestionSlice';
 export { default as FlashMessage } from './modal/FlashMessage';
-export { default as FullScreenModalController } from './modal/full-screen-modals/FullScreenModalController';
+export { default as FullScreenModalController } from './modal/FullScreenModalController';
 export { default as hostReducer } from './host/hostSlice';
 export * from './choose-name/chooseNameSlice';

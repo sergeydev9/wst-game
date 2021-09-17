@@ -139,6 +139,7 @@ export const selectAuthError = (state: RootState) => state.auth.authError;
 export const selectDetailsError = (state: RootState) => state.auth.fetchDetailsError;
 export const selectUpdateError = (state: RootState) => state.auth.updateError;
 export const selectRoles = (state: RootState) => state.auth.roles;
+export const selectId = (state: RootState) => state.auth.id;
 export const selectIsGuest = (state: RootState) => state.auth.isGuest;
 
 export default authSlice.reducer;

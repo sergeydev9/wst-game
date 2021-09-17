@@ -17,8 +17,8 @@ import '@fontsource/nunito/700.css';
 import '@fontsource/nunito/800.css';
 import '@fontsource/roboto/500.css';
 
-const stripeKey = process.env.NX_STRIPE_KEY || 'pk_test_aePyzXr3954EAlSXe88gluRi'
-const stripePromise = loadStripe(stripeKey)
+const stripeKey = process.env.NX_STRIPE_KEY as string;
+const stripePromise = loadStripe(stripeKey);
 
 Modal.setAppElement('#root');
 Modal.defaultStyles = {};
@@ -27,7 +27,7 @@ Modal.defaultStyles = {};
 ReactDOM.render(
   <StrictMode>
     <Elements stripe={stripePromise}>
-      <PayPalScriptProvider options={{ "client-id": process.env.NX_PAYPAL_ID || "test", currency: "USD" }}>
+      <PayPalScriptProvider options={{ "client-id": process.env.NX_PAYPAL_CLIENT_ID as string, currency: "USD" }}>
         <Provider store={store}>
           <App />
         </Provider>

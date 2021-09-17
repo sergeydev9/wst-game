@@ -29,7 +29,7 @@ describe('Orders', () => {
         pool.end()
     })
 
-    describe('completeStripeOrder', () => {
+    describe('completeOrder', () => {
         const validPaymentIntent = {
             id: "pi_3JZhbMLD70ppdWl614iyCiYE",
             object: "payment_intent",
@@ -216,7 +216,7 @@ describe('Orders', () => {
         })
 
         it('should have rowCount 1 if successful', async () => {
-            const { rowCount } = await orders.completeStripeOrder(userId, deckId, validPaymentIntent)
+            const { rowCount } = await orders.completeOrder(userId, deckId, validPaymentIntent)
 
             expect(rowCount).toEqual(1)
         })

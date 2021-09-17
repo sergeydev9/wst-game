@@ -52,10 +52,10 @@ class Orders extends Dao {
     }
 
     /**
-     * This method is called in the stripe webhook. It creates an order record, and
-     * a user_deck record after payment has succeeded.
+     * This method is called after a purchase has succeeded. It creates an order record, and
+     * a user_deck record.
      */
-    public async completeStripeOrder(user_id: number, deck_id: number, paymentIntent: Record<string, unknown>) {
+    public async completeOrder(user_id: number, deck_id: number, processorData: Record<string, unknown>) {
         const client = await this.pool.connect();
 
         try {
@@ -65,7 +65,7 @@ class Orders extends Dao {
             // Create order record
             const createOrderQuery = {
                 text: 'INSERT INTO orders (status, user_id, deck_id, payment_processor_data) VALUES ($1, $2, $3, $4)',
-                values: ["fulfilled", user_id, deck_id, paymentIntent]
+                values: ["fulfilled", user_id, deck_id, processorData]
             }
 
             await client.query(createOrderQuery)

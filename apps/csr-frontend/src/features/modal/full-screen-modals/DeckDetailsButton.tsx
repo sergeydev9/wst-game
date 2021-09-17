@@ -59,6 +59,7 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
             dispatch(createGame(response.data))
             dispatch(setGameStatus('gameCreateSuccess'))
             dispatch(setGameDeck(deck))
+            dispatch(setFullModal(''))
             history.push(`/game/invite`)
         } catch (e) {
             console.error(e)

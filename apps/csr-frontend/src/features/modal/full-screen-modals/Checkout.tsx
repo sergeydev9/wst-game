@@ -9,9 +9,11 @@ import PaymentRequestButton from './PaymentRequestButton';
 import { selectCartDeck, clearCart } from '../../cart/cartSlice';
 import { setFullModal, showError } from '../modalSlice';
 import { setGameDeck } from '../../game/gameSlice';
+import { selectId } from '../../auth/authSlice';
 import { api } from '../../../api';
 
 const Checkout: React.FC = () => {
+    const dispatch = useAppDispatch();
     const stripe = useStripe();
     const history = useHistory();
     const elements = useElements();
@@ -19,8 +21,8 @@ const Checkout: React.FC = () => {
     const [price, setPrice] = useState(0);
     const [processing, setProcessing] = useState(false);
     const [clientSecret, setClientSecret] = useState<string | null>(null);
-    const dispatch = useAppDispatch();
     const deck = useAppSelector(selectCartDeck);
+    const userId = useAppSelector(selectId);
 
 
     // on successful purchase
@@ -110,17 +112,17 @@ const Checkout: React.FC = () => {
                 <CardElement options={{
                     hidePostalCode: true,
                     classes: {
-                        base: `px-3
-                    py-4
-                    form-input
-                    border-purple-base
-                    placeholder-basic-gray
-                    rounded-xl
-                    bg-purple-subtle-fill
-                    mb-10
-                    `,
+                        base: `
+                            px-3
+                            py-4
+                            form-input
+                            border-purple-base
+                            placeholder-basic-gray
+                            rounded-xl
+                            bg-purple-subtle-fill
+                            mb-10
+                        `,
                         invalid: "bg-red-subtle-fill border-red-base shadow-error"
-
                     }
                 }} />
                 <div className={`${!ready && 'opacity-40 pointer-events-none'}`}>
@@ -131,6 +133,52 @@ const Checkout: React.FC = () => {
 
                 <PayPalButtons
                     className="mt-6 select-none"
+                    createOrder={(_, actions) => {
+                        const priceAsString = deck.purchase_price.replace(/[^0-9-.]/g, "")
+                        return actions.order.create({
+                            intent: 'CAPTURE',
+                            purchase_units: [{
+                                custom_id: `${userId}`,
+                                amount: {
+                                    currency_code: 'USD',
+                                    value: priceAsString,
+                                    breakdown: {
+                                        item_total: {
+                                            currency_code: 'USD',
+                                            value: priceAsString
+                                        }
+                                    }
+                                },
+                                items: [{
+                                    category: 'DIGITAL_GOODS',
+                                    name: deck.name,
+                                    sku: `${deck.id}`,
+                                    quantity: '1',
+                                    unit_amount: { currency_code: 'USD', value: priceAsString }
+                                }]
+                            }],
+                            application_context: {
+                                user_action: 'PAY_NOW',
+                                brand_name: 'Who Said True?',
+                                shipping_preference: 'NO_SHIPPING'
+                            }
+                        });
+                    }}
+                    onApprove={(data, actions) => {
+                        return api.post('/purchase/capture-paypal', { orderID: data.orderID, deckId: deck.id })
+                            .then(() => {
+                                success()
+                            }).catch(e => {
+                                const parsed = JSON.parse(e.response.data)
+
+                                if (parsed.details[0]?.issue === 'INSTRUMENT_DECLINED') {
+                                    dispatch(showError('Payment declined'))
+                                    return
+                                }
+                                dispatch(showError('An error occured while processing payment.'))
+                                return
+                            })
+                    }}
                     style={{
                         color: 'white',
                         shape: 'pill',
