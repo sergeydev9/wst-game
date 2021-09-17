@@ -30,9 +30,11 @@ const DeckDetailsModal: React.FC = () => {
         <ModalContent $narrow>
             <Title1 className="text-center mb-6 mt-2">{deck.name}</Title1>
             <DeckDetails {...deck}></DeckDetails>
-            <div className="my-8 px-8 md:px-16">
+
+            <div className="w-full sm:w-2/3">
                 <DeckDetailsButton deck={deck} isOwned={isOwned} />
             </div>
+
             {!loggedIn && !isOwned && (<>
                 <Headline className="text-center">Already own this deck?</Headline>
                 <Headline className="underline cursor-pointer text-center" onClick={loginClick}>Log in</Headline>

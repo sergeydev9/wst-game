@@ -16,6 +16,13 @@ module.exports = {
             margin: {
                 'btn': '0.1rem'
             },
+            inset: {
+                'p40': '40%',
+                'p35': '35%',
+                'p25': '25%',
+                'p15': '15%',
+                'p10': '10%'
+            },
             width: {
                 'p99': '99%', // custom width for buttons. Full width breaks the style.
                 '40rem': '40rem',
