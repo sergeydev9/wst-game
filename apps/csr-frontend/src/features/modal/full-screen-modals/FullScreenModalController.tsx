@@ -78,11 +78,9 @@ const FullScreenModalController = () => {
                 isOpen={currentModal === 'checkout'}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={false}>
-                <NoFlexBox className="w-80 md:w-28rem">
-                    <Suspense fallback={<Loading />}>
-                        <Checkout />
-                    </Suspense>
-                </NoFlexBox>
+                <Suspense fallback={<Loading />}>
+                    <Checkout />
+                </Suspense>
             </Modal>
             }
 
