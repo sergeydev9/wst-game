@@ -12,8 +12,6 @@ const pool = new Pool({
     port: 5432
 });
 
-
-
 const users = new Users(pool);
 const games = new Games(pool);
 const decks = new Decks(pool);

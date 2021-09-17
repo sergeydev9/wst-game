@@ -69,9 +69,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
                 const { status, data } = e.response
                 if ((status === 422 || status === 401) && data) {
                     if (status === 401) {
-                        dispatch(showError("Invalid Credentials"))
+                        dispatch(showError("Incorrect email/password"))
                     } else {
-                        dispatch(showError(data))
+                        dispatch(showError('Invalid credentials'))
                     }
                 } else {
                     // manually set message to avoid accidentallly printing a cryptic error message on unexpected error.

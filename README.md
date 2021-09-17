@@ -50,17 +50,9 @@ The api reads from the following env variables:
 - JWT_SECRET
 - NODE_ENV
 - PORT
-- POSTGRES_DB=whosaidtrue-dev
-- POSTGRES_HOST=localhost
-- POSTGRES_USER=root
-- POSTGRES_PASSWORD=password
-- JWT_SECRET=mySecret
-- NODE_ENV=development
-- PORT=3000
-- STRIPE_SECRET_KEY=test
+- STRIPE_SECRET_KEY
 - DOMAIN
 - DATABASE_URL
-- NX_API_BASEURL
 - SG_API_KEY
 
 These can be changed for local dev in `.local.env`

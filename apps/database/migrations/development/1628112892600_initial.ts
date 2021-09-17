@@ -297,14 +297,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         }
     })
 
-    // charges
+    // orders
     pgm.createTable('orders', {
         id: 'id',
         status: { type: 'varchar(100)', notNull: true },
         user_id: { type: 'integer', notNull: false, references: 'users', onDelete: 'SET NULL' },
         deck_id: { type: 'integer', notNull: false, references: 'decks', onDelete: 'SET NULL' },
         credits_used: { type: 'boolean', notNull: true, default: false }, // true if user used free deck credits to make this purchase
-        charge_data: { type: 'jsonb', notNull: false }, // stripe charge json object. Contains the details for the charge
+        payment_processor_data: { type: 'jsonb', notNull: false }, // json data. PaymentIntent for stripe.
         created_at: {
             type: 'timestamptz',
             notNull: true,

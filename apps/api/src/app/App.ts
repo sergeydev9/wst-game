@@ -32,7 +32,6 @@ class App {
     }
 
     private initializeMiddlewares() {
-        this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
         this.app.use(cors({ origin: process.env.DOMAIN || true, credentials: true }));
@@ -41,11 +40,14 @@ class App {
     }
 
     private initializeRoutes() {
+        this.app.use('/purchase', purchase)
+        this.app.use(express.json()); // this iddleware needs to come after purchase route because of webhook signatures
+
         this.app.use('/healthz', healthcheck)
         this.app.use('/user', user)
         this.app.use('/decks', decks)
         this.app.use('/names', names)
-        this.app.use('/purchase', purchase)
+
         this.app.use('/games', games)
     }
 

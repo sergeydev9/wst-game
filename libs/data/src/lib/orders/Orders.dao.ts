@@ -50,6 +50,43 @@ class Orders extends Dao {
             client.release()
         }
     }
+
+    /**
+     * This method is called in the stripe webhook. It creates an order record, and
+     * a user_deck record after payment has succeeded.
+     */
+    public async completeStripeOrder(user_id: number, deck_id: number, paymentIntent: Record<string, unknown>) {
+        const client = await this.pool.connect();
+
+        try {
+            // start transaction
+            await client.query('BEGIN')
+
+            // Create order record
+            const createOrderQuery = {
+                text: 'INSERT INTO orders (status, user_id, deck_id, payment_processor_data) VALUES ($1, $2, $3, $4)',
+                values: ["fulfilled", user_id, deck_id, paymentIntent]
+            }
+
+            await client.query(createOrderQuery)
+
+            // create a new user_deck with user id and deck id
+            const createUserDeckQuery = {
+                text: 'INSERT INTO user_decks (user_id, deck_id) VALUES ($1, $2)',
+                values: [user_id, deck_id]
+            }
+
+            const createResult = await client.query(createUserDeckQuery);
+            await client.query('COMMIT')
+
+            return createResult;
+        } catch (e) {
+            await client.query('ROLLBACK')
+            throw e // rethrow and catch in caller
+        } finally {
+            client.release()
+        }
+    }
 }
 
 export default Orders

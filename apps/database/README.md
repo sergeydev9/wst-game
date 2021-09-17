@@ -276,7 +276,7 @@ user_id | integer | yes | no | | users | SET NULL
 deck_id | integer | yes | no | | decks | SET NULL
 status: | varchar(100) | no
 credits_used | boolean | no | no | false
-charge_data: | jsonb | yes
+payment_processor_data: | jsonb | yes
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 

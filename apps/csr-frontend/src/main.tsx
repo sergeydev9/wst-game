@@ -1,5 +1,5 @@
 
-import { StrictMode } from "react";
+import { StrictMode, useMemo } from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import Modal from 'react-modal';
@@ -17,7 +17,8 @@ import '@fontsource/nunito/700.css';
 import '@fontsource/nunito/800.css';
 import '@fontsource/roboto/500.css';
 
-const stripePromise = loadStripe(process.env.NX_STRIPE_KEY || 'pk_test_6pRNASCoBOKtIshFeQd4XMUh');
+const stripeKey = process.env.NX_STRIPE_KEY || 'pk_test_aePyzXr3954EAlSXe88gluRi'
+const stripePromise = loadStripe(stripeKey)
 
 Modal.setAppElement('#root');
 Modal.defaultStyles = {};
