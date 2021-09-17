@@ -13,7 +13,7 @@ import {
     Title2
 } from '@whosaidtrue/ui';
 import { useAppDispatch } from '../../app/hooks';
-import { setFullModal } from '../modal/modalSlice';
+import { setFullModal, showError } from '../modal/modalSlice';
 
 
 const ChangePassword: React.FC = () => {
@@ -37,7 +37,8 @@ const ChangePassword: React.FC = () => {
                 await api.patch('/user/change-password', { oldPass, newPass })
                 dispatch(setFullModal(''))
             } catch (e) {
-                setChangeErr(e.response.data)
+                console.error(e);
+                dispatch(showError('An unexpected error occurred while changing password. Please try again later.'))
             }
         }
     })

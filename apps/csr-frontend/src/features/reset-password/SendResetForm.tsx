@@ -15,6 +15,7 @@ import {
     TextInput,
     ErrorText
 } from "@whosaidtrue/ui";
+import { showError } from '../modal/modalSlice';
 
 const SendResetForm: React.FC = () => {
     const history = useHistory();
@@ -28,25 +29,24 @@ const SendResetForm: React.FC = () => {
         validationSchema: Yup.object({
             email: Yup.string().email('Email is invalid').required('Email is required')
         }),
-        onSubmit: async (values) => {
-            try {
-                await api.post('/user/send-reset', { email: values.email })
+        onSubmit: (values) => {
+
+            api.post('/user/send-reset', { email: values.email }).then(response => {
                 dispatch(setEmail(values.email))
                 history.push('/reset/enter-code')
-            } catch (e) {
-                console.error(e)
-                if (e.response?.data) {
-                    setError(e.response.data)
+            }).catch(e => {
+                if (e.response.status === 404) {
+                    dispatch(showError('Could not find a user with that email'))
                 } else {
-                    setError('An unkown error has occured')
+                    dispatch(showError('Oops, somethign went wrong. Please try again later'))
                 }
-            }
+            })
         }
     })
 
     const emailErr = formik.touched.email && formik.errors.email ? true : false
     return (
-        <Form className="bg-white-ish rounded-3xl mx-auto filter  drop-shadow-card px-8 py-6" onSubmit={formik.handleSubmit}>
+        <Form className="bg-white-ish rounded-3xl mx-auto filter drop-shadow-card px-8 py-6" onSubmit={formik.handleSubmit}>
             <div>
                 <Title1>Reset Password</Title1>
                 <BodySmall>Please enter your email</BodySmall>
