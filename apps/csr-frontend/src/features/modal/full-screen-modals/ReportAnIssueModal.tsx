@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { setFullModal } from "../..";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { Title1, FormGroup, InputLabel, ErrorText, TextInput, TextArea, Button } from "@whosaidtrue/ui";
+import { Title1, FormGroup, InputLabel, ErrorText, TextInput, TextArea, Button, ModalContent } from "@whosaidtrue/ui";
 
 
 const ReportAnIssue: React.FC = () => {
@@ -34,36 +34,38 @@ const ReportAnIssue: React.FC = () => {
 
     // render
     return (
-        <form className="m-7 w-full px-16" onSubmit={formik.handleSubmit}>
+        <ModalContent $narrow>
+            <form className="m-7 w-full px-16" onSubmit={formik.handleSubmit}>
 
-            <Title1 className="text-center mb-3">Report an Issue</Title1>
+                <Title1 className="text-center mb-3">Report an Issue</Title1>
 
-            {/* name */}
-            <FormGroup>
-                <InputLabel htmlFor="name">Name</InputLabel>
-                <TextInput {...formik.getFieldProps('name')} id="name" $hasError={nameErr} $border name="name" type="text" />
+                {/* name */}
+                <FormGroup>
+                    <InputLabel htmlFor="name">Name</InputLabel>
+                    <TextInput {...formik.getFieldProps('name')} id="name" $hasError={nameErr} $border name="name" type="text" />
 
-                {nameErr && <ErrorText>{formik.errors.name}</ErrorText>}
-            </FormGroup>
+                    {nameErr && <ErrorText>{formik.errors.name}</ErrorText>}
+                </FormGroup>
 
-            {/* email */}
-            <FormGroup>
-                <InputLabel htmlFor="email">Email</InputLabel>
-                <TextInput {...formik.getFieldProps('email')} $hasError={emailErr} id="email" $border name="email" type="email" />
-                {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
-            </FormGroup>
+                {/* email */}
+                <FormGroup>
+                    <InputLabel htmlFor="email">Email</InputLabel>
+                    <TextInput {...formik.getFieldProps('email')} $hasError={emailErr} id="email" $border name="email" type="email" />
+                    {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
+                </FormGroup>
 
 
-            {/* message */}
-            <FormGroup>
-                <InputLabel htmlFor="message">Please tell us what went wrong</InputLabel>
-                <TextArea {...formik.getFieldProps('message')} $hasError={emailErr} id="message" name="message" />
-                {messageErr && <ErrorText>{formik.errors.message}</ErrorText>}
-            </FormGroup>
+                {/* message */}
+                <FormGroup>
+                    <InputLabel htmlFor="message">Please tell us what went wrong</InputLabel>
+                    <TextArea {...formik.getFieldProps('message')} $hasError={emailErr} id="message" name="message" />
+                    {messageErr && <ErrorText>{formik.errors.message}</ErrorText>}
+                </FormGroup>
 
-            {/* submit */}
-            <Button color="blue" type="submit" >Send</Button>
-        </form>
+                {/* submit */}
+                <Button color="blue" type="submit" >Send</Button>
+            </form>
+        </ModalContent>
     )
 }
 

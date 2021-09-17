@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { api } from '../../../api'
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { AuthForm } from '../..'
-import { TextInput, Headline, FormGroup, InputLabel, ErrorText, Button, Divider, Title2 } from "@whosaidtrue/ui";
+import { TextInput, Headline, FormGroup, InputLabel, ErrorText, Button, Divider, Title2, ModalContent } from "@whosaidtrue/ui";
 import { setFullModal, } from '../modalSlice';
 import { useFormik } from 'formik';
 import { setGameDeck, createGame } from '../../game/gameSlice';

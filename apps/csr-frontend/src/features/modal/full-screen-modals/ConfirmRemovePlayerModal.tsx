@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Button, Title1, BodyMedium } from '@whosaidtrue/ui';
+import { Button, Title1, BodyMedium, ModalContent } from '@whosaidtrue/ui';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks"
 import { selectTargetName, clearTarget, sendRemovePlayerSignal, selectTargetId } from "../../game/gameSlice";
 import { setFullModal } from '../modalSlice';
@@ -22,7 +22,7 @@ const ConfirmRemovePlayerModal: React.FC = () => {
 
     }
     return (
-        <>
+        <ModalContent>
             <Title1 className="mb-8 mt-2">Remove Player?</Title1>
             <BodyMedium >Are you sure you want to remove</BodyMedium>
             <h3 className='font-black text-2xl'>{targetName}</h3>
@@ -30,7 +30,7 @@ const ConfirmRemovePlayerModal: React.FC = () => {
                 <Button onClick={removePlayer} type="button">Yes, remove player</Button>
                 <Button className="w-full" onClick={() => dispatch(setFullModal(''))} type="button" $secondary>Cancel</Button>
             </div>
-        </>
+        </ModalContent>
     )
 }
 

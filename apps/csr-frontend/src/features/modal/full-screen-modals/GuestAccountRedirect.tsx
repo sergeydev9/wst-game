@@ -1,4 +1,4 @@
-import { Button, Box, Title3, BodySmall } from "@whosaidtrue/ui"
+import { Button, Box, Title3, BodySmall, ModalContent } from "@whosaidtrue/ui"
 import { useHistory } from "react-router"
 import { setFullModal } from "../.."
 import { useAppDispatch } from "../../../app/hooks"
@@ -13,7 +13,7 @@ const GuestAccountRedirect = () => {
     }
 
     return (
-        <Box boxstyle="white" className="gap-8 mx-8 mt-3">
+        <ModalContent>
             <Title3 className="text-center">You are currently logged in as a guest.</Title3>
             <BodySmall className="text-center"> Please set a password before making any purchases</BodySmall>
             <div className="flex flex-col gap-4 w-full">
@@ -21,7 +21,7 @@ const GuestAccountRedirect = () => {
                 <Button $secondary onClick={() => dispatch(setFullModal(''))}>Cancel</Button>
             </div>
 
-        </Box>
+        </ModalContent>
     )
 }
 

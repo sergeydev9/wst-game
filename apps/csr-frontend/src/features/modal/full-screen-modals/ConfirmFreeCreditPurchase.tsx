@@ -1,12 +1,12 @@
 import { api } from '../../../api';
-import { Title1, Button } from "@whosaidtrue/ui"
+import { Title1, Button, ModalContent } from "@whosaidtrue/ui"
 import { useAppDispatch, useAppSelector } from "../../../app/hooks"
 import { setFullModal, showError } from "../modalSlice";
 import { clearCart, selectCartDeck } from "../../cart/cartSlice";
 import { useHistory } from 'react-router';
 import { setGameDeck } from '../../game/gameSlice';
 
-const CreditPurchase: React.FC = () => {
+const ConfirmFreeCreditPurchase: React.FC = () => {
     const dispatch = useAppDispatch()
     const cartDeck = useAppSelector(selectCartDeck)
     const history = useHistory();
@@ -30,15 +30,15 @@ const CreditPurchase: React.FC = () => {
     }
 
     return (
-        <>
+        <ModalContent>
             <Title1 className="text-center mb-8 mt-1 px-8 md:px-12 text-basic-black">Purchase with Free Deck Credit?</Title1>
             <div className="px-6">
                 <Button onClick={confirm}>Yes</Button>
                 <Button $secondary className="w-full mt-8 mb-3" onClick={cancel}>No</Button>
             </div>
 
-        </>
+        </ModalContent>
     )
 }
 
-export default CreditPurchase
+export default ConfirmFreeCreditPurchase

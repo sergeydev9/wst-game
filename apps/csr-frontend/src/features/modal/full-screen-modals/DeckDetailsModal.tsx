@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { isLoggedIn, selectDeckCredits } from '../../auth/authSlice';
-import { DeckDetails, Title1, Headline } from '@whosaidtrue/ui';
+import { DeckDetails, Title1, Headline, ModalContent } from '@whosaidtrue/ui';
 import { getSelectedDeck, selectIsOwned } from '../../decks/deckSlice';
 import { fetchDetails } from '../../auth/authSlice';
 import { setFullModal } from '../../modal/modalSlice';
@@ -27,7 +27,7 @@ const DeckDetailsModal: React.FC = () => {
     }
 
     return (
-        <>
+        <ModalContent $narrow>
             <Title1 className="text-center mb-6 mt-2">{deck.name}</Title1>
             <DeckDetails {...deck}></DeckDetails>
             <div className="my-8 px-8 md:px-16">
@@ -39,7 +39,7 @@ const DeckDetailsModal: React.FC = () => {
             </>
             )}
             {loggedIn && credits > 0 && <Headline className="text-center">You have a FREE Question Deck credit available</Headline>}
-        </>
+        </ModalContent>
     )
 }
 

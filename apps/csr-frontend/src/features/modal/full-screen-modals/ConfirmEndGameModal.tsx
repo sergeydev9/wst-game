@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { Title1, Button, BodyMedium } from '@whosaidtrue/ui';
+import { Title1, Button, BodyMedium, ModalContent } from '@whosaidtrue/ui';
 import { selectIsHost, sendEndGameSignal } from '../../game/gameSlice';
 import { setFullModal } from '../..';
 
@@ -22,7 +22,7 @@ const ConfirmEndGameModal: React.FC = () => {
     }
 
     return (
-        <>
+        <ModalContent>
             <Title1 className="text-center mt-1 mb-10">End Game</Title1>
             <div className="flex place-items-center flex-col gap-6 w-28rem">
                 <BodyMedium className="text-center mb-4">Are you sure you want to end the game for all players and see final scores?</BodyMedium>
@@ -39,7 +39,7 @@ const ConfirmEndGameModal: React.FC = () => {
             </div>
 
 
-        </>)
+        </ModalContent>)
 }
 
 export default ConfirmEndGameModal;
