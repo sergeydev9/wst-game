@@ -39,6 +39,7 @@
   },
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.4.1",
     "@fontsource/nunito": "^4.5.0",
     "@fontsource/roboto": "^4.5.0",
     "@paypal/checkout-server-sdk": "^1.0.2",
@@ -109,6 +110,7 @@
     "react-redux": "^7.2.4",
     "react-responsive-carousel": "^3.2.20",
     "react-router-dom": "^5.2.0",
+    "react-spinners": "^0.11.0",
     "regenerator-runtime": "0.13.7",
     "rxjs": "^7.3.0",
     "stream": "^0.0.2",

@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { api } from '../../../api';
 import { Button, Title1, ModalContent } from '@whosaidtrue/ui'
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import cards from '../../../assets/US_standard.webp';
@@ -10,7 +11,6 @@ import { selectCartDeck, clearCart } from '../../cart/cartSlice';
 import { setFullModal, showError } from '../modalSlice';
 import { setGameDeck } from '../../game/gameSlice';
 import { selectId } from '../../auth/authSlice';
-import { api } from '../../../api';
 
 const Checkout: React.FC = () => {
     const dispatch = useAppDispatch();
