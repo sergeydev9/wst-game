@@ -2,7 +2,7 @@ import { MovieRating } from '@whosaidtrue/app-interfaces';
 
 export const backgroundColorPicker = (rating: MovieRating | 'all') => {
     switch (rating) {
-        case 'PG-13':
+        case 'PG13':
             return 'bg-yellow-base';
         case 'PG':
             return 'bg-green-base';
@@ -15,7 +15,7 @@ export const backgroundColorPicker = (rating: MovieRating | 'all') => {
 
 export const borderAndTextColorPicker = (rating: MovieRating | 'all') => {
     switch (rating) {
-        case 'PG-13':
+        case 'PG13':
             return 'text-yellow-base border-yellow-base'
         case 'PG':
             return 'text-green-base border-green-base'

@@ -11,7 +11,7 @@ export default {
                 type: 'select',
 
             },
-            options: ['PG', 'PG-13', 'R']
+            options: ['PG', 'PG13', 'R']
         },
         name: {
             name: 'name',
@@ -33,5 +33,5 @@ export const Deck: Story<DeckCardProps> = (args) => {
 Deck.args = {
     thumbnailUrl: placeholder,
     name: 'In your 20s',
-    movieRating: 'PG-13'
+    movieRating: 'PG13'
 }

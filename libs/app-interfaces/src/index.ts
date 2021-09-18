@@ -42,7 +42,7 @@ export type Insert<T> = Omit<T, 'id' | 'created_at' | 'updated_at'>;
 /**
  * Type used to define the movie rating column on decks
  */
-export type MovieRating = "G" | "PG" | "PG-13" | "R" //TODO: check what actual possible values are.
+export type MovieRating = "PG" | "PG13" | "R"
 
 
 /**

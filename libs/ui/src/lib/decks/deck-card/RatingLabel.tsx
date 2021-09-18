@@ -9,12 +9,11 @@ export interface RatingLabelProps extends React.HtmlHTMLAttributes<HTMLSpanEleme
 const Label = tw.span`
     text-white
     rounded-full
-    py-2
+    py-1
     px-3
     text-md
     font-bold
     text-center
-    w-20
     `
 
 const RatingLabel: React.FC<RatingLabelProps> = ({ rating }) => {
