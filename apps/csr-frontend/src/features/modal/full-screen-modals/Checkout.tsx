@@ -115,7 +115,6 @@ const Checkout: React.FC = () => {
     width: 75px;
     `
 
-
     return (
         <ModalContent $narrow>
             {(processing && <>
