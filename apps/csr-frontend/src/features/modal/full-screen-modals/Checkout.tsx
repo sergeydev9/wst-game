@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useHistory } from 'react-router';
+import { css } from "@emotion/react";
+import DotLoader from 'react-spinners/DotLoader';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { api } from '../../../api';
@@ -102,10 +104,25 @@ const Checkout: React.FC = () => {
 
     };
 
+    const loaderOverride = css`
+    position: absolute;
+    top: 40%;
+    left: 0;
+    right: 0;
+    select: none;
+    margin-left: auto;
+    margin-right: auto;
+    width: 75px;
+    `
+
 
     return (
         <ModalContent $narrow>
-            <form onSubmit={handleSubmit}>
+            {(processing && <>
+                <h3 className="text-2xl mt-24 text-center font-semibold">Please wait while payment is processing...</h3>
+                <DotLoader color="#F2AB3C" css={loaderOverride} />
+            </>)}
+            <form className={`${processing && 'invisible'}`} onSubmit={handleSubmit}>
                 <Title1 className="mb-10 text-center mt-1">Enter Credit Card Information</Title1>
                 {clientSecret && <PaymentRequestButton clientSecret={clientSecret} deck={deck} price={price} />}
                 <img src={cards} alt='credit card logos' className="mb-16 mt-8 w-2/3 mx-auto" />
@@ -131,7 +148,7 @@ const Checkout: React.FC = () => {
                     </Button>
                 </div>
 
-                <PayPalButtons
+                {!processing && <PayPalButtons
                     className="mt-6 select-none"
                     createOrder={(_, actions) => {
                         const priceAsString = deck.purchase_price.replace(/[^0-9-.]/g, "")
@@ -164,7 +181,7 @@ const Checkout: React.FC = () => {
                             }
                         });
                     }}
-                    onApprove={(data, actions) => {
+                    onApprove={(data) => {
                         return api.post('/purchase/capture-paypal', { orderID: data.orderID, deckId: deck.id })
                             .then(() => {
                                 success()
@@ -184,7 +201,7 @@ const Checkout: React.FC = () => {
                         shape: 'pill',
                         layout: 'horizontal',
                         label: 'paypal'
-                    }} />
+                    }} />}
             </form>
         </ModalContent>
 

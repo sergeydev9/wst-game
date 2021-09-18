@@ -16,8 +16,7 @@ drop-shadow-card
 select-none
 mt-9
 md:mt-12
-lg:w-40rem
-sm:w-28rem
+md:w-40rem
 mx-auto
 `
 

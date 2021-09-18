@@ -3,8 +3,7 @@ import NoFlexBox from '../no-flex-box/NoFlexBox';
 
 export default tw(NoFlexBox)`
     mt-14
-    lg:w-52rem
-    md:w-full
+    md:w-40rem
     sm:w-28rem
     mx-auto
 `
