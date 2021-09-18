@@ -35,7 +35,7 @@ const SendResetForm: React.FC = () => {
                 dispatch(setEmail(values.email))
                 history.push('/reset/enter-code')
             }).catch(e => {
-                if (e.response.status === 404) {
+                if (e.response.status === 400) {
                     dispatch(showError('Could not find a user with that email'))
                 } else {
                     dispatch(showError('Oops, somethign went wrong. Please try again later'))

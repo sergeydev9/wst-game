@@ -27,7 +27,7 @@ const GameOptionsModal: React.FC = () => {
                         onClick={leaveGame}
                         className="border-2 border-destructive text-destructive text-label-big bg-white-ish font-bold rounded-full py-4 w-full text-center hover:bg-destructive hover:text-white-ish"
                     >Leave Game</button>}
-                <Headline className="text-purple-light underline text-center my-8"><Link to="/contact-us">Submit a Question</Link></Headline>
+                <Headline onClick={() => dispatch(setFullModal(''))} className="text-purple-light underline text-center my-8"><Link to="/contact-us">Submit a Question</Link></Headline>
                 <Headline onClick={() => dispatch(setFullModal('reportAnIssue'))} className="text-purple-light underline text-center cursor-pointer my-8">Report an issue</Headline>
             </InviteLinks>
         </ModalContent>)
