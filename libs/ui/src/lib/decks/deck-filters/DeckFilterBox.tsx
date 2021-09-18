@@ -3,9 +3,9 @@ import { Headline } from '../../typography/Typography';
 
 const DeckFilterBox: React.FC = ({ children }) => {
     return (
-        <Box boxstyle="white" className="p-8 w-max h-max select-none">
-            <Headline className="text-center mb-3">Filter Question Decks</Headline>
-            <div className="flex flex-col md:flex-row gap-4">{children}</div>
+        <Box boxstyle="purple-subtle" className="pt-2 pb-4 px-4 w-max h-max select-none">
+            <h2 className="text-center text-xl mb-1 font-black tracking-wide text-basic-black">Filter Decks</h2>
+            <div className="flex flex-col md:flex-row gap-2">{children}</div>
         </Box>
     )
 }

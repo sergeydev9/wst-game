@@ -8,9 +8,10 @@ export default {
 
 export const DeckFilterBox = () => (
     <FilterBox>
-        <FilterButton selected={false}>PG-Rated</FilterButton>
-        <FilterButton selected={false}>PG-13-Rated</FilterButton>
-        <FilterButton selected={true}>R-Rated</FilterButton>
-        <FilterButton selected={false}>Work Friendly</FilterButton>
+        <FilterButton selected={true} filterValue="ALL" />
+        <FilterButton selected={false} filterValue="PG" />
+        <FilterButton selected={false} filterValue="PG13" />
+        <FilterButton selected={false} filterValue="R" />
+        <FilterButton selected={false} filterValue="SFW" />
     </FilterBox>
 )
