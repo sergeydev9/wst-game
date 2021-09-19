@@ -19,10 +19,11 @@ const Faq: React.FC<FaqProps> = ({ question, children }) => {
     return (
         <Box boxstyle="white" className='text-basic-black py-6 px-16 relative select-none'>
             <Title3 onClick={clickHandler} className="bg-white-ish z-10 w-full cursor-pointer">{question}</Title3>
-            <FaAngleRight className={`
+            <FaAngleRight onClick={clickHandler} className={`
             top-5
             right-5
             absolute
+            cursor-pointer
             text-3xl
             ${open ? 'transition duration-100 transform rotate-90' : 'transition duration-100 transform rotate-0'}
             hover:text-basic-gray
