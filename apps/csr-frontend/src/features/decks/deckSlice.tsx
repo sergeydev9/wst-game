@@ -1,15 +1,14 @@
 import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { DeckSelectionResponse } from "@whosaidtrue/api-interfaces";
-import { Deck, MovieRating, RequestStatus } from "@whosaidtrue/app-interfaces";
+import { Deck, MovieRating } from "@whosaidtrue/app-interfaces";
 import { api } from '../../api';
 import { showError } from "../modal/modalSlice";
 
 
 export interface DeckState {
-    getSelectionStatus: RequestStatus;
-    getDetailsStatus: RequestStatus;
     sfwOnly: boolean;
+    showAll: boolean;
     movieRatingFilters: MovieRating[];
     owned: Deck[];
     notOwned: Deck[];
@@ -18,10 +17,9 @@ export interface DeckState {
 }
 
 export const initialState: DeckState = {
-    getSelectionStatus: 'idle',
-    getDetailsStatus: 'idle',
     sfwOnly: false,
-    movieRatingFilters: ["G", "PG", "PG-13", "R"],
+    showAll: true,
+    movieRatingFilters: ["PG", "PG13", "R"],
     owned: [],
     notOwned: [],
     selectedDeck: {
@@ -32,7 +30,7 @@ export const initialState: DeckState = {
         age_rating: 0,
         status: 'active',
         description: '',
-        movie_rating: 'G',
+        movie_rating: 'PG',
         sfw: true,
         thumbnail_url: '',
         purchase_price: ''
@@ -42,15 +40,14 @@ export const initialState: DeckState = {
 
 export const getDeckSelection = createAsyncThunk(
     'decks/getSelection',
-    async (_, { rejectWithValue, dispatch }) => {
+    async (_, { dispatch, rejectWithValue }) => {
         return api.get<DeckSelectionResponse>('/decks/selection').then(res => {
             return res.data
+        }).catch(e => {
+            console.error(e)
+            dispatch(showError("Oops, something went wrong. Please try again later."))
+            return rejectWithValue(e.message)
         })
-            .catch(e => {
-                console.error(e)
-                dispatch(showError("Oops, something went wrong. Please try again later."))
-                return rejectWithValue(e.response)
-            })
 
     }
 )
@@ -64,6 +61,12 @@ export const deckSlice = createSlice({
         },
         setSfw: (state, action) => {
             state.sfwOnly = action.payload
+        },
+        setShowAll: (state) => {
+            state.showAll = true;
+            state.sfwOnly = false;
+            state.movieRatingFilters = ["PG", "PG13", "R"];
+
         },
         removeRating: (state, action) => {
             state.movieRatingFilters = state.movieRatingFilters.filter(rating => rating !== action.payload)
@@ -86,20 +89,9 @@ export const deckSlice = createSlice({
             const { owned, notOwned } = action.payload;
             state.owned = owned;
             state.notOwned = notOwned;
-            state.getSelectionStatus = 'idle';
         })
 
-        // error
-        builder.addCase(getDeckSelection.rejected, (state, action) => {
-            // TODO: figure out error handling. Maybe flash message then redirect?
-            console.error(action.payload)
-            return initialState
-        })
-        // loading
-        builder.addCase(getDeckSelection.pending, (state, action) => {
-            state.getSelectionStatus = 'loading';
 
-        })
     }
 })
 
@@ -110,16 +102,18 @@ export const {
     addRating,
     setSfw,
     setSelectedDeck,
-    clearSelectedDeck
+    clearSelectedDeck,
+    setShowAll
 } = deckSlice.actions;
 
 // selectors
-export const selectMovieRatingFilters = (state: RootState) => state.decks.movieRatingFilters
-export const selectSfwOnly = (state: RootState) => state.decks.sfwOnly
-export const selectOwned = (state: RootState) => state.decks.owned
-export const selectNotOwned = (state: RootState) => state.decks.notOwned
-export const getSelectedDeck = (state: RootState) => state.decks.selectedDeck
-export const selectIsOwned = (state: RootState) => state.decks.isSelectedOwned
+export const selectShowAll = (state: RootState) => state.decks.showAll;
+export const selectMovieRatingFilters = (state: RootState) => state.decks.movieRatingFilters;
+export const selectSfwOnly = (state: RootState) => state.decks.sfwOnly;
+export const selectOwned = (state: RootState) => state.decks.owned;
+export const selectNotOwned = (state: RootState) => state.decks.notOwned;
+export const getSelectedDeck = (state: RootState) => state.decks.selectedDeck;
+export const selectIsOwned = (state: RootState) => state.decks.isSelectedOwned;
 
 export const movieFilteredNotOwned = createSelector(selectNotOwned, selectMovieRatingFilters, (decks, filters) => {
     // if no filters have been selected, return all decks

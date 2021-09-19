@@ -87,7 +87,7 @@ module.exports = {
                 'card-container': '0 0 0.6rem #E4E4F7',
                 'light': '0 0 0.6rem #EBEBF9',
                 'mid': '0 0 0.6rem #ACADEB',
-                'card': '0 0 32px #893FE2'
+                'card': '0 0 0.9rem #893FE2'
             },
             ringColor: {
                 'primary': '#5D5FEF'

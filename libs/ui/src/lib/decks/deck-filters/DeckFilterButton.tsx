@@ -2,7 +2,7 @@ import tw from 'tailwind-styled-components';
 import { MovieRating } from '@whosaidtrue/app-interfaces';
 import { borderAndTextColorPicker, backgroundColorPicker } from '@whosaidtrue/util';
 
-export interface FilterButtonProps extends Record<string, unknown> {
+export interface FilterButtonProps extends React.HtmlHTMLAttributes<HTMLButtonElement> {
     selected: boolean;
     filterValue: MovieRating | 'ALL' | 'SFW'
 }
@@ -17,8 +17,9 @@ const Base = tw.button`
     px-4
 `
 
-const DeckFilterButton: React.FC<FilterButtonProps> = ({ filterValue, selected }) => {
+const DeckFilterButton: React.FC<FilterButtonProps> = ({ filterValue, selected, ...rest }) => {
     return <Base
+        {...rest}
         className={selected ? `${backgroundColorPicker(filterValue)} text-white` : `${borderAndTextColorPicker(filterValue)} bg-white`}>
         {filterValue}
     </Base>

@@ -38,7 +38,7 @@ export const initialState: GameState = {
         age_rating: 0,
         status: 'active',
         description: '',
-        movie_rating: 'G',
+        movie_rating: 'PG',
         sfw: true,
         thumbnail_url: '',
         purchase_price: ''
