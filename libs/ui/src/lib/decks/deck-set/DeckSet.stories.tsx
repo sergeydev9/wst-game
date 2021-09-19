@@ -9,13 +9,13 @@ export default {
 
 export const DeckSet = () => {
     return (
-        <div className="container mx-auto">
+        <div className="sm:w-40rem mx-auto">
             <DeckSetComponent>
-                <DeckCard name="In your 20s" thumbnailUrl={placeholder} movieRating="PG-13" />
-                <DeckCard name="At Work" thumbnailUrl={placeholder} movieRating="PG-13" />
+                <DeckCard name="In your 20s" thumbnailUrl={placeholder} movieRating="PG13" />
+                <DeckCard name="Dinner with Friends and Family" thumbnailUrl={placeholder} movieRating="PG13" />
                 <DeckCard name="Guys Night Out" thumbnailUrl={placeholder} movieRating="R" />
                 <DeckCard name="Happy Hour" thumbnailUrl={placeholder} movieRating="R" />
-                <DeckCard name="Family Fun" thumbnailUrl={placeholder} movieRating="G" />
+                <DeckCard name="Family Fun" thumbnailUrl={placeholder} movieRating="PG" />
             </DeckSetComponent>
         </div>
 
