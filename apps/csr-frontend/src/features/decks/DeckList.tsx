@@ -1,15 +1,43 @@
-import { filteredNotOwned, filteredOwned } from "./deckSlice";
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppSelector } from "../../app/hooks";
 import { Title2, Headline, Divider } from "@whosaidtrue/ui";
+import { Deck } from '@whosaidtrue/app-interfaces';
+
+import { useAppSelector } from "../../app/hooks";
+
 import { isLoggedIn } from '../auth/authSlice';
+import { selectFilteredNotOwned, selectFilteredOwned, selectOwned, selectNotOwned, selectShowAll, selectSfwOnly } from "./deckSlice";
+
 import DeckCardSet from './DeckCardSet'
 
 const DeckList: React.FC = () => {
-    const owned = useAppSelector(filteredOwned); // for users that aren't logged in, owned = free
-    const notOwned = useAppSelector(filteredNotOwned);
+    const isShowAll = useAppSelector(selectShowAll);
+    const isSfwOnly = useAppSelector(selectSfwOnly);
+    const allOwned = useAppSelector(selectOwned);
+    const allNotOwned = useAppSelector(selectNotOwned);
+    const filteredOwned = useAppSelector(selectFilteredOwned);
+    const filteredNotOwned = useAppSelector(selectFilteredNotOwned);
     const loggedIn = useAppSelector(isLoggedIn);
 
+    const [owned, setOwned] = useState<Deck[]>([]);
+    const [notOwned, setNotOwned] = useState<Deck[]>([])
+
+    useEffect(() => {
+        if (isShowAll) {
+            setOwned(allOwned);
+            setNotOwned(allNotOwned)
+        } else {
+            if (isSfwOnly) {
+                const own = filteredOwned.filter(d => d.sfw)
+                const nOwn = filteredNotOwned.filter(d => d.sfw)
+                setOwned(own);
+                setNotOwned(nOwn);
+            } else {
+                setOwned(filteredOwned);
+                setNotOwned(filteredNotOwned);
+            }
+        }
+    }, [isShowAll, allOwned, allNotOwned, filteredOwned, filteredNotOwned, isSfwOnly])
 
     return (
         <>

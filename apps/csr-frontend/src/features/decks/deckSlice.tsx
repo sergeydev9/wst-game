@@ -19,7 +19,7 @@ export interface DeckState {
 export const initialState: DeckState = {
     sfwOnly: false,
     showAll: true,
-    movieRatingFilters: ["PG", "PG13", "R"],
+    movieRatingFilters: [],
     owned: [],
     notOwned: [],
     selectedDeck: {
@@ -65,13 +65,19 @@ export const deckSlice = createSlice({
         setShowAll: (state) => {
             state.showAll = true;
             state.sfwOnly = false;
-            state.movieRatingFilters = ["PG", "PG13", "R"];
+            state.movieRatingFilters = [];
 
         },
         removeRating: (state, action) => {
-            state.movieRatingFilters = state.movieRatingFilters.filter(rating => rating !== action.payload)
+            const filters = state.movieRatingFilters.filter(rating => rating !== action.payload);
+
+            if (!filters.length) {
+                state.showAll = true;
+            }
+            state.movieRatingFilters = filters;
         },
         addRating: (state, action) => {
+            state.showAll = false;
             state.movieRatingFilters = [...state.movieRatingFilters, action.payload]
         },
         setSelectedDeck: (state, action) => {
@@ -115,18 +121,15 @@ export const selectNotOwned = (state: RootState) => state.decks.notOwned;
 export const getSelectedDeck = (state: RootState) => state.decks.selectedDeck;
 export const selectIsOwned = (state: RootState) => state.decks.isSelectedOwned;
 
-export const movieFilteredNotOwned = createSelector(selectNotOwned, selectMovieRatingFilters, (decks, filters) => {
-    // if no filters have been selected, return all decks
-    if (filters.length === 4) {
-        return decks
-    } else {
-        // if any filter has been selected, return only decks that match the filter
-        return decks.filter(deck => {
-            return filters.every(rating => rating !== deck.movie_rating)
-        })
-    }
+export const movieFilteredNotOwned = createSelector(
+    selectNotOwned,
+    selectMovieRatingFilters,
+    (decks, filters) => {
 
-});
+        return decks.filter(deck => {
+            return filters.some(rating => rating === deck.movie_rating)
+        })
+    });
 
 export const movieFilteredOwned = createSelector(selectOwned, selectMovieRatingFilters, (decks, filters) => {
     return decks.filter(deck => {
@@ -134,11 +137,11 @@ export const movieFilteredOwned = createSelector(selectOwned, selectMovieRatingF
     })
 });
 
-export const filteredNotOwned = createSelector(movieFilteredNotOwned, selectSfwOnly, (decks, sfwOnly) => {
+export const selectFilteredNotOwned = createSelector(movieFilteredNotOwned, selectSfwOnly, (decks, sfwOnly) => {
     return decks.filter(deck => deck.sfw === sfwOnly || deck.sfw === true)
 })
 
-export const filteredOwned = createSelector(movieFilteredOwned, selectSfwOnly, (decks, sfwOnly) => {
+export const selectFilteredOwned = createSelector(movieFilteredOwned, selectSfwOnly, (decks, sfwOnly) => {
     return decks.filter(deck => deck.sfw === sfwOnly || deck.sfw === true)
 })
 // default

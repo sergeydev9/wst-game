@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-
 import { LargeTitle, DeckFilterBox, DeckFilterButton } from "@whosaidtrue/ui"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -21,8 +20,8 @@ const Decks: React.FC = () => {
     const movieFilters = useAppSelector(selectMovieRatingFilters)
     const isShowAll = useAppSelector(selectShowAll);
 
-    const isNotInFilters = (rating: MovieRating) => {
-        return !movieFilters.some(r => r === rating)
+    const isInFilters = (rating: MovieRating) => {
+        return movieFilters.some(r => r === rating)
     }
 
     useEffect(() => {
@@ -30,11 +29,10 @@ const Decks: React.FC = () => {
     }, [dispatch])
 
     const toggleRating = (rating: MovieRating) => (_: React.MouseEvent) => {
-        console.log('hi')
-        if (isNotInFilters(rating)) {
-            dispatch(addRating(rating))
-        } else {
+        if (isInFilters(rating)) {
             dispatch(removeRating(rating))
+        } else {
+            dispatch(addRating(rating))
         }
     }
 
@@ -51,9 +49,9 @@ const Decks: React.FC = () => {
             <LargeTitle className="text-white text-center">Choose a Question Deck</LargeTitle>
             <DeckFilterBox>
                 <DeckFilterButton onClick={toggleAll} selected={isShowAll} filterValue="ALL" />
-                <DeckFilterButton onClick={toggleRating('PG')} selected={isNotInFilters('PG')} filterValue="PG" />
-                <DeckFilterButton onClick={toggleRating('PG13')} selected={isNotInFilters('PG13')} filterValue="PG13" />
-                <DeckFilterButton onClick={toggleRating('R')} selected={isNotInFilters('R')} filterValue="R" />
+                <DeckFilterButton onClick={toggleRating('PG')} selected={isInFilters('PG')} filterValue="PG" />
+                <DeckFilterButton onClick={toggleRating('PG13')} selected={isInFilters('PG13')} filterValue="PG13" />
+                <DeckFilterButton onClick={toggleRating('R')} selected={isInFilters('R')} filterValue="R" />
                 <DeckFilterButton onClick={toggleSfw} selected={isSFWOnly} filterValue="SFW" />
             </DeckFilterBox>
             <DeckList />
