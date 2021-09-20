@@ -29,6 +29,15 @@ class GamePlayers extends Dao {
 
         return this.pool.query(query);
     }
+
+    public getPlayerByGameIdAndUserId(gameId: number, userId: number): Promise<QueryResult> {
+        const query = {
+            text: `SELECT * FROM game_players WHERE game_id = $1 and user_id = $2`,
+            values: [gameId, userId]
+        }
+
+        return this.pool.query(query);
+    }
 }
 
 export default GamePlayers

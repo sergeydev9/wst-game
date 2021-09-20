@@ -4,7 +4,7 @@ import Player, {GameStatus} from "./player";
 import {
   AnswerValue,
   Game as IGame,
-  User as IUser,
+  GamePlayer as IGamePlayer,
   Question as IQuestion,
 } from '@whosaidtrue/app-interfaces';
 import {PlayerScore} from "@whosaidtrue/api-interfaces";
@@ -23,7 +23,7 @@ export type GameQuestion = {
 
 class Game extends EventEmitter {
   public readonly gameRow: IGame;
-  public readonly hostRow: IUser;
+  public readonly hostPlayerRow: IGamePlayer;
 
   public readonly players: Player[] = [];
 
@@ -36,10 +36,10 @@ class Game extends EventEmitter {
   public reader: Player;
   public readonly readerOrder: Player[] = [];
 
-  constructor(game: IGame, host: IUser, questions: IQuestion[]) {
+  constructor(game: IGame, host: IGamePlayer, questions: IQuestion[]) {
     super();
     this.gameRow = game;
-    this.hostRow = host;
+    this.hostPlayerRow = host;
 
     questions.forEach(q => {
       const gameQuestion: GameQuestion = {

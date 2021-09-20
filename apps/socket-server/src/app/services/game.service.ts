@@ -54,7 +54,7 @@ class GameService {
       throw new Error(`Game ${code} not found`);
     }
 
-    const host: IUser = (await usersDao.getById(game.host_id)).rows[0];
+    const host: IGamePlayer = (await gamePlayersDao.getPlayerByGameIdAndUserId(game.id, game.host_id)).rows[0];
 
     // TODO: gamesDao.getQuestions(gameRow.id)
     const questions: IQuestion[] = [
@@ -333,7 +333,8 @@ class GameService {
       status: "ok",
       payload: {
         game_id: game.gameRow.id,
-        host_id: game.hostRow?.id,
+        host_id: game.hostPlayerRow?.id,
+        host_player_id: game.hostPlayerRow?.user_id,
         status: game.status,
         current_players: game.getActivePlayers().map(p => p.name),
         total_questions: game.questions.length,

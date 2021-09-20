@@ -67,6 +67,7 @@ export interface GameState extends WebsocketMessage {
   payload: {
     game_id: number,
     host_id: number,
+    host_player_id: number,
     status: string,
     current_players: string[],
     total_questions: number,
