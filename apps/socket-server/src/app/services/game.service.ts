@@ -76,7 +76,7 @@ class GameService {
     return gameInstance;
   }
 
-  public async connectPlayer(playerId: number, gameCode: string): Promise<Player> {
+  public async join(playerId: number, gameCode: string): Promise<Player> {
     if (!this.locks[gameCode]) {
       this.locks[gameCode] = new Mutex();
     }
@@ -95,7 +95,7 @@ class GameService {
       throw new Error("Player already active. No duplicate players allowed.");
     }
 
-    player.isActive = true;
+    this.joinGame(player);
     return player;
   }
 
@@ -138,15 +138,14 @@ class GameService {
     }
   }
 
-  public joinGame(player: Player, playerName: string) {
+  private joinGame(player: Player) {
     const game = player.game;
-    player.name = playerName;
     if (player.isHost()) {
       game.host = player;
     }
 
     player.isActive = true;
-    game.joinWaitingRoom(player);
+    game.join(player);
 
 
 
@@ -192,27 +191,27 @@ class GameService {
   }
 
   public async submitAnswerPart1(player: Player, data: any) {
-    this.requireCurrentQuestion(player.game, data.questionNumber);
+    this.requireCurrentQuestion(player.game, data.question_number);
 
-    const answer = player.getAnswer(data.questionNumber);
+    const answer = player.getAnswer(data.question_number);
     this.requireAnswerState(answer, 'part-1');
 
-    const question = player.game.getQuestion(data.questionNumber);
+    const question = player.game.getQuestion(data.question_number);
     this.requireValidAnswer(question, data.answer);
 
     answer.answer = data.answer;
     answer.state = 'part-2';
 
-    player.emit('message', this.getQuestionState(player, data.questionNumber));
+    player.emit('message', this.getQuestionState(player, data.question_number));
   }
 
   public async submitAnswerPart2(player: Player, data: any) {
-    this.requireCurrentQuestion(player.game, data.questionNumber);
+    this.requireCurrentQuestion(player.game, data.question_number);
 
-    const answer = player.getAnswer(data.questionNumber);
+    const answer = player.getAnswer(data.question_number);
     this.requireAnswerState(answer, 'part-2');
 
-    const question = player.game.getQuestion(data.questionNumber);
+    const question = player.game.getQuestion(data.question_number);
     this.requireValidGuess(question, data.guess);
 
     answer.guess = data.guess;
@@ -227,7 +226,7 @@ class GameService {
     };
     await answersDao.submit(answerRow);
 
-    player.game.getActivePlayers().forEach(p => p.emit('message', this.getQuestionState(p, data.questionNumber)));
+    player.game.getActivePlayers().forEach(p => p.emit('message', this.getQuestionState(p, data.question_number)));
 
     // auto-advance to results
     const finished = this.countFinishedAnswers(question);

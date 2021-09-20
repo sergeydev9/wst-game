@@ -59,21 +59,13 @@ class Game extends EventEmitter {
     return this.players.filter(p => p.isActive);
   }
 
-  public joinWaitingRoom(player: Player) {
+  public join(player: Player) {
     if (!player.isActive) {
       throw new Error('Player not active, game: ' + this.gameRow.access_code);
     }
 
     if (!this.players.includes(player)) {
       throw new Error('Player not in game: ' + this.gameRow.access_code);
-    }
-
-    if (player.gameStatus === 'waiting') {
-      throw new Error('Player already in waiting room, game: ' + this.gameRow.access_code);
-    }
-
-    if (!player.name) {
-      throw new Error('Please pick a name, game: ' + this.gameRow.access_code);
     }
 
     player.gameStatus = 'waiting';

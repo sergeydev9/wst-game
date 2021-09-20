@@ -1,6 +1,6 @@
 import GameService from "./game.service";
 import {Socket} from "socket.io";
-import {PlayerJoinGame, WebsocketMessage} from "@whosaidtrue/api-interfaces";
+import {WebsocketMessage} from "@whosaidtrue/api-interfaces";
 import Player from "../game/player";
 
 class SocketioService {
@@ -15,7 +15,7 @@ class SocketioService {
       const gameCode = socket.data.gameCode;
       const playerId = socket.data.playerId;
 
-      const player = await this.gameService.connectPlayer(playerId, gameCode);
+      const player = await this.gameService.join(playerId, gameCode);
       socket.join(socket.data.gameCode);
       const sendMessage = msg => socket.to(socket.data.gameCode).emit(msg.event, msg);
 
@@ -65,15 +65,6 @@ class SocketioService {
     // debug
     socket.onAny((event, msg) => {
       console.log(`game: ${game.gameRow.access_code}, player:${player.playerId},`, event, msg);
-    });
-
-    socket.on('HostJoinGame', async data => {
-      player.hostOverride = true;
-      await this.gameService.joinGame(player, (data as PlayerJoinGame).payload.player_name);
-    });
-
-    socket.on('PlayerJoinGame', async data => {
-      await this.gameService.joinGame(player, (data as PlayerJoinGame).payload.player_name);
     });
 
     socket.on('NextQuestion', async data => {
