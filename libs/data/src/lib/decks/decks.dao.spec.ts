@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { TEST_DB_CONNECTION } from '../util/testDbConnection';
+import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 import { cleanDb } from '../util/cleanDb';
 import { testDecks, testQuestions } from '../util/testEntityGenerators';
 import { setupUserDecks, setupDecks } from '../util/testDependencySetup';
@@ -141,7 +141,7 @@ describe('Decks', () => {
                 } = deck;
                 const query = {
                     text: `INSERT INTO decks (name, sort_order, sfw, age_rating, movie_rating, purchase_price, status, description, clean ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
-                    values: [name, sort_order, sfw, i > 0 ? 17 : 12, i > 0 ? "R" : "PG-13", purchase_price, status, description, clean]
+                    values: [name, sort_order, sfw, i > 0 ? 17 : 12, i > 0 ? "R" : "PG13", purchase_price, status, description, clean]
                 }
                 return pool.query(query)
             });
@@ -156,7 +156,7 @@ describe('Decks', () => {
         })
 
         it('should return only the deck with PG-13 rating', async () => {
-            const { rows } = await decks.getByMovieRating("PG-13");
+            const { rows } = await decks.getByMovieRating("PG13");
             expect(rows.length).toEqual(1)
         })
     })
