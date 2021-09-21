@@ -12,8 +12,6 @@ export interface GameState {
     game_id: number;
     deck: Deck;
     totalQuestions: number;
-    targetName: string;
-    targetId: number;
     isHost: boolean;
     currentHostName: string;
     players: PlayerRef[];
@@ -28,8 +26,6 @@ export const initialState: GameState = {
     gameToken: '',
     hasPassed: false,
     game_id: 0,
-    targetName: '', // for player remvoval. Store name here since remoal happens accross several modal components
-    targetId: 0,
     deck: {
         id: 0,
         name: '',
@@ -89,14 +85,6 @@ export const gameSlice = createSlice({
             state.access_code = action.payload;
             state.status = 'choosingName' as UserGameStatus;
         },
-        setTarget: (state, action) => {
-            state.targetName = action.payload.name;
-            state.targetId = action.payload.id
-        },
-        clearTarget: (state) => {
-            state.targetName = '';
-            state.targetId = 0;
-        },
         addPlayer: (state, action) => {
             state.players = [...state.players, action.payload];
         },
@@ -144,8 +132,6 @@ export const {
     clearGame,
     setGameDeck,
     createGame,
-    setTarget,
-    clearTarget,
     addPlayer,
     removePlayer,
     joinGame
@@ -154,11 +140,11 @@ export const {
 // selectors
 export const selectPlayerName = (state: RootState) => state.game.playerName;
 export const selectIsHost = (state: RootState) => state.game.isHost;
+export const selectGameId = (state: RootState) => state.game.game_id;
+export const selectGameToken = (state: RootState) => state.game.gameToken;
 export const selectGameStatus = (state: RootState) => state.game.status;
 export const selectAccessCode = (state: RootState) => state.game.access_code;
 export const selectGameDeck = (state: RootState) => state.game.deck;
-export const selectTargetName = (state: RootState) => state.game.targetName;
-export const selectTargetId = (state: RootState) => state.game.targetId;
-export const selectPlayers = (state: RootState) => state.game.players
+export const selectPlayers = (state: RootState) => state.game.players;
 
 export default gameSlice.reducer;

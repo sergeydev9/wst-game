@@ -1,11 +1,10 @@
 import { useHistory } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { Title1, InviteLinks, Headline, ModalContent } from '@whosaidtrue/ui';
-
 import { clearGame, selectAccessCode, selectIsHost } from '../../game/gameSlice';
-import HostGameOptionsButtons from '../../game/HostGameOptionsButtons';
+import HostGameOptionsButtons from '../../host/HostGameOptionsButtons';
 import { Link } from 'react-router-dom';
-import { setFullModal } from '../..';
+import { setFullModal } from '../modalSlice';
 
 const GameOptionsModal: React.FC = () => {
     const dispatch = useAppDispatch()

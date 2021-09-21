@@ -6,7 +6,7 @@ const options = {
     name: 'game-header'
 };
 
-export default new Strategy(options, async (payload, done) => {
+export default new Strategy(options, (payload, done) => {
 
     try {
         // yes, payload could just be sent through.

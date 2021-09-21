@@ -27,7 +27,9 @@ export {
   createGame,
   selectIsHost,
   setGameStatus,
-  selectAccessCode
+  selectAccessCode,
+  selectGameId,
+  selectGameToken
 } from './game/gameSlice';
 export { default as decksReducer, clearSelectedDeck } from './decks/deckSlice';
 export { default as AuthForm } from './auth/AuthForm';
@@ -39,7 +41,7 @@ export { default as ChangePassword } from './change-password/ChangePassword'; //
 export { default as resetPasswordReducer } from './reset-password/resetPasswordSlice'; // Reset via email code
 export { default as cartReducer } from './cart/cartSlice';
 export { default as Loading } from './loading/Loading';
-export { default as currentQuestionReducer } from './current-question/currentQuestionSlice';
+export { default as questionReducer } from './question/questionSlice';
 export { default as FlashMessage } from './modal/FlashMessage';
 export { default as FullScreenModalController } from './modal/FullScreenModalController';
 export { default as hostReducer } from './host/hostSlice';

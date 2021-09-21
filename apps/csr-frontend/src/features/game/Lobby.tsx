@@ -1,7 +1,7 @@
-import React from "react";
-
 const Lobby: React.FC = () => {
-    return <div>Lobby</div>
+    return (
+        <div></div>
+    )
 }
 
 export default Lobby;

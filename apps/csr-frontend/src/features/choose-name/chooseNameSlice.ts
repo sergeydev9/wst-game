@@ -21,7 +21,7 @@ export const initialState: ChooseNameState = {
 export const sendReport = createAsyncThunk(
     'chooseName/sendNameReport',
     async (report: NameChoiceReport) => {
-        return api.post('/names/report', report).then(res => {
+        return api.patch('/names/report', report).then(res => {
             return
         }).catch(e => {
             return // fail silently

@@ -75,11 +75,11 @@ export const {
 } = currentQuestionSlice.actions;
 
 // selectors
-export const selectSequenceIndex = (state: RootState) => state.currentQuestion.sequenceIndex;
-export const selectReaderId = (state: RootState) => state.currentQuestion.readerId;
-export const selectRatingSubmitted = (state: RootState) => state.currentQuestion.ratingSubmitted;
+export const selectSequenceIndex = (state: RootState) => state.question.sequenceIndex;
+export const selectReaderId = (state: RootState) => state.question.readerId;
+export const selectRatingSubmitted = (state: RootState) => state.question.ratingSubmitted;
 export const selectResults = (state: RootState) => {
-    const { results, globalTrue, groupTrue } = state.currentQuestion;
+    const { results, globalTrue, groupTrue } = state.question;
     return { results, globalTrue, groupTrue }
 }
 

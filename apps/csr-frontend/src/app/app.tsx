@@ -1,8 +1,8 @@
 import Layout from "./Layout";
 import { Route, Switch, BrowserRouter } from "react-router-dom";
 
-// TODO: make a suspense fallback so these can be lazy loaded.
-import Home from "../pages/home/Home";
+import Home from '../pages/home/Home';
+import Play from '../pages/play/Play';
 import ContactUs from "../pages/contact-us/ContactUs";
 import CreateAccount from '../pages/create-account/CreateAccount';
 import ChooseName from "../features/choose-name/ChooseName";
@@ -36,6 +36,9 @@ const App: React.FC = () => {
           </Route>
           <Route path='/x/:access_code'>
             <ChooseName />
+          </Route>
+          <Route path='/play'>
+            <Play />
           </Route>
           <Route exact path='/login'>
             <Login />

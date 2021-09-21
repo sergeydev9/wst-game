@@ -7,7 +7,7 @@ import {
     decksReducer,
     resetPasswordReducer,
     cartReducer,
-    currentQuestionReducer,
+    questionReducer,
     hostReducer
 } from "../features";
 import { enhancer } from "addon-redux";
@@ -44,7 +44,7 @@ export const store = configureStore({
         decks: decksReducer,
         resetPassword: resetPasswordReducer,
         cart: cartReducer,
-        currentQuestion: currentQuestionReducer,
+        question: questionReducer,
         host: hostReducer
     },
     preloadedState: persistedState,
@@ -55,9 +55,8 @@ export const store = configureStore({
 let storeTimer: ReturnType<typeof setTimeout>;
 store.subscribe(() => {
     clearTimeout(storeTimer)
-    const { auth, game, cart } = store.getState()
-
-    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game, cart })), 50)
+    const { auth, game, cart, question } = store.getState()
+    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game, cart, question })), 50)
 })
 
 export type AppDispatch = typeof store.dispatch;
