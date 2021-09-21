@@ -102,6 +102,7 @@
             "styles": ["apps/csr-frontend/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/csr-frontend/webpack.config.js",
+
             "generatePackageJson": true
           },
           "configurations": {
@@ -113,6 +114,7 @@
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
+              "webpackConfig": "@nrwl/react/plugins/webpack",
               "budgets": [
                 {
                   "type": "initial",
