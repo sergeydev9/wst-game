@@ -409,7 +409,6 @@ table | columns | unique
 |---|---|---
 | game_questions | game_id, question_sequence_index | yes
 | game_players | game_id, player_name | yes
-| game_players | user_id | yes
 | game_answers | question_id | no
 | questions | deck_id | no
 | user_decks | user_id deck_id | yes

@@ -1,7 +1,7 @@
 import { useState, } from 'react';
 import { RemovePlayers, RemovePlayersRow } from "@whosaidtrue/ui";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { selectPlayers, setTarget } from "../../game/gameSlice";
+import { selectPlayers } from "../../game/gameSlice";
 import { setFullModal } from '../..';
 
 const RemovePlayersModal: React.FC = () => {
@@ -18,7 +18,6 @@ const RemovePlayersModal: React.FC = () => {
                 key={i}
                 name={p.name}
                 handler={() => {
-                    dispatch(setTarget(p))
                     dispatch(setFullModal('confirmRemovePlayer'))
                 }} />
         ))

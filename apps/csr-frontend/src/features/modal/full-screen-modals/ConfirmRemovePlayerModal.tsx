@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Button, Title1, BodyMedium, ModalContent } from '@whosaidtrue/ui';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks"
-import { selectTargetName, clearTarget, sendRemovePlayerSignal, selectTargetId } from "../../game/gameSlice";
+import { selectTargetName, clearTarget, selectTargetId } from "../../host/hostSlice";
 import { setFullModal } from '../modalSlice';
 
 const ConfirmRemovePlayerModal: React.FC = () => {
@@ -17,7 +17,6 @@ const ConfirmRemovePlayerModal: React.FC = () => {
     }, [dispatch])
 
     const removePlayer = () => {
-        dispatch(sendRemovePlayerSignal(targetId))
         dispatch(setFullModal(''))
 
     }

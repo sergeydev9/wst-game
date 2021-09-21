@@ -43,6 +43,7 @@ export const { clearHost, clearTarget, setTarget, setHostModal } = hostSlice.act
 // selectors
 export const selectHostModal = (state: RootState) => state.host.hostModal;
 export const selectTargetName = (state: RootState) => state.host.targetName;
+export const selectTargetId = (state: RootState) => state.host.targetId;
 export const selectCurrentAction = (state: RootState) => state.host.currentAction;
 
 export default hostSlice.reducer;
