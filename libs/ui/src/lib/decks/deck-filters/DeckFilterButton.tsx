@@ -1,6 +1,5 @@
 import tw from 'tailwind-styled-components';
 import { MovieRating } from '@whosaidtrue/app-interfaces';
-import { borderAndTextColorPicker, backgroundColorPicker } from '@whosaidtrue/util';
 
 export interface FilterButtonProps extends React.HtmlHTMLAttributes<HTMLButtonElement> {
     selected: boolean;
