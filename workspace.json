@@ -101,7 +101,7 @@
             ],
             "styles": ["apps/csr-frontend/src/styles.css"],
             "scripts": [],
-            "webpackConfig": "apps/csr-frontend/webpack.config.js",
+            "webpackConfig": "@nrwl/react/plugins/webpack",
 
             "generatePackageJson": true
           },
