@@ -3,7 +3,6 @@ const { createGlobPatternsForDependencies } = require('@nrwl/react/tailwind');
 module.exports = {
 
     purge: {
-        enable: true,
         preserveHtmlElements: true,
         content: [...createGlobPatternsForDependencies(__dirname), "./apps/csr-frontend/src/**/*.{html,ts,tsx,jsx,js}"]
     },
