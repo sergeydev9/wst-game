@@ -40,7 +40,6 @@ router.post('/capture-paypal', [json(), ...paypalOrder], passport.authenticate('
     const { id } = req.user as TokenPayload;
     const { deckId, orderID } = req.body;
 
-
     let capture
     const request = new Paypal.orders.OrdersCaptureRequest(orderID);
     // Uncomment for local testing. Simulates a payment that fails after it's been approved by the user.

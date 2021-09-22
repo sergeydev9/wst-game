@@ -1,7 +1,7 @@
 import { FlashMessage, FullScreenModalController, } from '../features';
-
 import Footer from '../features/footer/Footer';
-import NavBar from '../features/navbar/Navbar'
+import NavBar from '../features/navbar/Navbar';
+
 
 const Layout: React.FC = ({ children }) => {
     return (

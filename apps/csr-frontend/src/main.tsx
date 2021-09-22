@@ -1,5 +1,5 @@
 
-import { StrictMode, useMemo } from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import Modal from 'react-modal';
@@ -10,6 +10,7 @@ import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 // local imports
 import App from "./app/app";
 import { store } from "./app/store";
+
 import "./styles.css";
 import '@fontsource/nunito/400.css';
 import '@fontsource/nunito/600.css';
