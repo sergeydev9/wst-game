@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   api:
-    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/api:20210907-bb5d8b0
+    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/api:20210921-52b14e3
     restart: always
     env_file:
       - .env
