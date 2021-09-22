@@ -31,9 +31,6 @@ function environment() {
         default:
             return
     }
-
-
-
 }
 
 // use this to make authenticated requests to paypal apis.
@@ -153,6 +150,7 @@ router.post('/webhook', raw({ type: 'application/json' }), async (req: Request, 
 
     if (event.type === 'payment_intent.succeeded') {
         try {
+            // get user and deck data from event metadata and use it to create user_deck record.
             const { user_id, deck_id } = event.data.object.metadata;
             const result = await orders.completeOrder(user_id, deck_id, event.data.object)
             if (result.rowCount == 1) {
