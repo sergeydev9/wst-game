@@ -1,4 +1,4 @@
-import { Request, Response, Router, RequestHandler } from 'express';
+import { Request, Response, Router } from 'express';
 import { passport, signGameToken } from '@whosaidtrue/middleware';
 import jwt from 'jsonwebtoken';
 import { ExtractJwt } from 'passport-jwt';
@@ -10,7 +10,6 @@ import {
     CreateGameRequest,
     TokenPayload,
     CreateGameResponse,
-    AccessCodeQuery,
     StatusRequestResponse,
     JoinGameRequest,
     JoinGameResponse
@@ -47,7 +46,7 @@ router.post('/join', [...joinGame], async (req: Request, res: Response) => {
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
-})
+});
 
 /**
  * Create a game and set user as its host.
@@ -62,16 +61,16 @@ router.post('/create', [...deckId], passport.authenticate('jwt', { session: fals
 
         // should never happen. If game creation failed,
         // db will throw. But this is here just in case.
-        if (!rows[0]) {
+        if (rows.length === 0) {
             res.status(500).send(ERROR_MESSAGES.unexpected)
         } else {
             res.status(201).json({ game_id: rows[0].id, access_code: rows[0].access_code } as CreateGameResponse)
         }
     } catch (e) {
-        logger.error(`inputs: user id: ${id}, deck id: ${deckId}, error: ${e}, stack: ${e.stack}`)
+        logger.error(e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
-})
+});
 
 /**
  * Get status of a game from access_code.
@@ -80,8 +79,8 @@ router.post('/create', [...deckId], passport.authenticate('jwt', { session: fals
  * Return 404 if game doesn't exist. Else return status.
  */
 
-const statusHandler: RequestHandler<unknown, unknown, unknown, AccessCodeQuery> = async (req, res) => {
-    const { access_code } = req.query as AccessCodeQuery;
+router.get('/status', [...accessCodeQuery], async (req: Request, res: Response) => {
+    const { access_code } = req.query as any;
 
     try {
         const { rows } = await games.gameStatusByAccessCode(access_code)
@@ -93,6 +92,6 @@ const statusHandler: RequestHandler<unknown, unknown, unknown, AccessCodeQuery> 
     } catch (e) {
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
-}
-router.get('/status', [...accessCodeQuery], statusHandler)
+});
+
 export default router;

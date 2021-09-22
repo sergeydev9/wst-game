@@ -159,7 +159,7 @@ router.patch('/send-reset', [...validateResetEmail], async (req: Request, res: R
 
         // if no user was updated, that account doesn't exist
         if (!rows.length) {
-            res.status(400).send('Could not find a user with that email')
+            res.status(404).send('Could not find a user with that email')
         } else {
             // if code was set, send reset email
             const resetResponse = await emailService.sendResetCode(rows[0].email, code);

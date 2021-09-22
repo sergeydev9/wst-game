@@ -47,7 +47,6 @@ class App {
         this.app.use('/user', user)
         this.app.use('/decks', decks)
         this.app.use('/names', names)
-
         this.app.use('/games', games)
     }
 

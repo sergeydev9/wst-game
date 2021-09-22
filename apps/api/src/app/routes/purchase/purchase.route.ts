@@ -21,10 +21,18 @@ function environment() {
     const clientId = process.env.NX_PAYPAL_CLIENT_ID;
     const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
 
-    return (process.env.NODE_ENV === 'production' ?
-        new Paypal.core.LiveEnvironment(clientId, clientSecret) :
-        new Paypal.core.SandboxEnvironment(clientId, clientSecret)
-    );
+    switch (process.env.NODE_ENV) {
+        case 'production':
+            new Paypal.core.LiveEnvironment(clientId, clientSecret);
+            break;
+        case 'development':
+            new Paypal.core.SandboxEnvironment(clientId, clientSecret);
+            break;
+        default:
+            return
+    }
+
+
 
 }
 

@@ -12,6 +12,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest'
   },
   setupFiles: ['../../jest.setEnv.js'],
-  moduleFileExtensions: ['ts', 'js', 'html', 'tsx', 'jsx'],
+  moduleFileExtensions: ['ts', 'js', 'html', 'tsx', 'jsx', 'json'],
   coverageDirectory: '../../coverage/apps/api',
 };
