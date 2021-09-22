@@ -21,16 +21,11 @@ function environment() {
     const clientId = process.env.NX_PAYPAL_CLIENT_ID;
     const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
 
-    switch (process.env.NODE_ENV) {
-        case 'production':
-            new Paypal.core.LiveEnvironment(clientId, clientSecret);
-            break;
-        case 'development':
-            new Paypal.core.SandboxEnvironment(clientId, clientSecret);
-            break;
-        default:
-            return
+    if (process.env.NODE_ENV == 'production') {
+        return new Paypal.core.LiveEnvironment(clientId, clientSecret);
     }
+
+    return new Paypal.core.SandboxEnvironment(clientId, clientSecret);
 }
 
 // use this to make authenticated requests to paypal apis.
