@@ -3,8 +3,9 @@ const { createGlobPatternsForDependencies } = require('@nrwl/react/tailwind');
 module.exports = {
 
     purge: {
+        enable: true,
         preserveHtmlElements: true,
-        content: [...createGlobPatternsForDependencies(__dirname), "./src/**/*.{html,ts,js}"]
+        content: [...createGlobPatternsForDependencies(__dirname), "./apps/csr-frontend/src/**/*.{html,ts,tsx,jsx,js}"]
     },
 
     presets: [require('../../tailwind-workspace-preset.js')],

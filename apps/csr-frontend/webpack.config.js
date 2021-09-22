@@ -28,9 +28,34 @@ module.exports = config => {
     return data;
   });
 
-  config.optimization = {
-    minimize: true,
-    minimizer: [new TerserPlugin()],
+  if(process.env.NODE_ENV === 'production'){
+
+    config.optimization = {
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          parallel: false,
+          extractComments: true
+        }),
+      ],
+    }
+
+    config.module.rules.push(
+      {
+        test: /\.(ts|js)x?$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/
+      }
+    )
+  } else {
+    const devServer = config.devServer || {}
+
+    config.devServer = {
+      ...devServer,
+      https: true,
+      key: fs.readFileSync(process.env.DEV_SSL_KEY),
+      cert: fs.readFileSync(process.env.DEV_SSL_CERT)
+    }
   }
 
   config.module.rules.push({
@@ -50,13 +75,5 @@ module.exports = config => {
       },
     })
 
-    const devServer = config.devServer || {}
-
-    config.devServer = {
-      ...devServer,
-      https: true,
-      key: fs.readFileSync(process.env.DEV_SSL_KEY),
-      cert: fs.readFileSync(process.env.DEV_SSL_CERT)
-    }
     return config;
   };

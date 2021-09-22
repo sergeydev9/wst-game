@@ -5,7 +5,6 @@ import { isLoggedIn } from "../auth/authSlice";
 import { useAppSelector } from "../../app/hooks";
 
 export interface GuardedRouteProps {
-  component: React.FC;
   path: string;
   exact: boolean;
 }
@@ -18,15 +17,13 @@ export interface GuardedRouteProps {
  * @param {GuradedRouteProps} { component, path, exact }
  * @return {React.FC}
  */
-const GuardedRoute: React.FC<GuardedRouteProps> = ({
-  component,
-  path,
-  exact,
-}) => {
+const GuardedRoute: React.FC<GuardedRouteProps> = ({ path, exact, children }) => {
   const loggedIn = useAppSelector(isLoggedIn);
   return (
     loggedIn ? (
-      <Route component={component} path={path} exact={exact} />
+      <Route path={path} exact={exact} >
+        {children}
+      </Route>
     ) : (
       <Redirect to="/login" />
     )
