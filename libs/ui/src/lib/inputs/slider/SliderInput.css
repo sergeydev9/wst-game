@@ -1,0 +1,62 @@
+.sl-input-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  border-radius: 0.75rem;
+  width: 100%;
+  height: 30px;
+  background: transparent;
+  outline: none;
+  z-index: 999;
+}
+
+
+.sl-input-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-image: url('slider-bg.svg');
+  appearance: none;
+  border-radius: 100%;
+  width: 32px;
+  z-index: 3;
+  height: 32px;
+  background-color: #411872;
+  cursor: pointer;
+}
+
+.sl-input-slider::-moz-range-thumb {
+  width: 32px;
+  background-image: url('slider-bg.svg');
+  appearance: none;
+  border-radius: 100%;
+  height: 32px;
+  z-index: 3;
+  background-color: #411872;
+  cursor: pointer;
+}
+
+.sl-prpl-cover {
+  position: absolute;
+  background-color: #8157DB;
+  border-radius: 0.75rem;
+  width: 100%;
+  height: 30px;
+  min-width: 32px;
+  max-width: '90%';
+  pointer-events: none;
+  opacity: 0.85;
+  z-index: 11;
+  /* z-index above svg used for divider*/
+
+}
+
+.sl-backgrnd {
+  position: absolute;
+  background-color: #FBFBFE;
+  border: 1px #E4DFEC solid;
+  border-radius: 0.75rem;
+  width: 100%;
+  pointer-events: none;
+  height: 30px;
+  z-index: 1;
+  outline: none;
+}

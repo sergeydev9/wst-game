@@ -4,7 +4,7 @@ import { RootState } from '../app/store';
 // TODO: Add xsrf
 export const api = axios.create({
     baseURL: process.env.NX_API_BASEURL,
-    timeout: 1500,
+    timeout: 3000,
 })
 
 api.interceptors.request.use(config => {

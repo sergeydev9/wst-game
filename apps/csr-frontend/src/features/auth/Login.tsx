@@ -1,23 +1,25 @@
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { closeModalsThunk, AuthForm } from '../../features'
+import { AuthForm, selectFullModal } from '../../features'
 import { Headline } from "@whosaidtrue/ui";
-import { setFullModal, selectFullModalFactory } from '../modal/modalSlice';
+import { setFullModal } from '../modal/modalSlice';
 
 const Login: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
-    const isModal = useAppSelector(selectFullModalFactory('login'))
+    const isModal = useAppSelector(selectFullModal) === 'login'
     const history = useHistory()
     const dispatch = useAppDispatch()
 
     const close = () => {
-        dispatch(closeModalsThunk())
+        dispatch(setFullModal(''))
     }
 
     // stay in current location if loging in from modal
     const successHandler = () => {
         if (!isModal) {
             history.push('/')
+        } else {
+            dispatch(setFullModal(''))
         }
     }
 

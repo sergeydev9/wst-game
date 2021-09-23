@@ -297,14 +297,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         }
     })
 
-    // charges
+    // orders
     pgm.createTable('orders', {
         id: 'id',
         status: { type: 'varchar(100)', notNull: true },
         user_id: { type: 'integer', notNull: false, references: 'users', onDelete: 'SET NULL' },
         deck_id: { type: 'integer', notNull: false, references: 'decks', onDelete: 'SET NULL' },
         credits_used: { type: 'boolean', notNull: true, default: false }, // true if user used free deck credits to make this purchase
-        charge_data: { type: 'jsonb', notNull: false }, // stripe charge json object. Contains the details for the charge
+        payment_processor_data: { type: 'jsonb', notNull: false }, // json data. PaymentIntent for stripe.
         created_at: {
             type: 'timestamptz',
             notNull: true,
@@ -452,7 +452,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     */
     pgm.createIndex('game_questions', ['game_id', 'question_sequence_index'], { unique: true });
     pgm.createIndex('game_players', ['game_id', 'player_name'], { unique: true });
-    pgm.createIndex('game_players', 'user_id', { unique: true }) // help look up players by user
     pgm.createIndex('game_answers', 'question_id');
     pgm.createIndex('questions', 'deck_id');
     pgm.createIndex('user_decks', ['user_id', 'deck_id']); // speed up finding a user's decks

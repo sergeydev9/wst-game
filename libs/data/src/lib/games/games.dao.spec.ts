@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { TEST_DB_CONNECTION } from '../util/testDbConnection';
+import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 import { cleanDb } from '../util/cleanDb';
 import { setupGame, setupGamePlayer, setupOneDeck, setupQuestion } from '../util/testDependencySetup';
 import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
@@ -126,7 +126,7 @@ describe('Games', () => {
             expect(actual.status).toEqual('lobby');
             expect(actual.isHost).toEqual(true);
             expect(actual.deck).toBeDefined();
-            expect(actual.game_id).toBeDefined();
+            expect(actual.gameId).toBeDefined();
             expect(actual.players.length).toEqual(1);
             expect(actual.access_code).toEqual(gameRes.rows[0].access_code);
             expect(actual.currentHostName).toEqual('Test Name');
@@ -156,7 +156,7 @@ describe('Games', () => {
             expect(actual.status).toEqual('lobby');
             expect(actual.isHost).toEqual(false);
             expect(actual.deck).toBeDefined();
-            expect(actual.game_id).toBeDefined();
+            expect(actual.gameId).toBeDefined();
             expect(actual.players.length).toEqual(1);
             expect(actual.access_code).toEqual(gameRes.rows[0].access_code);
             expect(actual.currentHostName).not.toEqual('Test Name');

@@ -6,11 +6,12 @@ import {
     modalReducer,
     decksReducer,
     resetPasswordReducer,
-    cartReducer
+    cartReducer,
+    questionReducer,
+    hostReducer
 } from "../features";
 import { enhancer } from "addon-redux";
 import jwt_decode, { JwtPayload } from "jwt-decode";
-
 
 const enhancers = process.env.NODE_ENV === 'development' ? [enhancer] : []; // add storybook enhancer if not in prod environment
 
@@ -42,7 +43,9 @@ export const store = configureStore({
         modals: modalReducer,
         decks: decksReducer,
         resetPassword: resetPasswordReducer,
-        cart: cartReducer
+        cart: cartReducer,
+        question: questionReducer,
+        host: hostReducer
     },
     preloadedState: persistedState,
     enhancers
@@ -52,9 +55,8 @@ export const store = configureStore({
 let storeTimer: ReturnType<typeof setTimeout>;
 store.subscribe(() => {
     clearTimeout(storeTimer)
-    const { auth, game, cart } = store.getState()
-
-    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game, cart })), 50)
+    const { auth, game, cart, question } = store.getState()
+    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game, cart, question })), 50)
 })
 
 export type AppDispatch = typeof store.dispatch;

@@ -8,11 +8,11 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     $secondary?: boolean
 }
 
-interface ChildProps {
+interface ChildProps extends Record<string, unknown> {
     $secondary?: boolean;
 }
 
-export interface BgProps {
+export interface BgProps extends Record<string, unknown> {
     btncolor: 'blue' | 'yellow';
 }
 
@@ -20,6 +20,7 @@ export interface BgProps {
 const Bg = tw.div<BgProps>`
     bg-gradient-to-b
     rounded-full
+    select-none
     ${(p) => (p.btncolor === 'yellow' ? `active:from-yellow-base
     active:to-yellow-base
     active:shadow-active-yellow
@@ -41,7 +42,8 @@ const DefaultButton = tw.button<ChildProps>`
     font-label-big
     font-bold
     m-btn
-    py-3
+    py-2
+    select-none
     px-9
     rounded-full
     active:bg-blue-base
@@ -58,6 +60,7 @@ const BigTextButton = tw.button<ChildProps>`
     m-btn
     py-2
     px-9
+    select-none
     rounded-full
     active:bg-blue-base
     ${(p) => (p.$secondary ?
@@ -72,6 +75,7 @@ const SmallButton = tw.button<ChildProps>`
     font-bold
     py-1
     px-3
+    select-none
     rounded-full
     m-btn
     ${(p) => (p.$secondary ?
@@ -85,6 +89,7 @@ const InlineButton = tw.button<ChildProps>`
     text-label-small
     py-1
     px-2
+    select-none
     font-semibold
     rounded-md
     ${(p) => (p.$secondary ?

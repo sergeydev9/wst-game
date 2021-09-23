@@ -4,6 +4,11 @@ import Button, { ButtonProps } from './Button';
 export default {
     component: Button,
     title: 'Buttons',
+    parameters: {
+        backgrounds: {
+            default: 'white'
+        }
+    },
     argTypes: {
         buttonStyle: {
             name: 'buttonStyle',
@@ -35,7 +40,8 @@ export default {
 } as Meta;
 
 const Template: Story<ButtonProps> = (args) => (
-    <div className="w-34 h-34">
+    <div className="w-max h-34">
+
         <Button {...args} >Button Label</Button>
     </div>
 )

@@ -1,20 +1,22 @@
 import Layout from "./Layout";
 import { Route, Switch, BrowserRouter } from "react-router-dom";
+import loadable from '@loadable/component'
 
-// TODO: make a suspense fallback so these can be lazy loaded.
-import Home from "../pages/home/Home";
-import ContactUs from "../pages/contact-us/ContactUs";
-import CreateAccount from '../pages/create-account/CreateAccount';
-import ChooseName from "../features/choose-name/ChooseName";
-import Login from '../pages/login/Login';
-import Decks from '../pages/decks/Decks';
-import MyAccount from '../pages/my-account/MyAccount';
+import Home from '../pages/home/Home';
 import { GuardedRoute } from "../features";
-import SendResetForm from "../features/reset-password/SendResetForm";
-import EnterCode from "../features/reset-password/EnterCode";
-import NewPassword from "../features/reset-password/NewPassword";
-import Invite from "../pages/invite/Invite";
-import PurchaseSuccess from "../pages/purchase-success/PurchaseSuccess";
+const ContactUs = loadable(() => import('../pages/contact-us/ContactUs'))
+const ChooseName = loadable(() => import('../features/choose-name/ChooseName'));
+const CreateAccount = loadable(() => import('../pages/create-account/CreateAccount'))
+const Login = loadable(() => import('../pages/login/Login'))
+const Decks = loadable(() => import('../pages/decks/Decks'))
+const MyAccount = loadable(() => import('../pages/my-account/MyAccount'))
+const SendResetForm = loadable(() => import('../features/reset-password/SendResetForm'))
+const EnterCode = loadable(() => import('../features/reset-password/EnterCode'))
+const NewPassword = loadable(() => import('../features/reset-password/NewPassword'));
+const Invite = loadable(() => import('../pages/invite/Invite'));
+const PurchaseSuccess = loadable(() => import('../pages/purchase-success/PurchaseSuccess'));
+const Play = loadable(() => import('../pages/play/Play'));
+
 
 const App: React.FC = () => {
   return (
@@ -37,13 +39,18 @@ const App: React.FC = () => {
           <Route path='/x/:access_code'>
             <ChooseName />
           </Route>
+          <Route path='/play'>
+            <Play />
+          </Route>
           <Route exact path='/login'>
             <Login />
           </Route>
           <Route exact path='/decks'>
             <Decks />
           </Route>
-          <GuardedRoute component={MyAccount} path='/account' exact />
+          <GuardedRoute path='/account' exact >
+            <MyAccount />
+          </GuardedRoute>
           <Route exact path='/reset/send-email'>
             <SendResetForm />
           </Route>

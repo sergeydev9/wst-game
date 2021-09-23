@@ -1,7 +1,7 @@
-import { FlashMessage, } from '../features';
-
+import { FlashMessage, FullScreenModalController, } from '../features';
 import Footer from '../features/footer/Footer';
-import NavBar from '../features/navbar/Navbar'
+import NavBar from '../features/navbar/Navbar';
+
 
 const Layout: React.FC = ({ children }) => {
     return (
@@ -10,6 +10,7 @@ const Layout: React.FC = ({ children }) => {
                 className='flex-grow pb-16 w-full'>
                 <NavBar />
                 <FlashMessage />
+                <FullScreenModalController />
                 <main>{children}</main>
             </div>
             <Footer />

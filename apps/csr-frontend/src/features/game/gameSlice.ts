@@ -7,16 +7,14 @@ import { RootState } from "../../app/store";
 
 export interface GameState {
     status: UserGameStatus;
+    hasPassed: boolean;
     gameToken: string,
     game_id: number;
     deck: Deck;
     totalQuestions: number;
-    targetName: string;
-    targetId: number;
     isHost: boolean;
     currentHostName: string;
     players: PlayerRef[];
-    currentQuestionIndex: number;
     access_code: string;
     playerId: number;
     playerName: string;
@@ -26,9 +24,8 @@ export interface GameState {
 export const initialState: GameState = {
     status: 'notInGame',
     gameToken: '',
+    hasPassed: false,
     game_id: 0,
-    targetName: '', // for player remvoval. Store name here since remoal happens accross several modal components
-    targetId: 0,
     deck: {
         id: 0,
         name: '',
@@ -37,7 +34,7 @@ export const initialState: GameState = {
         age_rating: 0,
         status: 'active',
         description: '',
-        movie_rating: 'G',
+        movie_rating: 'PG',
         sfw: true,
         thumbnail_url: '',
         purchase_price: ''
@@ -46,7 +43,6 @@ export const initialState: GameState = {
     isHost: false,
     access_code: '',
     players: [],
-    currentQuestionIndex: 0,
     currentHostName: '',
     playerName: '',
     playerId: 0
@@ -89,14 +85,6 @@ export const gameSlice = createSlice({
             state.access_code = action.payload;
             state.status = 'choosingName' as UserGameStatus;
         },
-        setTarget: (state, action) => {
-            state.targetName = action.payload.name;
-            state.targetId = action.payload.id
-        },
-        clearTarget: (state) => {
-            state.targetName = '';
-            state.targetId = 0;
-        },
         addPlayer: (state, action) => {
             state.players = [...state.players, action.payload];
         },
@@ -117,7 +105,6 @@ export const gameSlice = createSlice({
                 totalQuestions,
                 currentHostName,
                 players,
-                currentQuestionIndex,
                 access_code,
                 playerId,
                 player_name,
@@ -131,7 +118,6 @@ export const gameSlice = createSlice({
             state.totalQuestions = totalQuestions;
             state.currentHostName = currentHostName;
             state.players = players;
-            state.currentQuestionIndex = currentQuestionIndex;
             state.access_code = access_code;
             state.playerId = playerId;
             state.playerName = player_name
@@ -146,8 +132,6 @@ export const {
     clearGame,
     setGameDeck,
     createGame,
-    setTarget,
-    clearTarget,
     addPlayer,
     removePlayer,
     joinGame
@@ -156,11 +140,11 @@ export const {
 // selectors
 export const selectPlayerName = (state: RootState) => state.game.playerName;
 export const selectIsHost = (state: RootState) => state.game.isHost;
+export const selectGameId = (state: RootState) => state.game.game_id;
+export const selectGameToken = (state: RootState) => state.game.gameToken;
 export const selectGameStatus = (state: RootState) => state.game.status;
 export const selectAccessCode = (state: RootState) => state.game.access_code;
 export const selectGameDeck = (state: RootState) => state.game.deck;
-export const selectTargetName = (state: RootState) => state.game.targetName;
-export const selectTargetId = (state: RootState) => state.game.targetId;
-export const selectPlayers = (state: RootState) => state.game.players
+export const selectPlayers = (state: RootState) => state.game.players;
 
 export default gameSlice.reducer;

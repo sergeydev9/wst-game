@@ -9,17 +9,29 @@ module.exports = {
                 'height':'height'
             },
             translate: {
-                'extra': '-115%'
+                'extra': '-115%',
+                '110': '110%',
+                'host-action': 'calc(100% - 4rem)'
             },
-
             margin: {
                 'btn': '0.1rem'
+            },
+            inset: {
+                'p40': '40%',
+                'p35': '35%',
+                'p25': '25%',
+                'p15': '15%',
+                'p10': '10%'
             },
             width: {
                 'p99': '99%', // custom width for buttons. Full width breaks the style.
                 '40rem': '40rem',
                 '52rem': '52rem',
                 '28rem': '28rem'
+            },
+            height: {
+                '32rem': '32rem',
+                '36rem': '36rem'
             },
 
             fontSize: {
@@ -53,6 +65,7 @@ module.exports = {
                 'blue-subtle': '#EDF3FC',
                 'off-blue': '#5D5FEF',
                 'white-ish': '#FBFBFE',
+                'pink-base': '#CC008C',
                 'true-white': '#FFFFFF',
                 'basic-black': '#190136',
                 'basic-gray': '#827991',
@@ -67,10 +80,14 @@ module.exports = {
                 'red-light': '#A70B00'
             },
             dropShadow: {
+                'pie': '0 0 0.45rem rgba(126, 54, 198, 0.2)',
+                'yellow-base': '0 0 0.45rem #F2AB3C',
+                'purple-light': '0 0 0.45rem #914FD2',
                 'subtle-stroke': '0 0 0.45rem #D7D8F3',
+                'card-container': '0 0 0.6rem #E4E4F7',
                 'light': '0 0 0.6rem #EBEBF9',
                 'mid': '0 0 0.6rem #ACADEB',
-                'card': '0 0 32px #893FE2'
+                'card': '0 0 0.9rem #893FE2'
             },
             ringColor: {
                 'primary': '#5D5FEF'
@@ -94,20 +111,21 @@ module.exports = {
                 grow: 'grow 75ms ease-in-out',
                 shrink: 'shrink 2s ease-in-out'
 
-            }
+            },
+            boxShadow: {
+                'rating-button': '0px 4px 0px #BDABE3',
+                'active-yellow': 'inset 0px 2px #C17C10',
+                'active-blue': 'inset 0px 2px #084AB8',
+                'yellow': '0px 2px 0px #C17C10',
+                'blue-base': '0px 2px 0px #0F69FF',
+                'blue': '0px 2px 0px #084AB8',
+                'error': '0px 0px 24px #F6E8E8'
+            },
         },
         fontFamily: {
             'sans': ['Nunito'],
             'roboto': ['Roboto']
-        },
-        boxShadow: {
-            'active-yellow': 'inset 0px 2px #C17C10',
-            'active-blue': 'inset 0px 2px #084AB8',
-            'yellow': '0px 2px 0px #C17C10',
-            'blue-base': '0px 2px 0px #0F69FF',
-            'blue': '0px 2px 0px #084AB8',
-            'error': '0px 0px 24px #F6E8E8'
-        },
+        }
     },
     variants: {
         extend: {

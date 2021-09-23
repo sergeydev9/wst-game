@@ -99,16 +99,16 @@
               "apps/csr-frontend/src/favicon.ico",
               "apps/csr-frontend/src/assets"
             ],
+            "webpackConfig": "apps/csr-frontend/webpack.config.js",
             "styles": ["apps/csr-frontend/src/styles.css"],
             "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack",
             "generatePackageJson": true
           },
           "configurations": {
             "production": {
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,

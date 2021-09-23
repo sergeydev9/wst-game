@@ -32,7 +32,7 @@ describe('purchase routes', () => {
             supertest(app)
                 .post('/purchase/credits')
                 .send({ deckId: 15 })
-                .expect(422, done)
+                .expect(401, done)
         })
         it('should respond with 400 if result from service is undefined', done => {
             mockedOrders.purchaseWithCredits.mockResolvedValue(undefined)

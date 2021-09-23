@@ -41,7 +41,7 @@ export function* testDecks(num: number, extra = '-') {
             sort_order: 1,
             clean: true,
             age_rating: 13,
-            movie_rating: 'PG-13' as MovieRating,
+            movie_rating: 'PG13' as MovieRating,
             sfw: true,
             status: 'active' as DeckStatus,
             description: 'A deck for testing',

@@ -276,7 +276,7 @@ user_id | integer | yes | no | | users | SET NULL
 deck_id | integer | yes | no | | decks | SET NULL
 status: | varchar(100) | no
 credits_used | boolean | no | no | false
-charge_data: | jsonb | yes
+payment_processor_data: | jsonb | yes
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
@@ -409,7 +409,6 @@ table | columns | unique
 |---|---|---
 | game_questions | game_id, question_sequence_index | yes
 | game_players | game_id, player_name | yes
-| game_players | user_id | yes
 | game_answers | question_id | no
 | questions | deck_id | no
 | user_decks | user_id deck_id | yes

@@ -6,7 +6,8 @@
 /out-tsc
 
 # local env
-/.local.env
+/.local.env*
+/localhost*.pem
 
 # logs
 /logs

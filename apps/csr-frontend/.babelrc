@@ -7,5 +7,9 @@
       }
     ]
   ],
-  "plugins": []
+  "plugins": [
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-transform-template-literals",
+    "@loadable/babel-plugin",
+  ]
 }

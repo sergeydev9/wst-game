@@ -1,51 +1,60 @@
-
 import { useEffect } from 'react';
-
 import { LargeTitle, DeckFilterBox, DeckFilterButton } from "@whosaidtrue/ui"
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { getDeckSelection, selectSfwOnly, selectMovieRatingFilters, addRating, setSfw, removeRating } from './deckSlice';
-import { isLoggedIn } from '../auth/authSlice';
-import UserSelection from './UserSelection';
-import GuestSelection from './GuestSelection';
+import {
+    getDeckSelection,
+    selectSfwOnly,
+    selectMovieRatingFilters,
+    addRating,
+    setSfw,
+    removeRating,
+    selectShowAll,
+    setShowAll
+} from './deckSlice';
 import { MovieRating } from '@whosaidtrue/app-interfaces';
-
+import DeckList from './DeckList';
 
 const Decks: React.FC = () => {
     const dispatch = useAppDispatch();
-    const loggedIn = useAppSelector(isLoggedIn);
     const isSFWOnly = useAppSelector(selectSfwOnly)
     const movieFilters = useAppSelector(selectMovieRatingFilters)
+    const isShowAll = useAppSelector(selectShowAll);
 
-    const isNotInFilters = (rating: MovieRating) => {
-        return !movieFilters.some(r => r === rating)
+    const isInFilters = (rating: MovieRating) => {
+        return movieFilters.some(r => r === rating)
     }
 
     useEffect(() => {
         dispatch(getDeckSelection())
     }, [dispatch])
 
-    const toggleRating = (rating: MovieRating) => (e: React.MouseEvent) => {
-        if (isNotInFilters(rating)) {
-            dispatch(addRating(rating))
-        } else {
+    const toggleRating = (rating: MovieRating) => (_: React.MouseEvent) => {
+        if (isInFilters(rating)) {
             dispatch(removeRating(rating))
+        } else {
+            dispatch(addRating(rating))
         }
     }
 
-    const toggleSfw = (_: React.MouseEvent) => {
+    const toggleSfw = () => {
         dispatch(setSfw(!isSFWOnly))
     }
 
+    const toggleAll = () => {
+        dispatch(setShowAll())
+    }
+
     return (
-        <div className="container mx-auto px-4 flex flex-col items-center gap-12 max-w-max">
+        <div className="container mx-auto px-4 flex flex-col items-center gap-12 max-w-2xl">
             <LargeTitle className="text-white text-center">Choose a Question Deck</LargeTitle>
             <DeckFilterBox>
-                <DeckFilterButton onClick={toggleRating('PG')} selected={isNotInFilters('PG')}>PG-Rated</DeckFilterButton>
-                <DeckFilterButton onClick={toggleRating('PG-13')} selected={isNotInFilters('PG-13')}>PG-13-Rated</DeckFilterButton>
-                <DeckFilterButton onClick={toggleRating('R')} selected={isNotInFilters('R')}>R-Rated</DeckFilterButton>
-                <DeckFilterButton onClick={toggleSfw} selected={isSFWOnly}>Work Friendly</DeckFilterButton>
+                <DeckFilterButton onClick={toggleAll} selected={isShowAll} filterValue="ALL" />
+                <DeckFilterButton onClick={toggleRating('PG')} selected={isInFilters('PG')} filterValue="PG" />
+                <DeckFilterButton onClick={toggleRating('PG13')} selected={isInFilters('PG13')} filterValue="PG13" />
+                <DeckFilterButton onClick={toggleRating('R')} selected={isInFilters('R')} filterValue="R" />
+                <DeckFilterButton onClick={toggleSfw} selected={isSFWOnly} filterValue="SFW" />
             </DeckFilterBox>
-            {loggedIn ? <UserSelection /> : <GuestSelection />}
+            <DeckList />
         </div>
     )
 }

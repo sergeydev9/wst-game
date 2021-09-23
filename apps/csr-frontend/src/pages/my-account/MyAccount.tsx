@@ -9,7 +9,6 @@ import {
     fetchDetails,
     updateAccount,
     logout,
-    ChangePassword
 } from '../../features';
 import {
     Form,
@@ -21,16 +20,14 @@ import {
     ErrorText,
     InputLabel,
     Box,
-    Modal
 } from "@whosaidtrue/ui";
-import { setFullModal, selectFullModalFactory } from '../../features/modal/modalSlice';
+import { setFullModal } from '../../features';
 
 const MyAccount: React.FC = () => {
     const history = useHistory()
     const dispatch = useAppDispatch();
     const deckCredits = useAppSelector(selectDeckCredits)
     const email = useAppSelector(selectEmail)
-    const changePassOpen = useAppSelector(selectFullModalFactory('changePassword'))
 
     useEffect(() => {
         dispatch(fetchDetails())
@@ -57,7 +54,7 @@ const MyAccount: React.FC = () => {
     const emailErr = formik.touched.email && formik.errors.email ? true : undefined;
 
     return (
-        <Box boxstyle='white' className="w-max mx-auto px-8 py-10 filter drop-shadow-card">
+        <Box boxstyle='white' className="w-11/12 md:w-max mx-auto px-3 sm:px-8 py-10 filter drop-shadow-card">
             {/*title*/}
             <Title1 className="text-center mb-8">My Account</Title1>
             <Form onSubmit={formik.handleSubmit}>
@@ -76,18 +73,20 @@ const MyAccount: React.FC = () => {
                 <Headline className="text-basic-black text-left">Free Question Deck Credits: {deckCredits}</Headline>
 
                 {/* Save/Cancel */}
-                <div className="flex flex-row gap-10 items-center">
+                <div className="flex flex-row gap-6 sm:gap-10 items-center">
                     <Button buttonStyle='default' type='submit'>Save Changes</Button>
                     <Headline className="underline text-basic-black cursor-pointer" onClick={() => history.go(-1)}>Cancel</Headline>
                 </div>
                 <h4 className="text-off-blue cursor-pointer border-b-2 border-off-blue w-max mx-auto text-xl tracking-wide font-bold leading-relaxed" onClick={logOutClick}>Log Out</h4>
             </Form>
-            <Modal isOpen={changePassOpen} onRequestClose={() => dispatch(setFullModal(''))}>
-                <ChangePassword />
-            </Modal>
+
         </Box >
 
     )
 }
 
 export default MyAccount;
+
+{/* <Modal isOpen={changePassOpen} onRequestClose={() => dispatch(setFullModal(''))}>
+<ChangePassword />
+</Modal> */}

@@ -1,4 +1,4 @@
 // TODO: make a real loading element
-const Loading = () => <div>Loading...</div>;
+const Loading = () => <div></div>;
 
 export default Loading;

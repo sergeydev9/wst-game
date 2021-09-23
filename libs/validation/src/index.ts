@@ -9,4 +9,6 @@ export * from './lib/nameReport';
 export * from './lib/deckId';
 export * from './lib/emailOnly';
 export * from './lib/joinGame';
+export * from './lib/createPaymentIntent';
+export * from './lib/paypalOrder';
 export { default as validate } from './lib/validate';

@@ -9,8 +9,9 @@ import App from '../../App';
 import { decks } from '../../db';
 import { signUserPayload } from '@whosaidtrue/middleware';
 
-const mockedDecks = mocked(decks, true)
-jest.mock('../../db')
+const mockedDecks = mocked(decks, true);
+jest.mock('../../db');
+jest.mock('@paypal/checkout-server-sdk');
 
 describe('decks routes', () => {
     let app: Application;
@@ -49,7 +50,6 @@ describe('decks routes', () => {
         it('should have owned and notOwned attributes in successful response if not logged in', async () => {
             mockedDecks.guestDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
             mockedDecks.getFreeDecks.mockResolvedValue({ rows: [] } as QueryResult)
-
 
             const result = await supertest(app)
                 .get('/decks/selection')

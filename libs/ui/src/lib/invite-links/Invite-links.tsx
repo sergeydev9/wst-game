@@ -3,8 +3,8 @@ import { RiMessengerFill } from '@react-icons/all-files/ri/RiMessengerFill';
 import { FaSms } from '@react-icons/all-files/fa/FaSms';
 import { IoMdMail } from '@react-icons/all-files/io/IoMdMail';
 import Button from '../button/Button'
-import Box from '../box/Box';
-import { Title1, Headline, BodySmall } from '../typography/Typography';
+import Box from '../containers/box/Box';
+import { Title1, Headline } from '../typography/Typography';
 import React from "react";
 
 const InnerBox = tw.div`
