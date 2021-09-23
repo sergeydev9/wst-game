@@ -167,7 +167,7 @@ total_questions | smallint | no | no | 0
 current_question_index | smallint | no | no | 1
 host_player_name | varchar(200) | yes | no
 host_id | integer | yes | no | | users | SET NULL
-deck_id | integer | no | no | | decks | SET NULL
+deck_id | integer | yes | no | | decks | SET NULL
 start_date | timestamptz | yes | no
 end_date | timestamptz | yes | no
 created_at | timestamptz | no | no | now()
@@ -181,7 +181,7 @@ id | integer | no | yes
 text | text | no | no
 text_for_guess | text | no | no
 follow_up | text | no | no
-deck_id | integer | no | no | | decks | CASCADE
+deck_id | integer | yes | no | | decks | CASCADE
 age_rating | smallint | no | no
 status | question_status | no | no
 created_at | timestamptz | no | no | now()
