@@ -333,8 +333,8 @@ class GameService {
       status: "ok",
       payload: {
         game_id: game.gameRow.id,
-        host_id: game.hostPlayerRow?.id,
-        host_player_id: game.hostPlayerRow?.user_id,
+        host_id: game.hostPlayerRow?.user_id,
+        host_player_id: game.hostPlayerRow?.id,
         status: game.status,
         current_players: game.getActivePlayers().map(p => p.name),
         total_questions: game.questions.length,
