@@ -14,7 +14,7 @@ services:
       - 3000:3000
 
   socket-server:
-    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/socket-server:20210907-03a7d0a
+    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/socket-server:20210922-ab9f319
     restart: always
     env_file:
       - .env
