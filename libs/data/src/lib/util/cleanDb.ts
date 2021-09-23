@@ -16,15 +16,17 @@ export async function cleanDb(pool: Pool) {
         throw new Error("Not a test db");
     }
 
-    await pool.query('TRUNCATE orders CASCADE');
-    await pool.query(`TRUNCATE decks CASCADE`);
-    await pool.query(`TRUNCATE users CASCADE`);
-    await pool.query(`TRUNCATE user_decks CASCADE`);
-    await pool.query(`TRUNCATE games CASCADE`);
-    await pool.query(`TRUNCATE questions CASCADE`);
-    await pool.query(`TRUNCATE game_questions CASCADE`);
-    await pool.query(`TRUNCATE game_players CASCADE`);
-    await pool.query(`TRUNCATE game_answers CASCADE`);
-    await pool.query(`TRUNCATE generated_names CASCADE`);
-    await pool.query(`TRUNCATE reset_codes CASCADE`);
+    const promises = [
+        pool.query(`DELETE FROM decks WHERE id > 0`),
+        pool.query(`DELETE FROM users WHERE id > 0`),
+        pool.query(`DELETE FROM user_decks WHERE id > 0`),
+        pool.query(`DELETE FROM games WHERE id > 0`),
+        pool.query(`DELETE FROM questions WHERE id > 0`),
+        pool.query(`DELETE FROM game_questions WHERE id > 0`),
+        pool.query(`DELETE FROM game_players WHERE id > 0`),
+        pool.query(`DELETE FROM game_answers WHERE id > 0`),
+        pool.query(`DELETE FROM generated_names WHERE id > 0`)
+    ];
+
+    return Promise.all(promises);
 }
