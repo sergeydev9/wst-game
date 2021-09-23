@@ -241,7 +241,7 @@ game_question_id | integer | no | no | | game_questions | CASCADE
 game_id | integer | no | no | | games | CASCADE
 game_player_id | integer | no | no | | game_players | CASCADE
 question_id | integer | yes | no | | questions | SET NULL
-value | answer | no | no
+value | answer | yes | no
 number_true_guess | smallint | yes | no
 score | smallint | yes | no
 created_at | timestamptz | no | no | now()
