@@ -38,6 +38,12 @@ describe('Games', () => {
         pool.end()
     })
 
+    describe('hooks', () => {
+        it('should run without errors', async () => {
+            return;
+        })
+    })
+
     describe('create', () => {
 
         it('should insert a new game row', async () => {
@@ -167,6 +173,35 @@ describe('Games', () => {
 
         })
 
+    })
+
+    describe('startQuestion', () => {
+
+        it('should update game.current_question_index', async () => {
+            return; // TODO
+        })
+
+        it('should create a new game_answers row for all players', async () => {
+            const userId2 = (await users.register('email3@test.com', 'password1323')).rows[0].id;
+
+            const gameRes = await games.create(userId, deckId);
+            const accessCode = gameRes.rows[0].access_code;
+            const gameId = gameRes.rows[0].id;
+
+            let q = `SELECT id FROM game_questions WHERE game_id = ${gameId} LIMIT 1`;
+            const gameQuestionId = (await pool.query(q)).rows[0].id;
+
+            const gamePlayer1 = await games.join(accessCode, 'Test Name 1', userId);
+            const gamePlayer2 = await games.join(accessCode, 'Test Name 2', userId2);
+
+            const actual = await games.startQuestion(gameId, gameQuestionId, [gamePlayer1.playerId, gamePlayer2.playerId]);
+            expect(actual.rows[0].id).toBeDefined();
+            expect(actual.rows[1].id).toBeDefined();
+
+            q = `SELECT * FROM game_answers WHERE game_id = ${gameId} AND game_question_id = ${gameQuestionId}`;
+            const answers = await pool.query(q);
+            expect(answers.rows.length).toEqual(2);
+        })
     })
 
     // describe('gameStateByPlayerId')

@@ -14,13 +14,6 @@ export interface WebsocketError extends WebsocketMessage {
   }
 }
 
-export interface PlayerJoinGame extends WebsocketMessage {
-  event: 'PlayerJoinedGame'
-  payload: {
-    player_name: string,
-  },
-}
-
 export interface PlayerJoinedGame extends WebsocketMessage {
   event: 'PlayerJoinedGame'
   payload: {
@@ -43,14 +36,18 @@ export interface NextQuestion extends WebsocketMessage {
 
 export interface AnswerPart1 extends WebsocketMessage {
   event: 'AnswerPart1',
+  payload: {
+    question_number: number;
+    answer: boolean;
+  }
 }
 
 export interface AnswerPart2 extends WebsocketMessage {
   event: 'AnswerPart2',
-}
-
-export interface RemovePlayer extends WebsocketMessage {
-  event: 'RemovePlayer',
+  payload: {
+    question_number: number;
+    guess: number;
+  }
 }
 
 export interface QuestionState extends WebsocketMessage {
@@ -70,6 +67,7 @@ export interface GameState extends WebsocketMessage {
   payload: {
     game_id: number,
     host_id: number,
+    host_player_id: number,
     status: string,
     current_players: string[],
     total_questions: number,

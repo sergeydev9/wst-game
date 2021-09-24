@@ -1,5 +1,5 @@
 // import { Pool } from 'pg';
-// import { TEST_DB_CONNECTION } from '../util/testDbConnection';
+// import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 // import { setupGame } from '../util/testDependencySetup';
 // import { cleanDb } from '../util/cleanDb';
 // import GameQuestions from './GameQuestions';

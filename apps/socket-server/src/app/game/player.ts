@@ -6,8 +6,7 @@ export type GameStatus = 'new' | 'waiting' | 'playing';
 class Player extends EventEmitter {
   public name?: string;
 
-  public isActive: boolean;
-  public hostOverride: boolean;
+  public isActive = false;
   public gameStatus: GameStatus = 'new';
 
   public constructor(
@@ -18,10 +17,7 @@ class Player extends EventEmitter {
   }
 
   public isHost() {
-    if (this.game.hostRow && this.userId) {
-      return this.game.hostRow.id == this.userId;
-    }
-    return this.hostOverride;
+    return this.game?.hostPlayerRow?.id == this.playerId;
   }
 
   public getAnswer(questionNumber: number)

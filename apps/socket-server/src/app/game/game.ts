@@ -4,7 +4,7 @@ import Player, {GameStatus} from "./player";
 import {
   AnswerValue,
   Game as IGame,
-  User as IUser,
+  GamePlayer as IGamePlayer,
   Question as IQuestion,
 } from '@whosaidtrue/app-interfaces';
 import {PlayerScore} from "@whosaidtrue/api-interfaces";
@@ -23,7 +23,7 @@ export type GameQuestion = {
 
 class Game extends EventEmitter {
   public readonly gameRow: IGame;
-  public readonly hostRow: IUser;
+  public readonly hostPlayerRow: IGamePlayer;
 
   public readonly players: Player[] = [];
 
@@ -36,10 +36,10 @@ class Game extends EventEmitter {
   public reader: Player;
   public readonly readerOrder: Player[] = [];
 
-  constructor(game: IGame, host: IUser, questions: IQuestion[]) {
+  constructor(game: IGame, host: IGamePlayer, questions: IQuestion[]) {
     super();
     this.gameRow = game;
-    this.hostRow = host;
+    this.hostPlayerRow = host;
 
     questions.forEach(q => {
       const gameQuestion: GameQuestion = {
@@ -59,21 +59,13 @@ class Game extends EventEmitter {
     return this.players.filter(p => p.isActive);
   }
 
-  public joinWaitingRoom(player: Player) {
+  public join(player: Player) {
     if (!player.isActive) {
       throw new Error('Player not active, game: ' + this.gameRow.access_code);
     }
 
     if (!this.players.includes(player)) {
       throw new Error('Player not in game: ' + this.gameRow.access_code);
-    }
-
-    if (player.gameStatus === 'waiting') {
-      throw new Error('Player already in waiting room, game: ' + this.gameRow.access_code);
-    }
-
-    if (!player.name) {
-      throw new Error('Please pick a name, game: ' + this.gameRow.access_code);
     }
 
     player.gameStatus = 'waiting';

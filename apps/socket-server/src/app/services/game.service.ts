@@ -1,5 +1,6 @@
 import Game, {GameQuestion} from "../game/game";
 import Player from "../game/player";
+import NodeCache from "node-cache";
 
 import {
   AnswerValue,
@@ -26,12 +27,17 @@ import {Mutex} from 'async-mutex';
 
 
 class GameService {
-  private games = {};
+
+  private cache = new NodeCache({
+      useClones: false,         // TODO false
+      stdTTL: 1 * 24 * 60 * 60, // 1 day
+      checkperiod: 1 * 60 * 60, // 1 hour
+  });
   private locks = {};
 
   private async getGame(code: string): Promise<Game> {
-    if (this.games[code]) {
-      return this.games[code];
+    if (this.cache.has(code)) {
+      return this.cache.get(code);
     }
 
     return this.createGame(code);
@@ -39,7 +45,7 @@ class GameService {
 
   private async createGame(code: string): Promise<Game> {
 
-    if (this.games[code]) {
+    if (this.cache.has(code)) {
       throw new Error(`Game ${code} already exists`);
     }
 
@@ -48,7 +54,7 @@ class GameService {
       throw new Error(`Game ${code} not found`);
     }
 
-    const host: IUser = (await usersDao.getById(game.host_id)).rows[0];
+    const host: IGamePlayer = (await gamePlayersDao.getPlayerByGameIdAndUserId(game.id, game.host_id)).rows[0];
 
     // TODO: gamesDao.getQuestions(gameRow.id)
     const questions: IQuestion[] = [
@@ -66,11 +72,11 @@ class GameService {
 
     const gameInstance = new Game(game, host, questions);
 
-    this.games[code] = gameInstance;
+    this.cache.set(code, gameInstance)
     return gameInstance;
   }
 
-  public async connectPlayer(playerId: number, gameCode: string) {
+  public async join(playerId: number, gameCode: string): Promise<Player> {
     if (!this.locks[gameCode]) {
       this.locks[gameCode] = new Mutex();
     }
@@ -89,7 +95,7 @@ class GameService {
       throw new Error("Player already active. No duplicate players allowed.");
     }
 
-    player.isActive = true;
+    this.joinGame(player);
     return player;
   }
 
@@ -132,15 +138,14 @@ class GameService {
     }
   }
 
-  public joinGame(player: Player, playerName: string) {
+  private joinGame(player: Player) {
     const game = player.game;
-    player.name = playerName;
     if (player.isHost()) {
       game.host = player;
     }
 
     player.isActive = true;
-    game.joinWaitingRoom(player);
+    game.join(player);
 
 
 
@@ -170,43 +175,43 @@ class GameService {
     }
   }
 
-  public hostNextQuestion(game: Game, player: Player) {
+  public hostNextQuestion(player: Player) {
     this.requireHostAction(player);
 
-    const q = game.nextQuestion();
+    const q = player.game.nextQuestion();
     if (q == null) {
       throw new Error('No more questions gameRow over.');
     }
 
-    const gameStateMsg = this.getGameState(game);
-    game.getActivePlayers().forEach(p => {
-      p.emit('message', this.getQuestionState(p, game.questionNumber));
+    const gameStateMsg = this.getGameState(player.game);
+    player.game.getActivePlayers().forEach(p => {
+      p.emit('message', this.getQuestionState(p, player.game.questionNumber));
       p.emit('message', gameStateMsg);
     });
   }
 
-  public async submitAnswerPart1(game: Game, player: Player, data: any) {
-    this.requireCurrentQuestion(game, data.questionNumber);
+  public async submitAnswerPart1(player: Player, data: any) {
+    this.requireCurrentQuestion(player.game, data.question_number);
 
-    const answer = player.getAnswer(data.questionNumber);
+    const answer = player.getAnswer(data.question_number);
     this.requireAnswerState(answer, 'part-1');
 
-    const question = game.getQuestion(data.questionNumber);
+    const question = player.game.getQuestion(data.question_number);
     this.requireValidAnswer(question, data.answer);
 
     answer.answer = data.answer;
     answer.state = 'part-2';
 
-    player.emit('message', this.getQuestionState(player, data.questionNumber));
+    player.emit('message', this.getQuestionState(player, data.question_number));
   }
 
-  public async submitAnswerPart2(game: Game, player: Player, data: any) {
-    this.requireCurrentQuestion(game, data.questionNumber);
+  public async submitAnswerPart2(player: Player, data: any) {
+    this.requireCurrentQuestion(player.game, data.question_number);
 
-    const answer = player.getAnswer(data.questionNumber);
+    const answer = player.getAnswer(data.question_number);
     this.requireAnswerState(answer, 'part-2');
 
-    const question = game.getQuestion(data.questionNumber);
+    const question = player.game.getQuestion(data.question_number);
     this.requireValidGuess(question, data.guess);
 
     answer.guess = data.guess;
@@ -215,19 +220,19 @@ class GameService {
     const answerRow: IInsertAnwser = {
       game_player_id: player.playerId,
       game_question_id: question.questionRow.id,
-      game_id: game.gameRow.id,
+      game_id: player.game.gameRow.id,
       value: answer.answer,
       number_true_guess: answer.guess,
     };
     await answersDao.submit(answerRow);
 
-    game.getActivePlayers().forEach(p => p.emit('message', this.getQuestionState(p, data.questionNumber)));
+    player.game.getActivePlayers().forEach(p => p.emit('message', this.getQuestionState(p, data.question_number)));
 
     // auto-advance to results
     const finished = this.countFinishedAnswers(question);
     if (finished >= question.players.length) {
-      console.log(`auto advance to results game: ${game.gameRow.access_code}, question: ${game.questionNumber}`);
-      this.showResults(game);
+      console.log(`auto advance to results game: ${player.game.gameRow.access_code}, question: ${player.game.questionNumber}`);
+      this.showResults(player.game);
     }
   }
 
@@ -270,10 +275,10 @@ class GameService {
     return question.answers.filter(a => a.answer == 'true').length;
   }
 
-  public hostShowResults(game: Game, player: Player) {
+  public hostShowResults(player: Player) {
     this.requireHostAction(player);
 
-    this.showResults(game);
+    this.showResults(player.game);
   }
 
   private showResults(game: Game) {
@@ -283,20 +288,20 @@ class GameService {
     });
   }
 
-  public hostShowScores(game: Game, player: Player) {
+  public hostShowScores(player: Player) {
     this.requireHostAction(player);
 
-    game.getActivePlayers().forEach(player => {
-      const msg = this.getScoreState(game.questionNumber, player);
+    player.game.getActivePlayers().forEach(player => {
+      const msg = this.getScoreState(player.game.questionNumber, player);
       player.emit('message', msg);
     });
   }
 
-  public hostShowFinalScores(game: Game, player: Player) {
+  public hostShowFinalScores(player: Player) {
     this.requireHostAction(player);
 
-    game.getActivePlayers().forEach(player => {
-      const msg = this.getScoreState(game.questionNumber, player);
+    player.game.getActivePlayers().forEach(player => {
+      const msg = this.getScoreState(player.game.questionNumber, player);
 
       // final scores has extra fun facts
       msg.payload.fun_facts = this.getFunFacts(player);
@@ -317,7 +322,7 @@ class GameService {
         secondary_text: q.questionRow.text_for_guess,
         question_sequence_index: player.game.questionNumber,
         number_pending_answers: q.players.length - this.countFinishedAnswers(q),
-        reader_name: q.reader.name,
+        reader_name: q.reader?.name,
       }
     };
   }
@@ -328,7 +333,8 @@ class GameService {
       status: "ok",
       payload: {
         game_id: game.gameRow.id,
-        host_id: game.hostRow?.id,
+        host_id: game.hostPlayerRow?.user_id,
+        host_player_id: game.hostPlayerRow?.id,
         status: game.status,
         current_players: game.getActivePlayers().map(p => p.name),
         total_questions: game.questions.length,

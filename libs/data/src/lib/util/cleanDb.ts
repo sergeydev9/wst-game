@@ -1,4 +1,5 @@
-import { Pool } from 'pg';
+import {Pool} from 'pg';
+
 /**
  * Delete everything from every table DON'T EVER USE THIS
  * OUTSIDE OF TEST RUNS.
@@ -9,7 +10,11 @@ import { Pool } from 'pg';
  * @export
  * @param {Pool} pool
  */
-export function cleanDb(pool: Pool) {
+export async function cleanDb(pool: Pool) {
+
+    if (!(pool['options'].database as string).includes("test")) {
+        throw new Error("Not a test db");
+    }
 
     const promises = [
         pool.query('TRUNCATE orders CASCADE'),
