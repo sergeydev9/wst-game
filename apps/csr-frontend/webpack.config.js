@@ -1,3 +1,4 @@
+const nxConfig =  require('@nrwl/react/plugins/webpack');
 const TerserPlugin = require("terser-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const zlib = require("zlib");
@@ -75,12 +76,15 @@ module.exports = config => {
   } else {
     const devServer = config.devServer || {}
 
+    config.target = ["web"]
+
     config.devServer = {
       ...devServer,
       https: true,
       key: fs.readFileSync(process.env.DEV_SSL_KEY),
       cert: fs.readFileSync(process.env.DEV_SSL_CERT)
     }
+    config = nxConfig(config)
   }
 
   config.module.rules.push({

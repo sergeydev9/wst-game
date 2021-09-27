@@ -16,6 +16,8 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     const history = useHistory()
     const dispatch = useAppDispatch()
     const cartDeck = useAppSelector(selectCartDeck)
+
+    // Form
     const formik = useFormik(
         {
             initialValues: {
@@ -56,22 +58,28 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     const emailErr = formik.touched.email && formik.errors.email ? true : undefined;
     // render
     return (
-        <>
-            <Title2 className="mb-10 mx-8 text-center mt-2">Play as Guest Host</Title2>
-            <form onSubmit={formik.handleSubmit}>
-                <FormGroup>
+        <ModalContent $narrow>
+            <Title2 className="mx-8 text-center mt-2">Play as Guest Host</Title2>
+            <form className="w-full flex flex-col gap-6" onSubmit={formik.handleSubmit}>
+
+                {/* Guest host email login */}
+                <FormGroup className="mb-6">
                     <InputLabel>Email Address</InputLabel>
                     <TextInput {...formik.getFieldProps('email')} $hasError={emailErr} id="guest-email" $border name="email" type="email" />
                     <Headline className="text-basic-gray mt-2">(We'll send you the game results)</Headline>
-                    {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
+                    {emailErr && <ErrorText >{formik.errors.email}</ErrorText>}
                 </FormGroup>
                 <Button type="submit">Continue</Button>
             </form>
-            <div className="w-full flex flex-row justify-center items-center gap-3 h-8 px-20 my-8">
+
+            {/* divider */}
+            <div className="w-full flex flex-row justify-center items-center gap-3 h-8 px-20">
                 <Divider dividerColor='grey' />
                 <h3 className="font-black text-title-3" >OR</h3>
                 <Divider dividerColor='grey' />
             </div>
+
+            {/* user login */}
             <AuthForm
                 onSuccess={startGame}
                 endpoint="/user/login"
@@ -80,7 +88,7 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 $showForgotPassword
                 $smallTitle />
 
-        </>
+        </ModalContent>
 
     )
 }
