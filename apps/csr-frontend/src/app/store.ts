@@ -55,8 +55,8 @@ export const store = configureStore({
 let storeTimer: ReturnType<typeof setTimeout>;
 store.subscribe(() => {
     clearTimeout(storeTimer)
-    const { auth, game, cart, question } = store.getState()
-    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game, cart, question })), 50)
+    const { auth, game, question } = store.getState()
+    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game, question })), 50)
 })
 
 export type AppDispatch = typeof store.dispatch;

@@ -10,7 +10,7 @@ export type QuestionStatus = 'active' | 'inactive' | 'poll';
 export type UserRating = 'great' | 'bad';
 export type DeckStatus = 'active' | 'inactive' | 'pending';
 export type AnswerValue = 'true' | 'false' | 'pass';
-export type UserRole = 'user' | 'admin';
+export type UserRole = 'user' | 'admin' | 'test';
 
 export type GameStatus = 'lobby'
     | 'inProgress'
@@ -23,10 +23,9 @@ export type GameStatus = 'lobby'
  */
 export type UserGameStatus = 'notInGame'
     | 'gameCreateSuccess'
-    | 'gameCreateError'
-    | 'connecting'
+    | 'in-game'
+    | 'lobby'
     | 'removed'
-    | 'disconnected'
     | 'gameCreateError'
     | 'choosingName'
     & GameStatus
@@ -94,7 +93,7 @@ export interface PlayerScore {
 
 export interface PlayerRef {
     id: number;
-    name: string;
+    player_name: string;
 }
 
 export interface UserDetailsUpdate {

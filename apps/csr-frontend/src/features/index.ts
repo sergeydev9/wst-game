@@ -14,8 +14,9 @@ export {
 export {
   default as modalReducer,
   setFullModal,
-  setMessageContent,
-  setMessageType,
+  showInfo,
+  showError,
+  showSuccess,
   selectFullModal,
   selectMessageContent,
   selectMessageType,
@@ -29,7 +30,9 @@ export {
   setGameStatus,
   selectAccessCode,
   selectGameId,
-  selectGameToken
+  selectGameToken,
+  selectGameStatus,
+  selectPlayerId
 } from './game/gameSlice';
 export { default as decksReducer, clearSelectedDeck } from './decks/deckSlice';
 export { default as AuthForm } from './auth/AuthForm';

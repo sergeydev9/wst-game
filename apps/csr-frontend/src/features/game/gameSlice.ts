@@ -48,22 +48,6 @@ export const initialState: GameState = {
     playerId: 0
 }
 
-export const sendEndGameSignal = createAsyncThunk(
-    'game/sendEndGameSignal',
-    async (_, thunkApi) => {
-        // TODO: finish
-        console.log('game over')
-    }
-)
-
-export const sendRemovePlayerSignal = createAsyncThunk(
-    'game/sendRemovePlayerSignal',
-    async (playerId: number, thunkApi) => {
-        // TODO: finish
-        console.log(`kick player: ${playerId}`)
-    }
-)
-
 export const gameSlice = createSlice({
     name: "game",
     initialState,
@@ -146,5 +130,6 @@ export const selectGameStatus = (state: RootState) => state.game.status;
 export const selectAccessCode = (state: RootState) => state.game.access_code;
 export const selectGameDeck = (state: RootState) => state.game.deck;
 export const selectPlayers = (state: RootState) => state.game.players;
+export const selectPlayerId = (state: RootState) => state.game.playerId;
 
 export default gameSlice.reducer;

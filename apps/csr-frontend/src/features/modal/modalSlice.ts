@@ -24,6 +24,8 @@ export type FullModal = "createAccount"
 
 export type MessageType = ''
     | "error"
+    | "info"
+    | "success"
     | "playerJoined"
 
 
@@ -52,11 +54,15 @@ export const modalSlice = createSlice({
         setFullModal: (state, action) => {
             state.fullModal = action.payload
         },
-        setMessageType: (state, action) => {
-            state.messageType = action.payload
+        showInfo: (state, action) => {
+            state.isPersistent = false;
+            state.messageType = 'info';
+            state.messageContent = action.payload;
         },
-        setMessageContent: (state, action) => {
-            state.messageContent = action.payload
+        showSuccess: (state, action) => {
+            state.isPersistent = false;
+            state.messageType = 'success';
+            state.messageContent = action.payload;
         },
         showError: (state, action) => {
             state.isPersistent = false;
@@ -73,9 +79,9 @@ export const modalSlice = createSlice({
 
 export const {
     setFullModal,
-    setMessageType,
-    setMessageContent,
     clearMessage,
+    showInfo,
+    showSuccess,
     showError
 } = modalSlice.actions;
 export const selectFullModal = (state: RootState) => state.modals.fullModal;

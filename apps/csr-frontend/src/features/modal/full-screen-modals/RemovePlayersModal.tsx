@@ -1,22 +1,25 @@
-import { useState, } from 'react';
+import { useState, useMemo } from 'react';
 import { RemovePlayers, RemovePlayersRow } from "@whosaidtrue/ui";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { selectPlayers } from "../../game/gameSlice";
+import { selectPlayers, selectPlayerId } from "../../game/gameSlice";
 import { setFullModal } from '../..';
 
 const RemovePlayersModal: React.FC = () => {
     const dispatch = useAppDispatch();
-    const players = useAppSelector(selectPlayers)
-
+    const players = useAppSelector(selectPlayers);
+    const playerId = useAppSelector(selectPlayerId);
 
     const [searchText, setSearchText] = useState('')
-    const filtered = players.filter(player => player.name.toLowerCase().includes(searchText.toLowerCase()))
+
+    const filtered = useMemo(() => {
+        return players.filter(player => player.player_name.toLowerCase().includes(searchText.toLowerCase()) && player.id !== playerId)
+    }, [searchText, players, playerId])
 
     const helper = () => {
         return filtered.map((p, i) => (
             <RemovePlayersRow
                 key={i}
-                name={p.name}
+                name={p.player_name}
                 handler={() => {
                     dispatch(setFullModal('confirmRemovePlayer'))
                 }} />
