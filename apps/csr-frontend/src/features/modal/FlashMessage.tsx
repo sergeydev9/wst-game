@@ -16,13 +16,16 @@ const FlashMessage: React.FC = () => {
     const el = document.createElement("div")
 
     useEffect(() => {
+
+        // mount message element into container div
         if (mount) {
             mount.appendChild(el);
         }
+
+        // if not persistent, clear message after 2100 ms
         const timer = isPersistent ? null : setTimeout(() => {
             dispatch(clearMessage())
-        }, 2100
-        );
+        }, 2100);
 
         // clear any timers and remove the element if ever this component dismounts
         return () => {
@@ -30,7 +33,7 @@ const FlashMessage: React.FC = () => {
                 mount.removeChild(el)
             };
 
-            if (timer) clearTimeout(timer)
+            if (timer) clearTimeout(timer) // clear any timers on component dismount
         }
 
     }, [el, mount, dispatch, isPersistent])

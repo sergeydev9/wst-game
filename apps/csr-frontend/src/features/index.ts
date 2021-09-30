@@ -48,4 +48,6 @@ export { default as questionReducer } from './question/questionSlice';
 export { default as FlashMessage } from './modal/FlashMessage';
 export { default as FullScreenModalController } from './modal/FullScreenModalController';
 export { default as hostReducer } from './host/hostSlice';
+export { default as useSocket } from './socket/useSocket';
+export { default as SocketProvider } from './socket/SocketProvider';
 export * from './choose-name/chooseNameSlice';

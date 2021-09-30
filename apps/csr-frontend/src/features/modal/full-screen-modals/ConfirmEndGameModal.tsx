@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { useSocket } from '../../../app/socketContext';
+import useSocket from '../../socket/useSocket';
 import { Title1, Button, BodyMedium, ModalContent } from '@whosaidtrue/ui';
 import { clearGame, selectIsHost } from '../../game/gameSlice';
 import { setFullModal, showError } from '../../modal/modalSlice';

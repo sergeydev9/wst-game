@@ -1,6 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { Deck, UserGameStatus, PlayerRef } from '@whosaidtrue/app-interfaces';
-import { api } from '../../api';
 
 // local imports
 import { RootState } from "../../app/store";
@@ -15,6 +14,7 @@ export interface GameState {
     isHost: boolean;
     currentHostName: string;
     players: PlayerRef[];
+    inactivePlayers: PlayerRef[];
     access_code: string;
     playerId: number;
     playerName: string;
@@ -43,6 +43,7 @@ export const initialState: GameState = {
     isHost: false,
     access_code: '',
     players: [],
+    inactivePlayers: [],
     currentHostName: '',
     playerName: '',
     playerId: 0
@@ -81,6 +82,9 @@ export const gameSlice = createSlice({
             state.isHost = true
             state.status = 'gameCreateSuccess'
         },
+        setInactive: (state, action) => {
+            state.inactivePlayers = [...action.payload]
+        },
         joinGame: (state, action) => {
             const {
                 status,
@@ -109,6 +113,7 @@ export const gameSlice = createSlice({
     }
 })
 
+// actions
 export const {
     setPlayerName,
     initialRequest,
@@ -118,7 +123,8 @@ export const {
     createGame,
     addPlayer,
     removePlayer,
-    joinGame
+    joinGame,
+    setInactive
 } = gameSlice.actions;
 
 // selectors
@@ -131,5 +137,6 @@ export const selectAccessCode = (state: RootState) => state.game.access_code;
 export const selectGameDeck = (state: RootState) => state.game.deck;
 export const selectPlayers = (state: RootState) => state.game.players;
 export const selectPlayerId = (state: RootState) => state.game.playerId;
+export const selectInactive = (state: RootState) => state.game.inactivePlayers;
 
 export default gameSlice.reducer;

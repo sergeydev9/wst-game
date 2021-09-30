@@ -23,8 +23,6 @@ export type GameStatus = 'lobby'
  */
 export type UserGameStatus = 'notInGame'
     | 'gameCreateSuccess'
-    | 'in-game'
-    | 'lobby'
     | 'removed'
     | 'gameCreateError'
     | 'choosingName'

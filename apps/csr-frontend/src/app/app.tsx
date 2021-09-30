@@ -1,8 +1,7 @@
 import { Route, Switch, BrowserRouter } from "react-router-dom";
 import loadable from '@loadable/component'
 
-import { GuardedRoute } from "../features";
-import { SocketProvider } from "./socketContext";
+import { GuardedRoute, SocketProvider } from "../features";
 import Layout from "./Layout";
 import Home from '../pages/home/Home';
 
@@ -19,11 +18,9 @@ const Invite = loadable(() => import('../pages/invite/Invite'));
 const PurchaseSuccess = loadable(() => import('../pages/purchase-success/PurchaseSuccess'));
 const Play = loadable(() => import('../pages/play/Play'));
 
-
 const App: React.FC = () => {
 
   return (
-
     <BrowserRouter>
       <SocketProvider>
         <Layout>
@@ -74,7 +71,6 @@ const App: React.FC = () => {
         </Layout>
       </SocketProvider>
     </BrowserRouter>
-
   );
 };
 
