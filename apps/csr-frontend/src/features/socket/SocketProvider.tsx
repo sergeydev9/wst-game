@@ -15,8 +15,9 @@ import {
     selectGameStatus
 } from '..';
 import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal } from "../modal/modalSlice";
-import { addPlayer, clearGame, removePlayer, setInactive } from "../game/gameSlice";
-import { clearCurrentQuestion } from "../question/questionSlice";
+import { addPlayer, clearGame, removePlayer, setInactive, gameStateUpdate, setGameResults } from "../game/gameSlice";
+import { clearCurrentQuestion, setCurrentQuestion, setResults, setReader, setAnswersPending } from "../question/questionSlice";
+import { GameStateUpdate, PlayerJoinedGame, PlayerLeftGame, RemovePlayer, SetGameResults, SetQuestionResult, SetQuestionState, SetReader, UpdateAnswersPending, UpdateInactivePlayers } from "@whosaidtrue/api-interfaces";
 
 /**
  * Provider component for socket context.
@@ -43,18 +44,15 @@ export const SocketProvider: React.FC = ({ children }) => {
         // if game status is one of these values, then user should have a socket connection
         const shouldHaveConnection = ['inProgress', 'lobby', 'postGame', 'gameCreateSuccess', 'choosingName'].includes(gameStatus);
 
-        // if user should, but doesn't have a socket connection, create one and register listeners
+        // if user should, but doesn't, have a socket connection, create one and register listeners
         if (shouldHaveConnection && !socket) {
 
             const conn = io(process.env.NX_SOCKET_BASEURL as string,
                 {
-                    auth:
-                    {
-                        token: { game_code: accessCode, player_id: playerId } // TODO: replace with actual token when socket server implements decoding
-                    },
+                    auth: { token: { game_code: accessCode, player_id: playerId } }, // TODO: replace with actual token when socket server implements decoding,
                     rememberUpgrade: true,
                     reconnectionAttempts: 4,
-                    reconnectionDelay: 3000
+                    reconnectionDelay: 2500
                 });
 
             setSocket(conn); // add socket to provider
@@ -89,22 +87,22 @@ export const SocketProvider: React.FC = ({ children }) => {
             /**
              * GAME EVENT LISTENERS
              */
-            conn.on('PlayerJoinedGame', ({ payload }) => {
-                const { id, player_name } = payload;
+            conn.on('PlayerJoinedGame', (message: PlayerJoinedGame) => {
+                const { id, player_name } = message.payload;
 
                 dispatch(showPlayerJoined(player_name))
                 dispatch(addPlayer({ id, player_name }))
             })
 
-            conn.on('PlayerLeftGame', ({ payload }) => {
-                const { id, player_name } = payload;
+            conn.on('PlayerLeftGame', (message: PlayerLeftGame) => {
+                const { id, player_name } = message.payload;
 
                 dispatch(showPlayerLeft(player_name))
                 dispatch(removePlayer(id))
             })
 
-            conn.on('PlayerRemoved', ({ payload }) => {
-                const { id, player_name } = payload;
+            conn.on('RemovePlayer', (message: RemovePlayer) => {
+                const { id, player_name } = message.payload;
 
                 if (playerId === id) {
                     // If current player is the one that was removed
@@ -119,30 +117,36 @@ export const SocketProvider: React.FC = ({ children }) => {
                     dispatch(showPlayerRemoved(player_name));
                     dispatch(removePlayer(id))
                 }
-
             })
 
-            conn.on('UpdateInactivePlayers', ({ payload }) => {
-                dispatch(setInactive(payload))
+            conn.on('UpdateInactivePlayers', (message: UpdateInactivePlayers) => {
+                const { inactivePlayers } = message.payload;
+                dispatch(setInactive(inactivePlayers))
             })
 
-            // conn.on('SetGameState', ({payload}) => {
+            conn.on('SetQuestionState', (message: SetQuestionState) => {
+                dispatch(setCurrentQuestion(message.payload))
+            })
 
-            // })
+            conn.on('GameStateUpdate', (message: GameStateUpdate) => {
+                dispatch(gameStateUpdate(message.payload))
+            })
 
-            // conn.on('SetQuestionResult', ({payload}) => {
+            conn.on('SetQuestionResult', (message: SetQuestionResult) => {
+                dispatch(setResults(message.payload))
+            })
 
-            // })
+            conn.on('SetReader', (message: SetReader) => {
+                dispatch(setReader(message.payload))
+            })
 
-            // conn.on('SetGameResult', ({payload}) => {
+            conn.on('UpdateAnswersPending', (message: UpdateAnswersPending) => {
+                dispatch(setAnswersPending(message.payload))
+            })
 
-            // })
-
-            // conn.on('SetCurrentReader', ({payload}) => {
-            //     const { reader_id, reader_name} = payload;
-            // })
-
-
+            conn.on('SetGameResults', (message: SetGameResults) => {
+                dispatch(setGameResults(message.payload))
+            })
 
             // move playe to game page if they should be there but aren't
             if (['inProgress', 'lobby', 'postGame'].includes(gameStatus) && location.pathname !== '/play') {

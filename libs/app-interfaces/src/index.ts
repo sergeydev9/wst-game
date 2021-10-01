@@ -17,7 +17,6 @@ export type GameStatus = 'lobby'
     | 'postGame'
     | 'finished'
 
-// TODO: clean up statuses that don't get used
 /**
  * Status of game for the user on front end.
  */
@@ -28,6 +27,11 @@ export type UserGameStatus = 'notInGame'
     | 'choosingName'
     & GameStatus
 
+
+/**
+ * This status controls what screen players should be seeing in game.
+ */
+export type GameQuestionStatus = 'reading' | 'answering' | 'results';
 
 /**
  * type of objects for insertOne functions is always going to be the
@@ -68,10 +72,6 @@ export type ThemeColor = 'purple-light'
     | 'red-subtle-stroke'
     | 'red-subtle-fill'
     | 'red-light'
-
-export interface IRenderArrow {
-    (clickHandler: () => void, hasNext: boolean, label: string): React.ReactNode
-}
 
 export interface DeckSelectionOptions {
     pageSize: number;
