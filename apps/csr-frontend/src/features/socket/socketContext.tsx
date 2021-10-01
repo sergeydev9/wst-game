@@ -1,7 +1,7 @@
-import { createContext } from "react";
+import { createContext, Dispatch, SetStateAction } from "react";
 import { Socket } from "socket.io-client";
 
 // Create socket context
-const socketContext = createContext<Socket | null>(null);
+const socketContext = createContext<{ socket: Socket | null, setSocket: Dispatch<SetStateAction<Socket | null>> } | undefined>(undefined);
 
 export default socketContext;

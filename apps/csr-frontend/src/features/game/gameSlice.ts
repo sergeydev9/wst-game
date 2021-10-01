@@ -130,7 +130,7 @@ export const gameSlice = createSlice({
                 players,
                 access_code,
                 playerId,
-                player_name,
+                playerName,
                 gameToken
             } = action.payload;
 
@@ -143,7 +143,7 @@ export const gameSlice = createSlice({
             state.players = players;
             state.access_code = access_code;
             state.playerId = playerId;
-            state.playerName = player_name
+            state.playerName = playerName
         }
     }
 })

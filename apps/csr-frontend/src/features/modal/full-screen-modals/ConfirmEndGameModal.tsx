@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import useSocket from '../../socket/useSocket';
@@ -10,7 +10,7 @@ const ConfirmEndGameModal: React.FC = () => {
     const dispatch = useAppDispatch()
     const history = useHistory();
     const isHost = useAppSelector(selectIsHost);
-    const socket = useSocket()
+    const { socket, setSocket } = useSocket()
 
     useEffect(() => {
 
@@ -23,14 +23,16 @@ const ConfirmEndGameModal: React.FC = () => {
         }
     }, [isHost, dispatch, socket])
 
-    const endGame = () => {
+    const endGame = useCallback(() => {
         socket?.emit("EndGame");
         dispatch(clearGame); // TODO: remove when socket implentation completes this response
         socket?.close();
         dispatch(setFullModal(''));
         dispatch(clearGame());
+        setSocket(null);
         history.push('/')
-    }
+    }, [dispatch, socket, history, setSocket])
+
 
     return (
         <ModalContent>

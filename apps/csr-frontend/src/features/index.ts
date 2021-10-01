@@ -35,6 +35,7 @@ export {
   selectPlayerId,
   gameStateUpdate
 } from './game/gameSlice';
+export { default as Lobby } from './game/Lobby';
 export { default as decksReducer, clearSelectedDeck } from './decks/deckSlice';
 export { default as AuthForm } from './auth/AuthForm';
 export { default as Login } from './auth/Login';

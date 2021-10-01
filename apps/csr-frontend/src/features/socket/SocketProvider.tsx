@@ -42,7 +42,7 @@ export const SocketProvider: React.FC = ({ children }) => {
     useEffect(() => {
 
         // if game status is one of these values, then user should have a socket connection
-        const shouldHaveConnection = ['inProgress', 'lobby', 'postGame', 'gameCreateSuccess', 'choosingName'].includes(gameStatus);
+        const shouldHaveConnection = ['inProgress', 'lobby', 'postGame', 'gameCreateSuccess', 'choosingName'].includes(gameStatus) && playerId;
 
         // if user should, but doesn't, have a socket connection, create one and register listeners
         if (shouldHaveConnection && !socket) {
@@ -119,31 +119,38 @@ export const SocketProvider: React.FC = ({ children }) => {
                 }
             })
 
+            // updates the list of inactive players
             conn.on('UpdateInactivePlayers', (message: UpdateInactivePlayers) => {
                 const { inactivePlayers } = message.payload;
                 dispatch(setInactive(inactivePlayers))
             })
 
+            // updates question state
             conn.on('SetQuestionState', (message: SetQuestionState) => {
                 dispatch(setCurrentQuestion(message.payload))
             })
 
+            // updates game state
             conn.on('GameStateUpdate', (message: GameStateUpdate) => {
                 dispatch(gameStateUpdate(message.payload))
             })
 
+            // updates results for current question.
             conn.on('SetQuestionResult', (message: SetQuestionResult) => {
                 dispatch(setResults(message.payload))
             })
 
+            // updates the reader of the current question
             conn.on('SetReader', (message: SetReader) => {
                 dispatch(setReader(message.payload))
             })
 
+            // updates the value of answers yet to be submitted for the current question
             conn.on('UpdateAnswersPending', (message: UpdateAnswersPending) => {
                 dispatch(setAnswersPending(message.payload))
             })
 
+            // sets final results for the game
             conn.on('SetGameResults', (message: SetGameResults) => {
                 dispatch(setGameResults(message.payload))
             })
@@ -159,7 +166,7 @@ export const SocketProvider: React.FC = ({ children }) => {
         }
     }, [history, token, setSocket, accessCode, playerId, dispatch, gameStatus, socket, location])
 
-    return <socketContext.Provider value={socket}>{children}</socketContext.Provider>
+    return <socketContext.Provider value={{ socket, setSocket }}>{children}</socketContext.Provider>
 }
 
 export default SocketProvider;
