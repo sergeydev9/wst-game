@@ -80,9 +80,10 @@ const ChooseName: React.FC = () => {
         })
     }
 
+    // on click, send name report and join game
     const chooseName = (nameObj: NameObject) => {
-        dispatch(sendReport({ chosen: nameObj.id, seen: seen.map(n => n.id) }))
         return (e: React.MouseEvent) => {
+            dispatch(sendReport({ chosen: nameObj.id, seen: seen.map(n => n.id) }))
             join(nameObj.name)
         }
     }

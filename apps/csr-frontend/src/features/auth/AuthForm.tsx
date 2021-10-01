@@ -87,7 +87,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
     const clearCartAndDetails = () => {
         dispatch(setFullModal(''))
         dispatch(clearCart())
-        dispatch(clearDecks())
     }
     // render
     return (
@@ -95,29 +94,25 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
             {/* title */}
             {$smallTitle ? <Title2 className="text-center mb-3">{title}</Title2> : <LargeTitle className="text-center mb-3">{title}</LargeTitle>}
 
-            {/* This error reporting stuff is placeholder*/}
-            {authError && <ErrorText className="text-center">{authError}</ErrorText>}
-
-
             {/* email */}
             <FormGroup>
                 <InputLabel htmlFor="email">Email</InputLabel>
-                <TextInput {...formik.getFieldProps('email')} $hasError={emailErr} id="email" $border name="email" type="email" />
+                <TextInput {...formik.getFieldProps('email')} className="block" $hasError={emailErr} id="email" $border name="email" type="email" />
                 {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
             </FormGroup>
 
             {/* password */}
-            <FormGroup>
+            <FormGroup className="mb-3">
                 <InputLabel htmlFor="password">Password</InputLabel>
                 <TextInput {...formik.getFieldProps('password')} id="password" $hasError={pwErr} $border name="password" type="password" />
                 {$showMinLength && <Headline className="text-basic-gray">8 character minimum length</Headline>}
-                {$showForgotPassword && <Headline className="text-basic-gray underline mt-3" onClick={clearCartAndDetails}><Link to="/reset/send-email">Forgot Password?</Link></Headline>}
-
+                {$showForgotPassword && <Headline className="mt-2" ><Link className="text-basic-gray underline cursor-pointer mt-4" onClick={clearCartAndDetails} to="/reset/send-email">Forgot Password?</Link></Headline>}
                 {pwErr && <ErrorText>{formik.errors.password}</ErrorText>}
             </FormGroup>
 
+            <div className="mb-3 h-2"></div>
             {/* submit */}
-            <Button color="blue" type="submit" >{buttonlabel}</Button>
+            <Button color="blue" type="submit">{buttonlabel}</Button>
         </form>
     )
 }
