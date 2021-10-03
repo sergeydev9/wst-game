@@ -8,5 +8,4 @@ export default tw.span`
     translate-x-1
     translate-y-1
     font-bold
-    text-left
 `

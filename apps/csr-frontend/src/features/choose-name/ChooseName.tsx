@@ -20,7 +20,7 @@ import {
     Title1
 } from '@whosaidtrue/ui';
 import { NameObject } from '@whosaidtrue/app-interfaces';
-import { NameRequestResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
+import { JoinGameResponse, NameRequestResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
 import { showError } from '../modal/modalSlice';
 
@@ -67,9 +67,9 @@ const ChooseName: React.FC = () => {
 
     const join = async (name: string) => {
 
-        api.post('/games/join', { access_code, name }).then(result => {
+        api.post<JoinGameResponse>('/games/join', { access_code, name }).then(result => {
             dispatch(joinGame(result.data))
-            history.push('/game')
+            history.push('/play')
         }).catch(e => {
             if (e.status === 401) {
                 dispatch(showError('That name is no longer available. Please select another'))
@@ -80,9 +80,10 @@ const ChooseName: React.FC = () => {
         })
     }
 
+    // on click, send name report and join game
     const chooseName = (nameObj: NameObject) => {
-        dispatch(sendReport({ chosen: nameObj.id, seen: seen.map(n => n.id) }))
         return (e: React.MouseEvent) => {
+            dispatch(sendReport({ chosen: nameObj.id, seen: seen.map(n => n.id) }))
             join(nameObj.name)
         }
     }

@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Deck, UserGameStatus, PlayerRef } from '@whosaidtrue/app-interfaces';
-import { api } from '../../api';
+import { createSlice } from "@reduxjs/toolkit";
+import { FunFact } from "@whosaidtrue/api-interfaces";
+import { Deck, UserGameStatus, PlayerRef, PlayerScore } from '@whosaidtrue/app-interfaces';
 
 // local imports
 import { RootState } from "../../app/store";
@@ -15,9 +15,14 @@ export interface GameState {
     isHost: boolean;
     currentHostName: string;
     players: PlayerRef[];
+    inactivePlayers: PlayerRef[];
+    disconnectedPlayers: PlayerRef[];
     access_code: string;
     playerId: number;
     playerName: string;
+    results: PlayerScore[];
+    winner: string;
+    funFacts: FunFact[];
 
 }
 
@@ -43,26 +48,16 @@ export const initialState: GameState = {
     isHost: false,
     access_code: '',
     players: [],
+    inactivePlayers: [],
+    disconnectedPlayers: [],
     currentHostName: '',
     playerName: '',
-    playerId: 0
+    playerId: 0,
+    winner: '',
+    results: [],
+    funFacts: []
+
 }
-
-export const sendEndGameSignal = createAsyncThunk(
-    'game/sendEndGameSignal',
-    async (_, thunkApi) => {
-        // TODO: finish
-        console.log('game over')
-    }
-)
-
-export const sendRemovePlayerSignal = createAsyncThunk(
-    'game/sendRemovePlayerSignal',
-    async (playerId: number, thunkApi) => {
-        // TODO: finish
-        console.log(`kick player: ${playerId}`)
-    }
-)
 
 export const gameSlice = createSlice({
     name: "game",
@@ -97,6 +92,34 @@ export const gameSlice = createSlice({
             state.isHost = true
             state.status = 'gameCreateSuccess'
         },
+        setGameResults: (state, action) => {
+            const { results, winner, funFacts } = action.payload;
+            state.results = results;
+            state.winner = winner;
+            state.funFacts = funFacts;
+        },
+        gameStateUpdate: (state, action) => {
+            const {
+                game_id,
+                access_code,
+                status,
+                players,
+                inactivePlayers,
+                disconnectedPlayers,
+                totalQuestions
+            } = action.payload;
+            state.game_id = game_id;
+            state.access_code = access_code;
+            state.status = status;
+            state.disconnectedPlayers = disconnectedPlayers;
+            state.players = players;
+            state.inactivePlayers = inactivePlayers;
+            state.totalQuestions = totalQuestions;
+        },
+
+        setInactive: (state, action) => {
+            state.inactivePlayers = [...action.payload]
+        },
         joinGame: (state, action) => {
             const {
                 status,
@@ -107,7 +130,7 @@ export const gameSlice = createSlice({
                 players,
                 access_code,
                 playerId,
-                player_name,
+                playerName,
                 gameToken
             } = action.payload;
 
@@ -120,11 +143,12 @@ export const gameSlice = createSlice({
             state.players = players;
             state.access_code = access_code;
             state.playerId = playerId;
-            state.playerName = player_name
+            state.playerName = playerName
         }
     }
 })
 
+// actions
 export const {
     setPlayerName,
     initialRequest,
@@ -134,7 +158,10 @@ export const {
     createGame,
     addPlayer,
     removePlayer,
-    joinGame
+    joinGame,
+    setInactive,
+    gameStateUpdate,
+    setGameResults
 } = gameSlice.actions;
 
 // selectors
@@ -146,5 +173,8 @@ export const selectGameStatus = (state: RootState) => state.game.status;
 export const selectAccessCode = (state: RootState) => state.game.access_code;
 export const selectGameDeck = (state: RootState) => state.game.deck;
 export const selectPlayers = (state: RootState) => state.game.players;
+export const selectPlayerId = (state: RootState) => state.game.playerId;
+export const selectInactive = (state: RootState) => state.game.inactivePlayers;
+export const selectDisconnected = (state: RootState) => state.game.disconnectedPlayers;
 
 export default gameSlice.reducer;

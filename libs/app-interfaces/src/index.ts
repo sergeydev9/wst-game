@@ -10,27 +10,28 @@ export type QuestionStatus = 'active' | 'inactive' | 'poll';
 export type UserRating = 'great' | 'bad';
 export type DeckStatus = 'active' | 'inactive' | 'pending';
 export type AnswerValue = 'true' | 'false' | 'pass';
-export type UserRole = 'user' | 'admin';
+export type UserRole = 'user' | 'admin' | 'test';
 
 export type GameStatus = 'lobby'
     | 'inProgress'
     | 'postGame'
     | 'finished'
 
-// TODO: clean up statuses that don't get used
 /**
  * Status of game for the user on front end.
  */
 export type UserGameStatus = 'notInGame'
     | 'gameCreateSuccess'
-    | 'gameCreateError'
-    | 'connecting'
     | 'removed'
-    | 'disconnected'
     | 'gameCreateError'
     | 'choosingName'
     & GameStatus
 
+
+/**
+ * This status controls what screen players should be seeing in game.
+ */
+export type GameQuestionStatus = 'reading' | 'answering' | 'results';
 
 /**
  * type of objects for insertOne functions is always going to be the
@@ -72,10 +73,6 @@ export type ThemeColor = 'purple-light'
     | 'red-subtle-fill'
     | 'red-light'
 
-export interface IRenderArrow {
-    (clickHandler: () => void, hasNext: boolean, label: string): React.ReactNode
-}
-
 export interface DeckSelectionOptions {
     pageSize: number;
     pageNumber: number;
@@ -94,7 +91,7 @@ export interface PlayerScore {
 
 export interface PlayerRef {
     id: number;
-    name: string;
+    player_name: string;
 }
 
 export interface UserDetailsUpdate {

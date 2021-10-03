@@ -1,4 +1,4 @@
-import Game, {GameQuestion} from "../game/game";
+import Game, { GameQuestion } from "../game/game";
 import Player from "../game/player";
 import NodeCache from "node-cache";
 
@@ -11,7 +11,7 @@ import {
   Question as IQuestion
 } from '@whosaidtrue/app-interfaces';
 
-import {answersDao, gamePlayersDao, gamesDao, usersDao} from '../db';
+import { answersDao, gamePlayersDao, gamesDao, usersDao } from '../db';
 
 import {
   FunFact,
@@ -23,15 +23,15 @@ import {
   ScoreState
 } from "@whosaidtrue/api-interfaces";
 
-import {Mutex} from 'async-mutex';
+import { Mutex } from 'async-mutex';
 
 
 class GameService {
 
   private cache = new NodeCache({
-      useClones: false,         // TODO false
-      stdTTL: 1 * 24 * 60 * 60, // 1 day
-      checkperiod: 1 * 60 * 60, // 1 hour
+    useClones: false,         // TODO false
+    stdTTL: 1 * 24 * 60 * 60, // 1 day
+    checkperiod: 1 * 60 * 60, // 1 hour
   });
   private locks = {};
 
@@ -58,16 +58,16 @@ class GameService {
 
     // TODO: gamesDao.getQuestions(gameRow.id)
     const questions: IQuestion[] = [
-      {id: 1, text: 'Text 1', text_for_guess: 'Test for guess 1', follow_up: 'Follow up 1'} as IQuestion,
-      {id: 1, text: 'Text 2', text_for_guess: 'Test for guess 2', follow_up: 'Follow up 2'} as IQuestion,
-      {id: 1, text: 'Text 3', text_for_guess: 'Test for guess 3', follow_up: 'Follow up 3'} as IQuestion,
-      {id: 1, text: 'Text 4', text_for_guess: 'Test for guess 4', follow_up: 'Follow up 4'} as IQuestion,
-      {id: 1, text: 'Text 5', text_for_guess: 'Test for guess 5', follow_up: 'Follow up 5'} as IQuestion,
-      {id: 1, text: 'Text 6', text_for_guess: 'Test for guess 6', follow_up: 'Follow up 6'} as IQuestion,
-      {id: 1, text: 'Text 7', text_for_guess: 'Test for guess 7', follow_up: 'Follow up 7'} as IQuestion,
-      {id: 1, text: 'Text 8', text_for_guess: 'Test for guess 8', follow_up: 'Follow up 8'} as IQuestion,
-      {id: 1, text: 'Text 9', text_for_guess: 'Test for guess 9', follow_up: 'Follow up 9'} as IQuestion,
-      {id: 1, text: 'Text 10', text_for_guess: 'Test for guess 10', follow_up: 'Follow up 10'} as IQuestion,
+      { id: 1, text: 'Text 1', text_for_guess: 'Test for guess 1', follow_up: 'Follow up 1' } as IQuestion,
+      { id: 1, text: 'Text 2', text_for_guess: 'Test for guess 2', follow_up: 'Follow up 2' } as IQuestion,
+      { id: 1, text: 'Text 3', text_for_guess: 'Test for guess 3', follow_up: 'Follow up 3' } as IQuestion,
+      { id: 1, text: 'Text 4', text_for_guess: 'Test for guess 4', follow_up: 'Follow up 4' } as IQuestion,
+      { id: 1, text: 'Text 5', text_for_guess: 'Test for guess 5', follow_up: 'Follow up 5' } as IQuestion,
+      { id: 1, text: 'Text 6', text_for_guess: 'Test for guess 6', follow_up: 'Follow up 6' } as IQuestion,
+      { id: 1, text: 'Text 7', text_for_guess: 'Test for guess 7', follow_up: 'Follow up 7' } as IQuestion,
+      { id: 1, text: 'Text 8', text_for_guess: 'Test for guess 8', follow_up: 'Follow up 8' } as IQuestion,
+      { id: 1, text: 'Text 9', text_for_guess: 'Test for guess 9', follow_up: 'Follow up 9' } as IQuestion,
+      { id: 1, text: 'Text 10', text_for_guess: 'Test for guess 10', follow_up: 'Follow up 10' } as IQuestion,
     ];
 
     const gameInstance = new Game(game, host, questions);
@@ -127,7 +127,7 @@ class GameService {
       debug: `Player ${player.name} has left the game.`,
       payload: {
         player_name: player.name,
-        is_host: player.isHost(),
+        id: player.playerId
       },
     };
     player.game.getActivePlayers().forEach(p => p.emit('message', msg));
@@ -154,21 +154,21 @@ class GameService {
       status: "ok",
       payload: {
         player_name: player.name,
-        is_host: player.isHost(),
+        id: player.playerId
       },
     };
     const gameStateMsg = this.getGameState(game);
     game.getActivePlayers()
-        .forEach(p => {
-          // let everyone else know player joined
-          if (p != player) {
-            p.emit('message', joinedMsg)
-          }
+      .forEach(p => {
+        // let everyone else know player joined
+        if (p != player) {
+          p.emit('message', joinedMsg)
+        }
 
-          // everyone gets the new game state
-          p.emit('message', gameStateMsg)
+        // everyone gets the new game state
+        p.emit('message', gameStateMsg)
 
-        });
+      });
 
     if (game.questionNumber > 0) {
       player.emit('message', this.getQuestionState(player, game.questionNumber));

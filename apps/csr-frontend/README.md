@@ -7,6 +7,7 @@ This is a client side rendered React application.
 This application requires the following variables to be specified at build time:
 
 - NX_API_BASEURL
+- NX_SOCKET_BASEURL
 - NX_SOCKET_URL
 - NX_STRIPE_KEY
 - NX_PAYPAL_CLIENT_ID
@@ -23,3 +24,13 @@ When building for production, gz, and br compressed versions of all html, css, j
 The server must be configured to prefer serving br, if br isn't supported by the requesting browser it should serve gz, and if gz isn't supported, then the original file should be served.
 
 File names for compressed files follow the rule `[filename][extension].gz` for gzipped files, and `[filename][extension].br` for brotli compressed files.
+
+## Gameplay
+
+All event listeners are defined in the `SocketProvider` component. This component can be found in `src/features/socket/SocketProvider.tsx`.
+
+Any component that needs to send messages to the game server can access the socket connection by using the `useSocket` hook. This is defined in `src/features/socket/useSocket.tsx`
+
+### Events
+
+The following events are emitted by players during gameplay:

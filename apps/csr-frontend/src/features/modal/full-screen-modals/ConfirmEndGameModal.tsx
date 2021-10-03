@@ -1,25 +1,38 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import useSocket from '../../socket/useSocket';
 import { Title1, Button, BodyMedium, ModalContent } from '@whosaidtrue/ui';
-import { selectIsHost, sendEndGameSignal } from '../../game/gameSlice';
-import { setFullModal } from '../..';
+import { clearGame, selectIsHost } from '../../game/gameSlice';
+import { setFullModal, showError } from '../../modal/modalSlice';
 
 const ConfirmEndGameModal: React.FC = () => {
     const dispatch = useAppDispatch()
     const history = useHistory();
     const isHost = useAppSelector(selectIsHost);
+    const { socket, setSocket } = useSocket()
 
     useEffect(() => {
+
         if (!isHost) {
             dispatch(setFullModal(''))
         }
-    }, [isHost, dispatch])
 
-    const endGame = () => {
-        dispatch(sendEndGameSignal())
-        history.push('/game/results')
-    }
+        if (!socket) {
+            dispatch(showError('No connnection to game server. Check your internet connection and try again'))
+        }
+    }, [isHost, dispatch, socket])
+
+    const endGame = useCallback(() => {
+        socket?.emit("EndGame");
+        dispatch(clearGame); // TODO: remove when socket implentation completes this response
+        socket?.close();
+        dispatch(setFullModal(''));
+        dispatch(clearGame());
+        setSocket(null);
+        history.push('/')
+    }, [dispatch, socket, history, setSocket])
+
 
     return (
         <ModalContent>

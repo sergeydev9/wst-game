@@ -1,17 +1,17 @@
+import { UserGameStatus } from '@whosaidtrue/app-interfaces';
 import { useEffect, useState } from 'react';
 import { io, Socket } from "socket.io-client";
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectGameId } from '../../features';
+import { selectGameStatus, Lobby } from '../../features';
 
 const Play: React.FC = () => {
-    const gameId = useAppSelector(selectGameId);
-    const [socket, setSocket] = useState<Socket | null>(null);
+    const gameStatus = useAppSelector(selectGameStatus);
 
-    useEffect(() => {
-        const gameSocket = io(`/socket/${gameId}`, { rememberUpgrade: true })
-    }, [gameId])
     return (
-        <div></div>
+        <>
+            <div></div>
+            {gameStatus === "lobby" as UserGameStatus && <Lobby />}
+        </>
     )
 }
 

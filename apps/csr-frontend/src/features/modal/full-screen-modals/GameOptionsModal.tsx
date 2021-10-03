@@ -14,6 +14,7 @@ const GameOptionsModal: React.FC = () => {
 
     const leaveGame = () => {
         dispatch(clearGame())
+        dispatch(setFullModal(''))
         history.push('/')
     }
     return (

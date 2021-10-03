@@ -42,7 +42,7 @@ router.post('/join', [...joinGame], async (req: Request, res: Response) => {
         if (e.message === 'Game not found') {
             res.status(404).send('Game not found')
         } else {
-            logger.error(e)
+            logger.error('error joining game', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
@@ -67,7 +67,7 @@ router.post('/create', [...deckId], passport.authenticate('jwt', { session: fals
             res.status(201).json({ game_id: rows[0].id, access_code: rows[0].access_code } as CreateGameResponse)
         }
     } catch (e) {
-        logger.error(e)
+        logger.error('error creating game', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 });
