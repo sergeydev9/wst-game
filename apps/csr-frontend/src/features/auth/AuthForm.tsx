@@ -109,7 +109,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
             <div className="mb-3 h-2"></div>
             {/* submit */}
             <Button color="blue" data-cy="login-submit" type="submit">{buttonlabel}</Button>
-        </form >
+        </form>
     )
 }
 
