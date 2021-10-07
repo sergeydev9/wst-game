@@ -65,6 +65,7 @@ const ChooseName: React.FC = () => {
         })()
     }, [dispatch, history, access_code])
 
+    // send request to join the game
     const join = async (name: string) => {
 
         api.post<JoinGameResponse>('/games/join', { access_code, name }).then(result => {
@@ -88,6 +89,7 @@ const ChooseName: React.FC = () => {
         }
     }
 
+    // creates a button for each name
     const namesHelper = (names: NameObject[]) => {
         return names.map((nameObj, i) => {
             return (
@@ -96,6 +98,7 @@ const ChooseName: React.FC = () => {
         })
     }
 
+    // get the next set of names
     const rerollHandler = (e: React.MouseEvent) => {
         e.preventDefault()
         dispatch(setCurrentNameOptions());

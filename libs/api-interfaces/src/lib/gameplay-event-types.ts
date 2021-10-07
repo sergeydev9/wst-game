@@ -1,0 +1,13 @@
+export const PLAYER_JOINED_GAME = 'PlayerJoinedGame';
+export const PLAYER_LEFT_GAME = 'PlayerLeftGame';
+export const REMOVE_PLAYER = 'RemovePlayer';
+export const UPDATE_INACTIVE = 'UpdateInactivePlayers';
+export const UPDATE_DISCONNECTED = 'UpdateDisconnectedPlayers';
+export const SET_QUESTION_STATE = 'SetQuestionState';
+export const SET_QUESTION_RESULTS = 'SetQuestionResult';
+export const ANSWER_PART_1 = 'AnswerPart1';
+export const ANSWER_PART_2 = 'AnswerPart2';
+export const SET_GAME_STATE = 'SetGameState';
+export const SET_GAME_RESULTS = 'SetGameResults';
+export const UPDATE_ANSWERS_PENDING = 'UpdateAnswersPending';
+export const SET_READER = 'SetReader';

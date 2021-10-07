@@ -10,27 +10,22 @@ import tw from "tailwind-styled-components";
 export const LargeTitle = tw.h1`
     text-large-title
     font-extrabold
-    select-none
 `
 
 export const Title1 = tw.h2`
     text-title-1
     font-bold
-    select-none
-
 `
 
 export const Title2 = tw.h3`
     text-title-2
     font-bold
-    select-none
 `
 
 export const Title3 = tw.h4`
     text-title-3
     font-bold
 `
-
 
 // Body elements may or may not be paragraphs. Span is used to prevent
 // any positioning styles from being applied. Only want these components

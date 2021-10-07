@@ -1,4 +1,4 @@
-import { UserDetailsUpdate } from '@whosaidtrue/app-interfaces';
+import { UserDetailsUpdate, UserRole } from '@whosaidtrue/app-interfaces';
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
 
@@ -26,10 +26,10 @@ class Users extends Dao {
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public register(email: string, password: string): Promise<QueryResult> {
+    public register(email: string, password: string, role: UserRole = "user"): Promise<QueryResult> {
         const query = {
             text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, array_to_json(roles) AS roles",
-            values: [email, password, ["user"]]
+            values: [email, password, [role]]
         }
         return this._pool.query(query);
     }

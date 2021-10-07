@@ -4,6 +4,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const zlib = require("zlib");
 const fs = require('fs')
 
+
 module.exports = config => {
 
   config.module.rules = config.module.rules.filter(

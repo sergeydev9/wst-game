@@ -1,5 +1,11 @@
 import { Deck, NameObject, PlayerRef, GameStatus } from '@whosaidtrue/app-interfaces';
 
+export interface GameTokenPayload {
+  playerId: number;
+  playerName: string;
+  gameId: number;
+  isHost: boolean;
+}
 /**
  * user
  */

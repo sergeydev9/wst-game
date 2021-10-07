@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import insertNames from './generated-names.seed';
 import insertDecks from './decks.seed';
 import insertQuestions from './questions.seed';
+import { insertCypressUsers } from './users.seed';
 
 
 (async () => {
@@ -13,6 +14,9 @@ import insertQuestions from './questions.seed';
     })
 
     try {
+        // seed cypress test users
+        insertCypressUsers(pool)
+
         // seed names
         const namesResult = await insertNames(pool, 500)
         namesResult.rows.length ? console.log(`Inserted ${namesResult.rowCount} names into the generated_names table`) : null

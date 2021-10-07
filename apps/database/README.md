@@ -240,7 +240,6 @@ id | integer | no | yes
 game_question_id | integer | no | no | | game_questions | CASCADE
 game_id | integer | no | no | | games | CASCADE
 game_player_id | integer | no | no | | game_players | CASCADE
-question_id | integer | yes | no | | questions | SET NULL
 value | answer | yes | no
 number_true_guess | smallint | yes | no
 score | smallint | yes | no
@@ -409,7 +408,7 @@ table | columns | unique
 |---|---|---
 | game_questions | game_id, question_sequence_index | yes
 | game_players | game_id, player_name | yes
-| game_answers | question_id | no
+| game_answers | game_question_id, game_player_id | yes
 | questions | deck_id | no
 | user_decks | user_id deck_id | yes
 | decks | purchase_price | no

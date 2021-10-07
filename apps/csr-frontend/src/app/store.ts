@@ -13,26 +13,32 @@ import {
 import { enhancer } from "addon-redux";
 import jwt_decode, { JwtPayload } from "jwt-decode";
 
+declare global {
+    interface Window { Cypress: any, store: any }
+}
+
 const enhancers = process.env.NODE_ENV === 'development' ? [enhancer] : []; // add storybook enhancer if not in prod environment
 
-const stored = localStorage.getItem('wstState')
+const stored = localStorage.getItem('wstState');
 let persistedState;
 
 try {
-    const state = stored ? JSON.parse(stored) : null
-    const decoded = jwt_decode(state.auth.token) as JwtPayload
+    persistedState = stored ? JSON.parse(stored) : {}
 
-    // if token is expired, don't copy cart or auth from storage
-    if (decoded.exp && decoded.exp * 1000 < new Date().getTime()) {
-        const { auth, cart, ...noAuthState } = state;
-        persistedState = noAuthState
-    } else {
-        persistedState = state
+    //if there is a token, check if expired
+    if (persistedState && persistedState.auth && persistedState.auth.token) {
+        const decoded = jwt_decode(persistedState.auth.token) as JwtPayload;
+
+        // if token is expired, remove authentication data from store
+        if (decoded.exp && decoded.exp * 1000 < new Date().getTime()) {
+            const { auth, cart, ...noAuthState } = persistedState;
+            persistedState = noAuthState;
+        }
     }
 
 } catch (e) {
-    console.error('invalid token')
-    persistedState = {}
+    console.error('invalid token');
+    persistedState = {};
 }
 
 export const store = configureStore({
@@ -50,6 +56,12 @@ export const store = configureStore({
     preloadedState: persistedState,
     enhancers
 });
+
+
+// if in a cypress run, add store to window so that cypress can access it during tests.
+if (window.Cypress) {
+    window.store = store
+}
 
 // debounce saving to local storage
 let storeTimer: ReturnType<typeof setTimeout>;

@@ -1,8 +1,17 @@
 /**
  * Home page slider box. An array of strings representing a conversation.
  */
+
+export type SendMessageFunction = (type: string, payload: unknown, ack?: (...args: unknown[]) => void) => void;
+
 export interface UserStory {
     lines: string[];
+}
+
+export interface UserInsertObject {
+    email: string;
+    password: string;
+    role: UserRole
 }
 
 export type RequestStatus = 'idle' | 'loading';
@@ -10,7 +19,7 @@ export type QuestionStatus = 'active' | 'inactive' | 'poll';
 export type UserRating = 'great' | 'bad';
 export type DeckStatus = 'active' | 'inactive' | 'pending';
 export type AnswerValue = 'true' | 'false' | 'pass';
-export type UserRole = 'user' | 'admin' | 'test';
+export type UserRole = 'user' | 'admin' | 'test' | 'guest';
 
 export type GameStatus = 'lobby'
     | 'inProgress'
@@ -207,7 +216,7 @@ export interface GamePlayer {
     id: number;
     player_name: string;
     game_id: number;
-    user_id: number;    // TODO: add to schema
+    user_id: number;
     created_at?: Date;
     updated_at?: Date;
 }
