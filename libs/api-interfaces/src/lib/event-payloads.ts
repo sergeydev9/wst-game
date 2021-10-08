@@ -1,5 +1,8 @@
 import { GameQuestionStatus, GameStatus, PlayerRef } from "@whosaidtrue/app-interfaces";
 
+export interface SetCurrentPlayers {
+    players: PlayerRef[]
+}
 export interface PlayerScore {
     player_id: number,
     player_name: string,

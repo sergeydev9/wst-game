@@ -1,12 +1,15 @@
+import http from 'http';
 import { pool } from './db'
+import { types, payloads } from '@whosaidtrue/api-interfaces';
 import { logger } from '@whosaidtrue/logger';
 import { verify } from 'jsonwebtoken';
-import { Server, Socket } from "socket.io";
-import http from 'http';
 import { createAdapter } from "@socket.io/redis-adapter";
-import { createClient } from "redis"
+import { Server } from "socket.io";
 import { GameTokenPayload } from '@whosaidtrue/api-interfaces';
 import registerHandlers from './registerHandlers';
+import { subClient, pubClient, } from './redis';
+import { getCurrentPlayersKey, playerValueString } from './util';
+import { PlayerRef } from '@whosaidtrue/app-interfaces';
 
 declare module 'socket.io' {
     interface Socket {
@@ -16,10 +19,6 @@ declare module 'socket.io' {
         playerName: string;
     }
 }
-
-// create Redis clients
-const pubClient = createClient({ host: process.env.REDIS_HOST, port: 6379, password: process.env.REDIS_PASSWORD });
-const subClient = pubClient.duplicate();
 
 // create socket server
 const server = http.createServer();
@@ -33,7 +32,7 @@ const io = new Server(server, {
 // create redis adapter and add it to server
 io.adapter(createAdapter(pubClient, subClient));
 
-// middleware to verify token and add user data to socket
+// verify token and add user data to socket
 io.use((socket, next) => {
     const token = socket.handshake.auth.token as string;
 
@@ -51,9 +50,28 @@ io.use((socket, next) => {
 });
 
 // Join game room and register handlers
-io.on('connection', socket => {
-    socket.join(`${socket.gameId}`)
+io.on('connection', async socket => {
+
+    // join room
+    socket.join(`${socket.gameId}`);
+
+    // register event handlers
     registerHandlers(socket);
+
+    const playersKey = getCurrentPlayersKey(socket) // stores list of current players for game
+
+    // add player to redis
+    const insertResult = await pubClient.sadd(playersKey, playerValueString(socket))
+    logger.debug(`Insert user result: ${insertResult}`)
+
+    // TODO: fetch game state here and make this into a pipeline
+    // get list of current players
+    const playersResponse = await pubClient.smembers(playersKey)
+    const players = playersResponse.map(player => JSON.parse(player)) as PlayerRef[] // players are stored as a string
+    logger.debug(`Players response: ${playersResponse}`)
+
+    // send players to client
+    socket.emit(types.SET_CURRENT_PLAYERS, { players } as payloads.SetCurrentPlayers)
 });
 
 

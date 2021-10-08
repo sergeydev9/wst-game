@@ -192,9 +192,6 @@ class Games extends Dao {
             hostName = game.host_player_name;
 
             // if user is host, set host name to new player name.
-            // Game is created before host technically joins it.
-            // This is an unfortunate side effect of name choice being put
-            // AFTER game creation in the design.
             if (userId && (userId === game.host_id) && (name !== game.host_player_name)) {
                 const updateGameHostQuery = {
                     text: `UPDATE games SET host_player_name = $1 WHERE games.id = $2`,
@@ -204,13 +201,6 @@ class Games extends Dao {
                 hostName = name;
                 isHost = true;
             }
-
-            // get list of other players
-            const getPlayerListQuery = {
-                text: `SELECT id, player_name FROM game_players WHERE game_players.game_id = $1`,
-                values: [game.id]
-            }
-            const playersResult = await client.query(getPlayerListQuery);
 
             // get deck info
             const getDeckQuery = {
@@ -228,7 +218,6 @@ class Games extends Dao {
                 currentHostName: hostName as string,
                 access_code,
                 isHost,
-                players: playersResult.rows as PlayerRef[],
                 playerId: createPlayerResult.rows[0].id,
                 playerName: name as string,
                 totalQuestions: game.total_questions

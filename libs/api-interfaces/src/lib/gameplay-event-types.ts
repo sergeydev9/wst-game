@@ -11,3 +11,4 @@ export const SET_GAME_STATE = 'SetGameState';
 export const SET_GAME_RESULTS = 'SetGameResults';
 export const UPDATE_ANSWERS_PENDING = 'UpdateAnswersPending';
 export const SET_READER = 'SetReader';
+export const SET_CURRENT_PLAYERS = 'SetCurrentPlayers';

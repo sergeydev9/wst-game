@@ -44,7 +44,7 @@ const FlashMessage: React.FC = () => {
     const emojiHelper = () => {
         switch (messageType) {
             case 'playerJoined':
-                return <img src={partypopper} alt="party popper" aria-label="party popper" />
+                return <img width="20px" height="20px" src={partypopper} alt="party popper" aria-label="party popper" />
             case 'playerRemoved':
                 return GoodbyeEmoji
             case 'playerLeft':

@@ -108,7 +108,6 @@ export interface JoinGameResponse {
   deck: Deck;
   totalQuestions: number;
   currentHostName: string;
-  players: PlayerRef[];
   currentQuestionIndex: number;
   access_code: string;
   playerId: number;

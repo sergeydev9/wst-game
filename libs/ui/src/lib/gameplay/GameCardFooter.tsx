@@ -12,7 +12,7 @@ rounded-b-3xl
 py-2
 md:py-3
 text-center
-text-md
+text-sm
 sm:text-lg
 font-black
 flex

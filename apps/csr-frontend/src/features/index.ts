@@ -33,6 +33,7 @@ export {
   selectGameToken,
   selectGameStatus,
   selectPlayerId,
+  selectPlayerStatus,
   gameStateUpdate
 } from './game/gameSlice';
 export { default as Lobby } from './game/Lobby';

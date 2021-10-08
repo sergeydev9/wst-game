@@ -12,10 +12,9 @@ import {
     selectGameId,
     selectPlayerId,
     showError,
-    selectGameStatus
 } from '..';
 import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal } from "../modal/modalSlice";
-import { addPlayer, clearGame, removePlayer, setInactive, gameStateUpdate, setGameResults, selectPlayerName } from "../game/gameSlice";
+import { addPlayer, clearGame, removePlayer, setInactive, gameStateUpdate, setGameResults, selectPlayerName, selectPlayerStatus, selectGameStatus } from "../game/gameSlice";
 import { clearCurrentQuestion, setCurrentQuestion, setResults, setReader, setAnswersPending } from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { SendMessageFunction } from "@whosaidtrue/app-interfaces";
@@ -35,7 +34,7 @@ export const SocketProvider: React.FC = ({ children }) => {
     const history = useHistory();
     const dispatch = useAppDispatch();
     const gameStatus = useAppSelector(selectGameStatus);
-    const gameId = useAppSelector(selectGameId);
+    const playerStatus = useAppSelector(selectPlayerStatus);
     const playerId = useAppSelector(selectPlayerId);
     const playerName = useAppSelector(selectPlayerName)
     const accessCode = useAppSelector(selectAccessCode);
@@ -44,7 +43,7 @@ export const SocketProvider: React.FC = ({ children }) => {
     useEffect(() => {
 
         // if game status is one of these values, then user should have a socket connection
-        const shouldHaveConnection = ['inProgress', 'lobby', 'postGame', 'gameCreateSuccess', 'choosingName'].includes(gameStatus) && playerId;
+        const shouldHaveConnection = ['inGame', 'lobby', 'gameCreateSuccess', 'choosingName'].includes(playerStatus) && playerId;
 
         // if user should, but doesn't, have a socket connection, create one and register listeners
         if (shouldHaveConnection && !socket) {
@@ -113,6 +112,8 @@ export const SocketProvider: React.FC = ({ children }) => {
                     dispatch(clearGame()); // clear state
                     dispatch(clearCurrentQuestion())
                     conn.close() // close socket
+                    setSocket(null);
+
                     history.push('/') // nav home
 
                     // otherwise, show goodbye message
@@ -167,7 +168,7 @@ export const SocketProvider: React.FC = ({ children }) => {
         } else if (!shouldHaveConnection && socket) {
             socket.close();
         }
-    }, [history, token, setSocket, accessCode, playerId, dispatch, gameStatus, socket, location, playerName])
+    }, [history, token, setSocket, accessCode, playerId, dispatch, gameStatus, socket, location, playerName, playerStatus])
 
 
     // Send a message to the socket server, and passes acknowledgement to optional callback

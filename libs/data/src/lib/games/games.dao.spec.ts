@@ -133,7 +133,6 @@ describe('Games', () => {
             expect(actual.isHost).toEqual(true);
             expect(actual.deck).toBeDefined();
             expect(actual.gameId).toBeDefined();
-            expect(actual.players.length).toEqual(1);
             expect(actual.access_code).toEqual(gameRes.rows[0].access_code);
             expect(actual.currentHostName).toEqual('Test Name');
             expect(actual.currentQuestionIndex).toEqual(1);
@@ -163,7 +162,6 @@ describe('Games', () => {
             expect(actual.isHost).toEqual(false);
             expect(actual.deck).toBeDefined();
             expect(actual.gameId).toBeDefined();
-            expect(actual.players.length).toEqual(1);
             expect(actual.access_code).toEqual(gameRes.rows[0].access_code);
             expect(actual.currentHostName).not.toEqual('Test Name');
             expect(actual.currentQuestionIndex).toEqual(1);
@@ -175,34 +173,34 @@ describe('Games', () => {
 
     })
 
-    describe('startQuestion', () => {
+    // describe('startQuestion', () => {
 
-        it('should update game.current_question_index', async () => {
-            return; // TODO
-        })
+    //     it('should update game.current_question_index', async () => {
+    //         return; // TODO
+    //     })
 
-        it('should create a new game_answers row for all players', async () => {
-            const userId2 = (await users.register('email3@test.com', 'password1323')).rows[0].id;
+    //     it('should create a new game_answers row for all players', async () => {
+    //         const userId2 = (await users.register('email3@test.com', 'password1323')).rows[0].id;
 
-            const gameRes = await games.create(userId, deckId);
-            const accessCode = gameRes.rows[0].access_code;
-            const gameId = gameRes.rows[0].id;
+    //         const gameRes = await games.create(userId, deckId);
+    //         const accessCode = gameRes.rows[0].access_code;
+    //         const gameId = gameRes.rows[0].id;
 
-            let q = `SELECT id FROM game_questions WHERE game_id = ${gameId} LIMIT 1`;
-            const gameQuestionId = (await pool.query(q)).rows[0].id;
+    //         let q = `SELECT id FROM game_questions WHERE game_id = ${gameId} LIMIT 1`;
+    //         const gameQuestionId = (await pool.query(q)).rows[0].id;
 
-            const gamePlayer1 = await games.join(accessCode, 'Test Name 1', userId);
-            const gamePlayer2 = await games.join(accessCode, 'Test Name 2', userId2);
+    //         const gamePlayer1 = await games.join(accessCode, 'Test Name 1', userId);
+    //         const gamePlayer2 = await games.join(accessCode, 'Test Name 2', userId2);
 
-            const actual = await games.startQuestion(gameId, gameQuestionId, [gamePlayer1.playerId, gamePlayer2.playerId]);
-            expect(actual.rows[0].id).toBeDefined();
-            expect(actual.rows[1].id).toBeDefined();
+    //         const actual = await games.startQuestion(gameId, gameQuestionId, [gamePlayer1.playerId, gamePlayer2.playerId]);
+    //         expect(actual.rows[0].id).toBeDefined();
+    //         expect(actual.rows[1].id).toBeDefined();
 
-            q = `SELECT * FROM game_answers WHERE game_id = ${gameId} AND game_question_id = ${gameQuestionId}`;
-            const answers = await pool.query(q);
-            expect(answers.rows.length).toEqual(2);
-        })
-    })
+    //         q = `SELECT * FROM game_answers WHERE game_id = ${gameId} AND game_question_id = ${gameQuestionId}`;
+    //         const answers = await pool.query(q);
+    //         expect(answers.rows.length).toEqual(2);
+    //     })
+    // })
 
     // describe('gameStateByPlayerId')
 
