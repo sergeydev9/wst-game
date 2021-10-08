@@ -168,7 +168,8 @@ export const {
     joinGame,
     setInactive,
     gameStateUpdate,
-    setGameResults
+    setGameResults,
+    setPlayers
 } = gameSlice.actions;
 
 // selectors

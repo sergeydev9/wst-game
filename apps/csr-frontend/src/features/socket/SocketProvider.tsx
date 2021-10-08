@@ -9,12 +9,22 @@ import {
     selectAccessCode,
     showInfo,
     showSuccess,
-    selectGameId,
     selectPlayerId,
     showError,
 } from '..';
 import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal } from "../modal/modalSlice";
-import { addPlayer, clearGame, removePlayer, setInactive, gameStateUpdate, setGameResults, selectPlayerName, selectPlayerStatus, selectGameStatus } from "../game/gameSlice";
+import {
+    addPlayer,
+    clearGame,
+    removePlayer,
+    setInactive,
+    gameStateUpdate,
+    setGameResults,
+    selectPlayerName,
+    selectPlayerStatus,
+    selectGameStatus,
+    setPlayers
+} from "../game/gameSlice";
 import { clearCurrentQuestion, setCurrentQuestion, setResults, setReader, setAnswersPending } from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { SendMessageFunction } from "@whosaidtrue/app-interfaces";
@@ -48,7 +58,8 @@ export const SocketProvider: React.FC = ({ children }) => {
         // if user should, but doesn't, have a socket connection, create one and register listeners
         if (shouldHaveConnection && !socket) {
 
-            const conn = io(process.env.NX_SOCKET_BASEURL as string,
+            const conn = io(
+                process.env.NX_SOCKET_BASEURL as string,
                 {
                     auth: { token },
                     rememberUpgrade: true,
@@ -59,8 +70,8 @@ export const SocketProvider: React.FC = ({ children }) => {
             setSocket(conn); // add socket to provider
 
             /**
-             * CONNECTION LISTENERS
-             */
+            * CONNECTION LISTENERS
+            */
             conn.on("connect", () => {
                 console.log('Game server connection successful!'); // connection success
                 conn.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName })
@@ -89,6 +100,9 @@ export const SocketProvider: React.FC = ({ children }) => {
             /**
              * GAME EVENT LISTENERS
              */
+            conn.on(types.SET_CURRENT_PLAYERS, (message: payloads.SetCurrentPlayers) => {
+                dispatch(setPlayers(message))
+            })
             conn.on(types.PLAYER_JOINED_GAME, (message: payloads.PlayerEvent) => {
                 const { id, player_name } = message;
 
@@ -106,18 +120,18 @@ export const SocketProvider: React.FC = ({ children }) => {
             // remove player
             conn.on(types.REMOVE_PLAYER, (message: payloads.PlayerEvent) => {
                 const { id, player_name } = message;
+
                 if (playerId === id) {
                     // If current player is the one that was removed
                     dispatch(setFullModal("removedFromGame")) // show modal
                     dispatch(clearGame()); // clear state
                     dispatch(clearCurrentQuestion())
-                    conn.close() // close socket
+                    conn.close() // close  and delete the socket
                     setSocket(null);
 
                     history.push('/') // nav home
-
-                    // otherwise, show goodbye message
                 } else {
+                    // otherwise, show player has been removed message
                     dispatch(showPlayerRemoved(player_name));
                     dispatch(removePlayer(id))
                 }
