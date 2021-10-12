@@ -1,7 +1,6 @@
 import Redis from 'ioredis';
-import { Socket } from "socket.io";
 
-// create Redis clients
+// create Redis client
 export const pubClient = new Redis({
     host: process.env.REDIS_HOST,
     port: 6379,

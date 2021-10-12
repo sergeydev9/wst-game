@@ -1,6 +1,6 @@
 import tw from "tailwind-styled-components";
 
-export default tw.footer`
+export default tw.footer<Record<string, unknown>>`
     bg-white-ish
     w-full
     flex

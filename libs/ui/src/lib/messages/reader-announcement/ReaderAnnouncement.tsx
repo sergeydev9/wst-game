@@ -1,8 +1,29 @@
 import { ReactComponent as Callout } from './callout.svg';
 
-const ReaderAnnouncement = () => {
+const ReaderAnnouncement: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     return (
-        <div className="rounded-full filter drop-shadow-mid animate-pulse border-2 gap-3 border-purple-base w-max bg-white px-5 py-1 flex flex-row items-center font-bold"><Callout />Your turn to read</div>
+        <div className={`
+        absolute
+         mx-auto
+         top-24
+         z-50
+         left-0
+         right-0
+         rounded-full
+         filter
+         drop-shadow-mid
+         animate-pulse
+         border-2 gap-3
+         border-purple-base
+         w-max
+         bg-white
+         px-5
+         py-1
+         flex
+         flex-row
+         items-center
+         font-bold`
+        }><Callout />Heads Up! It's your turn to read</div>
     )
 }
 

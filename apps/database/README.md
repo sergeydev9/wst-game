@@ -216,6 +216,8 @@ id | integer | no | yes
 question_sequence_index | smallint | no | no
 question_id | integer | yes | no | | questions | SET_NULL
 reader_id | integer | yes | no | | game_players | SET_NULL
+reader_name | varchar(1000) | yes | no
+player_number_snapshot | smallint | yes | no
 game_id | integer | no | no | | games | CASCADE
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()

@@ -19,15 +19,18 @@ import {
     removePlayer,
     setInactive,
     gameStateUpdate,
+    setGameStatus,
     setGameResults,
     selectPlayerName,
     selectPlayerStatus,
     selectGameStatus,
-    setPlayers
+    setPlayers,
+    setPlayerStatus
 } from "../game/gameSlice";
 import { clearCurrentQuestion, setCurrentQuestion, setResults, setReader, setAnswersPending } from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
-import { SendMessageFunction } from "@whosaidtrue/app-interfaces";
+import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
+import { clearHost } from "../host/hostSlice";
 
 /**
  * Provider component for socket context.
@@ -100,9 +103,21 @@ export const SocketProvider: React.FC = ({ children }) => {
             /**
              * GAME EVENT LISTENERS
              */
+
+            // game not found in DB
+            conn.on(types.GAME_NOT_FOUND, () => {
+                dispatch(clearGame());
+                dispatch(clearHost());
+                dispatch(showError('Error while connecting to game'));
+                history.push('/')
+            })
+
+            // update list of currently connected players
             conn.on(types.SET_CURRENT_PLAYERS, (message: payloads.SetCurrentPlayers) => {
                 dispatch(setPlayers(message))
             })
+
+            // another player joined
             conn.on(types.PLAYER_JOINED_GAME, (message: payloads.PlayerEvent) => {
                 const { id, player_name } = message;
 
@@ -110,6 +125,7 @@ export const SocketProvider: React.FC = ({ children }) => {
                 dispatch(addPlayer({ id, player_name }))
             })
 
+            // another player left on purpose
             conn.on(types.PLAYER_LEFT_GAME, (message: payloads.PlayerEvent) => {
                 const { id, player_name } = message;
 
@@ -133,7 +149,6 @@ export const SocketProvider: React.FC = ({ children }) => {
                 } else {
                     // otherwise, show player has been removed message
                     dispatch(showPlayerRemoved(player_name));
-                    dispatch(removePlayer(id))
                 }
             })
 
@@ -146,11 +161,20 @@ export const SocketProvider: React.FC = ({ children }) => {
             // updates question state
             conn.on(types.SET_QUESTION_STATE, (message: payloads.SetQuestionState) => {
                 dispatch(setCurrentQuestion(message))
+                if (playerStatus === 'lobby' && message.status === 'question') {
+                    dispatch(setPlayerStatus('inGame'))
+                }
+            })
+
+            // set game status (e.g. 'inProgress', 'lobby', etc)
+            conn.on(types.UPDATE_GAME_STATUS, (message: GameStatus) => {
+                dispatch(setGameStatus(message))
             })
 
             // updates game state
             conn.on(types.SET_GAME_STATE, (message: payloads.SetGameState) => {
                 dispatch(gameStateUpdate(message))
+
             })
 
             // updates results for current question.
@@ -181,6 +205,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             // if user shouldn't have a game connection but does for some reason, close it.
         } else if (!shouldHaveConnection && socket) {
             socket.close();
+            setSocket(null);
         }
     }, [history, token, setSocket, accessCode, playerId, dispatch, gameStatus, socket, location, playerName, playerStatus])
 

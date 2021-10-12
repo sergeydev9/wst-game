@@ -15,7 +15,7 @@ export interface GameState {
     deck: Deck;
     totalQuestions: number;
     isHost: boolean;
-    currentHostName: string;
+    hostName: string;
     players: Record<number, PlayerRef>;
     inactivePlayers: PlayerRef[];
     disconnectedPlayers: PlayerRef[];
@@ -52,7 +52,7 @@ export const initialState: GameState = {
     players: {},
     inactivePlayers: [],
     disconnectedPlayers: [],
-    currentHostName: '',
+    hostName: '',
     playerName: '',
     playerId: 0,
     winner: '',
@@ -70,6 +70,9 @@ export const gameSlice = createSlice({
         setGameStatus: (state, action) => {
             state.gameStatus = action.payload;
         },
+        setPlayerStatus: (state, action: PayloadAction<UserGameStatus>) => {
+            state.playerStatus = action.payload
+        },
         setGameDeck: (state, action) => {
             state.deck = action.payload
         },
@@ -79,7 +82,7 @@ export const gameSlice = createSlice({
 
         initialRequest: (state, action) => {
             state.access_code = action.payload;
-            state.playerStatus = 'choosingName' as UserGameStatus;
+            state.playerStatus = 'choosingName';
         },
         addPlayer: (state, action) => {
             const { id } = action.payload
@@ -133,7 +136,7 @@ export const gameSlice = createSlice({
                 gameId,
                 deck,
                 totalQuestions,
-                currentHostName,
+                hostName,
                 access_code,
                 playerId,
                 playerName,
@@ -146,8 +149,7 @@ export const gameSlice = createSlice({
             state.gameId = gameId;
             state.deck = deck;
             state.totalQuestions = totalQuestions;
-            state.currentHostName = currentHostName;
-
+            state.hostName = hostName;
             state.access_code = access_code;
             state.playerId = playerId;
             state.playerName = playerName
@@ -169,12 +171,14 @@ export const {
     setInactive,
     gameStateUpdate,
     setGameResults,
-    setPlayers
+    setPlayers,
+    setPlayerStatus
 } = gameSlice.actions;
 
 // selectors
 export const selectPlayerName = (state: RootState) => state.game.playerName;
 export const selectIsHost = (state: RootState) => state.game.isHost;
+export const selectHasPassed = (state: RootState) => state.game.hasPassed;
 export const selectGameId = (state: RootState) => state.game.gameId;
 export const selectGameToken = (state: RootState) => state.game.gameToken;
 export const selectGameStatus = (state: RootState) => state.game.gameStatus;
@@ -185,6 +189,7 @@ export const selectInactive = (state: RootState) => state.game.inactivePlayers;
 export const selectDisconnected = (state: RootState) => state.game.disconnectedPlayers;
 export const selectPlayerStatus = (state: RootState) => state.game.playerStatus;
 export const selectPlayers = (state: RootState) => state.game.players;
+export const selectTotalQuestions = (state: RootState) => state.game.totalQuestions;
 export const selectPlayerList = createSelector(selectPlayers, (players) => {
     return Object.values(players);
 })

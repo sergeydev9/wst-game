@@ -158,7 +158,7 @@ const FullScreenModalController = () => {
             </Modal>}
 
             {/* Removed From Game Notification */}
-            {currentModal === 'removedFromGame' && <Modal isOpen={currentModal === 'removedFromGame'} onRequestClose={close}>
+            {currentModal === 'removedFromGame' && <Modal isOpen={currentModal === 'removedFromGame'} hideClose={true} onRequestClose={close}>
                 <Suspense fallback={<Loading />}>
                     <RemovalNotification />
                 </Suspense>

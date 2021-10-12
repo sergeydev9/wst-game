@@ -3,7 +3,6 @@ import { Button, Title1, BodyMedium, ModalContent } from '@whosaidtrue/ui';
 import { types, payloads } from '@whosaidtrue/api-interfaces';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks"
 import useSocket from '../../socket/useSocket';
-import { showError } from '../modalSlice';
 import { selectTargetName, clearTarget, selectTargetId } from "../../host/hostSlice";
 import { setFullModal } from '../modalSlice';
 
@@ -14,7 +13,6 @@ const ConfirmRemovePlayerModal: React.FC = () => {
     const targetId = useAppSelector(selectTargetId)
 
     useEffect(() => {
-
         return () => {
             dispatch(clearTarget())
         }

@@ -1,11 +1,13 @@
 import { Footer, SocialMediaLinks, FooterLinks } from '@whosaidtrue/ui';
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const FooterComponent: React.FC = () => {
-
+    const location = useLocation();
     // TODO: Fill in with real urls/links
+
+    const isHidden = location.pathname === '/play'
     return (
-        <Footer>
+        <Footer className={isHidden ? "hidden" : ""}>
             <FooterLinks>
                 <a>Who Said True For Schools</a>
                 <a>FAQs</a>

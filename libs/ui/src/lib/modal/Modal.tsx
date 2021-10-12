@@ -3,16 +3,17 @@ import { GrFormClose } from '@react-icons/all-files/gr/GrFormClose';
 
 export interface ModalProps extends Modal.Props {
     isOpen: boolean;
+    hideClose?: boolean;
     onRequestClose: () => void;
 }
 
 /**
  * React modal component used to display all full screen modal components.
  */
-const WstModal: React.FC<ModalProps> = ({ children, onRequestClose, ...rest }) => {
+const WstModal: React.FC<ModalProps> = ({ children, onRequestClose, hideClose, ...rest }) => {
     return (
         <Modal onRequestClose={onRequestClose} {...rest} >
-            <GrFormClose className="absolute right-1 sm:right-6 sm:top-8 top-4 text-4xl z-10 font-black cursor-pointer" onClick={onRequestClose} />
+            {!hideClose && <GrFormClose className="absolute right-1 sm:right-6 sm:top-8 top-4 text-4xl z-10 font-black cursor-pointer" onClick={onRequestClose} />}
             {children}
         </Modal>
     )

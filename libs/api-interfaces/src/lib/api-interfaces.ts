@@ -107,7 +107,7 @@ export interface JoinGameResponse {
   gameId: number;
   deck: Deck;
   totalQuestions: number;
-  currentHostName: string;
+  hostName: string;
   currentQuestionIndex: number;
   access_code: string;
   playerId: number;

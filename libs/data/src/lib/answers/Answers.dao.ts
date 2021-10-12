@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
-import { AnswerValue, IInsertAnwser } from '@whosaidtrue/app-interfaces';
+import { AnswerValue, InsertAnwser } from '@whosaidtrue/app-interfaces';
 
 
 class Answers extends Dao {
@@ -14,11 +14,11 @@ class Answers extends Dao {
      *
      * Result rows[0].id = inserted record id if successfull.
      *
-     * @param {ISubmitAnswer} answer
+     * @param {SubmitAnswer} answer
      * @return  {Promise<QueryResult>}
      * @memberof Answers
      */
-    public async submit(answer: IInsertAnwser): Promise<QueryResult> {
+    public async submit(answer: InsertAnwser): Promise<QueryResult> {
         const {
             game_player_id,
             game_question_id,

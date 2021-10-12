@@ -55,11 +55,14 @@ export {
   setRatingSubmitted,
   setHasGuessed,
   setHasAnswered,
-  setStatus
+  setStatus,
+  selectQuestionStatus
 } from './question/questionSlice';
 export { default as FlashMessage } from './modal/FlashMessage';
 export { default as FullScreenModalController } from './modal/FullScreenModalController';
 export { default as hostReducer } from './host/hostSlice';
 export { default as useSocket } from './socket/useSocket';
 export { default as SocketProvider } from './socket/SocketProvider';
+export { default as HostActions } from './host/HostActions';
+export { default as Question } from './question/Question';
 export * from './choose-name/chooseNameSlice';

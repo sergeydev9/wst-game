@@ -45,11 +45,12 @@ export interface AnswerPart2 {
 }
 
 export interface SetQuestionState {
-    id: number;
+    questionId: number;
+    gameQuestionId: number
     status: GameQuestionStatus;
-    primaryText: string;
+    text: string;
     followUp: string;
-    secondaryText: string;
+    textForGuess: string;
     sequenceIndex: number;
     answersPending: number;
     readerName: string;

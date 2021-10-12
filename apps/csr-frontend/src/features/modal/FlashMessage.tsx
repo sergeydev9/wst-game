@@ -4,7 +4,6 @@ import { MessageModal, } from "@whosaidtrue/ui";
 import partypopper from '../../assets/party-popper-emoji.png';
 import goodbye from '../../assets/waving-hand.png';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-
 import { selectIsPersistent, selectMessageContent, selectMessageType } from '../modal/modalSlice';
 import { clearMessage } from './modalSlice';
 
