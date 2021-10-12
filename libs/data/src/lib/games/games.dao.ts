@@ -136,7 +136,17 @@ class Games extends Dao {
 
             // get game
             const getGameQuery = {
-                text: 'SELECT id, deck_id, host_id, status, host_player_name, current_question_index, total_questions FROM games WHERE games.access_code = $1',
+                text: `
+                SELECT
+                    id,
+                    deck_id,
+                    host_id,
+                    status,
+                    host_player_name,
+                    current_question_index,
+                    total_questions
+                FROM games
+                WHERE games.access_code = $1`,
                 values: [access_code]
             }
             const gameResult = await client.query(getGameQuery);
@@ -168,7 +178,21 @@ class Games extends Dao {
 
             // get deck info
             const getDeckQuery = {
-                text: 'SELECT id, name, movie_rating, sfw, description, sort_order, clean, age_rating, status, thumbnail_url, purchase_price FROM decks WHERE id = $1',
+                text: `
+                SELECT
+                    id,
+                    name,
+                    movie_rating,
+                    sfw,
+                    description,
+                    sort_order,
+                    clean,
+                    age_rating,
+                    status,
+                    thumbnail_url,
+                    purchase_price
+                FROM decks
+                WHERE id = $1`,
                 values: [game.deck_id]
             }
             const deckResult = await client.query(getDeckQuery);
@@ -255,7 +279,7 @@ class Games extends Dao {
                     AND question_sequence_index IS NULL
                     LIMIT 1
                     )
-                RETURNING reader_id, reader_name, question_sequence_index, player_number_snapshot, question_id;
+                RETURNING id, reader_id, reader_name, question_sequence_index, player_number_snapshot, question_id;
             `
 
             const gqUpdateResult = await client.query({

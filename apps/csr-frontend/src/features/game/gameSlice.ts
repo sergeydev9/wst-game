@@ -79,7 +79,9 @@ export const gameSlice = createSlice({
         setPlayerName: (state, action) => {
             state.playerName = action.payload;
         },
-
+        setHasPassed: (state, action) => {
+            state.hasPassed = action.payload
+        },
         initialRequest: (state, action) => {
             state.access_code = action.payload;
             state.playerStatus = 'choosingName';
@@ -172,7 +174,8 @@ export const {
     gameStateUpdate,
     setGameResults,
     setPlayers,
-    setPlayerStatus
+    setPlayerStatus,
+    setHasPassed
 } = gameSlice.actions;
 
 // selectors

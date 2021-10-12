@@ -1,25 +1,20 @@
 import { Pool } from 'pg';
 import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 import { cleanDb } from '../util/cleanDb';
-import { setupGame, setupGamePlayer, setupOneDeck, setupQuestion } from '../util/testDependencySetup';
-import TEST_GAME_PLAYERS from '../test-objects/gamePlayers';
+import { setupOneDeck, setupQuestion } from '../util/testDependencySetup';
 import Games from './Games.dao';
-import Questions from '../questions/Questions.dao';
-import GamePlayers from '../game-players/GamePlayers.dao';
 import Users from '../users/Users.dao';
 
 describe('Games', () => {
     let pool: Pool;
     let games: Games;
     let users: Users;
-    let players: GamePlayers;
     let userId: number;
     let deckId: number;
 
     beforeAll(async () => {
         pool = new Pool(TEST_DB_CONNECTION);
         games = new Games(pool);
-        players = new GamePlayers(pool);
         users = new Users(pool);
     })
 
@@ -79,18 +74,6 @@ describe('Games', () => {
         it("should return an empty array if game doesn't exist", async () => {
             const { rows } = await games.getByAccessCode('wrong');
             expect(rows.length).toEqual(0)
-        })
-    })
-
-    describe('setStartDate', () => {
-
-        it('should set the end date of a game', async () => {
-            const gameRes = await games.create(userId, deckId);
-            const date = new Date();
-            const { rows } = await games.setStartDate(gameRes.rows[0].id, date);
-
-            // game should have start_date equal to input
-            expect(rows[0].start_date).toEqual(date);
         })
     })
 
@@ -190,6 +173,8 @@ describe('Games', () => {
 
             expect(game.status).toEqual('inProgress');
             expect(game.startDate).toEqual(startDate)
+            expect(question.questionId).toBeDefined();
+            expect(question.gameQuestionId).toBeDefined();
             expect(question.numPlayers).toEqual(1);
             expect(question.sequenceIndex).toEqual(1);
             expect(question.readerId).toEqual(playerId);

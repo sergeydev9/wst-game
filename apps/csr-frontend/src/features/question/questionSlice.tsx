@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import { payloads } from "@whosaidtrue/api-interfaces";
-import { GameQuestionStatus, PlayerScore } from "@whosaidtrue/app-interfaces";
+import { GameQuestionStatus, PlayerRef, PlayerScore } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
 import { selectPlayerId } from "../game/gameSlice";
 
@@ -12,6 +12,7 @@ export interface CurrentQuestionState {
     sequenceIndex: number;
     hasAnswered: boolean;
     hasGuessed: boolean;
+    numPlayers: number;
     readerId: number;
     readerName: string;
     followUp: string;
@@ -22,12 +23,14 @@ export interface CurrentQuestionState {
     globalTrue: number;
     groupTrue: number;
     results: PlayerScore[];
-
+    haveNotAnswered: PlayerRef[];
 }
+
 export const initialState: CurrentQuestionState = {
     questionId: 0,
     gameQuestionId: 0,
     status: '',
+    numPlayers: 0,
     sequenceIndex: 0,
     correctAnswer: 0,
     hasAnswered: false,
@@ -41,7 +44,8 @@ export const initialState: CurrentQuestionState = {
     answersPending: 0,
     globalTrue: 0,
     groupTrue: 0,
-    results: []
+    results: [],
+    haveNotAnswered: []
 }
 
 const currentQuestionSlice = createSlice({
@@ -61,7 +65,8 @@ const currentQuestionSlice = createSlice({
                 textForGuess,
                 readerId,
                 status,
-                answersPending,
+                haveNotAnswered,
+                numPlayers,
                 readerName } = action.payload;
 
             state.questionId = questionId;
@@ -72,10 +77,10 @@ const currentQuestionSlice = createSlice({
             state.textForGuess = textForGuess;
             state.readerId = readerId;
             state.status = status;
-            state.answersPending = answersPending;
+            state.haveNotAnswered = haveNotAnswered;
+            state.numPlayers = numPlayers;
             state.readerName = readerName;
         },
-
         setResults: (state, action) => {
             const {
                 results,
@@ -127,18 +132,44 @@ export const {
     setAnswersPending } = currentQuestionSlice.actions;
 
 // selectors
+export const selectTextForGuess = (state: RootState) => state.question.textForGuess;
 export const selectSequenceIndex = (state: RootState) => state.question.sequenceIndex;
 export const selectReaderId = (state: RootState) => state.question.readerId;
 export const selectText = (state: RootState) => state.question.text;
+export const selectHasAnswered = (state: RootState) => state.question.hasAnswered;
+export const selectHasGuessed = (state: RootState) => state.question.hasGuessed;
 export const selectRatingSubmitted = (state: RootState) => state.question.ratingSubmitted;
 export const selectResults = (state: RootState) => {
     const { results, globalTrue, groupTrue, correctAnswer } = state.question;
     return { results, globalTrue, groupTrue, correctAnswer }
 }
 export const selectQuestionStatus = (state: RootState) => state.question.status;
-
+export const selectGamequestionId = (state: RootState) => state.question.gameQuestionId;
 export const selectIsReader = createSelector([selectPlayerId, selectReaderId], (playerId, readerId) => {
     return playerId === readerId;
 })
+export const selectNumPlayers = (state: RootState) => state.question.numPlayers;
+export const currentScreen = createSelector(
+    [
+        selectQuestionStatus,
+        selectHasAnswered,
+        selectHasGuessed
+    ], (status, hasAnswered, hasGuessed) => {
+
+        // if in question (i.e. not results)
+        if (status === 'question') {
+
+            // if they haven't answered yet
+            if (!hasAnswered) {
+                return 'answer'
+            }
+
+            // if they have answered, but haven't guessed
+            // show guess, else show waiting room
+            return hasGuessed ? 'waitingRoom' : 'guess'
+        }
+
+        return 'results'
+    })
 
 export default currentQuestionSlice.reducer;

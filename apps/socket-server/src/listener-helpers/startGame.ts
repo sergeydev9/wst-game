@@ -13,8 +13,6 @@ const startGame = async (socket: Socket) => {
     // count currently connected players
     const currentCount = await pubClient.scard(currentPlayers);
 
-    logger.debug(`[startGame] Current player count: ${currentCount}`)
-
     // set readers list from players list
     await pubClient.send_command('COPY', currentPlayers, readerList)
     await pubClient.expire(readerList, ONE_DAY)
@@ -23,23 +21,47 @@ const startGame = async (socket: Socket) => {
     const readerString = await pubClient.spop(readerList);
     const reader = JSON.parse(readerString) as PlayerRef;
 
-    logger.debug(`[startGame] reader: ${readerString}`)
-
     // set start time
     const startDate = new Date();
 
     // update game and question, fetch question text
-    const gameStartResult = await games.start(gameId, currentCount, reader.id, reader.player_name, startDate)
-    logger.debug(`[startGame] start game result : ${JSON.stringify(gameStartResult)}`)
-
+    const gameStartResult = await games.start(
+        gameId,
+        currentCount,
+        reader.id,
+        reader.player_name,
+        startDate
+    )
     const { game, question } = gameStartResult;
 
     // update game status
-    await pubClient.set(socket.keys.gameStatus, game.status)
+    await pubClient.set(socket.keys.gameStatus, game.status);
+
+    // use list of current players as list of players that haven't answered yet
+    const notAnsweredStrings = await pubClient.smembers(currentPlayers);
+    const haveNotAnswered = notAnsweredStrings.map(s => JSON.parse(s)) as PlayerRef[];
+
+    logger.debug(`Have not answered: ${JSON.stringify(haveNotAnswered)}`)
+    logger.debug(`Game start result: ${JSON.stringify(gameStartResult)}`)
 
     // save question in redis
-    await pubClient.send_command('JSON.SET', currentQuestion, '.', JSON.stringify(question))
-    return { ...gameStartResult, currentCount };
+    await pubClient.send_command(
+        'JSON.SET',
+        currentQuestion,
+        '.',
+        JSON.stringify(
+            {
+                ...question,
+                haveNotAnswered,
+                numHaveNotGuessed: currentCount,
+            }))
+
+
+    return {
+        ...gameStartResult,
+        currentCount,
+        haveNotAnswered
+    };
 }
 
 export default startGame;

@@ -1,4 +1,4 @@
-import { GameQuestionStatus, GameStatus, PlayerRef } from "@whosaidtrue/app-interfaces";
+import { AnswerValue, GameQuestionStatus, GameStatus, PlayerRef } from "@whosaidtrue/app-interfaces";
 
 export interface SetCurrentPlayers {
     players: PlayerRef[]
@@ -35,8 +35,8 @@ export interface SetQuestionResult {
 }
 
 export interface AnswerPart1 {
-    questionId: number;
-    answer: boolean;
+    gameQuestionId: number;
+    answer: AnswerValue;
 }
 
 export interface AnswerPart2 {
@@ -52,7 +52,8 @@ export interface SetQuestionState {
     followUp: string;
     textForGuess: string;
     sequenceIndex: number;
-    answersPending: number;
+    numPlayers: number;
+    haveNotAnswered: PlayerRef[];
     readerName: string;
     readerId: number;
 }

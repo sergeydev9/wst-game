@@ -3,11 +3,16 @@ import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 import { cleanDb } from '../util/cleanDb';
 import { testDecks, testQuestions } from '../util/testEntityGenerators';
 import Answers from './Answers.dao';
+import { setupGame, setupQuestion } from '../util/testDependencySetup';
 
 describe('Answers', () => {
     let pool: Pool;
     let answers: Answers;
-    let game
+    let gameId: number;
+    let deckId: number;
+    let playerId: number;
+
+
 
     beforeAll(async () => {
         pool = new Pool(TEST_DB_CONNECTION)
@@ -17,7 +22,7 @@ describe('Answers', () => {
         pool.end()
     })
 
-    describe('submit', () => {
+    describe('submitValue', () => {
 
         it('should create a new answer row', async () => {
             expect(true).toBe(true);

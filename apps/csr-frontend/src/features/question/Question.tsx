@@ -1,24 +1,53 @@
-import { TrueFalse, QuestionCard } from "@whosaidtrue/ui";
-import { useAppSelector } from "../../app/hooks";
-import { selectIsReader, selectSequenceIndex, selectText } from '../question/questionSlice';
-import { selectHasPassed, selectTotalQuestions } from '../game/gameSlice';
+import { TrueFalse, QuestionCard, NumberTrueGuess } from "@whosaidtrue/ui";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { selectIsReader, selectSequenceIndex, selectText, selectGamequestionId, currentScreen, selectTextForGuess, selectNumPlayers } from '../question/questionSlice';
+import { selectHasPassed, selectTotalQuestions, setHasPassed } from '../game/gameSlice';
 import ReaderAnnouncement from "./ReaderAnnouncement";
+import { setHasAnswered, showError, useSocket } from "..";
+import { payloads, types } from "@whosaidtrue/api-interfaces";
 
 const Question: React.FC = () => {
-    const isReader = useAppSelector(selectIsReader)
+    const dispatch = useAppDispatch();
+    const { sendMessage } = useSocket();
+    const isReader = useAppSelector(selectIsReader);
     const text = useAppSelector(selectText);
     const hasPassed = useAppSelector(selectHasPassed);
+    const gameQuestionId = useAppSelector(selectGamequestionId);
     const questionNumber = useAppSelector(selectSequenceIndex);
-    const totalQuestions = useAppSelector(selectTotalQuestions)
+    const totalQuestions = useAppSelector(selectTotalQuestions);
+    const guessText = useAppSelector(selectTextForGuess);
+    const screen = useAppSelector(currentScreen);
+    const numPlayers = useAppSelector(selectNumPlayers);
 
-    const submitHandler = (value: string) => {
-        console.log(value);
+
+    const answerHandler = (value: string) => {
+        sendMessage(types.ANSWER_PART_1, { gameQuestionId, answer: value } as payloads.AnswerPart1, ack => {
+            if (ack === 'ok') {
+                dispatch(setHasAnswered(true));
+
+                if (value === 'pass') {
+                    dispatch(setHasPassed(true))
+                }
+            } else {
+                // if error while saving answer
+                dispatch(showError('Could not submit answer'))
+            }
+        })
     }
+
+    const guessHandler = (value: number) => {
+        console.log(value)
+    }
+
     return (
         <>
             {isReader && <ReaderAnnouncement />}
-            <QuestionCard totalQuestions={totalQuestions} questionNumber={questionNumber} category="Entertainment">
-                <TrueFalse submitHandler={submitHandler} text={text} isReader={isReader} hasPasses={!hasPassed} />
+            <QuestionCard
+                totalQuestions={totalQuestions}
+                questionNumber={questionNumber}
+                category="Entertainment">
+                {screen === 'answer' && <TrueFalse submitHandler={answerHandler} text={text} isReader={isReader} hasPasses={!hasPassed} />}
+                {screen === 'guess' && <NumberTrueGuess questionText={guessText} submitHandler={guessHandler} totalPlayers={numPlayers} />}
 
             </QuestionCard>
         </>
