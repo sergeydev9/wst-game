@@ -76,8 +76,8 @@ const registerListeners = (socket: Socket, io: Server) => {
                     // else move to question results
 
                 }
-
             }
+
             cb('ok')
         } catch (e) {
             logError('[submitAnswerPart2] Error', e)

@@ -33,7 +33,7 @@ export const chooseNameSlice = createSlice({
     name: 'chooseName',
     initialState,
     reducers: {
-        clear: () => {
+        clearNameChoices: () => {
             return initialState;
         },
         setRemainingNameOptions: (state, action) => {
@@ -52,7 +52,7 @@ export const chooseNameSlice = createSlice({
 });
 
 // actions
-export const { setCurrentNameOptions, setRemainingNameOptions } = chooseNameSlice.actions;
+export const { setCurrentNameOptions, setRemainingNameOptions, clearNameChoices } = chooseNameSlice.actions;
 
 // selectors
 export const selectNameRerolls = (state: RootState) => state.chooseName.rerolls;

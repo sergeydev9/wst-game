@@ -34,7 +34,8 @@ export {
   selectGameStatus,
   selectPlayerId,
   selectPlayerStatus,
-  gameStateUpdate
+  gameStateUpdate,
+  clearGame
 } from './game/gameSlice';
 export { default as Lobby } from './game/Lobby';
 export { default as decksReducer, clearSelectedDeck } from './decks/deckSlice';
@@ -56,7 +57,8 @@ export {
   setHasGuessed,
   setHasAnswered,
   setStatus,
-  selectQuestionStatus
+  selectQuestionStatus,
+  clearCurrentQuestion
 } from './question/questionSlice';
 export { default as FlashMessage } from './modal/FlashMessage';
 export { default as FullScreenModalController } from './modal/FullScreenModalController';

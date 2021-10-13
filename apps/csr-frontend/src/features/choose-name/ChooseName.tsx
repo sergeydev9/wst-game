@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
@@ -9,7 +9,7 @@ import {
     selectSeen,
     sendReport
 } from './chooseNameSlice';
-import { setGameStatus, clearGame, joinGame } from '../game/gameSlice';
+import { setGameStatus, clearGame, joinGame, selectIsHost } from '../game/gameSlice';
 import {
     Button,
     RerollNamesButton,
@@ -23,17 +23,42 @@ import { NameObject } from '@whosaidtrue/app-interfaces';
 import { JoinGameResponse, NameRequestResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
 import { showError } from '../modal/modalSlice';
+import { clearCurrentQuestion, clearNameChoices } from '..';
 
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
+    const [shouldBlock, setShouldBlock] = useState(true);
     const { access_code } = useParams<{ access_code: string }>()
     const history = useHistory();
     const names = useAppSelector(selectCurrentNameOptions);
     const rerolls = useAppSelector(selectNameRerolls);
     const seen = useAppSelector(selectSeen)
+    const isHost = useAppSelector(selectIsHost);
 
-    // get a batch of 6 names when user first arrives
     useEffect(() => {
+
+        // show confirmation dialog and clear game state if confirmed
+        const unblock = history.block((...args: any[]) => {
+
+            // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
+            // has to be used here to prevent compiler errors
+            // args[0] is a location object, and args[1] is a navigation action type
+            if (args[0].pathname as any !== '/play') {
+                const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
+                    'Are you sure you want to leave the game?';
+
+                if (window.confirm(confirmMessage)) {
+                    unblock();
+                    dispatch(clearGame());
+                    dispatch(clearCurrentQuestion());
+                    return true;
+                }
+
+                return false
+            }
+            return true
+        })
+
         dispatch(setGameStatus('choosingName'));
 
         // redirect if no access_code
@@ -47,13 +72,14 @@ const ChooseName: React.FC = () => {
             // check game status
             try {
                 const statusResponse = await api.get<StatusRequestResponse>(`/games/status?access_code=${access_code}`)
-                dispatch(setGameStatus(statusResponse.status))
+                dispatch(setGameStatus(statusResponse.data.status))
             } catch (e) {
-                dispatch(showError('Could not find the game you were looking for'))
-                dispatch(clearGame())
+                dispatch(showError('Could not find the game you were looking for'));
+                dispatch(clearGame());
+                dispatch(clearCurrentQuestion());
                 history.push('/')
             }
-            // get name options
+            // get 6 name options
             try {
                 const response = await api.get<NameRequestResponse>('/names')
                 dispatch(setRemainingNameOptions(response.data.names)) // populate total name pool
@@ -63,11 +89,16 @@ const ChooseName: React.FC = () => {
                 dispatch(clearGame())
             }
         })()
-    }, [dispatch, history, access_code])
+
+        // cleanup
+        return () => {
+            dispatch(clearNameChoices());
+        }
+    }, [dispatch, history, access_code, shouldBlock, isHost])
 
     // send request to join the game
     const join = async (name: string) => {
-
+        setShouldBlock(false)
         api.post<JoinGameResponse>('/games/join', { access_code, name }).then(result => {
             dispatch(joinGame(result.data))
             history.push('/play')
@@ -84,6 +115,7 @@ const ChooseName: React.FC = () => {
     // on click, send name report and join game
     const chooseName = (nameObj: NameObject) => {
         return (e: React.MouseEvent) => {
+            setShouldBlock(false);
             dispatch(sendReport({ chosen: nameObj.id, seen: seen.map(n => n.id) }))
             join(nameObj.name)
         }
