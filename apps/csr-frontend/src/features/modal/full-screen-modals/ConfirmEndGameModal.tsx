@@ -5,6 +5,7 @@ import useSocket from '../../socket/useSocket';
 import { Title1, Button, BodyMedium, ModalContent } from '@whosaidtrue/ui';
 import { clearGame, selectIsHost } from '../../game/gameSlice';
 import { setFullModal, showError } from '../../modal/modalSlice';
+import { clearCurrentQuestion } from '../../question/questionSlice';
 
 const ConfirmEndGameModal: React.FC = () => {
     const dispatch = useAppDispatch()
@@ -29,6 +30,7 @@ const ConfirmEndGameModal: React.FC = () => {
         socket?.close();
         dispatch(setFullModal(''));
         dispatch(clearGame());
+        dispatch(clearCurrentQuestion());
         setSocket(null);
         history.push('/')
     }, [dispatch, socket, history, setSocket])

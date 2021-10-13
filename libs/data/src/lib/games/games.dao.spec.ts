@@ -38,12 +38,6 @@ describe('Games', () => {
         pool.end()
     })
 
-    describe('hooks', () => {
-        it('should run without errors', async () => {
-            return;
-        })
-    })
-
     describe('create', () => {
 
         it('should insert a new game row', async () => {
@@ -133,9 +127,8 @@ describe('Games', () => {
             expect(actual.isHost).toEqual(true);
             expect(actual.deck).toBeDefined();
             expect(actual.gameId).toBeDefined();
-            expect(actual.players.length).toEqual(1);
             expect(actual.access_code).toEqual(gameRes.rows[0].access_code);
-            expect(actual.currentHostName).toEqual('Test Name');
+            expect(actual.hostName).toEqual('Test Name');
             expect(actual.currentQuestionIndex).toEqual(1);
             expect(actual.totalQuestions).toEqual(9);
             expect(actual.playerId).toBeDefined();
@@ -163,54 +156,49 @@ describe('Games', () => {
             expect(actual.isHost).toEqual(false);
             expect(actual.deck).toBeDefined();
             expect(actual.gameId).toBeDefined();
-            expect(actual.players.length).toEqual(1);
             expect(actual.access_code).toEqual(gameRes.rows[0].access_code);
-            expect(actual.currentHostName).not.toEqual('Test Name');
+            expect(actual.hostName).not.toEqual('Test Name');
             expect(actual.currentQuestionIndex).toEqual(1);
             expect(actual.totalQuestions).toEqual(9);
             expect(actual.playerId).toBeDefined();
-
-
-        })
-
-    })
-
-    describe('startQuestion', () => {
-
-        it('should update game.current_question_index', async () => {
-            return; // TODO
-        })
-
-        it('should create a new game_answers row for all players', async () => {
-            const userId2 = (await users.register('email3@test.com', 'password1323')).rows[0].id;
-
-            const gameRes = await games.create(userId, deckId);
-            const accessCode = gameRes.rows[0].access_code;
-            const gameId = gameRes.rows[0].id;
-
-            let q = `SELECT id FROM game_questions WHERE game_id = ${gameId} LIMIT 1`;
-            const gameQuestionId = (await pool.query(q)).rows[0].id;
-
-            const gamePlayer1 = await games.join(accessCode, 'Test Name 1', userId);
-            const gamePlayer2 = await games.join(accessCode, 'Test Name 2', userId2);
-
-            const actual = await games.startQuestion(gameId, gameQuestionId, [gamePlayer1.playerId, gamePlayer2.playerId]);
-            expect(actual.rows[0].id).toBeDefined();
-            expect(actual.rows[1].id).toBeDefined();
-
-            q = `SELECT * FROM game_answers WHERE game_id = ${gameId} AND game_question_id = ${gameQuestionId}`;
-            const answers = await pool.query(q);
-            expect(answers.rows.length).toEqual(2);
         })
     })
 
-    // describe('gameStateByPlayerId')
+    describe('start', () => {
+        let gameId: number;
+        let playerId: number;
+        const playerName = "Test Name";
 
-    // describe('setStatus')
+        beforeEach(async () => {
+            // create a game
+            const { rows } = await games.create(userId, deckId);
+            const game = rows[0];
+            gameId = game.id;
 
-    // describe('getScoreboard')
+            // join game as host
+            const joinResult = await games.join(game.access_code, playerName, userId);
+            playerId = joinResult.playerId;
 
-    // describe('getHost')
+        })
 
-    // describe('getPlayers')
+        it('should return updated game and question records', async () => {
+
+            const startDate = new Date()
+            const actual = await games.start(gameId, 1, playerId, playerName, startDate)
+
+            const { question, game } = actual;
+
+            expect(game.status).toEqual('inProgress');
+            expect(game.startDate).toEqual(startDate)
+            expect(question.numPlayers).toEqual(1);
+            expect(question.sequenceIndex).toEqual(1);
+            expect(question.readerId).toEqual(playerId);
+            expect(question.readerName).toEqual(playerName);
+            expect(question.followUp).toBeDefined();
+            expect(question.text).toBeDefined();
+            expect(question.textForGuess).toBeDefined();
+
+        })
+    })
+
 })

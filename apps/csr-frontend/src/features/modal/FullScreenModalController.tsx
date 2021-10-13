@@ -1,10 +1,11 @@
 import { Suspense, lazy } from 'react';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Modal, NoFlexBox, Box, ModalContent } from '@whosaidtrue/ui';
+import { Modal, ModalContent } from '@whosaidtrue/ui';
 import { selectFullModal, setFullModal } from "./modalSlice";
 import Loading from '../loading/Loading';
 
 // Lazy load modals
+const RemovalNotification = lazy(() => import('./full-screen-modals/RemovalNotification'))
 const Checkout = lazy(() => import('./full-screen-modals/Checkout'));
 const ChoosePaymentMethod = lazy(() => import('./full-screen-modals/ChoosePaymentMethod'));
 const DeckDetailsModal = lazy(() => import('./full-screen-modals/DeckDetailsModal'));
@@ -22,7 +23,8 @@ const GameOptionsModal = lazy(() => import('./full-screen-modals/GameOptionsModa
 /**
  * All full screen modals render from here. This makes it possible to
  * open and close modals without having to re-render other components
- * in the current page.
+ * in the current page, and makes it easier to control what modals are showing
+ * and when.
  *
  */
 const FullScreenModalController = () => {
@@ -33,9 +35,6 @@ const FullScreenModalController = () => {
         dispatch(setFullModal(''))
     }
 
-    //TODO: Re-do the styling here to use the ModalContent ui component
-    // instead of Box or NoFlexBox containers. See
-    // remove players modal for an example.
     return (
         <>
             {/* Deck Details */}
@@ -159,13 +158,11 @@ const FullScreenModalController = () => {
             </Modal>}
 
             {/* Removed From Game Notification */}
-            {/* {currentModal === 'removedFromGame' && <Modal isOpen={currentModal === 'removedFromGame'} onRequestClose={close}>
-                <NoFlexBox>
-                    <Suspense fallback={<Loading />}>
-                        <ConfirmEndGameModal />
-                    </Suspense>
-                </NoFlexBox>
-            </Modal>} */}
+            {currentModal === 'removedFromGame' && <Modal isOpen={currentModal === 'removedFromGame'} hideClose={true} onRequestClose={close}>
+                <Suspense fallback={<Loading />}>
+                    <RemovalNotification />
+                </Suspense>
+            </Modal>}
 
             {/* Report an issue */}
             {currentModal === 'reportAnIssue' && <Modal isOpen={currentModal === 'reportAnIssue'} onRequestClose={close}>

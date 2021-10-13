@@ -1,6 +1,6 @@
-import {Pool, QueryResult} from 'pg';
+import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
-import { IInsertGamePlayer } from '@whosaidtrue/app-interfaces';
+import { InsertGamePlayer } from '@whosaidtrue/app-interfaces';
 
 
 class GamePlayers extends Dao {
@@ -16,11 +16,11 @@ class GamePlayers extends Dao {
      *  - Player name is not available
      *  - Bad game_id
      *
-     * @param {IInsertGamePlayer} player
+     * @param {InsertGamePlayer} player
      * @return {{id, player_name}}  {Promise<QueryResult>}
      * @memberof GamePlayers
      */
-    public insertOne(player: IInsertGamePlayer): Promise<QueryResult> {
+    public insertOne(player: InsertGamePlayer): Promise<QueryResult> {
         const { player_name, game_id } = player;
         const query = {
             text: `INSERT INTO game_players (player_name, game_id) VALUES ($1, $2) RETURNING id, player_name`,

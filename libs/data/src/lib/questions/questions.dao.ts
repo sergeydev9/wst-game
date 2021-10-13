@@ -1,5 +1,5 @@
-import { IInsertQuestion } from '@whosaidtrue/app-interfaces';
-import {Pool} from 'pg';
+import { InsertQuestion } from '@whosaidtrue/app-interfaces';
+import { Pool } from 'pg';
 import Dao from '../base.dao';
 
 
@@ -8,7 +8,7 @@ class Question extends Dao {
         super(pool, 'questions');
     }
 
-    public async insertOne(question: IInsertQuestion) {
+    public async insertOne(question: InsertQuestion) {
         const {
             text,
             text_for_guess,

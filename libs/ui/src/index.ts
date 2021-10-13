@@ -38,5 +38,8 @@ export { default as WideBox } from './lib/containers/wide-box/WideBox';
 export { default as Lobby } from './lib/lobby/Lobby';
 export { default as HostActions } from './lib/gameplay/host-actions/HostActions';
 export { default as ModalContent } from './lib/containers/ModalContent';
+export { default as TrueFalse } from './lib/gameplay/true-or-false/TrueOrFalseBox';
+export { default as QuestionCard } from './lib/gameplay/QuestionCard';
+export { default as RemovalNotificationModal } from './lib/removal-notification/RemovalNotification';
 
 export * from './lib/typography/Typography';

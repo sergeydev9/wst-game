@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
 export interface HostState {
@@ -26,7 +26,7 @@ const hostSlice = createSlice({
             state.targetId = 0;
             state.targetName = ''
         },
-        setTarget: (state, action) => {
+        setTarget: (state, action: PayloadAction<{ targetId: number, targetName: string }>) => {
             const { targetId, targetName } = action.payload;
             state.targetId = targetId
             state.targetName = targetName

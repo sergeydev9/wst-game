@@ -1,8 +1,17 @@
 /**
  * Home page slider box. An array of strings representing a conversation.
  */
+
+export type SendMessageFunction = (type: string, payload?: unknown, ack?: (...args: unknown[]) => void) => void;
+
 export interface UserStory {
     lines: string[];
+}
+
+export interface UserInsertObject {
+    email: string;
+    password: string;
+    role: UserRole
 }
 
 export type RequestStatus = 'idle' | 'loading';
@@ -10,7 +19,7 @@ export type QuestionStatus = 'active' | 'inactive' | 'poll';
 export type UserRating = 'great' | 'bad';
 export type DeckStatus = 'active' | 'inactive' | 'pending';
 export type AnswerValue = 'true' | 'false' | 'pass';
-export type UserRole = 'user' | 'admin' | 'test';
+export type UserRole = 'user' | 'admin' | 'test' | 'guest';
 
 export type GameStatus = 'lobby'
     | 'inProgress'
@@ -23,15 +32,16 @@ export type GameStatus = 'lobby'
 export type UserGameStatus = 'notInGame'
     | 'gameCreateSuccess'
     | 'removed'
+    | 'inGame'
     | 'gameCreateError'
     | 'choosingName'
-    & GameStatus
+    | 'lobby'
 
 
 /**
  * This status controls what screen players should be seeing in game.
  */
-export type GameQuestionStatus = 'reading' | 'answering' | 'results';
+export type GameQuestionStatus = 'question' | 'results' | '';
 
 /**
  * type of objects for insertOne functions is always going to be the
@@ -207,7 +217,7 @@ export interface GamePlayer {
     id: number;
     player_name: string;
     game_id: number;
-    user_id: number;    // TODO: add to schema
+    user_id: number;
     created_at?: Date;
     updated_at?: Date;
 }
@@ -231,15 +241,46 @@ export interface UserQuestionRating {
     updated_at?: Date;
 }
 
-export type IInsertUserQuestionRating = Insert<UserQuestionRating>;
-export type IInsertQuestionRating = Insert<UserQuestionRating>;
-export type IInsertOrder = Insert<Order>;
-export type IInsertGamePlayer = Insert<GamePlayer>;
-export type IInsertGameUsers = Insert<GameUser>;
-export type IInsertGeneratedName = Insert<GeneratedName>;
-export type IInsertUserDeck = Insert<UserDeck>;
-export type IInsertSession = Insert<UserSession>;
-export type IInsertAnwser = Insert<GameAnswer>;
-export type IInsertDeck = Insert<Deck>;
-export type IInsertQuestion = Insert<Question>;
-export type IInsertGame = Insert<Game>;
+export type InsertUserQuestionRating = Insert<UserQuestionRating>;
+export type InsertQuestionRating = Insert<UserQuestionRating>;
+export type InsertOrder = Insert<Order>;
+export type InsertGamePlayer = Insert<GamePlayer>;
+export type InsertGameUsers = Insert<GameUser>;
+export type InsertGeneratedName = Insert<GeneratedName>;
+export type InsertUserDeck = Insert<UserDeck>;
+export type InsertSession = Insert<UserSession>;
+export type InsertAnwser = Insert<GameAnswer>;
+export type InsertDeck = Insert<Deck>;
+export type InsertQuestion = Insert<Question>;
+export type InsertGame = Insert<Game>;
+
+export interface JoinGameResult {
+    status: GameStatus
+    gameId: number
+    deck: Deck,
+    currentQuestionIndex: number
+    hostName: string,
+    access_code: string,
+    isHost: boolean,
+    playerId: number
+    playerName: string,
+    totalQuestions: number
+}
+
+export interface StartGameResult {
+    game: {
+        status: GameStatus;
+        startDate: Date;
+    };
+    question: {
+        questionId: number;
+        gameQuestionId: number;
+        numPlayers: number;
+        sequenceIndex: number;
+        readerId: number;
+        readerName: string;
+        followUp: string;
+        text: string;
+        textForGuess: string
+    }
+}

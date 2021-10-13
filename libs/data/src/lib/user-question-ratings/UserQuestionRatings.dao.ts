@@ -1,5 +1,5 @@
 import { Pool, QueryResult } from 'pg';
-import { IInsertUserQuestionRating } from '@whosaidtrue/app-interfaces';
+import { InsertUserQuestionRating } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
 class UserQuestionRating extends Dao {
@@ -10,11 +10,11 @@ class UserQuestionRating extends Dao {
     /**
      * Submit a rating for a question.
      *
-     * @param {IInsertUserQuestionRating} userRating
+     * @param {InsertUserQuestionRating} userRating
      * @return {id}  {Promise<QueryResult>}
      * @memberof UserQuestionRating
      */
-    public async submit(userRating: IInsertUserQuestionRating): Promise<QueryResult> {
+    public async submit(userRating: InsertUserQuestionRating): Promise<QueryResult> {
         const { question_id, user_id, rating } = userRating;
         const query = {
             text: 'INSERT INTO user_question_ratings (question_id, user_id, rating) VALUES ($1, $2, $3) RETURNING id',

@@ -90,7 +90,7 @@ export const modalSlice = createSlice({
         },
         showPlayerRemoved: (state, action) => {
             state.messageType = 'playerRemoved';
-            state.messageContent = `${action.payload} has left the game`;
+            state.messageContent = `${action.payload} has been removed from the game`;
             state.isPersistent = false;
         }
     }

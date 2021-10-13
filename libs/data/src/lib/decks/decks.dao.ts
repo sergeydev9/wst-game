@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
-import { MovieRating, IInsertDeck, DeckSelectionOptions, UserDeckSelectionOptions } from '@whosaidtrue/app-interfaces';
+import { MovieRating, InsertDeck, DeckSelectionOptions, UserDeckSelectionOptions } from '@whosaidtrue/app-interfaces';
 
 
 class Decks extends Dao {
@@ -24,7 +24,7 @@ class Decks extends Dao {
         return this.pool.query(query);
     }
 
-    public insertOne(deck: IInsertDeck): Promise<QueryResult> {
+    public insertOne(deck: InsertDeck): Promise<QueryResult> {
         const {
             name,
             sort_order,

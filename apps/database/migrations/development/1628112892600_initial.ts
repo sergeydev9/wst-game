@@ -88,7 +88,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         total_questions: { type: 'smallint', notNull: true, default: 0 },
         current_question_index: { type: 'smallint', notNull: true, default: 1 },
         access_code: { type: 'varchar(10)', notNull: false, unique: true },
-        status: { type: 'varchar(100)', notNull: true }, // TODO: create custom type? what are the possible values?
+        status: { type: 'varchar(100)', notNull: true },
         deck_id: { type: 'integer', notNull: false, references: 'decks', onDelete: 'SET NULL' },
         start_date: { type: 'timestamptz', notNull: false },
         host_player_name: { type: 'varchar(200)', notNull: false },
@@ -138,6 +138,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
         user_id: { type: 'integer', notNull: false, references: 'users', onDelete: 'SET NULL' },
         player_name: { type: 'citext', notNull: true },
+        status: { type: 'varchar(100)', notNull: true, default: 'joined' }, // joined, disconnected, or removed
         created_at: {
             type: 'timestamptz',
             notNull: true,
@@ -179,6 +180,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             references: 'game_players',
             notNull: false,
             onDelete: 'SET NULL'
+        },
+        reader_name: {
+            type: 'varchar(1000)',
+            notNull: false
+        },
+        player_number_snapshot: { // number of players connected at start of question
+            type: 'smallint',
+            notNull: false
         },
         created_at: {
             type: 'timestamptz',
@@ -232,10 +241,9 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             notNull: true,
             onDelete: 'CASCADE',
         },
-        value: { type: 'answer_value', notNull: false }, // custom type
+        value: { type: 'answer_value', notNull: true }, // custom type
         number_true_guess: { type: 'smallint', notNull: false },
         score: { type: 'integer', notNull: false },
-        question_id: { type: 'integer', notNull: false, references: 'questions', onDelete: 'SET NULL' },
         created_at: {
             type: 'timestamptz',
             notNull: true,
@@ -452,7 +460,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     */
     pgm.createIndex('game_questions', ['game_id', 'question_sequence_index'], { unique: true });
     pgm.createIndex('game_players', ['game_id', 'player_name'], { unique: true });
-    pgm.createIndex('game_answers', 'question_id');
+    // pgm.createIndex('game_answers', ['game_player_id', 'game_question_id'], { unique: true }) // prevent more than 1 answer by same player for same question
     pgm.createIndex('questions', 'deck_id');
     pgm.createIndex('user_decks', ['user_id', 'deck_id']); // speed up finding a user's decks
     pgm.createIndex('decks', 'purchase_price') // pick out free decks faster

@@ -1,9 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
+import { payloads } from "@whosaidtrue/api-interfaces";
 import { GameQuestionStatus, PlayerScore } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
+import { selectPlayerId } from "../game/gameSlice";
 
 export interface CurrentQuestionState {
-    id: number;
+    questionId: number;
+    gameQuestionId: number;
     status: GameQuestionStatus;
     correctAnswer: number;
     sequenceIndex: number;
@@ -12,8 +15,8 @@ export interface CurrentQuestionState {
     readerId: number;
     readerName: string;
     followUp: string;
-    primaryText: string;
-    secondaryText: string;
+    text: string;
+    textForGuess: string;
     ratingSubmitted: boolean;
     answersPending: number;
     globalTrue: number;
@@ -22,8 +25,9 @@ export interface CurrentQuestionState {
 
 }
 export const initialState: CurrentQuestionState = {
-    id: 0,
-    status: "reading",
+    questionId: 0,
+    gameQuestionId: 0,
+    status: '',
     sequenceIndex: 0,
     correctAnswer: 0,
     hasAnswered: false,
@@ -31,8 +35,8 @@ export const initialState: CurrentQuestionState = {
     readerId: 0,
     readerName: '',
     followUp: '',
-    primaryText: '',
-    secondaryText: '',
+    text: '',
+    textForGuess: '',
     ratingSubmitted: false,
     answersPending: 0,
     globalTrue: 0,
@@ -47,23 +51,25 @@ const currentQuestionSlice = createSlice({
         clearCurrentQuestion: () => {
             return initialState
         },
-        setCurrentQuestion: (state, action) => {
+        setCurrentQuestion: (state, action: PayloadAction<payloads.SetQuestionState>) => {
             const {
-                id,
+                questionId,
+                gameQuestionId,
                 sequenceIndex,
                 followUp,
-                primaryText,
-                secondaryText,
+                text,
+                textForGuess,
                 readerId,
                 status,
                 answersPending,
                 readerName } = action.payload;
 
-            state.id = id;
+            state.questionId = questionId;
+            state.gameQuestionId = gameQuestionId;
             state.sequenceIndex = sequenceIndex;
             state.followUp = followUp;
-            state.primaryText = primaryText;
-            state.secondaryText = secondaryText;
+            state.text = text;
+            state.textForGuess = textForGuess;
             state.readerId = readerId;
             state.status = status;
             state.answersPending = answersPending;
@@ -123,10 +129,16 @@ export const {
 // selectors
 export const selectSequenceIndex = (state: RootState) => state.question.sequenceIndex;
 export const selectReaderId = (state: RootState) => state.question.readerId;
+export const selectText = (state: RootState) => state.question.text;
 export const selectRatingSubmitted = (state: RootState) => state.question.ratingSubmitted;
 export const selectResults = (state: RootState) => {
     const { results, globalTrue, groupTrue, correctAnswer } = state.question;
     return { results, globalTrue, groupTrue, correctAnswer }
 }
+export const selectQuestionStatus = (state: RootState) => state.question.status;
+
+export const selectIsReader = createSelector([selectPlayerId, selectReaderId], (playerId, readerId) => {
+    return playerId === readerId;
+})
 
 export default currentQuestionSlice.reducer;

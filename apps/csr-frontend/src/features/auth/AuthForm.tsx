@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch } from '../../app/hooks';
 import { AuthenticationResponse } from '@whosaidtrue/api-interfaces';
 import { decodeUserToken } from '../../util/functions';
 import { login } from './authSlice'
@@ -15,11 +15,10 @@ import {
     Title2
 } from "@whosaidtrue/ui";
 import { api } from '../../api';
-import { selectAuthError, clearError } from './authSlice';
+import { clearError } from './authSlice';
 import { Link } from 'react-router-dom';
 import { setFullModal, showError } from '../modal/modalSlice';
 import { clearCart } from '../cart/cartSlice';
-import { clearDecks } from '../decks/deckSlice';
 
 export interface AuthFormProps {
     endpoint: string;
@@ -33,9 +32,6 @@ export interface AuthFormProps {
 
 const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, title, $showMinLength, $showForgotPassword, $smallTitle }) => {
     const dispatch = useAppDispatch();
-
-    // TODO: need to clarify how this error is reported. Maybe move this to flash message modal?
-    const authError = useAppSelector(selectAuthError)
 
     // Form
     const formik = useFormik({
@@ -74,7 +70,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
                         dispatch(showError('Invalid credentials'))
                     }
                 } else {
-                    // manually set message to avoid accidentallly printing a cryptic error message on unexpected error.
+                    // show error message
                     dispatch(showError('An unknown error has occurred, please try again later'))
                     console.error(e)
                 }
@@ -96,7 +92,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
 
             {/* email */}
             <FormGroup>
-                <InputLabel htmlFor="email">Email</InputLabel>
+                <InputLabel data-cy="email-input" htmlFor="email">Email</InputLabel>
                 <TextInput {...formik.getFieldProps('email')} className="block" $hasError={emailErr} id="email" $border name="email" type="email" />
                 {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
             </FormGroup>
@@ -104,7 +100,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
             {/* password */}
             <FormGroup className="mb-3">
                 <InputLabel htmlFor="password">Password</InputLabel>
-                <TextInput {...formik.getFieldProps('password')} id="password" $hasError={pwErr} $border name="password" type="password" />
+                <TextInput data-cy="password-input" {...formik.getFieldProps('password')} id="password" $hasError={pwErr} $border name="password" type="password" />
                 {$showMinLength && <Headline className="text-basic-gray">8 character minimum length</Headline>}
                 {$showForgotPassword && <Headline className="mt-2" ><Link className="text-basic-gray underline cursor-pointer mt-4" onClick={clearCartAndDetails} to="/reset/send-email">Forgot Password?</Link></Headline>}
                 {pwErr && <ErrorText>{formik.errors.password}</ErrorText>}
@@ -112,7 +108,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
 
             <div className="mb-3 h-2"></div>
             {/* submit */}
-            <Button color="blue" type="submit">{buttonlabel}</Button>
+            <Button color="blue" data-cy="login-submit" type="submit">{buttonlabel}</Button>
         </form>
     )
 }

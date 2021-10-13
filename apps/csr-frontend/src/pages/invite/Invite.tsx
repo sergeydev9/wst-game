@@ -1,24 +1,23 @@
 import { useEffect } from 'react';
 import { NoFlexBox, Button, InviteLinks, Title1, Title3 } from '@whosaidtrue/ui';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectAccessCode, setGameStatus, selectIsHost } from '../../features';
+import { selectAccessCode, setGameStatus, selectIsHost, selectPlayerStatus } from '../../features';
 import { useHistory } from "react-router";
-import { selectGameStatus } from '../../features/game/gameSlice';
 
 
 const Invite: React.FC = () => {
     const dispatch = useAppDispatch()
     const history = useHistory()
     const isHost = useAppSelector(selectIsHost)
-    const gameStatus = useAppSelector(selectGameStatus)
+    const status = useAppSelector(selectPlayerStatus)
 
     // this page should only be accessed by users that
     // have just successfully created a game.
     useEffect(() => {
-        if (!isHost || !(gameStatus === 'gameCreateSuccess')) {
+        if (!isHost || !(status === 'gameCreateSuccess')) {
             history.push('/')
         }
-    }, [dispatch, history, isHost, gameStatus])
+    }, [dispatch, history, isHost, status])
 
     const accessCode = useAppSelector(selectAccessCode)
 

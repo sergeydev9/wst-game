@@ -1,8 +1,8 @@
-const nxConfig =  require('@nrwl/react/plugins/webpack');
 const TerserPlugin = require("terser-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const zlib = require("zlib");
 const fs = require('fs')
+
 
 module.exports = config => {
 

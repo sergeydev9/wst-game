@@ -1,13 +1,9 @@
-import { getGreeting } from '../support/app.po';
 
 describe('csr-frontend', () => {
-  beforeEach(() => cy.visit('/'));
+  beforeEach(() => cy.visit('https://localhost:4200'));
 
-  it('should display welcome message', () => {
-    // Custom command example, see `../support/commands.ts` file
-    cy.login('my-email@something.com', 'myPassword');
-
-    // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome to csr-frontend!');
+  it('should log in', () => {
+    cy.loginUser();
+    expect(localStorage.getItem('wstState')).to.exist;
   });
 });

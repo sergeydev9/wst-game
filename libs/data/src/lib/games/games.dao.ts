@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg';
 import format from 'pg-format';
-import { Deck, GameStatus, IInsertGame, PlayerRef } from '@whosaidtrue/app-interfaces';
+import { Deck, GameStatus, InsertGame, JoinGameResult, PlayerRef, StartGameResult } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
 class Games extends Dao {
@@ -8,7 +8,7 @@ class Games extends Dao {
         super(pool, 'games');
     }
 
-    public insertOne(game: IInsertGame): Promise<QueryResult> {
+    public insertOne(game: InsertGame): Promise<QueryResult> {
         const { deck_id, status, access_code } = game;
         const query = {
             text: `INSERT INTO games (
@@ -38,42 +38,6 @@ class Games extends Dao {
         return this.pool.query(query)
     }
 
-    // TODO: finish implementation in DB
-    /**
-     * Get all the game_questions for the game.
-     *
-     * @param {number} gameId
-     * @return {Promise<QueryResult>}
-     * @memberof Games
-     */
-    // public async getQuestions(gameId: number): Promise<QueryResult> {
-    //     const query = {
-    //         text: 'SELECT * from get_game_questions($1)',
-    //         values: [gameId]
-    //     }
-    //     return this.pool.query(query)
-    // }
-
-    /**
-     * Set start_date for game.
-     *
-     * Returns id and start_date of game.
-     *
-     * Return value of start_date is a date, not a string.
-     *
-     * @param {number} game_id
-     * @param {Date} date
-     * @return {{id: number, start_date: Date}}  {Promise<QueryResult>}
-     * @memberof Games
-     */
-    public setStartDate(game_id: number, date: Date): Promise<QueryResult> {
-        const query = {
-            text: 'UPDATE games SET start_date = $1 WHERE id = $2 RETURNING id, start_date',
-            values: [date.toISOString(), game_id]
-        }
-
-        return this.pool.query(query);
-    }
 
     /**
      * Set end_date for game.
@@ -161,7 +125,7 @@ class Games extends Dao {
      * @param userId (optional) if user has id, pass it here to associate game player id with user id.
      *
      */
-    public async join(access_code: string, name: string, userId?: number) {
+    public async join(access_code: string, name: string, userId?: number): Promise<JoinGameResult> {
         // start transaction
         const client = await this.pool.connect();
 
@@ -192,9 +156,6 @@ class Games extends Dao {
             hostName = game.host_player_name;
 
             // if user is host, set host name to new player name.
-            // Game is created before host technically joins it.
-            // This is an unfortunate side effect of name choice being put
-            // AFTER game creation in the design.
             if (userId && (userId === game.host_id) && (name !== game.host_player_name)) {
                 const updateGameHostQuery = {
                     text: `UPDATE games SET host_player_name = $1 WHERE games.id = $2`,
@@ -204,13 +165,6 @@ class Games extends Dao {
                 hostName = name;
                 isHost = true;
             }
-
-            // get list of other players
-            const getPlayerListQuery = {
-                text: `SELECT id, player_name FROM game_players WHERE game_players.game_id = $1`,
-                values: [game.id]
-            }
-            const playersResult = await client.query(getPlayerListQuery);
 
             // get deck info
             const getDeckQuery = {
@@ -225,10 +179,9 @@ class Games extends Dao {
                 gameId: game.id,
                 deck: deckResult.rows[0] as Deck,
                 currentQuestionIndex: game.current_question_index,
-                currentHostName: hostName as string,
+                hostName,
                 access_code,
                 isHost,
-                players: playersResult.rows as PlayerRef[],
                 playerId: createPlayerResult.rows[0].id,
                 playerName: name as string,
                 totalQuestions: game.total_questions
@@ -242,47 +195,123 @@ class Games extends Dao {
     }
 
     /**
-     * Call this method to start a new question for a
+     * Called when the host starts the game.
      *
-     * Will throw error if a game_player already exists with the specified name, and
-     * the same game.
+     * Sets the game status to "inProgress", and fetches the first
+     * question for the game. The question is randomly selected from
+     * questions with a null sequence index value.
      *
-     * @param access_code game access code
-     * @param name name the player is trying to join as
-     * @param userId (optional) if user has id, pass it here to associate game player id with user id.
+     * While fetching the question, adds reader data, and saves the number
+     * of connected players at the start of the question. This number is used
+     * to calculate scores.
      *
+     * @param gameId
+     * @param numberOfPlayersSnapshot number of players connected at start of game
+     * @param readerId
+     * @param readerName
+     * @param startDate new start date for the game
      */
-    public async startQuestion(gameId: number, gameQuestionId: number, playerIds: number[]): Promise<QueryResult> {
-
-        const answers = playerIds.map(playerId => [gameQuestionId, gameId, playerId]);
-
+    public async start(
+        gameId: number,
+        playerNumberSnapshot: number,
+        readerId: number,
+        readerName: string,
+        startDate: Date
+    ): Promise<StartGameResult> {
+        // start transaction
         const client = await this.pool.connect();
+
         try {
+            const gameQuery = `
+                UPDATE games
+                SET status = 'inProgress', start_date = $1
+                WHERE id = $2
+                RETURNING status, start_date;
+            `
 
-            const answersQuery = format(`INSERT INTO game_answers (game_question_id, game_id, game_player_id) VALUES %L RETURNING id`, answers);
-            const gamesQuery = {
-                text: `UPDATE games
-                    SET current_question_index = game_questions.question_sequence_index
+            // update game
+            const gameResult = await client.query({
+                text: gameQuery,
+                values: [startDate.toISOString(), gameId]
+            })
+
+            const gameRow = gameResult.rows[0];
+
+            // throw if no game data
+            if (!gameRow) throw new Error(`[start game] game update failed. gameId: ${gameId}`)
+
+            // update game_question
+            const gameQuestionUpdate = `
+                UPDATE game_questions
+                SET
+                    reader_id = $1,
+                    reader_name = $2,
+                    question_sequence_index = 1,
+                    player_number_snapshot = $3
+                WHERE id = (
+                    SELECT id
                     FROM game_questions
-                    WHERE game_questions.id = $1`,
-                values: [gameQuestionId]
-            };
+                    WHERE game_id = $4
+                    AND question_sequence_index IS NULL
+                    LIMIT 1
+                    )
+                RETURNING reader_id, reader_name, question_sequence_index, player_number_snapshot, question_id;
+            `
 
-            // TODO: fix create_game() db function to set game_questions.question_sequence_index
-            //  error: null value in column "current_question_index" violates not-null constraint
-            //await client.query(gamesQuery);
-            const answersRes = await client.query(answersQuery);
-            await client.query('COMMIT');
-            return answersRes;
+            const gqUpdateResult = await client.query({
+                text: gameQuestionUpdate,
+                values: [readerId, readerName, playerNumberSnapshot, gameId]
+            });
+
+            const gameQuestion = gqUpdateResult.rows[0];
+
+            // throw if no game_question data
+            if (!gameQuestion) throw new Error(
+                `[start game] Game question update failed.
+                game id: ${gameId},
+                reader id: ${readerId},
+                reader name: ${readerName},
+                number snapshot: ${playerNumberSnapshot}`
+            );
+
+            // get question text
+            const getQuestionQuery = 'SELECT * FROM questions WHERE id = $1';
+
+            const questionResult = await client.query({
+                text: getQuestionQuery,
+                values: [gameQuestion.question_id]
+            })
+
+            const questionRow = questionResult.rows[0];
+
+            // throw if no question data
+            if (!questionRow) throw new Error(`Question not found. question id: ${gameQuestion.question_id}`)
+
+            return {
+                game: {
+                    status: gameRow.status,
+                    startDate: new Date(gameRow.start_date)
+                },
+                question: {
+                    questionId: questionRow.id,
+                    gameQuestionId: gameQuestion.id,
+                    numPlayers: gameQuestion.player_number_snapshot,
+                    sequenceIndex: gameQuestion.question_sequence_index,
+                    readerId: gameQuestion.reader_id,
+                    readerName: gameQuestion.reader_name,
+                    text: questionRow.text,
+                    textForGuess: questionRow.text_for_guess,
+                    followUp: questionRow.follow_up
+                }
+            }
         } catch (e) {
-            await client.query('ROLLBACK');
+            await client.query('ROLLBACK')
             throw e
         } finally {
             client.release()
         }
-    }
 
-    // public getScoreboard(gameId: number) { }
+    }
 }
 
 export default Games;

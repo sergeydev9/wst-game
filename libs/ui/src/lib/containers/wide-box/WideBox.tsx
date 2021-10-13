@@ -5,5 +5,6 @@ export default tw(NoFlexBox)`
     mt-14
     md:w-40rem
     sm:w-28rem
-    mx-auto
+    mx-2
+    sm:mx-auto
 `

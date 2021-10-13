@@ -3458,6 +3458,16 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@socket.io/redis-adapter@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@socket.io/redis-adapter/-/redis-adapter-7.0.0.tgz#5c71abb468f4c98d7297a5b47e1b504e34fc1814"
+  integrity sha512-ioqzSUH2XvrBKm70bphTeLwBSPUU0n+w/Qkz11ryKBn6IIT4GJxyVOpodVBGnmDpxhT31EImQTZRT1ZueSTiTQ==
+  dependencies:
+    debug "~4.3.1"
+    notepack.io "~2.2.0"
+    socket.io-adapter "~2.3.0"
+    uid2 "0.0.3"
+
 "@sphinxxxx/color-conversion@^2.2.2":
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/@sphinxxxx/color-conversion/-/color-conversion-2.2.2.tgz#03ecc29279e3c0c832f6185a5bfa3497858ac8ca"
@@ -5283,6 +5293,13 @@
     "@types/through" "*"
     rxjs "^6.4.0"
 
+"@types/ioredis@^4.27.6":
+  version "4.27.6"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.6.tgz#06f2826ca9bcf4e9c179cd11417a4d0413903cba"
+  integrity sha512-3FeeDlVQ2sdbvU436XnZzOiDMMgFbKfIsiUF2BnJnH7xxqCbJ1teJwfcu9fLwnfmV0qH2W1Vg3jFrtOehNIkMA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/is-function@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/is-function/-/is-function-1.0.0.tgz#1b0b819b1636c7baf0d6785d030d12edf70c3e83"
@@ -5358,6 +5375,13 @@
   integrity sha512-YhoCCxyuvP2XeZNbHbi8Wb9EMaUJuA2VGHxJffcQYrJKIKSkymJrhbzsf9y4zpTmr5pExAAEh5hbF628PAZ8Dg==
   dependencies:
     "@types/react" "*"
+
+"@types/lodash.omit@^4.5.6":
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/@types/lodash.omit/-/lodash.omit-4.5.6.tgz#f2a9518259e481a48ff7ec423420fa8fd58933e2"
+  integrity sha512-KXPpOSNX2h0DAG2w7ajpk7TXvWF28ZHs5nJhOJyP0BQHkehgr948RVsToItMme6oi0XJkp19CbuNXkIX8FiBlQ==
+  dependencies:
+    "@types/lodash" "*"
 
 "@types/lodash.uniqueid@^4.0.6":
   version "4.0.6"
@@ -5650,6 +5674,13 @@
     "@types/prop-types" "*"
     "@types/scheduler" "*"
     csstype "^3.0.2"
+
+"@types/redis@^2.8.32":
+  version "2.8.32"
+  resolved "https://registry.yarnpkg.com/@types/redis/-/redis-2.8.32.tgz#1d3430219afbee10f8cfa389dad2571a05ecfb11"
+  integrity sha512-7jkMKxcGq9p242exlbsVzuJb57KqHRhNl4dHoQu2Y5v9bCAbtIXXH0R3HleSQW4CTOqpHIYUW3t6tpUj4BVQ+w==
+  dependencies:
+    "@types/node" "*"
 
 "@types/resolve@0.0.8":
   version "0.0.8"
@@ -8470,6 +8501,11 @@ clsx@^1.1.1:
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
 
+cluster-key-slot@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/cluster-key-slot/-/cluster-key-slot-1.1.0.tgz#30474b2a981fb12172695833052bc0d01336d10d"
+  integrity sha512-2Nii8p3RwAPiFwsnZvukotvow2rIHM+yQ6ZcBXGHdniadkYGZYiGmkHJIbZPIV9nfv7m/U1IPMVVcAhoWFeklw==
+
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
@@ -9737,6 +9773,11 @@ delegates@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/delegates/-/delegates-1.0.0.tgz#84c6e159b81904fdca59a0ef44cd870d31250f9a"
   integrity sha1-hMbhWbgZBP3KWaDvRM2HDTElD5o=
+
+denque@^1.1.0, denque@^1.5.0:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/denque/-/denque-1.5.1.tgz#07f670e29c9a78f8faecb2566a1e2c11929c5cbf"
+  integrity sha512-XwE+iZ4D6ZUB7mfYRMb5wByE8L74HCn30FBN7sWnXksWc1LO1bPDl67pBR9o/kC4z/xSNAwkMYcGgqDV3BE3Hw==
 
 depd@^1.1.2, depd@~1.1.2:
   version "1.1.2"
@@ -14042,6 +14083,23 @@ invariant@^2.2.3, invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
+ioredis@^4.27.10:
+  version "4.27.10"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.10.tgz#3da6c1d2eab440f94c52d6fcd9b91127d7e07470"
+  integrity sha512-BtV2mEoZlhnW0EyxuK49V5iutLeZeJAYi/+Fuc4Q6DpDjq0cGMLODdS/+Kb5CHpT7v3YT6SK0vgJF6y0Ls4+Bg==
+  dependencies:
+    cluster-key-slot "^1.1.0"
+    debug "^4.3.1"
+    denque "^1.1.0"
+    lodash.defaults "^4.2.0"
+    lodash.flatten "^4.4.0"
+    lodash.isarguments "^3.1.0"
+    p-map "^2.1.0"
+    redis-commands "1.7.0"
+    redis-errors "^1.2.0"
+    redis-parser "^3.0.0"
+    standard-as-callback "^2.1.0"
+
 ip-regex@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-2.1.0.tgz#fa78bf5d2e6913c911ce9f819ee5146bb6d844e9"
@@ -15992,6 +16050,11 @@ lodash.deburr@^4.1.0:
   resolved "https://registry.yarnpkg.com/lodash.deburr/-/lodash.deburr-4.1.0.tgz#ddb1bbb3ef07458c0177ba07de14422cb033ff9b"
   integrity sha1-3bG7s+8HRYwBd7oH3hRCLLAz/5s=
 
+lodash.defaults@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.defaults/-/lodash.defaults-4.2.0.tgz#d09178716ffea4dde9e5fb7b37f6f0802274580c"
+  integrity sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=
+
 lodash.difference@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.difference/-/lodash.difference-4.5.0.tgz#9ccb4e505d486b91651345772885a2df27fd017c"
@@ -16041,6 +16104,11 @@ lodash.includes@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.includes/-/lodash.includes-4.3.0.tgz#60bb98a87cb923c68ca1e51325483314849f553f"
   integrity sha1-YLuYqHy5I8aMoeUTJUgzFISfVT8=
+
+lodash.isarguments@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/lodash.isarguments/-/lodash.isarguments-3.1.0.tgz#2f573d85c6a24289ff00663b491c1d338ff3458a"
+  integrity sha1-L1c9hcaiQon/AGY7SRwdM4/zRYo=
 
 lodash.isboolean@^3.0.3:
   version "3.0.3"
@@ -16096,6 +16164,11 @@ lodash.mergewith@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.mergewith/-/lodash.mergewith-4.6.2.tgz#617121f89ac55f59047c7aec1ccd6654c6590f55"
   integrity sha512-GK3g5RPZWTRSeLSpgP8Xhra+pnjBC56q9FZYe1d5RN3TJ35dbkGy3YqBSMbyCrlbi+CM9Z3Jk5yTL7RCsqboyQ==
+
+lodash.omit@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.omit/-/lodash.omit-4.5.0.tgz#6eb19ae5a1ee1dd9df0b969e66ce0b7fa30b5e60"
+  integrity sha1-brGa5aHuHdnfC5aeZs4Lf6MLXmA=
 
 lodash.once@^4.0.0, lodash.once@^4.1.1:
   version "4.1.1"
@@ -17432,6 +17505,11 @@ normalize-url@^6.0.1, normalize-url@^6.1.0:
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-6.1.0.tgz#40d0885b535deffe3f3147bec877d05fe4c5668a"
   integrity sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==
 
+notepack.io@~2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/notepack.io/-/notepack.io-2.2.0.tgz#d7ea71d1cb90094f88c6f3c8d84277c2d0cd101c"
+  integrity sha512-9b5w3t5VSH6ZPosoYnyDONnUTF8o0UkBw7JLA6eBlYJWyGT1Q3vQa8Hmuj1/X6RYvHjjygBDgw6fJhe0JEojfw==
+
 npm-bundled@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/npm-bundled/-/npm-bundled-1.1.2.tgz#944c78789bd739035b70baa2ca5cc32b8d860bc1"
@@ -17981,7 +18059,7 @@ p-map-series@^1.0.0:
   dependencies:
     p-reduce "^1.0.0"
 
-p-map@^2.0.0:
+p-map@^2.0.0, p-map@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/p-map/-/p-map-2.1.0.tgz#310928feef9c9ecc65b68b17693018a665cea175"
   integrity sha512-y3b8Kpd8OAN444hxfBbFfj1FY/RjtTd8tzYwhUqNYXx0fXx2iX4maP4Qr6qhIKbQXI02wTLAda4fYUbDagTUFw==
@@ -20522,6 +20600,33 @@ redent@^1.0.0:
     indent-string "^2.1.0"
     strip-indent "^1.0.1"
 
+redis-commands@1.7.0, redis-commands@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.7.0.tgz#15a6fea2d58281e27b1cd1acfb4b293e278c3a89"
+  integrity sha512-nJWqw3bTFy21hX/CPKHth6sfhZbdiHP6bTawSgQBlKOVRG7EZkfHbbHwQJnrE4vsQf0CMNE+3gJ4Fmm16vdVlQ==
+
+redis-errors@^1.0.0, redis-errors@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/redis-errors/-/redis-errors-1.2.0.tgz#eb62d2adb15e4eaf4610c04afe1529384250abad"
+  integrity sha1-62LSrbFeTq9GEMBK/hUpOEJQq60=
+
+redis-parser@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/redis-parser/-/redis-parser-3.0.0.tgz#b66d828cdcafe6b4b8a428a7def4c6bcac31c8b4"
+  integrity sha1-tm2CjNyv5rS4pCin3vTGvKwxyLQ=
+  dependencies:
+    redis-errors "^1.0.0"
+
+redis@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/redis/-/redis-3.1.2.tgz#766851117e80653d23e0ed536254677ab647638c"
+  integrity sha512-grn5KoZLr/qrRQVwoSkmzdbw6pwF+/rwODtrOr6vuBRiR/f3rjSTGupbF90Zpqm2oenix8Do6RV7pYEkGwlKkw==
+  dependencies:
+    denque "^1.5.0"
+    redis-commands "^1.7.0"
+    redis-errors "^1.2.0"
+    redis-parser "^3.0.0"
+
 reduce-css-calc@^2.1.8:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/reduce-css-calc/-/reduce-css-calc-2.1.8.tgz#7ef8761a28d614980dc0c982f772c93f7a99de03"
@@ -21668,7 +21773,7 @@ socket.io-adapter@~2.1.0:
   resolved "https://registry.yarnpkg.com/socket.io-adapter/-/socket.io-adapter-2.1.0.tgz#edc5dc36602f2985918d631c1399215e97a1b527"
   integrity sha512-+vDov/aTsLjViYTwS9fPy5pEtTkrbEKsw2M+oVSoFGw6OD1IpvlV1VPhUzNbofCQ8oyMbdYJqDtGdmHQK6TdPg==
 
-socket.io-adapter@~2.3.2:
+socket.io-adapter@~2.3.0, socket.io-adapter@~2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/socket.io-adapter/-/socket.io-adapter-2.3.2.tgz#039cd7c71a52abad984a6d57da2c0b7ecdd3c289"
   integrity sha512-PBZpxUPYjmoogY0aoaTmo1643JelsaS1CiAwNjRVdrI0X9Seuc19Y2Wife8k88avW6haG8cznvwbubAZwH4Mtg==
@@ -22056,6 +22161,11 @@ stackframe@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-1.2.0.tgz#52429492d63c62eb989804c11552e3d22e779303"
   integrity sha512-GrdeshiRmS1YLMYgzF16olf2jJ/IzxXY9lhKOskuVziubpTYcYqyOwYeJKzQkwy7uN0fYSsbsC4RQaXf9LCrYA==
+
+standard-as-callback@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/standard-as-callback/-/standard-as-callback-2.1.0.tgz#8953fc05359868a77b5b9739a665c5977bb7df45"
+  integrity sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==
 
 state-toggle@^1.0.0:
   version "1.0.3"
@@ -23506,6 +23616,11 @@ typescript@^4.1.3, typescript@~4.3.5:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
   integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
 
+uid2@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/uid2/-/uid2-0.0.3.tgz#483126e11774df2f71b8b639dcd799c376162b82"
+  integrity sha1-SDEm4Rd03y9xuLY53NeZw3YWK4I=
+
 unbox-primitive@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.1.tgz#085e215625ec3162574dc8859abee78a59b14471"
@@ -24258,7 +24373,7 @@ webpack-merge@4.2.1:
   dependencies:
     lodash "^4.17.5"
 
-webpack-merge@^5.7.3:
+webpack-merge@^5.7.3, webpack-merge@^5.8.0:
   version "5.8.0"
   resolved "https://registry.yarnpkg.com/webpack-merge/-/webpack-merge-5.8.0.tgz#2b39dbf22af87776ad744c390223731d30a68f61"
   integrity sha512-/SaI7xY0831XwP6kzuwhKWVKDP9t1QY1h65lAFLbZqMPIuYcD9QAW4u9STIbU9kaJbPBB/geU/gLr1wDjOhQ+Q==
