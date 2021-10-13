@@ -42,5 +42,5 @@ export { default as TrueFalse } from './lib/gameplay/true-or-false/TrueOrFalseBo
 export { default as QuestionCard } from './lib/gameplay/QuestionCard';
 export { default as RemovalNotificationModal } from './lib/removal-notification/RemovalNotification';
 export { default as NumberTrueGuess } from './lib/gameplay/number-true-guess/NumberTrueGuess';
-
+export { default as WaitingRoom } from './lib/gameplay/waiting-room/WaitingRoom';
 export * from './lib/typography/Typography';

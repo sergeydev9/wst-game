@@ -32,9 +32,14 @@ const initializeGame = async (socket: Socket) => {
             return;
         }
 
+        const game = rows[0]
+
+        // set total questions value
+        await pubClient.set(socket.keys.totalQuestions, game.total_questions, 'EX', ONE_DAY)
+
         // set status key to match game
-        await pubClient.set(status, rows[0].status, 'EX', ONE_DAY);
-        logger.debug(`Game initialized. Status: ${rows[0].status}`)
+        await pubClient.set(status, game.status, 'EX', ONE_DAY);
+        logger.debug(`Game initialized. Status: ${game.status}`)
     } catch (e) {
         logger.error('error while retrieving game data', e)
         await pubClient.del(status); // release lock

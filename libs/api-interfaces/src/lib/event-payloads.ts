@@ -40,7 +40,7 @@ export interface AnswerPart1 {
 }
 
 export interface AnswerPart2 {
-    questionId: number;
+    gameQuestionId: number;
     guess: number;
 }
 
@@ -68,8 +68,8 @@ export interface SetGameState {
     totalQuestions: number;
 }
 
-export interface UpdateAnswersPending {
-    answersPending: number;
+export interface SetHaveNotAnswered {
+    haveNotAnswered: PlayerRef[];
 }
 
 export interface SetGameResults {

@@ -8,7 +8,12 @@ import { PlayerRef } from "@whosaidtrue/app-interfaces";
 const startGame = async (socket: Socket) => {
 
     const { gameId } = socket
-    const { currentPlayers, readerList, currentQuestion } = socket.keys;
+    const {
+        currentPlayers,
+        readerList,
+        currentQuestion,
+        currentSequenceIndex
+    } = socket.keys;
 
     // count currently connected players
     const currentCount = await pubClient.scard(currentPlayers);
@@ -37,30 +42,27 @@ const startGame = async (socket: Socket) => {
     // update game status
     await pubClient.set(socket.keys.gameStatus, game.status);
 
-    // use list of current players as list of players that haven't answered yet
-    const notAnsweredStrings = await pubClient.smembers(currentPlayers);
-    const haveNotAnswered = notAnsweredStrings.map(s => JSON.parse(s)) as PlayerRef[];
+    // set have not answered list from players list
+    const notAnsweredKey = `${question.gameQuestionId}:haveNotAnswered`;
+    await pubClient.send_command('COPY', currentPlayers, notAnsweredKey)
+    await pubClient.expire(notAnsweredKey, ONE_DAY)
 
-    logger.debug(`Have not answered: ${JSON.stringify(haveNotAnswered)}`)
+    // get and parse set of players that have not answered
+    const notAnsweredStrings = await pubClient.smembers(notAnsweredKey)
+    const notAnsweredParsed = notAnsweredStrings.map(s => JSON.parse(s))
+
     logger.debug(`Game start result: ${JSON.stringify(gameStartResult)}`)
 
     // save question in redis
-    await pubClient.send_command(
-        'JSON.SET',
-        currentQuestion,
-        '.',
-        JSON.stringify(
-            {
-                ...question,
-                haveNotAnswered,
-                numHaveNotGuessed: currentCount,
-            }))
+    await pubClient.send_command('JSON.SET', currentQuestion, '.', JSON.stringify(question))
 
+    // set current sequence index in Redis
+    await pubClient.set(currentSequenceIndex, 1, 'EX', ONE_DAY)
 
     return {
         ...gameStartResult,
         currentCount,
-        haveNotAnswered
+        haveNotAnswered: notAnsweredParsed
     };
 }
 

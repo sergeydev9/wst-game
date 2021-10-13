@@ -27,7 +27,7 @@ import {
     setPlayers,
     setPlayerStatus
 } from "../game/gameSlice";
-import { clearCurrentQuestion, setCurrentQuestion, setResults, setReader, setAnswersPending } from "../question/questionSlice";
+import { clearCurrentQuestion, setCurrentQuestion, setResults, setReader, setHaveNotAnswered } from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
@@ -61,7 +61,7 @@ export const SocketProvider: React.FC = ({ children }) => {
         // if user should, but doesn't, have a socket connection, create one and register listeners
         if (shouldHaveConnection && !socket) {
 
-            const conn = io(
+            const connection = io(
                 process.env.NX_SOCKET_BASEURL as string,
                 {
                     auth: { token },
@@ -70,33 +70,33 @@ export const SocketProvider: React.FC = ({ children }) => {
                     reconnectionDelay: 2500
                 });
 
-            setSocket(conn); // add socket to provider
+            setSocket(connection); // add socket to provider
 
             /**
             * CONNECTION LISTENERS
             */
-            conn.on("connect", () => {
+            connection.on("connect", () => {
                 console.log('Game server connection successful!'); // connection success
-                conn.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName })
+                connection.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName })
             })
 
-            conn.on("connect_error", () => {
+            connection.on("connect_error", () => {
                 dispatch(showError('Could not connect to game server')); // initial connection failed
             })
 
-            conn.on("disconnect", () => {
+            connection.on("disconnect", () => {
                 console.log('Disconnected from game server'); // disconnected from game server. Could happen if player leaves, or is removed.
             })
 
-            conn.io.on("reconnect_attempt", () => {
+            connection.io.on("reconnect_attempt", () => {
                 dispatch(showInfo(`Reconnecting to game server...`)); // reconnecting
             })
 
-            conn.io.on("reconnect_failed", () => {
+            connection.io.on("reconnect_failed", () => {
                 dispatch(showError('Could not reconnect to game server.')); // when all reconnect attempts have failed
             })
 
-            conn.io.on('reconnect', () => {
+            connection.io.on('reconnect', () => {
                 dispatch(showSuccess('Reconnected to game server!')); // reconnect success
             })
 
@@ -105,7 +105,7 @@ export const SocketProvider: React.FC = ({ children }) => {
              */
 
             // game not found in DB
-            conn.on(types.GAME_NOT_FOUND, () => {
+            connection.on(types.GAME_NOT_FOUND, () => {
                 dispatch(clearGame());
                 dispatch(clearHost());
                 dispatch(showError('Error while connecting to game'));
@@ -113,12 +113,12 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             // update list of currently connected players
-            conn.on(types.SET_CURRENT_PLAYERS, (message: payloads.SetCurrentPlayers) => {
+            connection.on(types.SET_CURRENT_PLAYERS, (message: payloads.SetCurrentPlayers) => {
                 dispatch(setPlayers(message))
             })
 
             // another player joined
-            conn.on(types.PLAYER_JOINED_GAME, (message: payloads.PlayerEvent) => {
+            connection.on(types.PLAYER_JOINED_GAME, (message: payloads.PlayerEvent) => {
                 const { id, player_name } = message;
 
                 dispatch(showPlayerJoined(player_name))
@@ -126,7 +126,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             // another player left on purpose
-            conn.on(types.PLAYER_LEFT_GAME, (message: payloads.PlayerEvent) => {
+            connection.on(types.PLAYER_LEFT_GAME, (message: payloads.PlayerEvent) => {
                 const { id, player_name } = message;
 
                 dispatch(showPlayerLeft(player_name))
@@ -134,7 +134,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             // remove player
-            conn.on(types.REMOVE_PLAYER, (message: payloads.PlayerEvent) => {
+            connection.on(types.REMOVE_PLAYER, (message: payloads.PlayerEvent) => {
                 const { id, player_name } = message;
 
                 if (playerId === id) {
@@ -142,7 +142,7 @@ export const SocketProvider: React.FC = ({ children }) => {
                     dispatch(setFullModal("removedFromGame")) // show modal
                     dispatch(clearGame()); // clear state
                     dispatch(clearCurrentQuestion())
-                    conn.close() // close  and delete the socket
+                    connection.close() // close  and delete the socket
                     setSocket(null);
 
                     history.push('/') // nav home
@@ -153,13 +153,13 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             // updates the list of inactive players
-            conn.on(types.UPDATE_INACTIVE, (message: payloads.UpdateInactivePlayers) => {
+            connection.on(types.UPDATE_INACTIVE, (message: payloads.UpdateInactivePlayers) => {
                 const { inactivePlayers } = message;
                 dispatch(setInactive(inactivePlayers))
             })
 
             // updates question state
-            conn.on(types.SET_QUESTION_STATE, (message: payloads.SetQuestionState) => {
+            connection.on(types.SET_QUESTION_STATE, (message: payloads.SetQuestionState) => {
                 dispatch(setCurrentQuestion(message))
                 if (playerStatus === 'lobby' && message.status === 'question') {
                     dispatch(setPlayerStatus('inGame'))
@@ -167,33 +167,33 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             // set game status (e.g. 'inProgress', 'lobby', etc)
-            conn.on(types.UPDATE_GAME_STATUS, (message: GameStatus) => {
+            connection.on(types.UPDATE_GAME_STATUS, (message: GameStatus) => {
                 dispatch(setGameStatus(message))
             })
 
             // updates game state
-            conn.on(types.SET_GAME_STATE, (message: payloads.SetGameState) => {
+            connection.on(types.SET_GAME_STATE, (message: payloads.SetGameState) => {
                 dispatch(gameStateUpdate(message))
 
             })
 
             // updates results for current question.
-            conn.on(types.SET_QUESTION_RESULTS, (message: payloads.SetQuestionResult) => {
+            connection.on(types.SET_QUESTION_RESULTS, (message: payloads.SetQuestionResult) => {
                 dispatch(setResults(message))
             })
 
             // updates the reader of the current question
-            conn.on(types.SET_READER, (message: payloads.PlayerEvent) => {
+            connection.on(types.SET_READER, (message: payloads.PlayerEvent) => {
                 dispatch(setReader(message))
             })
 
             // updates the value of answers yet to be submitted for the current question
-            conn.on(types.UPDATE_ANSWERS_PENDING, (message: payloads.UpdateAnswersPending) => {
-                dispatch(setAnswersPending(message))
+            connection.on(types.SET_HAVE_NOT_ANSWERED, (message: payloads.SetHaveNotAnswered) => {
+                dispatch(setHaveNotAnswered(message))
             })
 
             // sets final results for the game
-            conn.on(types.SET_GAME_RESULTS, (message: payloads.SetGameResults) => {
+            connection.on(types.SET_GAME_RESULTS, (message: payloads.SetGameResults) => {
                 dispatch(setGameResults(message))
             })
 
@@ -207,6 +207,8 @@ export const SocketProvider: React.FC = ({ children }) => {
             socket.close();
             setSocket(null);
         }
+
+
     }, [history, token, setSocket, accessCode, playerId, dispatch, gameStatus, socket, location, playerName, playerStatus])
 
 

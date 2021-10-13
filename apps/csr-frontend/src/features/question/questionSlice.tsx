@@ -19,11 +19,11 @@ export interface CurrentQuestionState {
     text: string;
     textForGuess: string;
     ratingSubmitted: boolean;
-    answersPending: number;
     globalTrue: number;
     groupTrue: number;
     results: PlayerScore[];
     haveNotAnswered: PlayerRef[];
+    guessValue: number;
 }
 
 export const initialState: CurrentQuestionState = {
@@ -41,11 +41,11 @@ export const initialState: CurrentQuestionState = {
     text: '',
     textForGuess: '',
     ratingSubmitted: false,
-    answersPending: 0,
     globalTrue: 0,
     groupTrue: 0,
     results: [],
-    haveNotAnswered: []
+    haveNotAnswered: [],
+    guessValue: 0
 }
 
 const currentQuestionSlice = createSlice({
@@ -97,7 +97,9 @@ const currentQuestionSlice = createSlice({
             state.readerId = readerId;
             state.readerName = readerName;
         },
-
+        setGuessValue: (state, action) => {
+            state.guessValue = action.payload
+        },
         setRatingSubmitted: (state, action) => {
             state.ratingSubmitted = action.payload
         },
@@ -112,8 +114,8 @@ const currentQuestionSlice = createSlice({
         setStatus: (state, action) => {
             state.status = action.payload
         },
-        setAnswersPending: (state, action) => {
-            state.answersPending = action.payload;
+        setHaveNotAnswered: (state, action) => {
+            state.haveNotAnswered = action.payload
         }
 
     }
@@ -129,7 +131,8 @@ export const {
     setHasAnswered,
     setHasGuessed,
     setStatus,
-    setAnswersPending } = currentQuestionSlice.actions;
+    setGuessValue,
+    setHaveNotAnswered } = currentQuestionSlice.actions;
 
 // selectors
 export const selectTextForGuess = (state: RootState) => state.question.textForGuess;
@@ -139,16 +142,25 @@ export const selectText = (state: RootState) => state.question.text;
 export const selectHasAnswered = (state: RootState) => state.question.hasAnswered;
 export const selectHasGuessed = (state: RootState) => state.question.hasGuessed;
 export const selectRatingSubmitted = (state: RootState) => state.question.ratingSubmitted;
-export const selectResults = (state: RootState) => {
-    const { results, globalTrue, groupTrue, correctAnswer } = state.question;
-    return { results, globalTrue, groupTrue, correctAnswer }
-}
+export const selectHaveNotAnswered = (state: RootState) => state.question.haveNotAnswered
 export const selectQuestionStatus = (state: RootState) => state.question.status;
 export const selectGamequestionId = (state: RootState) => state.question.gameQuestionId;
+export const selectGuessValue = (state: RootState) => state.question.guessValue;
 export const selectIsReader = createSelector([selectPlayerId, selectReaderId], (playerId, readerId) => {
     return playerId === readerId;
 })
 export const selectNumPlayers = (state: RootState) => state.question.numPlayers;
+
+// number of players that have submitted an answer and a guess
+export const selectNumHaveGuessed = createSelector([selectNumPlayers, selectHaveNotAnswered], (numPlayers, notAnsweredList) => {
+    return numPlayers - notAnsweredList.length;
+})
+
+export const selectResults = (state: RootState) => {
+    const { results, globalTrue, groupTrue, correctAnswer } = state.question;
+    return { results, globalTrue, groupTrue, correctAnswer }
+}
+
 export const currentScreen = createSelector(
     [
         selectQuestionStatus,
@@ -161,12 +173,12 @@ export const currentScreen = createSelector(
 
             // if they haven't answered yet
             if (!hasAnswered) {
-                return 'answer'
+                return 'answer';
             }
 
             // if they have answered, but haven't guessed
             // show guess, else show waiting room
-            return hasGuessed ? 'waitingRoom' : 'guess'
+            return hasGuessed ? 'waitingRoom' : 'guess';
         }
 
         return 'results'
