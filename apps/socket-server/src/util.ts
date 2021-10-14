@@ -6,7 +6,7 @@ export function playerValueString(socket: Socket, guess?: number) {
     let val: Record<string, string | number>;
     const player = { id: socket.playerId, player_name: socket.playerName }
 
-    if (guess) {
+    if (typeof guess === 'number') {
         val = { ...player, guess };
     } else {
         val = player;

@@ -59,9 +59,9 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
 
     // list of scores
     const list = useMemo(() => {
-        const sorted = scores.sort((p1, p2) => p1.rank >= p2.rank ? 1 : -1)
 
-        return sorted.map((p, i) => {
+
+        return scores.map((p, i) => {
             return (
                 <li key={i} className={`
                 ${scoreClass}

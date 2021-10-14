@@ -4,15 +4,24 @@ import { logger, logIncoming, logOutgoing, logError } from '@whosaidtrue/logger'
 import { playerValueString } from './util';
 import { pubClient } from "./redis";
 import { ONE_DAY } from "./constants";
-import { Keys } from './keys';
 import startGame from "./listener-helpers/startGame";
 import submitAnswerPart1 from "./listener-helpers/submitAnswerPart1";
 import submitAnswerPart2 from "./listener-helpers/submitAnswerPart2";
 import saveScores from "./listener-helpers/saveScores";
+import { games } from "./db";
+import nextQuestion from "./listener-helpers/nextQuestion";
 
 
 const registerListeners = (socket: Socket, io: Server) => {
-    const { currentPlayers, removedPlayers, currentSequenceIndex, totalQuestions } = socket.keys;
+    const {
+        currentPlayers,
+        removedPlayers,
+        currentSequenceIndex,
+        totalQuestions,
+        gameStatus,
+        latestResults,
+        currentQuestion
+    } = socket.keys;
 
     // source info
     const source = {
@@ -43,9 +52,9 @@ const registerListeners = (socket: Socket, io: Server) => {
         logOutgoing(type, payload, "all", source);
     }
 
-    /**
+    /*******************************************************************
      * EVENT LISTENERS
-     */
+     *******************************************************************/
 
     // on player join, just rebroadcast
     socket.on(types.PLAYER_JOINED_GAME, (msg: payloads.PlayerEvent) => {
@@ -74,7 +83,7 @@ const registerListeners = (socket: Socket, io: Server) => {
             const pendingList = await submitAnswerPart2(socket, msg) // returns list of players that havent answered yet
 
             // store player guess
-            await pubClient.set(`${playerKey}:${msg.gameQuestionId}:guess`, msg.guess, 'EX', ONE_DAY);
+            await pubClient.set(`${playerKey}:${msg.gameQuestionId}:guess`, `${msg.guess}`, 'EX', ONE_DAY);
 
             // send list to all clients
             sendToAll(types.SET_HAVE_NOT_ANSWERED, pendingList)
@@ -103,12 +112,16 @@ const registerListeners = (socket: Socket, io: Server) => {
         }
     })
 
-    /**
+    /*******************************************************************
      * HOST ONLY LISTENERS
-     */
+     ********************************************************************/
+
     if (socket.isHost) {
 
-        // Start game when host presses button
+
+        /**
+         * START GAME
+         */
         socket.on(types.START_GAME, async (_, cb) => {
 
             try {
@@ -131,7 +144,52 @@ const registerListeners = (socket: Socket, io: Server) => {
             }
         })
 
-        // on remove player, remove from redis state, then rebroadcast
+        /**
+         * END GAME
+         */
+        socket.on(types.END_GAME, async (ack) => {
+            logIncoming(types.END_GAME, {}, source);
+
+            // use game status as a sort of lock to deduplicate requests
+            const status = await pubClient.get(gameStatus);
+
+            // if status is anything other than 'inProgress', do nothing.
+            if (status !== 'inProgress') return;
+
+            try {
+
+                const [, questionIdResult] = await pubClient
+                    .pipeline()
+                    .set(gameStatus, 'calculatingScores')
+                    .get(`${currentQuestion}:id`)
+                    .exec()
+
+                const currentQuestionId = questionIdResult[1];
+                const result = await saveScores(currentQuestionId, socket.gameId);
+
+                // end game in DB
+                await games.endGame(socket.gameId);
+
+                await pubClient.pipeline()
+                    .set(latestResults, JSON.stringify(result), 'EX', ONE_DAY)
+                    .set(gameStatus, 'finished')
+                    .exec()
+
+                // send results
+                sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd)
+
+                // acknowledge complete
+                ack('ok')
+            } catch (e) {
+                logError('Error while ending game', e);
+                await pubClient.set(gameStatus, 'inProgress'); // reset so request can be sent again
+                ack('error')
+            }
+        })
+
+        /**
+        * REMOVE PLAYER
+        */
         socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent) => {
             logIncoming(types.REMOVE_PLAYER, msg, source)
 
@@ -146,15 +204,81 @@ const registerListeners = (socket: Socket, io: Server) => {
             sendToAll(types.REMOVE_PLAYER, msg);
         })
 
-        // move players from the question answer screen to the scores sceen
+        /**
+        * SKIP QUESTION
+        */
+        socket.on(types.SKIP_QUESTION, async (msg: payloads.QuestionSkip, ack) => {
+            logIncoming(types.SKIP_QUESTION, msg, source)
+
+            try {
+                const nextQuestionResult = await nextQuestion(socket)
+                sendToAll(types.SET_QUESTION_STATE, {
+                    ...nextQuestionResult,
+                    status: 'question'
+                } as payloads.SetQuestionState)
+
+                ack('ok')
+            } catch (e) {
+                logError('Error while skipping question', e)
+                ack('error')
+            }
+        })
+
+        /**
+        * MOVE TO SCORES FROM ANSWERS
+        */
         socket.on(types.MOVE_TO_QUESTION_RESULTS, () => {
             sendToAll(types.MOVE_TO_QUESTION_RESULTS)
         });
 
-        // set host as reader
+        /**
+        * READER TAKEOVER
+        */
         socket.on(types.HOST_TAKE_OVER_READING, (msg: payloads.PlayerEvent) => {
+            logIncoming(types.HOST_TAKE_OVER_READING, msg, source)
             sendToAll(types.SET_READER, msg)
         })
+
+        /**
+         * END QUESTION AND MOVE TO ANSWERS
+         */
+        socket.on(types.MOVE_TO_ANSWER, async (msg: payloads.QuestionSkip, ack) => {
+            logIncoming(types.MOVE_TO_ANSWER, undefined, source)
+
+            try {
+
+                // calculate scores
+                const result = await saveScores(msg.gameQuestionId, socket.gameId);
+
+                // send result
+                sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);
+                ack('ok')
+            } catch (e) {
+                logError('Error skipping to results', e)
+                ack('error')
+            }
+        });
+
+        /**
+        * NEXT QUESTION
+        */
+        socket.on(types.START_NEXT_QUESTION, async (_, ack) => {
+            logIncoming(types.START_NEXT_QUESTION, {}, source)
+
+            try {
+                const nextQuestionResult = await nextQuestion(socket)
+                sendToAll(types.SET_QUESTION_STATE, {
+                    ...nextQuestionResult,
+                    status: 'question'
+                } as payloads.SetQuestionState)
+
+                ack('ok')
+            } catch (e) {
+                logError('Error while starting question', e)
+                ack('error')
+            }
+        })
+
     }
 }
 

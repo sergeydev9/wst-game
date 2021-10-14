@@ -22,29 +22,39 @@ const saveScores = async (questionId: number, gameId: number) => {
         const score = calculateScore(player.guess, totalPlayers, totalTrue) // calculate
         const answerIdSpace = Keys.answerIdsForPlayer(player.id);
         const answerId = await pubClient.get(`${answerIdSpace}:${questionId}`) // player's answerId
-        const playerKey = `players:${player.id}`;
 
-        // check if answer already calculated
-        const calculated = await pubClient.exists(`${playerKey}:${questionId}:pointsEarned`);
+        logger.debug({
+            score,
+            player,
+            answerId,
+            answerIdSpace,
+            totalPlayers,
+            totalTrue
+        })
+        await answers.setScore(Number(answerId), score); // save score in DB
 
-        if (!calculated) {
-            await answers.setScore(Number(answerId), score); // save score in DB
+        const oldRank = await pubClient.zrevrank(`games:${gameId}:scoreboard`, player.player_name)
 
-            // save score for question, increment total score, return old and new ranks
-            const [, rankRes] = await pubClient
-                .pipeline()
-                .hset(`gameQuestions:${questionId}:pointsByPlayer`, player.player_name, score)
-                .zrevrank(`games:${gameId}:scoreboard`, player.player_name)
-                .zincrby(`games:${gameId}:scoreboard`, score, player.player_name)
-                .exec();
+        // save score for question, increment total score, return old and new ranks
+        const [, , rankRes] = await pubClient
+            .pipeline()
+            .hset(`gameQuestions:${questionId}:pointsByPlayer`, player.player_name, score)
+            .zincrby(`games:${gameId}:scoreboard`, score, player.player_name)
+            .zrevrank(`games:${gameId}:scoreboard`, player.player_name)
+            .exec();
 
-            const oldRank = rankRes[1] || 0;
-            const newRank = await pubClient.zrevrank(`games:${gameId}:scoreboard`, player.player_name);
+        const newRank = rankRes[1];
 
-            // save rank dif
-            const rankDif = oldRank - newRank;
-            return pubClient.hset(`gameQuestions:${questionId}:rankDifferences`, player.player_name, rankDif);
-        }
+        // save rank dif
+        const rankDif = oldRank - newRank;
+
+        logger.debug({
+            newRank,
+            oldRank,
+            rankDif
+        })
+        return pubClient.hset(`gameQuestions:${questionId}:rankDifferences`, player.player_name, rankDif);
+
     })
 
     // wait until updates are done for all players
@@ -66,7 +76,11 @@ const saveScores = async (questionId: number, gameId: number) => {
     const pointsEarned = r3[1];
 
     // percent true for group
-    const groupTrueNum = r4[1];
+    let groupTrueNum = r4[1];
+
+    if (groupTrueNum === null) {
+        groupTrueNum = 0;
+    }
     const groupTotal = r5[1];
     const groupTrue = (groupTrueNum / groupTotal) * 100;
 

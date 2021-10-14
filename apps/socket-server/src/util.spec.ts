@@ -12,4 +12,9 @@ describe('calculateScore', () => {
         const actual = calculateScore(0, 9, 7);
         expect(actual).toEqual(0);
     })
+
+    it('should equal 1500', () => {
+        const actual = calculateScore(0, 2, 0);
+        expect(actual).toEqual(1500);
+    })
 })

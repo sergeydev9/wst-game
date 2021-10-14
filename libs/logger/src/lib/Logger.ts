@@ -13,7 +13,7 @@ export function debugObjects(message: string, objects: Record<string, unknown>) 
   logger.debug({ message: message, objects: objects })
 }
 
-export function logIncoming(event: string, message: unknown, source: SourceSocket) {
+export function logIncoming(event: string, message?: unknown, source?: SourceSocket) {
   logger.debug({ "IncomingEvent": `[${event}]`, message, source })
 }
 

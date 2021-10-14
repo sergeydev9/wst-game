@@ -21,3 +21,6 @@ export const GAME_END = 'GameEnd';
 export const MOVE_TO_QUESTION_RESULTS = 'MoveToQuestionResults';
 export const HOST_TAKE_OVER_READING = 'HostTakeOverReading';
 export const SKIP_QUESTION = 'SkipQuestion';
+export const GAME_END_NO_ANNOUNCE = 'EndGameNoAnnounce';
+export const MOVE_TO_ANSWER = 'MoveToAnswer';
+export const START_NEXT_QUESTION = 'StartNextQuestion';

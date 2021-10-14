@@ -9,6 +9,7 @@ import { RootState } from "../../app/store";
 export interface GameState {
     gameStatus: GameStatus | '';
     playerStatus: UserGameStatus;
+    announceWinner: boolean;
     hasPassed: boolean;
     gameToken: string,
     gameId: number;
@@ -22,14 +23,14 @@ export interface GameState {
     access_code: string;
     playerId: number;
     playerName: string;
-    results: PlayerScore[];
     winner: string;
 
 }
 
-export const initialState: GameState = {
+export const initialGameState: GameState = {
     gameStatus: '',
     playerStatus: 'notInGame',
+    announceWinner: false, // should there be a winner announcement when user gets to results
     gameToken: '',
     hasPassed: false,
     gameId: 0,
@@ -56,16 +57,14 @@ export const initialState: GameState = {
     playerName: '',
     playerId: 0,
     winner: '',
-    results: [],
-
 }
 
 export const gameSlice = createSlice({
     name: "game",
-    initialState,
+    initialState: initialGameState,
     reducers: {
         clearGame: () => {
-            return initialState
+            return initialGameState
         },
         setGameStatus: (state, action) => {
             state.gameStatus = action.payload;
@@ -99,11 +98,7 @@ export const gameSlice = createSlice({
             state.isHost = true
             state.playerStatus = 'gameCreateSuccess';
         },
-        setGameResults: (state, action) => {
-            const { results, winner } = action.payload;
-            state.results = results;
-            state.winner = winner;
-        },
+
         gameStateUpdate: (state, action) => {
             const {
                 gameId,
@@ -172,7 +167,6 @@ export const {
     joinGame,
     setInactive,
     gameStateUpdate,
-    setGameResults,
     setPlayers,
     setPlayerStatus,
     setHasPassed

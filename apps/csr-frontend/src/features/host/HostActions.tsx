@@ -13,7 +13,7 @@ const HostActions: React.FC = () => {
     const questionStatus = useAppSelector(selectQuestionStatus);
     const screen = useAppSelector(currentScreen);
 
-    const isRequired = (gameStatus === 'lobby' || questionStatus === 'results' || questionStatus === 'answer')
+    const isRequired = (gameStatus === 'lobby' || questionStatus === 'results' || questionStatus === 'answer' || screen === 'answerResults' || screen === 'scoreResults')
 
     return (
         <HostActionsBox required={isRequired}>
@@ -21,7 +21,7 @@ const HostActions: React.FC = () => {
             {screen === 'answerSubmit' && <DuringQuestion />}
             {screen === 'waitingRoom' && <MoveToAnswer />}
             {screen === 'answerResults' && <MoveToQuestionScores />}
-            {(screen === 'scoreResults' && gameStatus !== 'postGame') && <StartNextQuestion />}
+            {screen === 'scoreResults' && gameStatus !== 'lobby' && <StartNextQuestion />}
         </HostActionsBox>
     )
 }

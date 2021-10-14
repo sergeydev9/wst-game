@@ -20,14 +20,13 @@ import {
     setInactive,
     gameStateUpdate,
     setGameStatus,
-    setGameResults,
     selectPlayerName,
     selectPlayerStatus,
     selectGameStatus,
     setPlayers,
     setPlayerStatus
 } from "../game/gameSlice";
-import { clearCurrentQuestion, setCurrentQuestion, questionEnd, setReader, setHaveNotAnswered } from "../question/questionSlice";
+import { clearCurrentQuestion, setCurrentQuestion, questionEnd, setReader, setHaveNotAnswered, setQuestionStatus } from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
@@ -171,12 +170,6 @@ export const SocketProvider: React.FC = ({ children }) => {
                 dispatch(setGameStatus(message))
             })
 
-            // updates game state
-            connection.on(types.SET_GAME_STATE, (message: payloads.SetGameState) => {
-                dispatch(gameStateUpdate(message))
-
-            })
-
             // question is done, store results
             connection.on(types.QUESTION_END, (message: payloads.QuestionEnd) => {
                 dispatch(questionEnd(message))
@@ -193,9 +186,16 @@ export const SocketProvider: React.FC = ({ children }) => {
                 dispatch(setHaveNotAnswered(message))
             })
 
-            // sets final results for the game
-            connection.on(types.SET_GAME_RESULTS, (message: payloads.SetGameResults) => {
-                dispatch(setGameResults(message))
+            // when host ends game by either disconnecting, or clicking the button.`
+            // Skips the winner announcement.
+            connection.on(types.GAME_END_NO_ANNOUNCE, (message: payloads.QuestionEnd) => {
+                dispatch(setGameStatus('postGame'))
+                dispatch(questionEnd(message))
+            })
+
+            // move from answer to scores at the end of a question
+            connection.on(types.MOVE_TO_QUESTION_RESULTS, () => {
+                dispatch(setQuestionStatus('results'))
             })
 
 

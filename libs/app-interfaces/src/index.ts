@@ -274,16 +274,18 @@ export interface StartGameResult {
         status: GameStatus;
         startDate: Date;
     };
-    question: {
-        questionId: number;
-        gameQuestionId: number;
-        numPlayers: number;
-        sequenceIndex: number;
-        readerId: number;
-        readerName: string;
-        followUp: string;
-        text: string;
-        textForGuess: string;
-        globalTrue: number;
-    }
+    question: NextQuestionResult
+}
+
+export interface NextQuestionResult {
+    questionId: number;
+    gameQuestionId: number;
+    numPlayers: number;
+    sequenceIndex: number;
+    readerId: number;
+    readerName: string;
+    followUp: string;
+    text: string;
+    textForGuess: string;
+    globalTrue: number;
 }

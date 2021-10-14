@@ -1,5 +1,7 @@
 import { Pool, QueryResult } from 'pg';
 import { logger } from '@whosaidtrue/logger';
+import { getAndUpdateQuery, } from '../game-questions/GameQuestions.dao';
+import { getQuestionData } from '../questions/Questions.dao';
 import { Deck, GameStatus, InsertGame, JoinGameResult, PlayerRef, StartGameResult } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
@@ -265,28 +267,9 @@ class Games extends Dao {
             // throw if no game data
             if (!gameRow) throw new Error(`[start game] game update failed. gameId: ${gameId}`)
 
-            // update game_question
-            const gameQuestionUpdate = `
-                UPDATE game_questions
-                SET
-                    reader_id = $1,
-                    reader_name = $2,
-                    question_sequence_index = 1,
-                    player_number_snapshot = $3
-                WHERE id = (
-                    SELECT id
-                    FROM game_questions
-                    WHERE game_id = $4
-                    AND question_sequence_index IS NULL
-                    LIMIT 1
-                    )
-                RETURNING id, reader_id, reader_name, question_sequence_index, player_number_snapshot, question_id;
-            `
 
-            const gqUpdateResult = await client.query({
-                text: gameQuestionUpdate,
-                values: [readerId, readerName, playerNumberSnapshot, gameId]
-            });
+
+            const gqUpdateResult = await client.query(getAndUpdateQuery(gameId, readerId, readerName, playerNumberSnapshot));
 
             const gameQuestion = gqUpdateResult.rows[0];
 
@@ -299,41 +282,16 @@ class Games extends Dao {
                 number snapshot: ${playerNumberSnapshot}`
             );
 
-            // get question text and stats
-            const getQuestionQuery = `
-                WITH question AS (
-                    SELECT * FROM questions WHERE id = $1
-                ),
-                gqs AS (
-                    SELECT id, question_id FROM game_questions
-                    WHERE question_id = $1
-                ),
-                q_answers AS (
-                    SELECT value FROM game_answers
-                    LEFT JOIN gqs
-                    ON game_answers.game_question_id = gqs.id
-                ), q_true AS (
-                    SELECT count(value) FROM q_answers
-                    WHERE q_answers.value = 'true'
-                ), q_total AS (
-                    SELECT count(value) FROM q_answers
-                ), gt AS (
-                    SELECT ((SELECT count FROM q_true)::numeric / (SELECT NULLIF(count, 0) from q_total)::numeric)::float * 100 as global_true
-                )
-                SELECT * FROM question
-                LEFT JOIN gt
-                ON true;`;
 
-            const questionResult = await client.query({
-                text: getQuestionQuery,
-                values: [gameQuestion.question_id]
-            })
+            const questionResult = await client.query(getQuestionData(gameQuestion.question_id))
 
             const questionRow = questionResult.rows[0];
 
 
             // throw if no question data
             if (!questionRow) throw new Error(`Question not found. question id: ${gameQuestion.question_id}`)
+
+            await client.query('COMMIT');
 
             return {
                 game: {
@@ -360,6 +318,23 @@ class Games extends Dao {
             client.release()
         }
 
+    }
+
+    /**
+     * Set game status to finised, and end time to now.
+     * @param gameId
+     * @returns
+     */
+    public endGame(gameId: number): Promise<QueryResult> {
+        const query = {
+            text: `
+            UPDATE games
+            SET end_date = $1, status = 'finished'
+            WHERE id = $2`,
+            values: [new Date().toISOString(), gameId]
+        }
+
+        return this.pool.query(query);
     }
 }
 

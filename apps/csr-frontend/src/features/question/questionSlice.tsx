@@ -8,7 +8,6 @@ import { selectPlayerId, selectPlayerName } from "../game/gameSlice";
 export interface CurrentQuestionState {
     questionId: number;
     gameQuestionId: number;
-    pointsEarned: Record<string, string>;
     status: GameQuestionStatus;
     correctAnswer: number;
     sequenceIndex: number;
@@ -29,6 +28,7 @@ export interface CurrentQuestionState {
     scoreboard: PlayerScore[];
     haveNotAnswered: PlayerRef[];
     guessValue: number;
+    pointsEarned: Record<string, string>;
 }
 
 export const initialQuestionState: CurrentQuestionState = {
@@ -91,6 +91,10 @@ const currentQuestionSlice = createSlice({
             state.haveNotAnswered = haveNotAnswered;
             state.numPlayers = numPlayers;
             state.readerName = readerName;
+            state.hasAnswered = false;
+            state.hasGuessed = false;
+            state.correctAnswer = 0;
+            state.guessValue = 0;
         },
         setReader: (state, action: PayloadAction<payloads.PlayerEvent>) => {
             const { id, player_name } = action.payload;
@@ -107,7 +111,9 @@ const currentQuestionSlice = createSlice({
         setHasAnswered: (state, action) => {
             state.hasAnswered = action.payload
         },
-
+        setQuestionStatus: (state, action: PayloadAction<GameQuestionStatus>) => {
+            state.status = action.payload;
+        },
         setHasGuessed: (state, action) => {
             state.hasGuessed = action.payload
         },
@@ -151,6 +157,7 @@ export const {
     setStatus,
     setGuessValue,
     questionEnd,
+    setQuestionStatus,
     setHaveNotAnswered } = currentQuestionSlice.actions;
 
 // selectors
@@ -183,6 +190,10 @@ export const selectPlayerScore = createSelector([selectPlayerName, selectScoreMa
 
 export const selectIsReader = createSelector([selectPlayerId, selectReaderId], (playerId, readerId) => {
     return playerId === readerId;
+})
+
+export const selectPlayerPointsEarned = createSelector([selectPointsEarned, selectPlayerName], (pointsEarned, name) => {
+    return Number(pointsEarned[name])
 })
 
 // number of players that have submitted an answer and a guess

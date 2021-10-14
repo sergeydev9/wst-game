@@ -22,21 +22,7 @@ export {
   selectMessageType,
   selectIsPersistent
 } from './modal/modalSlice';
-export {
-  default as gameReducer,
-  selectGameDeck,
-  createGame,
-  selectIsHost,
-  setGameStatus,
-  selectAccessCode,
-  selectGameId,
-  selectGameToken,
-  selectGameStatus,
-  selectPlayerId,
-  selectPlayerStatus,
-  gameStateUpdate,
-  clearGame
-} from './game/gameSlice';
+export { default as gameReducer } from './game/gameSlice';
 export { default as Lobby } from './game/Lobby';
 export { default as decksReducer, clearSelectedDeck } from './decks/deckSlice';
 export { default as AuthForm } from './auth/AuthForm';
@@ -48,17 +34,7 @@ export { default as ChangePassword } from './change-password/ChangePassword'; //
 export { default as resetPasswordReducer } from './reset-password/resetPasswordSlice'; // Reset via email code
 export { default as cartReducer } from './cart/cartSlice';
 export { default as Loading } from './loading/Loading';
-export {
-  default as questionReducer,
-  setReader,
-  setCurrentQuestion,
-  setRatingSubmitted,
-  setHasGuessed,
-  setHasAnswered,
-  setStatus,
-  selectQuestionStatus,
-  clearCurrentQuestion
-} from './question/questionSlice';
+export { default as questionReducer } from './question/questionSlice';
 export { default as FlashMessage } from './modal/FlashMessage';
 export { default as FullScreenModalController } from './modal/FullScreenModalController';
 export { default as hostReducer } from './host/hostSlice';
@@ -67,3 +43,5 @@ export { default as SocketProvider } from './socket/SocketProvider';
 export { default as HostActions } from './host/HostActions';
 export { default as Question } from './question/Question';
 export * from './choose-name/chooseNameSlice';
+export * from './question/questionSlice';
+export * from './game/gameSlice';

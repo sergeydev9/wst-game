@@ -47,7 +47,6 @@ const startGame = async (socket: Socket) => {
     // update game status
     await pubClient.set(gameStatus, game.status);
 
-
     // set player count
     await pubClient.set(Keys.totalPlayers(question.gameQuestionId), currentCount, 'EX', ONE_DAY);
 

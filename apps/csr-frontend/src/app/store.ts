@@ -8,7 +8,9 @@ import {
     resetPasswordReducer,
     cartReducer,
     questionReducer,
-    hostReducer
+    hostReducer,
+    initialGameState,
+    initialQuestionState
 } from "../features";
 import { enhancer } from "addon-redux";
 import jwt_decode, { JwtPayload } from "jwt-decode";
