@@ -1,6 +1,7 @@
 import { Socket } from 'socket.io';
 import { payloads } from "@whosaidtrue/api-interfaces";
 import { answers } from '../db';
+import { Keys } from '../keys';
 import { pubClient } from '../redis';
 import { playerValueString } from '../util';
 import { PlayerRef } from '@whosaidtrue/app-interfaces';
@@ -12,8 +13,9 @@ import { PlayerRef } from '@whosaidtrue/app-interfaces';
  */
 const submitAnswerPart2 = async (socket: Socket, msg: payloads.AnswerPart2): Promise<PlayerRef[]> => {
     const { answerIds } = socket.keys;
-    const NaKey = `${msg.gameQuestionId}:haveNotAnswered`;
     const idKey = `${answerIds}:${msg.gameQuestionId}`;
+    const haveAnswered = Keys.haveAnswered(msg.gameQuestionId);
+    const haveNotAnswered = Keys.haveNotAnswered(msg.gameQuestionId);
 
     // get answer id from redis
     const Id = await pubClient.get(idKey);
@@ -24,11 +26,15 @@ const submitAnswerPart2 = async (socket: Socket, msg: payloads.AnswerPart2): Pro
     // make sure guess was added to game_answer row
     if (!rows[0].id) throw new Error(`Could not update answer with id: ${Id}`)
 
-    // remove player from list of awaiting
-    await pubClient.srem(NaKey, playerValueString(socket));
-    const sList = await pubClient.smembers(NaKey);
+    // add player and answer to list of players that have answered
+    const [, , r3] = await pubClient
+        .pipeline()
+        .sadd(haveAnswered, playerValueString(socket, msg.guess))
+        .srem(haveNotAnswered, playerValueString(socket))
+        .smembers(haveNotAnswered)
+        .exec()
 
-    return sList.map(s => JSON.parse(s))
+    return r3[1].map(s => JSON.parse(s))
 
 }
 

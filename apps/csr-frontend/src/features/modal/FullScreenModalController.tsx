@@ -19,6 +19,8 @@ const RemovePlayersModal = lazy(() => import('./full-screen-modals/RemovePlayers
 const ReportAnIssueModal = lazy(() => import('./full-screen-modals/ReportAnIssueModal'));
 const ConfirmRemovePlayerModal = lazy(() => import('./full-screen-modals/ConfirmRemovePlayerModal'));
 const GameOptionsModal = lazy(() => import('./full-screen-modals/GameOptionsModal'));
+const ConfirmTakeOverReading = lazy(() => import('./full-screen-modals/ConfirmTakeOverReading'));
+const ConfirmSkipQuestion = lazy(() => import('./full-screen-modals/ConfirmSkipQuestion'));
 
 /**
  * All full screen modals render from here. This makes it possible to
@@ -168,6 +170,20 @@ const FullScreenModalController = () => {
             {currentModal === 'reportAnIssue' && <Modal isOpen={currentModal === 'reportAnIssue'} onRequestClose={close}>
                 <Suspense fallback={<Loading />}>
                     <ReportAnIssueModal />
+                </Suspense>
+            </Modal>}
+
+            {/* Confirm skip question */}
+            {currentModal === 'confirmSkipQuestion' && <Modal isOpen={currentModal === 'confirmSkipQuestion'} onRequestClose={close}>
+                <Suspense fallback={<Loading />}>
+                    <ConfirmSkipQuestion />
+                </Suspense>
+            </Modal>}
+
+            {/* Confirm take over reading */}
+            {currentModal === 'confirmTakeOverReading' && <Modal isOpen={currentModal === 'confirmTakeOverReading'} onRequestClose={close}>
+                <Suspense fallback={<Loading />}>
+                    <ConfirmTakeOverReading />
                 </Suspense>
             </Modal>}
         </>

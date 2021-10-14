@@ -15,10 +15,6 @@ class GameQuestions extends Dao {
         return this.pool.query(query);
     }
 
-    // TODO: FINISH
-    // public async getByIndex(gameId, index): Promise<QueryResult>{
-
-    // }
 }
 
 export default GameQuestions

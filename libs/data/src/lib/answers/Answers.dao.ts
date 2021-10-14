@@ -18,7 +18,7 @@ class Answers extends Dao {
      * @param {number} gameId
      * @return {Promise<QueryResult>}
      */
-    public async submitValue(
+    public submitValue(
         playerId: number,
         gameQuestionId: number,
         gameId: number,
@@ -49,7 +49,7 @@ class Answers extends Dao {
      * @param {number} guess
      * @return {Promise<QueryResult>}
      */
-    public async submitGuess(answerId: number, guess: number): Promise<QueryResult> {
+    public submitGuess(answerId: number, guess: number): Promise<QueryResult> {
         const query = {
             text: `
                 UPDATE game_answers
@@ -59,6 +59,25 @@ class Answers extends Dao {
             values: [guess, answerId]
         };
         return this.pool.query(query);
+    }
+
+    /**
+     * Set the score value of a game_answer. These are the points earned
+     * with this specific answer, not points earned thus far in game.
+     *
+     * @param answerId
+     * @param score
+     * @returns
+     */
+    public setScore(answerId: number, score: number): Promise<QueryResult> {
+        const query = {
+            text: `
+                UPDATE game_answers
+                SET score = $1
+                WHERE id = $2`,
+            values: [score, answerId]
+        };
+        return this.pool.query(query)
     }
 }
 

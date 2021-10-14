@@ -1,3 +1,4 @@
+import { useMemo, useCallback } from 'react';
 import tw from 'tailwind-styled-components';
 import { PlayerScore } from '@whosaidtrue/app-interfaces';
 import { RiArrowUpLine } from '@react-icons/all-files/ri/RiArrowUpLine';
@@ -41,7 +42,9 @@ const scoreClass = "flex flex-row justify-between text-basic-black font-semibold
 // DEV_NOTE: filter players before getting here.
 const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, showDiff }) => {
 
-    const diffHelper = (diff: number) => {
+    // render a green or red outline depending
+    // on whether diff is positive or negative
+    const diffHelper = useCallback((diff: number) => {
 
         if (diff === 0) {
             return;
@@ -51,9 +54,11 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
             return <RankDown><RiArrowDownLine />{Math.abs(diff)}</RankDown>
         }
 
-    }
+    }, [])
 
-    const listHelper = () => {
+
+    // list of scores
+    const list = useMemo(() => {
         const sorted = scores.sort((p1, p2) => p1.rank >= p2.rank ? 1 : -1)
 
         return sorted.map((p, i) => {
@@ -69,11 +74,12 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
                 </li>
             )
         })
-    }
+    }, [scores, diffHelper])
+
     return (
-        <div className="bg-purple-subtle-fill rounded-3xl w-full p-1 sm:p-3 mb-2">
+        <div className="bg-purple-subtle-fill rounded-3xl w-full p-1 sm:p-3 mb-5">
             <ul className='bg-purple-card-bg rounded-3xl border border-purple-subtle-stroke filter drop-shadow-subtle-stroke'>
-                {listHelper()}
+                {list}
             </ul>
             <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mt-4 mb-2`}>
                 <span>{currentPlayerScore.rank}</span>

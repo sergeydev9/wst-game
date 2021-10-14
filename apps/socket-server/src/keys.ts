@@ -16,20 +16,45 @@ export class Keys {
     readonly hasPassed: string;
     readonly totalQuestions: string;
     readonly currentSequenceIndex: string;
+    readonly scoreboard: string;
 
     constructor(socket: Socket) {
-        this.gameKey = `games:${socket.gameId}`;
-        this.playerKey = `players:${socket.playerId}`;
-        this.currentPlayers = `${this.gameKey}:currentPlayers`;
-        this.removedPlayers = `${this.gameKey}:removed`;
-        this.gameStatus = `${this.gameKey}:status`;
-        this.readerList = `${this.gameKey}:readers`;
-        this.currentQuestion = `${this.gameKey}:currentQuestion`;
+        this.gameKey = `games:${socket.gameId}`; // keyspace for the game
+        this.playerKey = `players:${socket.playerId}`; // keyspace for the player
+        this.currentPlayers = `${this.gameKey}:currentPlayers`; // set of currently connected players
+        this.removedPlayers = `${this.gameKey}:removed`; // set of players that have been removed from the game
+        this.gameStatus = `${this.gameKey}:status`; // status as string
+        this.readerList = `${this.gameKey}:readers`; // set of players. Used to build a reader queue
+        this.currentQuestion = `${this.gameKey}:currentQuestion`; // question data in json string format
         this.answerIds = `${this.playerKey}:answerIds`;
-        this.hasPassed = `${this.playerKey}:hasPassed`;
-        this.totalQuestions = `${this.gameKey}:totalQuestions`;
+        this.hasPassed = `${this.playerKey}:hasPassed`; // used to track whether or not a player has passed
+        this.totalQuestions = `${this.gameKey}:totalQuestions`; // total number of questions for a game
         this.currentSequenceIndex = `${this.gameKey}:currentSequenceIndex`;
+        this.scoreboard = `${this.gameKey}:scoreboard`; // sorted set of player names / scores
     }
+
+    static totalTrue(questionId: number) {
+        return `gameQuestions:${questionId}:totalTrue`
+    }
+
+    static totalPlayers(questionId: number) {
+        return `gameQuestions:${questionId}:totalPlayers`
+    }
+
+    // set used to keep track of who hasn't answered yet
+    static haveNotAnswered(questionId: number) {
+        return `gameQuestions:${questionId}:haveNotAnswered`;
+    }
+
+    // only used socket server side during score calculation
+    static haveAnswered(questionId: number) {
+        return `gameQuestions:${questionId}:haveAnswered`;
+    }
+
+    static answerIdsForPlayer(playerId: number) {
+        return `players:${playerId}:answerIds`;
+    }
+
 }
 
 export default Keys;

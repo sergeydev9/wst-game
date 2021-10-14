@@ -11,29 +11,21 @@ const ConfirmEndGameModal: React.FC = () => {
     const dispatch = useAppDispatch()
     const history = useHistory();
     const isHost = useAppSelector(selectIsHost);
-    const { socket, setSocket } = useSocket()
+    const { sendMessage } = useSocket()
 
     useEffect(() => {
 
         if (!isHost) {
             dispatch(setFullModal(''))
         }
+    }, [isHost, dispatch])
 
-        if (!socket) {
-            dispatch(showError('No connnection to game server. Check your internet connection and try again'))
-        }
-    }, [isHost, dispatch, socket])
-
-    const endGame = useCallback(() => {
-        socket?.emit("EndGame");
-        dispatch(clearGame); // TODO: remove when socket implentation completes this response
-        socket?.close();
+    const endGame = () => {
         dispatch(setFullModal(''));
         dispatch(clearGame());
         dispatch(clearCurrentQuestion());
-        setSocket(null);
         history.push('/')
-    }, [dispatch, socket, history, setSocket])
+    }
 
 
     return (

@@ -51,7 +51,6 @@ export { default as Loading } from './loading/Loading';
 export {
   default as questionReducer,
   setReader,
-  setResults,
   setCurrentQuestion,
   setRatingSubmitted,
   setHasGuessed,

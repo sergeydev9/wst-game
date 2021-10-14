@@ -1,4 +1,4 @@
-import { TrueFalse, QuestionCard, NumberTrueGuess, WaitingRoom } from "@whosaidtrue/ui";
+import { TrueFalse, QuestionCard, NumberTrueGuess, WaitingRoom, QuestionAnswers } from "@whosaidtrue/ui";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
     selectIsReader,
@@ -12,12 +12,19 @@ import {
     setHasGuessed,
     selectNumHaveGuessed,
     selectGuessValue,
-    setGuessValue
+    setGuessValue,
+    selectGlobalTrue,
+    selectGroupTrue,
+    selectCorrectAnswer,
+    selectFollowUp
 } from '../question/questionSlice';
 import { selectHasPassed, selectTotalQuestions, setHasPassed } from '../game/gameSlice';
 import ReaderAnnouncement from "./ReaderAnnouncement";
 import { showError, useSocket } from "..";
 import { payloads, types } from "@whosaidtrue/api-interfaces";
+import QuestionResults from './QuestionResults';
+import { isLoggedIn } from "../auth/authSlice";
+import RateQuestion from "./RateQuestion";
 
 /**
  * This component controls what the user sees over the course
@@ -28,6 +35,7 @@ import { payloads, types } from "@whosaidtrue/api-interfaces";
 const Question: React.FC = () => {
     const dispatch = useAppDispatch();
     const { sendMessage } = useSocket();
+    const loggedIn = useAppSelector(isLoggedIn);
     const isReader = useAppSelector(selectIsReader);
     const text = useAppSelector(selectText);
     const hasPassed = useAppSelector(selectHasPassed);
@@ -39,6 +47,10 @@ const Question: React.FC = () => {
     const totalPlayers = useAppSelector(selectNumPlayers);
     const numHaveGuessed = useAppSelector(selectNumHaveGuessed);
     const guessVal = useAppSelector(selectGuessValue);
+    const globalTrue = useAppSelector(selectGlobalTrue);
+    const groupTrue = useAppSelector(selectGroupTrue);
+    const correctAnswer = useAppSelector(selectCorrectAnswer);
+    const followUp = useAppSelector(selectFollowUp)
 
 
     // submit true/false answer
@@ -72,15 +84,25 @@ const Question: React.FC = () => {
 
     return (
         <>
-            {isReader && screen === 'answer' && <ReaderAnnouncement />}
+            {isReader && screen === 'answerSubmit' && <ReaderAnnouncement />}
             <QuestionCard
                 totalQuestions={totalQuestions}
                 questionNumber={questionNumber}
                 category="Entertainment">
-                {screen === 'answer' && <TrueFalse submitHandler={answerHandler} text={text} isReader={isReader} hasPasses={!hasPassed} />}
+                {screen === 'answerSubmit' && <TrueFalse submitHandler={answerHandler} text={text} isReader={isReader} hasPasses={!hasPassed} />}
                 {screen === 'guess' && <NumberTrueGuess questionText={guessText} submitHandler={guessHandler} totalPlayers={totalPlayers} />}
                 {screen === 'waitingRoom' && <WaitingRoom totalPlayers={totalPlayers} numberHaveGuessed={numHaveGuessed} guessValue={guessVal} questionText={guessText} />}
-
+                {screen === 'answerResults' && (<QuestionAnswers
+                    globalTruePercent={globalTrue}
+                    groupTruePercent={groupTrue}
+                    correctAnswer={correctAnswer}
+                    questionText={guessText}
+                    followUp={followUp}
+                >
+                    {loggedIn && <RateQuestion />}
+                </QuestionAnswers>
+                )}
+                {screen === 'scoreResults' && <QuestionResults />}
             </QuestionCard>
         </>
     )

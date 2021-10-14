@@ -27,7 +27,7 @@ import {
     setPlayers,
     setPlayerStatus
 } from "../game/gameSlice";
-import { clearCurrentQuestion, setCurrentQuestion, setResults, setReader, setHaveNotAnswered } from "../question/questionSlice";
+import { clearCurrentQuestion, setCurrentQuestion, questionEnd, setReader, setHaveNotAnswered } from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
@@ -177,10 +177,11 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             })
 
-            // updates results for current question.
-            connection.on(types.SET_QUESTION_RESULTS, (message: payloads.SetQuestionResult) => {
-                dispatch(setResults(message))
+            // question is done, store results
+            connection.on(types.QUESTION_END, (message: payloads.QuestionEnd) => {
+                dispatch(questionEnd(message))
             })
+
 
             // updates the reader of the current question
             connection.on(types.SET_READER, (message: payloads.PlayerEvent) => {
@@ -196,6 +197,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             connection.on(types.SET_GAME_RESULTS, (message: payloads.SetGameResults) => {
                 dispatch(setGameResults(message))
             })
+
 
             // move playe to game page if they should be there but aren't
             if (['inProgress', 'lobby', 'postGame'].includes(gameStatus) && location.pathname !== '/play') {

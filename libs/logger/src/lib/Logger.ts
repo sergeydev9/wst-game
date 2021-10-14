@@ -13,12 +13,12 @@ export function debugObjects(message: string, objects: Record<string, unknown>) 
   logger.debug({ message: message, objects: objects })
 }
 
-export function logIncoming(event: string, message: unknown) {
-  logger.debug({ "IncomingEvent": `[${event}]`, message })
+export function logIncoming(event: string, message: unknown, source: SourceSocket) {
+  logger.debug({ "IncomingEvent": `[${event}]`, message, source })
 }
 
-export function logOutgoing(event: string, message: unknown, recipients: "all" | "others") {
-  logger.debug({ "OutgoingEvent": `[${event}]`, message, recipients })
+export function logOutgoing(event: string, message: unknown, recipients: "all" | "others", source: SourceSocket) {
+  logger.debug({ "OutgoingEvent": `[${event}]`, message, recipients, source })
 }
 
 /**
@@ -26,4 +26,10 @@ export function logOutgoing(event: string, message: unknown, recipients: "all" |
  */
 export function logError(message: string, err: any) {
   logger.error({ message, err })
+}
+
+interface SourceSocket {
+  playerId: number;
+  playerName: string;
+  gameId: number;
 }

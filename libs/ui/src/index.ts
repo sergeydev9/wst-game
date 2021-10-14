@@ -43,4 +43,8 @@ export { default as QuestionCard } from './lib/gameplay/QuestionCard';
 export { default as RemovalNotificationModal } from './lib/removal-notification/RemovalNotification';
 export { default as NumberTrueGuess } from './lib/gameplay/number-true-guess/NumberTrueGuess';
 export { default as WaitingRoom } from './lib/gameplay/waiting-room/WaitingRoom';
+export { default as Scoreboard } from './lib/gameplay/scoreboard/Scoreboard';
+export { default as QuestionScores } from './lib/gameplay/question-scores/QuestionScores';
+export { default as QuestionAnswers } from './lib/gameplay/question-answers/QuestionAnswers';
+export { default as SubmitRating } from './lib/submit-rating/SubmitRating';
 export * from './lib/typography/Typography';

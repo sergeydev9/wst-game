@@ -20,6 +20,8 @@ export type FullModal = "createAccount"
     | "guestAccountRedirect"
     | "reportAnIssue"
     | "confirmRemovePlayer"
+    | "confirmSkipQuestion"
+    | "confirmTakeOverReading"
     | ""
 
 export type MessageType = ''

@@ -1,6 +1,7 @@
 import { Socket } from 'socket.io';
 import { payloads } from "@whosaidtrue/api-interfaces";
 import { answers } from '../db';
+import { Keys } from '../keys';
 import { pubClient } from '../redis';
 import { ONE_DAY } from '../constants';
 
@@ -18,6 +19,10 @@ const submitAnswerPart1 = async (socket: Socket, msg: payloads.AnswerPart1) => {
 
         // mark player as having passed
         await pubClient.set(`${hasPassed}`, 1, 'EX', ONE_DAY)
+    } else if (msg.answer === 'true') {
+
+        // increment count for current question. Sets to 1 if no value
+        await pubClient.incr(Keys.totalTrue(msg.gameQuestionId))
     }
 
     // submit answer

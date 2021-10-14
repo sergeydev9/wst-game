@@ -182,6 +182,7 @@ describe('Games', () => {
             expect(question.followUp).toBeDefined();
             expect(question.text).toBeDefined();
             expect(question.textForGuess).toBeDefined();
+            expect(question.globalTrue).toEqual(0)
 
         })
     })

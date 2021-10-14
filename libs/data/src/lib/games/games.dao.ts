@@ -1,5 +1,5 @@
 import { Pool, QueryResult } from 'pg';
-import format from 'pg-format';
+import { logger } from '@whosaidtrue/logger';
 import { Deck, GameStatus, InsertGame, JoinGameResult, PlayerRef, StartGameResult } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
@@ -96,7 +96,8 @@ class Games extends Dao {
             await client.query('COMMIT')
             return gameResult;
         } catch (e) {
-            await client.query('ROLLBACK')
+            logger.error(e);
+            await client.query('ROLLBACK');
             throw e
         } finally {
             client.release()
@@ -298,8 +299,30 @@ class Games extends Dao {
                 number snapshot: ${playerNumberSnapshot}`
             );
 
-            // get question text
-            const getQuestionQuery = 'SELECT * FROM questions WHERE id = $1';
+            // get question text and stats
+            const getQuestionQuery = `
+                WITH question AS (
+                    SELECT * FROM questions WHERE id = $1
+                ),
+                gqs AS (
+                    SELECT id, question_id FROM game_questions
+                    WHERE question_id = $1
+                ),
+                q_answers AS (
+                    SELECT value FROM game_answers
+                    LEFT JOIN gqs
+                    ON game_answers.game_question_id = gqs.id
+                ), q_true AS (
+                    SELECT count(value) FROM q_answers
+                    WHERE q_answers.value = 'true'
+                ), q_total AS (
+                    SELECT count(value) FROM q_answers
+                ), gt AS (
+                    SELECT ((SELECT count FROM q_true)::numeric / (SELECT NULLIF(count, 0) from q_total)::numeric)::float * 100 as global_true
+                )
+                SELECT * FROM question
+                LEFT JOIN gt
+                ON true;`;
 
             const questionResult = await client.query({
                 text: getQuestionQuery,
@@ -307,6 +330,7 @@ class Games extends Dao {
             })
 
             const questionRow = questionResult.rows[0];
+
 
             // throw if no question data
             if (!questionRow) throw new Error(`Question not found. question id: ${gameQuestion.question_id}`)
@@ -325,7 +349,8 @@ class Games extends Dao {
                     readerName: gameQuestion.reader_name,
                     text: questionRow.text,
                     textForGuess: questionRow.text_for_guess,
-                    followUp: questionRow.follow_up
+                    followUp: questionRow.follow_up,
+                    globalTrue: Math.round(questionRow.global_true) || 0
                 }
             }
         } catch (e) {

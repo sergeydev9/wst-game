@@ -27,10 +27,11 @@ export interface UpdateDisconnectedPlayers {
     disconnectedPlayers: PlayerRef[]
 }
 
-export interface SetQuestionResult {
-    globalTrue: number;
+export interface QuestionEnd {
     groupTrue: number;
-    results: PlayerScore[];
+    rankDifferences: Record<string, string>;
+    pointsEarned: Record<string, string>;
+    scores: string[];
     correctAnswer: number
 }
 
@@ -53,9 +54,14 @@ export interface SetQuestionState {
     textForGuess: string;
     sequenceIndex: number;
     numPlayers: number;
+    globalTrue: number;
     haveNotAnswered: PlayerRef[];
     readerName: string;
     readerId: number;
+}
+
+export interface QuestionSkip {
+    gameQuestionId: number;
 }
 
 export interface SetGameState {

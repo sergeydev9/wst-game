@@ -41,7 +41,7 @@ export type UserGameStatus = 'notInGame'
 /**
  * This status controls what screen players should be seeing in game.
  */
-export type GameQuestionStatus = 'question' | 'results' | '';
+export type GameQuestionStatus = 'question' | 'results' | 'answer' | '';
 
 /**
  * type of objects for insertOne functions is always going to be the
@@ -91,6 +91,8 @@ export interface DeckSelectionOptions {
 export interface UserDeckSelectionOptions extends DeckSelectionOptions {
     userId: number;
 }
+
+export type ScoreMap = Record<string, PlayerScore>
 
 export interface PlayerScore {
     rank: number;
@@ -281,6 +283,7 @@ export interface StartGameResult {
         readerName: string;
         followUp: string;
         text: string;
-        textForGuess: string
+        textForGuess: string;
+        globalTrue: number;
     }
 }

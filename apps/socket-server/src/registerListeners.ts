@@ -4,13 +4,22 @@ import { logger, logIncoming, logOutgoing, logError } from '@whosaidtrue/logger'
 import { playerValueString } from './util';
 import { pubClient } from "./redis";
 import { ONE_DAY } from "./constants";
+import { Keys } from './keys';
 import startGame from "./listener-helpers/startGame";
 import submitAnswerPart1 from "./listener-helpers/submitAnswerPart1";
 import submitAnswerPart2 from "./listener-helpers/submitAnswerPart2";
+import saveScores from "./listener-helpers/saveScores";
 
 
 const registerListeners = (socket: Socket, io: Server) => {
-    const { currentPlayers, removedPlayers, currentSequenceIndex, totalQuestions } = socket.keys
+    const { currentPlayers, removedPlayers, currentSequenceIndex, totalQuestions } = socket.keys;
+
+    // source info
+    const source = {
+        playerId: socket.playerId,
+        playerName: socket.playerName,
+        gameId: socket.gameId
+    }
 
     // handle disconnect
     socket.on('disconnect', async () => {
@@ -22,15 +31,16 @@ const registerListeners = (socket: Socket, io: Server) => {
      * MESSAGE HELPERS
      */
     // send to connected clients excluding sender
-    const sendToOthers = (type: string, payload: unknown) => {
+    const sendToOthers = (type: string, payload?: unknown) => {
         socket.to(`${socket.gameId}`).emit(type, payload)
-        logOutgoing(type, payload, "others");
+
+        logOutgoing(type, payload, "others", source);
     }
 
     // send to connected clients including sender
-    const sendToAll = (type: string, payload: unknown) => {
+    const sendToAll = (type: string, payload?: unknown) => {
         io.to(`${socket.gameId}`).emit(type, payload);
-        logOutgoing(type, payload, "all");
+        logOutgoing(type, payload, "all", source);
     }
 
     /**
@@ -44,7 +54,7 @@ const registerListeners = (socket: Socket, io: Server) => {
 
     // submit true false
     socket.on(types.ANSWER_PART_1, async (msg: payloads.AnswerPart1, cb) => {
-        logIncoming(types.ANSWER_PART_1, msg);
+        logIncoming(types.ANSWER_PART_1, msg, source);
 
         try {
             await submitAnswerPart1(socket, msg);
@@ -57,12 +67,16 @@ const registerListeners = (socket: Socket, io: Server) => {
 
     // submit guess
     socket.on(types.ANSWER_PART_2, async (msg: payloads.AnswerPart2, cb) => {
-        logIncoming(types.ANSWER_PART_2, msg)
+        logIncoming(types.ANSWER_PART_2, msg, source)
+        const { playerKey } = socket.keys;
 
         try {
-            const pendingList = await submitAnswerPart2(socket, msg)
+            const pendingList = await submitAnswerPart2(socket, msg) // returns list of players that havent answered yet
 
-            // send new list of players that haven't answered yet
+            // store player guess
+            await pubClient.set(`${playerKey}:${msg.gameQuestionId}:guess`, msg.guess, 'EX', ONE_DAY);
+
+            // send list to all clients
             sendToAll(types.SET_HAVE_NOT_ANSWERED, pendingList)
 
             if (!pendingList.length) {
@@ -71,10 +85,14 @@ const registerListeners = (socket: Socket, io: Server) => {
 
                 // if last question, move to game results
                 if (current === total) {
-                    console.log('last question')
+                    sendToAll(types.GAME_END)
                 } else {
-                    // else move to question results
 
+                    // calculate scores
+                    const result = await saveScores(msg.gameQuestionId, socket.gameId);
+
+                    // send result
+                    sendToAll(types.QUESTION_END, result as payloads.QuestionEnd)
                 }
             }
 
@@ -115,7 +133,7 @@ const registerListeners = (socket: Socket, io: Server) => {
 
         // on remove player, remove from redis state, then rebroadcast
         socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent) => {
-            logIncoming(types.REMOVE_PLAYER, msg)
+            logIncoming(types.REMOVE_PLAYER, msg, source)
 
             // add player to removed players set
             const remResponse = await pubClient.sadd(removedPlayers, msg.id);
@@ -126,6 +144,16 @@ const registerListeners = (socket: Socket, io: Server) => {
             // remove player from current players
             await pubClient.srem(currentPlayers, JSON.stringify(msg)); // remove from redis
             sendToAll(types.REMOVE_PLAYER, msg);
+        })
+
+        // move players from the question answer screen to the scores sceen
+        socket.on(types.MOVE_TO_QUESTION_RESULTS, () => {
+            sendToAll(types.MOVE_TO_QUESTION_RESULTS)
+        });
+
+        // set host as reader
+        socket.on(types.HOST_TAKE_OVER_READING, (msg: payloads.PlayerEvent) => {
+            sendToAll(types.SET_READER, msg)
         })
     }
 }

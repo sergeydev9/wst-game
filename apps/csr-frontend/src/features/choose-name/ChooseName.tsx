@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import useNames from './useNames';
 import {
     selectNameRerolls,
     setRemainingNameOptions,
@@ -27,7 +28,6 @@ import { clearCurrentQuestion, clearNameChoices } from '..';
 
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
-    const [shouldBlock, setShouldBlock] = useState(true);
     const { access_code } = useParams<{ access_code: string }>()
     const history = useHistory();
     const names = useAppSelector(selectCurrentNameOptions);
@@ -35,7 +35,10 @@ const ChooseName: React.FC = () => {
     const seen = useAppSelector(selectSeen)
     const isHost = useAppSelector(selectIsHost);
 
+    useNames();
+
     useEffect(() => {
+        dispatch(setGameStatus('choosingName'));
 
         // show confirmation dialog and clear game state if confirmed
         const unblock = history.block((...args: any[]) => {
@@ -43,12 +46,13 @@ const ChooseName: React.FC = () => {
             // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
             // has to be used here to prevent compiler errors
             // args[0] is a location object, and args[1] is a navigation action type
-            if (args[0].pathname as any !== '/play') {
+
+            const path = args[0].pathname as any
+            if (path !== '/play') {
                 const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
                     'Are you sure you want to leave the game?';
 
                 if (window.confirm(confirmMessage)) {
-                    unblock();
                     dispatch(clearGame());
                     dispatch(clearCurrentQuestion());
                     return true;
@@ -59,17 +63,14 @@ const ChooseName: React.FC = () => {
             return true
         })
 
-        dispatch(setGameStatus('choosingName'));
-
         // redirect if no access_code
         if (!access_code) {
             dispatch(showError('Access code not found'))
             history.push('/')
         }
 
-
-        (async () => {
-            // check game status
+        // check if game exists
+        const checkStatus = async () => {
             try {
                 const statusResponse = await api.get<StatusRequestResponse>(`/games/status?access_code=${access_code}`)
                 dispatch(setGameStatus(statusResponse.data.status))
@@ -79,26 +80,18 @@ const ChooseName: React.FC = () => {
                 dispatch(clearCurrentQuestion());
                 history.push('/')
             }
-            // get 6 name options
-            try {
-                const response = await api.get<NameRequestResponse>('/names')
-                dispatch(setRemainingNameOptions(response.data.names)) // populate total name pool
-                dispatch(setCurrentNameOptions()) // set initial set of options and remove them from pool
-            } catch (e) {
-                history.push('/')
-                dispatch(clearGame())
-            }
-        })()
+        }
 
-        // cleanup
+        checkStatus();
+
         return () => {
             dispatch(clearNameChoices());
+            unblock();
         }
-    }, [dispatch, history, access_code, shouldBlock, isHost])
+    }, [dispatch, history, access_code, isHost])
 
     // send request to join the game
     const join = async (name: string) => {
-        setShouldBlock(false)
         api.post<JoinGameResponse>('/games/join', { access_code, name }).then(result => {
             dispatch(joinGame(result.data))
             history.push('/play')
@@ -115,7 +108,6 @@ const ChooseName: React.FC = () => {
     // on click, send name report and join game
     const chooseName = (nameObj: NameObject) => {
         return (e: React.MouseEvent) => {
-            setShouldBlock(false);
             dispatch(sendReport({ chosen: nameObj.id, seen: seen.map(n => n.id) }))
             join(nameObj.name)
         }
