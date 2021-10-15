@@ -6,7 +6,7 @@ import './winner.css'
 
 export interface WinnerAnnouncementProps {
     name: string;
-    onRequestClose: () => void;
+    onRequestClose?: () => void;
 }
 
 const Container = tw.div`

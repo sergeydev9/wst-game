@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import useNames from './useNames';
 import {
     selectNameRerolls,
     setRemainingNameOptions,
@@ -9,7 +10,7 @@ import {
     selectSeen,
     sendReport
 } from './chooseNameSlice';
-import { setGameStatus, clearGame, joinGame } from '../game/gameSlice';
+import { setGameStatus, clearGame, joinGame, selectIsHost } from '../game/gameSlice';
 import {
     Button,
     RerollNamesButton,
@@ -23,6 +24,7 @@ import { NameObject } from '@whosaidtrue/app-interfaces';
 import { JoinGameResponse, NameRequestResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
 import { showError } from '../modal/modalSlice';
+import { clearCurrentQuestion, clearNameChoices } from '..';
 
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -31,10 +33,35 @@ const ChooseName: React.FC = () => {
     const names = useAppSelector(selectCurrentNameOptions);
     const rerolls = useAppSelector(selectNameRerolls);
     const seen = useAppSelector(selectSeen)
+    const isHost = useAppSelector(selectIsHost);
 
-    // get a batch of 6 names when user first arrives
+    useNames();
+
     useEffect(() => {
         dispatch(setGameStatus('choosingName'));
+
+        // show confirmation dialog and clear game state if confirmed
+        const unblock = history.block((...args: any[]) => {
+
+            // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
+            // has to be used here to prevent compiler errors
+            // args[0] is a location object, and args[1] is a navigation action type
+
+            const path = args[0].pathname as any
+            if (path !== '/play') {
+                const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
+                    'Are you sure you want to leave the game?';
+
+                if (window.confirm(confirmMessage)) {
+                    dispatch(clearGame());
+                    dispatch(clearCurrentQuestion());
+                    return true;
+                }
+
+                return false
+            }
+            return true
+        })
 
         // redirect if no access_code
         if (!access_code) {
@@ -42,32 +69,29 @@ const ChooseName: React.FC = () => {
             history.push('/')
         }
 
-
-        (async () => {
-            // check game status
+        // check if game exists
+        const checkStatus = async () => {
             try {
                 const statusResponse = await api.get<StatusRequestResponse>(`/games/status?access_code=${access_code}`)
-                dispatch(setGameStatus(statusResponse.status))
+                dispatch(setGameStatus(statusResponse.data.status))
             } catch (e) {
-                dispatch(showError('Could not find the game you were looking for'))
-                dispatch(clearGame())
+                dispatch(showError('Could not find the game you were looking for'));
+                dispatch(clearGame());
+                dispatch(clearCurrentQuestion());
                 history.push('/')
             }
-            // get name options
-            try {
-                const response = await api.get<NameRequestResponse>('/names')
-                dispatch(setRemainingNameOptions(response.data.names)) // populate total name pool
-                dispatch(setCurrentNameOptions()) // set initial set of options and remove them from pool
-            } catch (e) {
-                history.push('/')
-                dispatch(clearGame())
-            }
-        })()
-    }, [dispatch, history, access_code])
+        }
+
+        checkStatus();
+
+        return () => {
+            dispatch(clearNameChoices());
+            unblock();
+        }
+    }, [dispatch, history, access_code, isHost])
 
     // send request to join the game
     const join = async (name: string) => {
-
         api.post<JoinGameResponse>('/games/join', { access_code, name }).then(result => {
             dispatch(joinGame(result.data))
             history.push('/play')

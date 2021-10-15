@@ -43,6 +43,26 @@ Documentation for the api can be found [here](apps/ap/README.md)
 
 Documentation for the database can be found [here](apps/database/README.md)
 
+## Redis
+
+Both the socket server and the API use Redis
+
+The docker compose file includes Redis Insight, an in browser redis management tool.
+
+To access it, navigate to `localhost:8001`. There you will be asked to accept the EULA. Do so.
+After accepting the EULA, you will be asked configure redis. Select the option to connect to a database using hostname and password.
+There, you can enter the credentials for the Redis instance:
+
+```shell
+  Host: redis
+  Port: 6379
+  Name: wst (this can be whatever you want. It's only used to identify the DB in the Insight GUI)
+  Username: default
+  Password: pword (this just needs to match what is in the .env)
+```
+
+when prompted.
+
 ## Generate an application
 
 Run `nx g @nrwl/react:app my-app` to generate an application.

@@ -1,6 +1,7 @@
 import { Story, Meta } from '@storybook/react';
 import QuestionAnswersComponent, { QuestionAnswersProps } from './QuestionAnswers';
 import QuestionCard from '../QuestionCard';
+import SubmitRating from '../../submit-rating/SubmitRating';
 import { UserRating } from '@whosaidtrue/app-interfaces';
 
 export default {
@@ -19,7 +20,10 @@ export default {
 
 export const QuestionAnswers: Story<QuestionAnswersProps> = (args) => (
     <QuestionCard totalQuestions={9} questionNumber={5} category="Entertainment">
-        <QuestionAnswersComponent {...args} />
+        <QuestionAnswersComponent {...args} >
+            <SubmitRating submitRatingHandler={(v: UserRating) => console.log(v)} />
+        </QuestionAnswersComponent>
+
     </QuestionCard>
 )
 
@@ -29,5 +33,4 @@ QuestionAnswers.args = {
     followUp: "What was the show?",
     globalTruePercent: 75,
     groupTruePercent: 50,
-    submitRatingHandler: (v: UserRating) => console.log(v)
 }

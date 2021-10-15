@@ -28,6 +28,6 @@ const port = process.env.SOCKET_PORT || 4001;
 server.listen(port, () => {
     logger.info(`=================================`);
     logger.info(`======= ENV: ${process.env.NODE_ENV} =======`);
-    logger.info(`🚀 App listening on the port ${port}`);
+    logger.info(`🚀 Socket server listening on the port ${port}`);
     logger.info(`=================================`);
 });

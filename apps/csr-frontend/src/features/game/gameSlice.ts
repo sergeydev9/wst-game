@@ -9,6 +9,7 @@ import { RootState } from "../../app/store";
 export interface GameState {
     gameStatus: GameStatus | '';
     playerStatus: UserGameStatus;
+    shouldAnnounce: boolean;
     hasPassed: boolean;
     gameToken: string,
     gameId: number;
@@ -22,14 +23,14 @@ export interface GameState {
     access_code: string;
     playerId: number;
     playerName: string;
-    results: PlayerScore[];
     winner: string;
 
 }
 
-export const initialState: GameState = {
+export const initialGameState: GameState = {
     gameStatus: '',
     playerStatus: 'notInGame',
+    shouldAnnounce: false, // should there be a winner announcement when user gets to results
     gameToken: '',
     hasPassed: false,
     gameId: 0,
@@ -56,16 +57,14 @@ export const initialState: GameState = {
     playerName: '',
     playerId: 0,
     winner: '',
-    results: [],
-
 }
 
 export const gameSlice = createSlice({
     name: "game",
-    initialState,
+    initialState: initialGameState,
     reducers: {
         clearGame: () => {
-            return initialState
+            return initialGameState
         },
         setGameStatus: (state, action) => {
             state.gameStatus = action.payload;
@@ -79,7 +78,9 @@ export const gameSlice = createSlice({
         setPlayerName: (state, action) => {
             state.playerName = action.payload;
         },
-
+        setHasPassed: (state, action) => {
+            state.hasPassed = action.payload
+        },
         initialRequest: (state, action) => {
             state.access_code = action.payload;
             state.playerStatus = 'choosingName';
@@ -97,11 +98,11 @@ export const gameSlice = createSlice({
             state.isHost = true
             state.playerStatus = 'gameCreateSuccess';
         },
-        setGameResults: (state, action) => {
-            const { results, winner } = action.payload;
-            state.results = results;
-            state.winner = winner;
+        endGame: (state) => {
+            state.gameStatus = 'postGame';
+            state.shouldAnnounce = true;
         },
+
         gameStateUpdate: (state, action) => {
             const {
                 gameId,
@@ -170,9 +171,10 @@ export const {
     joinGame,
     setInactive,
     gameStateUpdate,
-    setGameResults,
     setPlayers,
-    setPlayerStatus
+    setPlayerStatus,
+    setHasPassed,
+    endGame
 } = gameSlice.actions;
 
 // selectors
@@ -190,6 +192,7 @@ export const selectDisconnected = (state: RootState) => state.game.disconnectedP
 export const selectPlayerStatus = (state: RootState) => state.game.playerStatus;
 export const selectPlayers = (state: RootState) => state.game.players;
 export const selectTotalQuestions = (state: RootState) => state.game.totalQuestions;
+export const selectShouldAnnounce = (state: RootState) => state.game.shouldAnnounce;
 export const selectPlayerList = createSelector(selectPlayers, (players) => {
     return Object.values(players);
 })

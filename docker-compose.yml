@@ -5,6 +5,7 @@ services:
   # Redis
   redis:
     image: redislabs/rejson:2.0.0
+    restart: unless-stopped
     env_file:
       - .env
     ports:
@@ -17,7 +18,7 @@ services:
     container_name: postgres
     env_file:
       - .local.env
-    restart: 'always'
+    restart: unless-stopped
     ports:
       - '5432:5432'
     volumes:
@@ -28,7 +29,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
-    restart: always
+    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: address@email.com # use these credentials to log in to pgadmin
       PGADMIN_DEFAULT_PASSWORD: secret
@@ -40,8 +41,18 @@ services:
 
     depends_on:
       - postgres
-  
+
+# REDIS INSIGHT
+  redis-insight:
+    image: redislabs/redisinsight
+    ports:
+      -  "8001:8001"
+    volumes:
+      - redis-insight:/db
+    restart: unless-stopped
+
 # named volume to help identify db data volume
 volumes: 
   data:
   pgadmin-data:
+  redis-insight:

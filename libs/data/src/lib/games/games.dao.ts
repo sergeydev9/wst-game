@@ -1,5 +1,7 @@
 import { Pool, QueryResult } from 'pg';
-import format from 'pg-format';
+import { logger } from '@whosaidtrue/logger';
+import { getAndUpdateQuery, } from '../game-questions/GameQuestions.dao';
+import { getQuestionData } from '../questions/Questions.dao';
 import { Deck, GameStatus, InsertGame, JoinGameResult, PlayerRef, StartGameResult } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
@@ -78,6 +80,7 @@ class Games extends Dao {
 
         const client = await this.pool.connect();
         try {
+            await client.query('BEGIN');
 
             // create the game and questions.
             const createGameQuery = {
@@ -96,7 +99,8 @@ class Games extends Dao {
             await client.query('COMMIT')
             return gameResult;
         } catch (e) {
-            await client.query('ROLLBACK')
+            logger.error(e);
+            await client.query('ROLLBACK');
             throw e
         } finally {
             client.release()
@@ -136,7 +140,17 @@ class Games extends Dao {
 
             // get game
             const getGameQuery = {
-                text: 'SELECT id, deck_id, host_id, status, host_player_name, current_question_index, total_questions FROM games WHERE games.access_code = $1',
+                text: `
+                SELECT
+                    id,
+                    deck_id,
+                    host_id,
+                    status,
+                    host_player_name,
+                    current_question_index,
+                    total_questions
+                FROM games
+                WHERE games.access_code = $1`,
                 values: [access_code]
             }
             const gameResult = await client.query(getGameQuery);
@@ -168,7 +182,21 @@ class Games extends Dao {
 
             // get deck info
             const getDeckQuery = {
-                text: 'SELECT id, name, movie_rating, sfw, description, sort_order, clean, age_rating, status, thumbnail_url, purchase_price FROM decks WHERE id = $1',
+                text: `
+                SELECT
+                    id,
+                    name,
+                    movie_rating,
+                    sfw,
+                    description,
+                    sort_order,
+                    clean,
+                    age_rating,
+                    status,
+                    thumbnail_url,
+                    purchase_price
+                FROM decks
+                WHERE id = $1`,
                 values: [game.deck_id]
             }
             const deckResult = await client.query(getDeckQuery);
@@ -222,6 +250,9 @@ class Games extends Dao {
         const client = await this.pool.connect();
 
         try {
+
+            await client.query('BEGIN');
+
             const gameQuery = `
                 UPDATE games
                 SET status = 'inProgress', start_date = $1
@@ -240,28 +271,9 @@ class Games extends Dao {
             // throw if no game data
             if (!gameRow) throw new Error(`[start game] game update failed. gameId: ${gameId}`)
 
-            // update game_question
-            const gameQuestionUpdate = `
-                UPDATE game_questions
-                SET
-                    reader_id = $1,
-                    reader_name = $2,
-                    question_sequence_index = 1,
-                    player_number_snapshot = $3
-                WHERE id = (
-                    SELECT id
-                    FROM game_questions
-                    WHERE game_id = $4
-                    AND question_sequence_index IS NULL
-                    LIMIT 1
-                    )
-                RETURNING reader_id, reader_name, question_sequence_index, player_number_snapshot, question_id;
-            `
 
-            const gqUpdateResult = await client.query({
-                text: gameQuestionUpdate,
-                values: [readerId, readerName, playerNumberSnapshot, gameId]
-            });
+
+            const gqUpdateResult = await client.query(getAndUpdateQuery(gameId, readerId, readerName, playerNumberSnapshot));
 
             const gameQuestion = gqUpdateResult.rows[0];
 
@@ -274,18 +286,16 @@ class Games extends Dao {
                 number snapshot: ${playerNumberSnapshot}`
             );
 
-            // get question text
-            const getQuestionQuery = 'SELECT * FROM questions WHERE id = $1';
 
-            const questionResult = await client.query({
-                text: getQuestionQuery,
-                values: [gameQuestion.question_id]
-            })
+            const questionResult = await client.query(getQuestionData(gameQuestion.question_id))
 
             const questionRow = questionResult.rows[0];
 
+
             // throw if no question data
             if (!questionRow) throw new Error(`Question not found. question id: ${gameQuestion.question_id}`)
+
+            await client.query('COMMIT');
 
             return {
                 game: {
@@ -301,7 +311,8 @@ class Games extends Dao {
                     readerName: gameQuestion.reader_name,
                     text: questionRow.text,
                     textForGuess: questionRow.text_for_guess,
-                    followUp: questionRow.follow_up
+                    followUp: questionRow.follow_up,
+                    globalTrue: Math.round(questionRow.global_true) || 0
                 }
             }
         } catch (e) {
@@ -311,6 +322,23 @@ class Games extends Dao {
             client.release()
         }
 
+    }
+
+    /**
+     * Set game status to finised, and end time to now.
+     * @param gameId
+     * @returns
+     */
+    public endGame(gameId: number): Promise<QueryResult> {
+        const query = {
+            text: `
+            UPDATE games
+            SET end_date = $1, status = 'finished'
+            WHERE id = $2`,
+            values: [new Date().toISOString(), gameId]
+        }
+
+        return this.pool.query(query);
     }
 }
 

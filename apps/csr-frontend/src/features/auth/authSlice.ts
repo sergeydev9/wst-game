@@ -45,7 +45,6 @@ export const initialState: AuthState = {
 };
 
 
-// TODO: use details endpoint to retrieve notifications when that feature gets added.
 export const fetchDetails = createAsyncThunk('auth/fetchDetails',
   async (_, { rejectWithValue, dispatch }) => {
 

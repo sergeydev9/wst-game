@@ -1,6 +1,7 @@
 import QuestionResultsComponent from './QuestionScores';
 import QuestionCard from '../QuestionCard';
-import ScoreBoard, { PlayerScore } from '../scoreboard/Scoreboard';
+import { PlayerScore } from '@whosaidtrue/app-interfaces';
+import ScoreBoard from '../scoreboard/Scoreboard';
 
 export default {
     component: QuestionResultsComponent,

@@ -3,7 +3,7 @@ import { verify } from 'jsonwebtoken';
 import { createAdapter } from "@socket.io/redis-adapter";
 import { Server } from "socket.io";
 import { GameTokenPayload } from '@whosaidtrue/api-interfaces';
-import registerListeners from './listener-helpers/registerListeners';
+import registerListeners from './registerListeners';
 import { subClient, pubClient, } from './redis';
 import initializeGame from './listener-helpers/initializeGame';
 import initializePlayer from './listener-helpers/initializePlayer';

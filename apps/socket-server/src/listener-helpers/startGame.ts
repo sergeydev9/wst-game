@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { logger } from '@whosaidtrue/logger';
 import { games } from '../db';
+import { Keys } from '../keys';
 import { pubClient } from "../redis";
 import { ONE_DAY } from "../constants";
 import { PlayerRef } from "@whosaidtrue/app-interfaces";
@@ -8,12 +9,19 @@ import { PlayerRef } from "@whosaidtrue/app-interfaces";
 const startGame = async (socket: Socket) => {
 
     const { gameId } = socket
-    const { currentPlayers, readerList, currentQuestion } = socket.keys;
+    const {
+        currentPlayers,
+        readerList,
+        currentQuestion,
+        currentSequenceIndex,
+        gameStatus
+    } = socket.keys;
+
+    // DEV_NOTE: can't pipeline these because send_command doesn't work on pipeline
+    // in ioredis :(
 
     // count currently connected players
     const currentCount = await pubClient.scard(currentPlayers);
-
-    logger.debug(`[startGame] Current player count: ${currentCount}`)
 
     // set readers list from players list
     await pubClient.send_command('COPY', currentPlayers, readerList)
@@ -23,23 +31,47 @@ const startGame = async (socket: Socket) => {
     const readerString = await pubClient.spop(readerList);
     const reader = JSON.parse(readerString) as PlayerRef;
 
-    logger.debug(`[startGame] reader: ${readerString}`)
-
     // set start time
     const startDate = new Date();
 
     // update game and question, fetch question text
-    const gameStartResult = await games.start(gameId, currentCount, reader.id, reader.player_name, startDate)
-    logger.debug(`[startGame] start game result : ${JSON.stringify(gameStartResult)}`)
-
+    const gameStartResult = await games.start(
+        gameId,
+        currentCount,
+        reader.id,
+        reader.player_name,
+        startDate
+    )
     const { game, question } = gameStartResult;
 
     // update game status
-    await pubClient.set(socket.keys.gameStatus, game.status)
+    await pubClient.set(gameStatus, game.status);
+
+    // set player count
+    await pubClient.set(Keys.totalPlayers(question.gameQuestionId), currentCount, 'EX', ONE_DAY);
+
+    // set have not answered list from players list
+    const notAnsweredKey = Keys.haveNotAnswered(question.gameQuestionId);
+    await pubClient.send_command('COPY', currentPlayers, notAnsweredKey)
+    await pubClient.expire(notAnsweredKey, ONE_DAY)
+
+    // get and parse set of players that have not answered
+    const notAnsweredStrings = await pubClient.smembers(notAnsweredKey)
+    const notAnsweredParsed = notAnsweredStrings.map(s => JSON.parse(s))
+
+    logger.debug({ message: 'Game start result', gameStartResult })
 
     // save question in redis
-    await pubClient.send_command('JSON.SET', currentQuestion, '.', JSON.stringify(question))
-    return { ...gameStartResult, currentCount };
+    await pubClient.set(currentQuestion, JSON.stringify(question), 'EX', ONE_DAY);
+
+    // set current sequence index in Redis
+    await pubClient.set(currentSequenceIndex, 1, 'EX', ONE_DAY);
+
+    return {
+        ...gameStartResult,
+        currentCount,
+        haveNotAnswered: notAnsweredParsed
+    };
 }
 
 export default startGame;
