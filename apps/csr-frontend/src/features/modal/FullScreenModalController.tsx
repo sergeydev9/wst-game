@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Modal, ModalContent } from '@whosaidtrue/ui';
 import { selectFullModal, setFullModal } from "./modalSlice";
 import Loading from '../loading/Loading';
+import WinnerAnnouncement from './full-screen-modals/WinnerAnnouncement';
 
 // Lazy load modals
 const RemovalNotification = lazy(() => import('./full-screen-modals/RemovalNotification'))
@@ -184,6 +185,13 @@ const FullScreenModalController = () => {
             {currentModal === 'confirmTakeOverReading' && <Modal isOpen={currentModal === 'confirmTakeOverReading'} onRequestClose={close}>
                 <Suspense fallback={<Loading />}>
                     <ConfirmTakeOverReading />
+                </Suspense>
+            </Modal>}
+
+            {/* Winner announcement */}
+            {currentModal === 'announceWinner' && <Modal isOpen={currentModal === 'announceWinner'} onRequestClose={close}>
+                <Suspense fallback={<Loading />}>
+                    <WinnerAnnouncement />
                 </Suspense>
             </Modal>}
         </>

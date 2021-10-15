@@ -188,6 +188,8 @@ export const selectPlayerScore = createSelector([selectPlayerName, selectScoreMa
     return scores[name];
 })
 
+export const selectWinner = createSelector([selectScores], (scores) => scores[0]);
+
 export const selectIsReader = createSelector([selectPlayerId, selectReaderId], (playerId, readerId) => {
     return playerId === readerId;
 })

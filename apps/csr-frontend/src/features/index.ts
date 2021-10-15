@@ -42,6 +42,7 @@ export { default as useSocket } from './socket/useSocket';
 export { default as SocketProvider } from './socket/SocketProvider';
 export { default as HostActions } from './host/HostActions';
 export { default as Question } from './question/Question';
+export { default as FinalResults } from './question/FinalResults';
 export * from './choose-name/chooseNameSlice';
 export * from './question/questionSlice';
 export * from './game/gameSlice';

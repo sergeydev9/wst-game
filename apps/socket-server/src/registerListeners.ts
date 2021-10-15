@@ -56,12 +56,17 @@ const registerListeners = (socket: Socket, io: Server) => {
      * EVENT LISTENERS
      *******************************************************************/
 
-    // on player join, just rebroadcast
+    /**
+    * PLAYER JOIN
+    */
     socket.on(types.PLAYER_JOINED_GAME, (msg: payloads.PlayerEvent) => {
         sendToOthers(types.PLAYER_JOINED_GAME, msg)
     })
 
-    // submit true false
+
+    /**
+    * ANSWER PART 1
+    */
     socket.on(types.ANSWER_PART_1, async (msg: payloads.AnswerPart1, cb) => {
         logIncoming(types.ANSWER_PART_1, msg, source);
 
@@ -74,7 +79,9 @@ const registerListeners = (socket: Socket, io: Server) => {
         }
     })
 
-    // submit guess
+    /**
+     * ANSWER PART 2
+     */
     socket.on(types.ANSWER_PART_2, async (msg: payloads.AnswerPart2, cb) => {
         logIncoming(types.ANSWER_PART_2, msg, source)
         const { playerKey } = socket.keys;
@@ -94,7 +101,12 @@ const registerListeners = (socket: Socket, io: Server) => {
 
                 // if last question, move to game results
                 if (current === total) {
-                    sendToAll(types.GAME_END)
+
+                    // calculate scores
+                    const result = await saveScores(msg.gameQuestionId, socket.gameId);
+
+                    // end game
+                    sendToAll(types.GAME_END, result as payloads.QuestionEnd)
                 } else {
 
                     // calculate scores

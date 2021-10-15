@@ -22,6 +22,7 @@ export type FullModal = "createAccount"
     | "confirmRemovePlayer"
     | "confirmSkipQuestion"
     | "confirmTakeOverReading"
+    | "announceWinner"
     | ""
 
 export type MessageType = ''

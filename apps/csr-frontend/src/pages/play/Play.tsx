@@ -11,7 +11,8 @@ import {
     clearGame,
     clearCurrentQuestion,
     selectFullModal,
-    useSocket
+    useSocket,
+    FinalResults
 } from '../../features';
 
 const Play: React.FC = () => {
@@ -65,7 +66,8 @@ const Play: React.FC = () => {
         <>
             {playerStatus === "lobby" && <Lobby />}
             {playerStatus === 'inGame' && gameStatus === 'inProgress' && <Question />}
-            {isHost && <HostActions />}
+            {gameStatus === 'postGame' && <FinalResults />}
+            {isHost && gameStatus !== 'postGame' && <HostActions />}
         </>
     )
 }

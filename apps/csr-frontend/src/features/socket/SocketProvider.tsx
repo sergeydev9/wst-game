@@ -18,13 +18,13 @@ import {
     clearGame,
     removePlayer,
     setInactive,
-    gameStateUpdate,
     setGameStatus,
     selectPlayerName,
     selectPlayerStatus,
     selectGameStatus,
     setPlayers,
-    setPlayerStatus
+    setPlayerStatus,
+    endGame
 } from "../game/gameSlice";
 import { clearCurrentQuestion, setCurrentQuestion, questionEnd, setReader, setHaveNotAnswered, setQuestionStatus } from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
@@ -196,6 +196,12 @@ export const SocketProvider: React.FC = ({ children }) => {
             // move from answer to scores at the end of a question
             connection.on(types.MOVE_TO_QUESTION_RESULTS, () => {
                 dispatch(setQuestionStatus('results'))
+            })
+
+            connection.on(types.GAME_END, (message: payloads.QuestionEnd) => {
+                dispatch(questionEnd(message))
+                dispatch(endGame())
+                dispatch(setFullModal('announceWinner'))
             })
 
 

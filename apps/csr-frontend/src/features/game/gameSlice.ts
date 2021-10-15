@@ -9,7 +9,7 @@ import { RootState } from "../../app/store";
 export interface GameState {
     gameStatus: GameStatus | '';
     playerStatus: UserGameStatus;
-    announceWinner: boolean;
+    shouldAnnounce: boolean;
     hasPassed: boolean;
     gameToken: string,
     gameId: number;
@@ -30,7 +30,7 @@ export interface GameState {
 export const initialGameState: GameState = {
     gameStatus: '',
     playerStatus: 'notInGame',
-    announceWinner: false, // should there be a winner announcement when user gets to results
+    shouldAnnounce: false, // should there be a winner announcement when user gets to results
     gameToken: '',
     hasPassed: false,
     gameId: 0,
@@ -97,6 +97,10 @@ export const gameSlice = createSlice({
             state.gameId = action.payload.game_id
             state.isHost = true
             state.playerStatus = 'gameCreateSuccess';
+        },
+        endGame: (state) => {
+            state.gameStatus = 'postGame';
+            state.shouldAnnounce = true;
         },
 
         gameStateUpdate: (state, action) => {
@@ -169,7 +173,8 @@ export const {
     gameStateUpdate,
     setPlayers,
     setPlayerStatus,
-    setHasPassed
+    setHasPassed,
+    endGame
 } = gameSlice.actions;
 
 // selectors
@@ -187,6 +192,7 @@ export const selectDisconnected = (state: RootState) => state.game.disconnectedP
 export const selectPlayerStatus = (state: RootState) => state.game.playerStatus;
 export const selectPlayers = (state: RootState) => state.game.players;
 export const selectTotalQuestions = (state: RootState) => state.game.totalQuestions;
+export const selectShouldAnnounce = (state: RootState) => state.game.shouldAnnounce;
 export const selectPlayerList = createSelector(selectPlayers, (players) => {
     return Object.values(players);
 })
