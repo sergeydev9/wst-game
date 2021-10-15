@@ -41,6 +41,7 @@ class GameQuestions extends Dao {
         const client = await this.pool.connect();
 
         try {
+            await client.query('BEGIN');
 
             // get game question
             const gameQuestionResult = await client.query(getAndUpdateQuery(gameId, readerId, readerName, numPlayers, nextIndex));
@@ -56,6 +57,7 @@ class GameQuestions extends Dao {
 
             if (!questionRow) throw new Error('Error fetching question data')
 
+            await client.query('COMMIT');
             return {
                 questionId: questionRow.id,
                 gameQuestionId: gameQuestion.id,

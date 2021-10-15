@@ -80,6 +80,7 @@ class Games extends Dao {
 
         const client = await this.pool.connect();
         try {
+            await client.query('BEGIN');
 
             // create the game and questions.
             const createGameQuery = {
@@ -249,6 +250,9 @@ class Games extends Dao {
         const client = await this.pool.connect();
 
         try {
+
+            await client.query('BEGIN');
+
             const gameQuery = `
                 UPDATE games
                 SET status = 'inProgress', start_date = $1

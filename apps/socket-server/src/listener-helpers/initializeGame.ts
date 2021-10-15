@@ -13,14 +13,10 @@ const initializeGame = async (socket: Socket) => {
 
     const status = socket.keys.gameStatus;
 
-    const lock = await pubClient.get(status);
+    const lock = await pubClient.set(status, 1, 'EX', 10, 'NX');
 
     // if game data already exists, or another socket is already fetching it, exit
-    if (lock) return;
-
-    // setting value acts as a lock so that only 1 connection
-    // attempts to fetch data
-    await pubClient.set(status, 1, 'EX', 10);
+    if (!lock) return;
 
     try {
         const { rows } = await games.getById(socket.gameId);
