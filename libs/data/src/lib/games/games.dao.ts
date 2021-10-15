@@ -2,7 +2,7 @@ import { Pool, QueryResult } from 'pg';
 import { logger } from '@whosaidtrue/logger';
 import { getAndUpdateQuery, } from '../game-questions/GameQuestions.dao';
 import { getQuestionData } from '../questions/Questions.dao';
-import { Deck, GameStatus, InsertGame, JoinGameResult, PlayerRef, StartGameResult } from '@whosaidtrue/app-interfaces';
+import { Deck, GameStatus, InsertGame, JoinGameResult, StartGameResult } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
 class Games extends Dao {
@@ -250,7 +250,6 @@ class Games extends Dao {
         const client = await this.pool.connect();
 
         try {
-
             await client.query('BEGIN');
 
             const gameQuery = `
@@ -271,10 +270,7 @@ class Games extends Dao {
             // throw if no game data
             if (!gameRow) throw new Error(`[start game] game update failed. gameId: ${gameId}`)
 
-
-
             const gqUpdateResult = await client.query(getAndUpdateQuery(gameId, readerId, readerName, playerNumberSnapshot));
-
             const gameQuestion = gqUpdateResult.rows[0];
 
             // throw if no game_question data
