@@ -2,37 +2,26 @@ version: '3.7'
 
 services:
 
-  # DATABASE
+  redis:
+    image: redis:6.0
+    container_name: wst-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+
   postgres:
     image: postgres:11
-    container_name: postgres
+    container_name: wst-postgres
     env_file:
       - .docker.env
-    restart: 'always'
+    restart: unless-stopped
     ports:
       - '5432:5432'
     volumes:
-      - data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
       - ../apps/database/dev:/usr/local/dev # Used to facilitate running sql files from host. See database README
-  
-  # PGADMIN
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: address@email.com # use these credentials to log in to pgadmin
-      PGADMIN_DEFAULT_PASSWORD: secret
-      PGADMIN_LISTEN_PORT: 80
-    ports:
-      - "8080:80" # go to localhost:8080 to access pgadmin
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
 
-    depends_on:
-      - postgres
   
 # named volume to help identify db data volume
 volumes: 
-  data:
-  pgadmin-data:
+  postgres-data:
