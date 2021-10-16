@@ -2,17 +2,13 @@ version: '3.7'
 
 services:
 
-  # Redis
   redis:
-    image: redislabs/rejson:2.0.0
+    image: redis:6.0
+    container_name: redis
     restart: unless-stopped
-    env_file:
-      - .env
     ports:
       - '6379:6379'
-    command: "redis-server --requirepass ${REDIS_PASSWORD} --loadmodule /usr/lib/redis/modules/rejson.so"
 
-  # DATABASE
   postgres:
     image: postgres:11
     container_name: postgres
@@ -24,8 +20,7 @@ services:
     volumes:
       - data:/var/lib/postgresql/data
       - ./apps/database/dev:/usr/local/dev # Used to facilitate running sql files from host. See database README
-  
-  # PGADMIN
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -42,9 +37,9 @@ services:
     depends_on:
       - postgres
 
-# REDIS INSIGHT
   redis-insight:
     image: redislabs/redisinsight
+    container_name: redis-insight
     ports:
       -  "8001:8001"
     volumes:
