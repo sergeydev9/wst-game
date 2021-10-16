@@ -8,7 +8,8 @@ export { default as GameQuestions } from './lib/game-questions/GameQuestions.dao
 export { default as GeneratedNames } from './lib/generated-names/GeneratedNames.dao';
 export { default as Orders } from './lib/orders/Orders.dao';
 export { default as Questions } from './lib/questions/Questions.dao';
-export { default as UserQuestionRating } from './lib/user-question-ratings/UserQuestionRatings.dao';
+export { default as QuestionRatings } from './lib/question-ratings/QuestionRatings.dao';
+export { default as AppRatings } from './lib/app-ratings/AppRatings.dao';
 
 /* Utils */
 export * from './lib/util/testEntityGenerators'

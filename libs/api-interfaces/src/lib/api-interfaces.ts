@@ -1,4 +1,4 @@
-import { Deck, NameObject, PlayerRef, GameStatus } from '@whosaidtrue/app-interfaces';
+import { Deck, NameObject, PlayerRef, GameStatus, UserRating } from '@whosaidtrue/app-interfaces';
 
 export interface GameTokenPayload {
   playerId: number;
@@ -119,4 +119,20 @@ export interface JoinGameResponse {
  */
 export interface BuyWithCreditsRequest {
   deckId: number
+}
+
+/**
+ * Ratings
+ */
+
+export interface CheckRatingResponse {
+  hasRated: boolean;
+}
+
+export interface SubmitRating {
+  rating: UserRating
+}
+
+export interface SubmitQuestionRating {
+  questionId: number;
 }

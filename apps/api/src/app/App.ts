@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { user, healthcheck, decks, names, purchase, games } from './routes';
+import { user, healthcheck, decks, names, purchase, games, ratings } from './routes';
 import { logger } from '@whosaidtrue/logger';
 
 // TODO: Make it crash if it can't connect to database
@@ -48,6 +48,7 @@ class App {
         this.app.use('/decks', decks)
         this.app.use('/names', names)
         this.app.use('/games', games)
+        this.app.use('/ratings', ratings)
     }
 
     private initializeSwagger() {

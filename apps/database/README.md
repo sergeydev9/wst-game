@@ -208,6 +208,16 @@ rating | user_rating | no | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
+### **user_app_ratings**
+
+| Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
+---| --- | --- | --- | --- | --- | ---
+id | integer | no | yes
+user_id | integer | yes | no | | orders | SET NULL
+rating | user_rating | no | no
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
+
 ### **game_questions**
 
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
