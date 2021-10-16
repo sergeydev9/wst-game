@@ -24,8 +24,8 @@ const startGame = async (socket: Socket) => {
     const currentCount = await pubClient.scard(currentPlayers);
 
     // set readers list from players list
-    await pubClient.send_command('COPY', currentPlayers, readerList)
-    await pubClient.expire(readerList, ONE_DAY)
+    await pubClient.sunionstore(readerList, currentPlayers);
+    await pubClient.expire(readerList, ONE_DAY);
 
     // pop a reader from the list to assign them as the first reader
     const readerString = await pubClient.spop(readerList);
@@ -52,14 +52,14 @@ const startGame = async (socket: Socket) => {
 
     // set have not answered list from players list
     const notAnsweredKey = Keys.haveNotAnswered(question.gameQuestionId);
-    await pubClient.send_command('COPY', currentPlayers, notAnsweredKey)
-    await pubClient.expire(notAnsweredKey, ONE_DAY)
+    await pubClient.sunionstore(notAnsweredKey, currentPlayers);
+    await pubClient.expire(notAnsweredKey, ONE_DAY);
 
     // get and parse set of players that have not answered
-    const notAnsweredStrings = await pubClient.smembers(notAnsweredKey)
-    const notAnsweredParsed = notAnsweredStrings.map(s => JSON.parse(s))
+    const notAnsweredStrings = await pubClient.smembers(notAnsweredKey);
+    const notAnsweredParsed = notAnsweredStrings.map(s => JSON.parse(s));
 
-    logger.debug({ message: 'Game start result', gameStartResult })
+    logger.debug({ message: 'Game start result', gameStartResult });
 
     // save question in redis
     await pubClient.set(currentQuestion, JSON.stringify(question), 'EX', ONE_DAY);
@@ -72,6 +72,6 @@ const startGame = async (socket: Socket) => {
         currentCount,
         haveNotAnswered: notAnsweredParsed
     };
-}
+};
 
 export default startGame;
