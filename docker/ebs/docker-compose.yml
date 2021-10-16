@@ -4,6 +4,7 @@ services:
 
   api:
     image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/api:20211015-066fc4a
+    container_name: api
     restart: always
     env_file:
       - .env
@@ -15,6 +16,7 @@ services:
 
   socket-server:
     image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/socket-server:20211015-066fc4a
+    container_name: socket-server
     restart: always
     env_file:
       - .env
