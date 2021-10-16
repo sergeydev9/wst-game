@@ -9,7 +9,7 @@ const pool = new Pool({
     port: 5432
 });
 
-if (!pool) throw new Error('Postgres connection pool unavailable')
+if (!pool) throw new Error('Postgres connection pool unavailable');
 
 const users = new Users(pool);
 const games = new Games(pool);

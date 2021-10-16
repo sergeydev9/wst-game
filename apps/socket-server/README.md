@@ -32,6 +32,9 @@ Connect to `http://localhost:4001/socket.io`
 
 To debug the Socket.io messages you can use https://amritb.github.io/socketio-client-tool.
 
+For CORS set `DOMAIN=https://amritb.github.io/` in your env file.
+Also you will need to generate a valid JWT token from the API.
+
 Example config:
 
 ```json
@@ -41,7 +44,7 @@ Example config:
   "reconnectionAttempts": 3, 
   "timeout": 2000,
   "auth": {
-    "token": "$JWT_TOKEN"
+    "token": "JWT_TOKEN"
   }
 }
 ```

@@ -4,7 +4,14 @@ import { logger } from '@whosaidtrue/logger';
 import initializeSocket from './socket';
 
 // create http server
-const server = http.createServer();
+const server = http.createServer((req, res) => {
+    if (req.url === '/healthz') {
+        res.end("OK");
+    } else {
+        res.statusCode = 404;
+        res.end();
+    }
+});
 
 // set up socket server
 initializeSocket(server);
