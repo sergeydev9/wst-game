@@ -1,15 +1,19 @@
-import { FinalScores, Scoreboard, WinnerAnnouncement } from "@whosaidtrue/ui";
-import { selectPlayerScore, selectScoreboard, selectShouldAnnounce, selectWinner } from "..";
+import { FinalScores, Scoreboard, } from "@whosaidtrue/ui";
+import { isLoggedIn, selectHasRatedApp, selectPlayerScore, selectScoreboard } from "..";
 import { useAppSelector } from "../../app/hooks";
+import RateApp from "./RateApp";
 
 const FinalResults: React.FC = () => {
     const scoreboard = useAppSelector(selectScoreboard);
     const playerScore = useAppSelector(selectPlayerScore);
+    const loggedIn = useAppSelector(isLoggedIn);
+    const hasRatedApp = useAppSelector(selectHasRatedApp);
 
 
     return (
         <FinalScores>
             <Scoreboard scores={scoreboard} currentPlayerScore={playerScore} />
+            {loggedIn && !hasRatedApp && <RateApp />}
         </FinalScores>
     )
 }

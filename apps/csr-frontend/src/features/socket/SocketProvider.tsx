@@ -26,7 +26,15 @@ import {
     setPlayerStatus,
     endGame
 } from "../game/gameSlice";
-import { clearCurrentQuestion, setCurrentQuestion, questionEnd, setReader, setHaveNotAnswered, setQuestionStatus } from "../question/questionSlice";
+import {
+    clearCurrentQuestion,
+    setCurrentQuestion,
+    questionEnd,
+    setReader,
+    setHaveNotAnswered,
+    setQuestionStatus,
+    checkHasRatedQuestion
+} from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
@@ -160,6 +168,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             // updates question state
             connection.on(types.SET_QUESTION_STATE, (message: payloads.SetQuestionState) => {
                 dispatch(setCurrentQuestion(message))
+                dispatch(checkHasRatedQuestion(message.gameQuestionId))
                 if (playerStatus === 'lobby' && message.status === 'question') {
                     dispatch(setPlayerStatus('inGame'))
                 }

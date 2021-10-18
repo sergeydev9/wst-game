@@ -1,6 +1,7 @@
-import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
-import { JoinGameResponse } from '@whosaidtrue/api-interfaces';
+import { createSlice, createSelector, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { JoinGameResponse, CheckRatingResponse } from '@whosaidtrue/api-interfaces';
 import { Deck, UserGameStatus, PlayerRef, PlayerScore, GameStatus } from '@whosaidtrue/app-interfaces';
+import { api } from '../../api';
 import omit from 'lodash.omit'
 
 // local imports
@@ -8,6 +9,7 @@ import { RootState } from "../../app/store";
 
 export interface GameState {
     gameStatus: GameStatus | '';
+    hasRatedApp: boolean;
     playerStatus: UserGameStatus;
     shouldAnnounce: boolean;
     hasPassed: boolean;
@@ -32,6 +34,7 @@ export const initialGameState: GameState = {
     playerStatus: 'notInGame',
     shouldAnnounce: false, // should there be a winner announcement when user gets to results
     gameToken: '',
+    hasRatedApp: false,
     hasPassed: false,
     gameId: 0,
     deck: {
@@ -58,6 +61,20 @@ export const initialGameState: GameState = {
     playerId: 0,
     winner: '',
 }
+
+
+export const checkHasRatedApp = createAsyncThunk(
+    'question/checkHasRated',
+    async (_, { rejectWithValue }) => {
+        return api.get<CheckRatingResponse>(`/ratings/app`).then(response => {
+            return response.data;
+        }).catch(err => {
+            // log error, but don't need to notify user
+            console.error(err)
+            return rejectWithValue({ hasRated: false })
+        })
+    })
+
 
 export const gameSlice = createSlice({
     name: "game",
@@ -121,7 +138,9 @@ export const gameSlice = createSlice({
             state.inactivePlayers = inactivePlayers;
             state.totalQuestions = totalQuestions;
         },
-
+        setHasRatedApp: (state, action) => {
+            state.hasRatedApp = action.payload
+        },
         setInactive: (state, action) => {
             state.inactivePlayers = [...action.payload]
         },
@@ -155,7 +174,14 @@ export const gameSlice = createSlice({
             state.playerId = playerId;
             state.playerName = playerName
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(checkHasRatedApp.fulfilled, (state, action) => {
+            state.hasRatedApp = action.payload.hasRated;
+        })
     }
+
+
 })
 
 // actions
@@ -174,7 +200,8 @@ export const {
     setPlayers,
     setPlayerStatus,
     setHasPassed,
-    endGame
+    endGame,
+    setHasRatedApp
 } = gameSlice.actions;
 
 // selectors
@@ -193,6 +220,8 @@ export const selectPlayerStatus = (state: RootState) => state.game.playerStatus;
 export const selectPlayers = (state: RootState) => state.game.players;
 export const selectTotalQuestions = (state: RootState) => state.game.totalQuestions;
 export const selectShouldAnnounce = (state: RootState) => state.game.shouldAnnounce;
+export const selectHasRatedApp = (state: RootState) => state.game.hasRatedApp;
+
 export const selectPlayerList = createSelector(selectPlayers, (players) => {
     return Object.values(players);
 })

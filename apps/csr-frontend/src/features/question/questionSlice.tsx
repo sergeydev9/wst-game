@@ -1,13 +1,15 @@
-import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
-import { payloads } from "@whosaidtrue/api-interfaces";
+import { createSlice, PayloadAction, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
+import { CheckRatingResponse, payloads } from "@whosaidtrue/api-interfaces";
 import { GameQuestionStatus, PlayerRef, PlayerScore } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
 import { buildScoreboardAndMap } from "../../util/functions";
 import { selectPlayerId, selectPlayerName } from "../game/gameSlice";
+import { api } from '../../api';
 
 export interface CurrentQuestionState {
     questionId: number;
     gameQuestionId: number;
+    hasRated: boolean;
     status: GameQuestionStatus;
     correctAnswer: number;
     sequenceIndex: number;
@@ -34,6 +36,7 @@ export interface CurrentQuestionState {
 export const initialQuestionState: CurrentQuestionState = {
     questionId: 0,
     gameQuestionId: 0,
+    hasRated: false,
     status: '',
     pointsEarned: {},
     numPlayers: 0,
@@ -56,6 +59,19 @@ export const initialQuestionState: CurrentQuestionState = {
     haveNotAnswered: [],
     guessValue: 0
 }
+
+
+export const checkHasRatedQuestion = createAsyncThunk(
+    'question/checkHasRated',
+    async (questionId: number, { rejectWithValue }) => {
+        return api.get<CheckRatingResponse>(`/ratings/question?id=${questionId}`).then(response => {
+            return response.data;
+        }).catch(err => {
+            // log error, but don't need to notify user
+            console.error(err)
+            return rejectWithValue({ hasRated: false })
+        })
+    })
 
 const currentQuestionSlice = createSlice({
     name: 'currentQuestion',
@@ -120,6 +136,9 @@ const currentQuestionSlice = createSlice({
         setStatus: (state, action) => {
             state.status = action.payload
         },
+        setHasRated: (state, action) => {
+            state.hasRated = action.payload;
+        },
         setHaveNotAnswered: (state, action) => {
             state.haveNotAnswered = action.payload
         },
@@ -143,6 +162,11 @@ const currentQuestionSlice = createSlice({
             state.scoreMap = scoreMap;
             state.scoreboard = scoreboard;
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(checkHasRatedQuestion.fulfilled, (state, action) => {
+            state.hasRated = action.payload.hasRated;
+        })
     }
 })
 
@@ -158,6 +182,7 @@ export const {
     setGuessValue,
     questionEnd,
     setQuestionStatus,
+    setHasRated,
     setHaveNotAnswered } = currentQuestionSlice.actions;
 
 // selectors
@@ -182,7 +207,8 @@ export const selectRankDifferences = (state: RootState) => state.question.rankDi
 export const selectScoreMap = (state: RootState) => state.question.scoreMap;
 export const selectScoreboard = (state: RootState) => state.question.scoreboard;
 export const selectFollowUp = (state: RootState) => state.question.followUp;
-export const selectQuestionId = (state: RootState) => state.question.questionId
+export const selectQuestionId = (state: RootState) => state.question.questionId;
+export const selectHasRatedQuestion = (state: RootState) => state.question.hasRated;
 
 export const selectPlayerScore = createSelector([selectPlayerName, selectScoreMap], (name, scores,) => {
     return scores[name];

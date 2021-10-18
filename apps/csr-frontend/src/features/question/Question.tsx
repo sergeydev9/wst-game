@@ -20,7 +20,7 @@ import {
 } from '../question/questionSlice';
 import { selectHasPassed, selectTotalQuestions, setHasPassed } from '../game/gameSlice';
 import ReaderAnnouncement from "./ReaderAnnouncement";
-import { showError, useSocket } from "..";
+import { selectHasRatedQuestion, showError, useSocket } from "..";
 import { payloads, types } from "@whosaidtrue/api-interfaces";
 import QuestionResults from './QuestionResults';
 import { isLoggedIn } from "../auth/authSlice";
@@ -50,8 +50,8 @@ const Question: React.FC = () => {
     const globalTrue = useAppSelector(selectGlobalTrue);
     const groupTrue = useAppSelector(selectGroupTrue);
     const correctAnswer = useAppSelector(selectCorrectAnswer);
-    const followUp = useAppSelector(selectFollowUp)
-
+    const followUp = useAppSelector(selectFollowUp);
+    const hasRated = useAppSelector(selectHasRatedQuestion);
 
     // submit true/false answer
     const answerHandler = (value: string) => {
@@ -99,7 +99,7 @@ const Question: React.FC = () => {
                     questionText={guessText}
                     followUp={followUp}
                 >
-                    {loggedIn && <RateQuestion />}
+                    {loggedIn && !hasRated && <RateQuestion />}
                 </QuestionAnswers>
                 )}
                 {screen === 'scoreResults' && <QuestionResults />}
