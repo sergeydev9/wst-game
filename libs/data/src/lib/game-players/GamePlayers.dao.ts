@@ -2,7 +2,6 @@ import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
 import { InsertGamePlayer } from '@whosaidtrue/app-interfaces';
 
-
 class GamePlayers extends Dao {
     constructor(pool: Pool) {
         super(pool, 'game_players')

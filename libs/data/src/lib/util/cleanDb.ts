@@ -1,4 +1,4 @@
-import {Pool} from 'pg';
+import { Pool } from 'pg';
 
 /**
  * Delete everything from every table DON'T EVER USE THIS
@@ -28,6 +28,7 @@ export async function cleanDb(pool: Pool) {
         pool.query(`TRUNCATE game_answers CASCADE`),
         pool.query(`TRUNCATE generated_names CASCADE`),
         pool.query(`TRUNCATE reset_codes CASCADE`),
+        pool.query(`TRUNCATE free_credit_signups CASCADE`),
     ];
 
     return Promise.all(promises);

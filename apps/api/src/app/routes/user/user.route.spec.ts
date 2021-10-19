@@ -7,13 +7,14 @@ import validator from 'validator';
 
 // local
 import App from '../../App';
-import { users } from '../../db';
+import { creditSignup, users } from '../../db';
 import { emailService } from '../../services';
 import { signUserPayload } from '@whosaidtrue/middleware';
 import { ClientResponse } from '@sendgrid/mail';
 
 const mockedUsers = mocked(users, true)
 const mockedSendgrid = mocked(emailService, true);
+const mockedCreditSignups = mocked(creditSignup, true);
 
 jest.mock('../../db')
 jest.mock('../../services')
@@ -532,6 +533,31 @@ describe('user routes', () => {
             expect(user.id).toEqual(1)
             expect(user.email).toEqual('email@email.com')
             expect(user.roles).toEqual(["guest"])
+        })
+    })
+
+    describe('[POST] free credit signup', () => {
+        it('should respond with 422 if not valid email', (done) => {
+            supertest(app)
+                .post('/user/free-credit-signup')
+                .send({ email: 'ffffff' })
+                .expect(422, done)
+        })
+
+        it('should respond with 201 if success.', (done) => {
+            mockedCreditSignups.insertOne.mockResolvedValue({ rowCount: 1 } as QueryResult);
+            supertest(app)
+                .post('/user/free-credit-signup')
+                .send({ email: 'email@test.com' })
+                .expect(201, done)
+        })
+
+        it('should respond with 422 if db rejects with duplicate key error.', (done) => {
+            mockedCreditSignups.insertOne.mockRejectedValue(new DatabaseError("duplicate key value violates unique constraint \"free_credit_signups_email_key\"", 1, "error"));
+            supertest(app)
+                .post('/user/free-credit-signup')
+                .send({ email: 'email@test.com' })
+                .expect(422, done)
         })
     })
 })

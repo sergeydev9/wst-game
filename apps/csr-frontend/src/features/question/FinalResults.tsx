@@ -2,6 +2,7 @@ import { FinalScores, Scoreboard, } from "@whosaidtrue/ui";
 import { isLoggedIn, selectHasRatedApp, selectPlayerScore, selectScoreboard } from "..";
 import { useAppSelector } from "../../app/hooks";
 import RateApp from "./RateApp";
+import RequestFreeCredit from "./RequestFreeCredit";
 
 const FinalResults: React.FC = () => {
     const scoreboard = useAppSelector(selectScoreboard);
@@ -13,6 +14,7 @@ const FinalResults: React.FC = () => {
     return (
         <FinalScores>
             <Scoreboard scores={scoreboard} currentPlayerScore={playerScore} />
+            {!loggedIn && <RequestFreeCredit />}
             {loggedIn && !hasRatedApp && <RateApp />}
         </FinalScores>
     )

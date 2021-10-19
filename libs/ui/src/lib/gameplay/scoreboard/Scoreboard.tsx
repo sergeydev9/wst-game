@@ -69,12 +69,12 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
                 border-purple-subtle-stroke
                 `}>
                     <span>{p.rank}</span>
-                    <span className="flex flex-col sm:flex-row  items-center">{p.name} {diffHelper(p.rankDiff)}</span>
+                    <span className="flex flex-col sm:flex-row  items-center">{p.name} {showDiff && diffHelper(p.rankDiff)}</span>
                     <span>{p.points.toLocaleString('en-US')}</span>
                 </li>
             )
         })
-    }, [scores, diffHelper])
+    }, [scores, diffHelper, showDiff])
 
     return (
         <div className="bg-purple-subtle-fill rounded-3xl w-full p-1 sm:p-3 mb-5">
@@ -83,7 +83,7 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
             </ul>
             <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mt-4 mb-2`}>
                 <span>{currentPlayerScore.rank}</span>
-                <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.name} (You) {diffHelper(currentPlayerScore.rankDiff)}</span>
+                <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.name} (You) {showDiff && diffHelper(currentPlayerScore.rankDiff)}</span>
                 <span>{currentPlayerScore.points.toLocaleString('en-US')}</span>
             </div>
         </div>
