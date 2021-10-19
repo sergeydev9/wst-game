@@ -57,8 +57,8 @@ There, you can enter the credentials for the Redis instance:
   Host: redis
   Port: 6379
   Name: wst (this can be whatever you want. It's only used to identify the DB in the Insight GUI)
-  Username: default
-  Password: pword (this just needs to match what is in the .env)
+  Username: (leave blank)
+  Password: (leave blank)
 ```
 
 when prompted.

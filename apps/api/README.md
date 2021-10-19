@@ -15,7 +15,6 @@ The api reads from the following env variables:
 - PORT
 - STRIPE_SECRET_KEY
 - DOMAIN
-- DATABASE_URL
 - SG_API_KEY
 - STRIPE_WEBHOOK_SECRET
 - PAYPAL_CLIENT_SECRET

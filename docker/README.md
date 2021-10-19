@@ -6,18 +6,10 @@ for development and production.
 
 # Installing Dependencies
 
-Before running in development mode the `package.json` file needs to be installed. This is 
-usually accomplished with `yarn install` but for simplicity you can use the `install.sh` 
-script which will install all dependencies using dockerized version of node.
-
+Before running in development mode the `package.json` file needs to be installed. 
 
 ```bash
 yarn install
-```
-
-OR
-```bash
-docker/isntall.sh
 ```
 
 

@@ -1,9 +1,6 @@
 import { Pool } from 'pg'
 import { Users, Decks, Games, GeneratedNames, Orders } from '@whosaidtrue/data';
 
-
-
-// TODO: adapt this to RDS
 const pool = new Pool({
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,

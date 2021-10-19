@@ -30,7 +30,7 @@ const nextQuestion = async (socket: Socket) => {
     if (!readerString) {
 
         // set readers list from players list
-        await pubClient.send_command('COPY', currentPlayers, readerList)
+        await pubClient.sunionstore(readerList, currentPlayers)
         await pubClient.expire(readerList, ONE_DAY)
 
         // pop a reader from the list to assign them as the reader
@@ -48,7 +48,7 @@ const nextQuestion = async (socket: Socket) => {
 
             // if no readers left, copy
             if (!readerCard) {
-                await pubClient.send_command('COPY', currentPlayers, readerList)
+                await pubClient.sunionstore(readerList, currentPlayers)
                 await pubClient.expire(readerList, ONE_DAY)
 
                 // pop a reader from the list to assign them as the reader
@@ -73,7 +73,7 @@ const nextQuestion = async (socket: Socket) => {
 
     // copy current players set into list of players that have not answered
     const notAnsweredKey = Keys.haveNotAnswered(questionResult.gameQuestionId);
-    await pubClient.send_command('COPY', currentPlayers, notAnsweredKey)
+    await pubClient.sunionstore(notAnsweredKey, currentPlayers)
     const notAnsweredStrings = await pubClient.smembers(notAnsweredKey)
     const haveNotAnswered = notAnsweredStrings.map(s => JSON.parse(s))
 
