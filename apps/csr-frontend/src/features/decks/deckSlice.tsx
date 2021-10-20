@@ -5,7 +5,6 @@ import { Deck, MovieRating } from "@whosaidtrue/app-interfaces";
 import { api } from '../../api';
 import { showError } from "../modal/modalSlice";
 
-
 export interface DeckState {
     sfwOnly: boolean;
     showAll: boolean;

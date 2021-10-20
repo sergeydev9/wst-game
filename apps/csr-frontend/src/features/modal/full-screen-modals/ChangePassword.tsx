@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { passwordValidationObject } from '@whosaidtrue/util';
-import { api } from '../../api';
+import { api } from '../../../api';
 import {
     TextInput,
     FormGroup,
@@ -10,15 +10,17 @@ import {
     InputLabel,
     ErrorText,
     Headline,
-    Title2
+    Title2,
+    ModalContent
 } from '@whosaidtrue/ui';
-import { useAppDispatch } from '../../app/hooks';
-import { setFullModal, showError } from '../modal/modalSlice';
+import { useAppDispatch } from '../../../app/hooks';
+import { setFullModal, showError } from '../modalSlice';
+import { Link } from 'react-router-dom';
 
 
 const ChangePassword: React.FC = () => {
     const dispatch = useAppDispatch();
-    const [changeErr, setChangeErr] = useState('')
+    const [changeErr] = useState('')
 
     const formik = useFormik({
         initialValues: {
@@ -43,45 +45,46 @@ const ChangePassword: React.FC = () => {
         }
     })
 
+    // errors will be strings if they exist. Only booleans are needed
     const oldPwErr = formik.touched.oldPass && formik.errors.oldPass ? true : undefined
     const newPwErr = formik.touched.newPass && formik.errors.newPass ? true : undefined
     const confPwErr = formik.touched.confPass && formik.errors.confPass ? true : undefined
 
     return (
-        <div className="text-center px-8 py-11 w-40rem rounded-3xl bg-white-ish border-0">
+        <ModalContent>
             <form className="w-full flex flex-col gap-4" onSubmit={formik.handleSubmit}>
+
                 {/* title */}
                 <FormGroup>
                     <Title2 className="text-center">Change Password</Title2>
-                    {changeErr && <ErrorText>{changeErr}</ErrorText>}
                 </FormGroup>
 
                 {/* oldPass */}
                 <FormGroup>
                     <InputLabel htmlFor="oldPass">Old Password</InputLabel>
-                    <TextInput {...formik.getFieldProps('oldPass')} id="oldPass" $hasError={oldPwErr} $border name="oldPass" type="password" />
-                    {oldPwErr ? (<ErrorText>{formik.errors.oldPass}</ErrorText>) : null}
+                    <TextInput className="block" {...formik.getFieldProps('oldPass')} id="oldPass" $hasError={oldPwErr} $border name="oldPass" type="password" />
+                    {oldPwErr && <ErrorText>{formik.errors.oldPass}</ErrorText>}
                 </FormGroup>
 
                 {/* newPass */}
                 <FormGroup>
                     <InputLabel htmlFor="newPass">New Password</InputLabel>
-                    <TextInput {...formik.getFieldProps('newPass')} id="newPass" $hasError={newPwErr} $border name="newPass" type="password" />
-                    {newPwErr ? (<ErrorText>{formik.errors.newPass}</ErrorText>) : null}
+                    <TextInput className="block" {...formik.getFieldProps('newPass')} id="newPass" $hasError={newPwErr} $border name="newPass" type="password" />
+                    {newPwErr && <ErrorText>{formik.errors.newPass}</ErrorText>}
                 </FormGroup>
 
                 {/* confPass */}
                 <FormGroup>
                     <InputLabel htmlFor="confPass">Confirm New Password</InputLabel>
-                    <TextInput {...formik.getFieldProps('confPass')} id="confPass" $hasError={confPwErr} $border name="confPass" type="password" />
-                    {confPwErr ? (<ErrorText>{formik.errors.confPass}</ErrorText>) : null}
+                    <TextInput className="block" {...formik.getFieldProps('confPass')} id="confPass" $hasError={confPwErr} $border name="confPass" type="password" />
+                    {confPwErr && <ErrorText>{formik.errors.confPass}</ErrorText>}
                 </FormGroup>
                 <div className="px-32 mt-4">
                     <Button type="submit" >Change Password</Button>
                 </div>
             </form>
-            <Headline className="text-basic-gray underline cursor-pointer mt-10">Forgot Password?</Headline>
-        </div>
+            <Headline onClick={() => dispatch(setFullModal(''))} className="text-basic-gray underline cursor-pointer mt-10"><Link to="/reset/send-email">Forgot Password?</Link></Headline>
+        </ModalContent>
     )
 }
 export default ChangePassword;

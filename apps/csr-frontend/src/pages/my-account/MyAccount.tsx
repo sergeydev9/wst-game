@@ -45,7 +45,7 @@ const MyAccount: React.FC = () => {
         }
     })
 
-    const logOutClick = (e: React.MouseEvent) => {
+    const logOutClick = () => {
         dispatch(logout())
         dispatch(setFullModal(''))
         history.push('/');

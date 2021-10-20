@@ -31,7 +31,7 @@ export { default as Login } from './auth/Login';
 export { default as DeckSelection } from './decks/DeckSelection';
 export { default as DeckDetailsModal } from './modal/full-screen-modals/DeckDetailsModal';
 export { default as CreateAccount } from './auth/CreateAccount';
-export { default as ChangePassword } from './change-password/ChangePassword'; // The modal in the 'My Account' secion
+export { default as ChangePassword } from './modal/full-screen-modals/ChangePassword'; // The modal in the 'My Account' secion
 export { default as resetPasswordReducer } from './reset-password/resetPasswordSlice'; // Reset via email code
 export { default as cartReducer } from './cart/cartSlice';
 export { default as Loading } from './loading/Loading';
