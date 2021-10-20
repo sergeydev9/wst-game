@@ -1,6 +1,6 @@
-import {pool} from './db'
+import {pool, jobs} from './db'
 import {Notification, PoolClient} from "pg";
-import { logger } from '@whosaidtrue/logger';
+import {logger} from '@whosaidtrue/logger';
 
 class Worker {
     private readonly POLL_MAX_MS = 60 * 1000; // 1 min
@@ -39,53 +39,41 @@ class Worker {
     private async attemptNextJob() {
         logger.trace("attemptNextJob()");
 
-        const client = await pool.connect();
         let status = 'empty';
         let scheduledAt: number;
 
-        try {
-            // start transaction
-            let commit = false;
-            await client.query('BEGIN');
+        // query next job
+        const job = await jobs.pollJob();
 
-            // query next job
-            const { rows } = await client.query(`
-                SELECT * FROM jobs WHERE status = 'pending' ORDER BY scheduled_at 
-                FOR UPDATE SKIP LOCKED 
-                LIMIT 1`);
-            const job = rows[0];
+        // have job?
+        if (job) {
+            status = 'pending';
+            scheduledAt = job.scheduled_at.getTime();
 
-            // have job?
-            if (job) {
-                status = 'pending';
-                scheduledAt = new Date(job.scheduled_at).getTime();
-
-                // can execute?
-                if (scheduledAt <= Date.now()) {
+            // can execute?
+            if (scheduledAt <= Date.now()) {
+                try {
                     logger.info(`executing job ${job.id}, ${job.type}`);
-                    await client.query(`UPDATE jobs SET started_at = NOW() WHERE id = ${job.id}`);
+                    await job.startJob();
 
-                    try {
-                        // TODO: run worker task
-                        await client.query(`UPDATE jobs SET status = 'completed', completed_at = NOW() WHERE id = ${job.id}`);
-                        status = 'completed';
-                    } catch (e) {
-                        // TODO: add retries
-                        await client.query(`UPDATE jobs SET status = 'failed', completed_at = NOW() WHERE id = ${job.id}`);
-                        status = 'failed';
-                    }
-                    commit = true;
+                    // TODO: run worker task
+
+                    // TODO: add retries
+
+                    // finish with completed or failed
+                    await job.finishJob('completed');
+                    status = 'completed';
+                } catch (e) {
+                    logger.error(`executing job failed ${job.id}, ${job.type}`, e);
+                    await job.abortJob();
+                    status = 'error';
                 }
+            } else {
+                logger.info(`not executing job too early ${job.id}, ${job.type}`);
+                await job.abortJob();
             }
-
-            await client.query(commit ? 'COMMIT' : 'ROLLBACK');
-        } catch (e) {
-            logger.error('attemptNextJob() failed', e);
-            await client.query('ROLLBACK');
-            status = 'error';
-        } finally {
-            client.release()
         }
+
 
         switch (status) {
 
@@ -105,7 +93,8 @@ class Worker {
                 this.exponentialBackoff++;
                 const timeout = Math.min(50 * 2 ** this.exponentialBackoff, this.POLL_MAX_MS);
                 this.scheduleNextPoll(Date.now() + timeout);
-            } break;
+            }
+                break;
             default:
                 logger.error(`Unhandled status ${status}`);
                 break;

@@ -1,4 +1,5 @@
 import { Pool } from 'pg'
+import { Jobs } from '@whosaidtrue/data';
 
 const pool = new Pool({
     user: process.env.POSTGRES_USER,
@@ -8,7 +9,6 @@ const pool = new Pool({
     port: 5432
 });
 
-//TODO
-// const jobs = new Jobs(pool);
+const jobs = new Jobs(pool);
 
-export { pool };
+export { pool, jobs };

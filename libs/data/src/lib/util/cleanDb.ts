@@ -28,6 +28,7 @@ export async function cleanDb(pool: Pool) {
         pool.query(`TRUNCATE game_answers CASCADE`),
         pool.query(`TRUNCATE generated_names CASCADE`),
         pool.query(`TRUNCATE reset_codes CASCADE`),
+        pool.query(`TRUNCATE jobs CASCADE`),
     ];
 
     return Promise.all(promises);
