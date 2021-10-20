@@ -1,9 +1,9 @@
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
 import { idQuery, appRating, questionRating } from '@whosaidtrue/validation';
 import { Request, Response, Router } from 'express';
-import { logger, logError } from '@whosaidtrue/logger';
+import { logError } from '@whosaidtrue/logger';
 import { passport } from '@whosaidtrue/middleware';
-import { TokenPayload } from '@whosaidtrue/api-interfaces';
+import { TokenPayload, CheckRatingResponse } from '@whosaidtrue/api-interfaces';
 import { questionRatings, appRatings } from '../../db';
 
 const router = Router();
@@ -39,7 +39,9 @@ router.post('/question', [...questionRating], passport.authenticate('jwt', { ses
     }
 })
 
-
+/**
+ * Check if a user has rated the app
+ */
 router.get('/app', passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
     const { id } = req.user as TokenPayload;
 
@@ -47,7 +49,7 @@ router.get('/app', passport.authenticate('jwt', { session: false }), async (req:
         const { rowCount } = await appRatings.getByUserId(id);
 
         if (rowCount) {
-            res.status(200).json({ hasRated: true });
+            res.status(200).json({ hasRated: true } as CheckRatingResponse);
         } else {
             res.status(200).json({ hasRated: false });
         }
@@ -59,6 +61,9 @@ router.get('/app', passport.authenticate('jwt', { session: false }), async (req:
 
 })
 
+/**
+ * Submit a new rating. Returns 500 is user has already submitted a rating
+ */
 router.post('/app', [...appRating], passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
     const { id } = req.user as TokenPayload;
     const { rating } = req.body;

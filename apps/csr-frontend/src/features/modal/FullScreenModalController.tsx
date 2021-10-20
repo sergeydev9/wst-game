@@ -22,6 +22,9 @@ const ConfirmRemovePlayerModal = lazy(() => import('./full-screen-modals/Confirm
 const GameOptionsModal = lazy(() => import('./full-screen-modals/GameOptionsModal'));
 const ConfirmTakeOverReading = lazy(() => import('./full-screen-modals/ConfirmTakeOverReading'));
 const ConfirmSkipQuestion = lazy(() => import('./full-screen-modals/ConfirmSkipQuestion'));
+const AlreadyReceivedCredits = lazy(() => import('./full-screen-modals/AlreadyReceivedCredit'));
+const CheckYourEmail = lazy(() => import('./full-screen-modals/CheckYourEmail'));
+const SubmitQuestion = lazy(() => import('./full-screen-modals/SubmitQuestion'));
 
 /**
  * All full screen modals render from here. This makes it possible to
@@ -129,16 +132,6 @@ const FullScreenModalController = () => {
                 </Suspense>
             </Modal>}
 
-
-            {/* Confirm Leave Game TODO make this */}
-            {/* {currentModal === 'confirmLeaveGame' && <Modal isOpen={currentModal === 'confirmLeaveGame'} onRequestClose={close}>
-                <NoFlexBox>
-                    <Suspense fallback={<Loading />}>
-                        <ConfirmEndGameModal />
-                    </Suspense>
-                </NoFlexBox>
-            </Modal>} */}
-
             {/* Confirm End Game */}
             {currentModal === 'confirmEndGame' && <Modal isOpen={currentModal === 'confirmEndGame'} onRequestClose={close}>
                 <Suspense fallback={<Loading />}>
@@ -192,6 +185,27 @@ const FullScreenModalController = () => {
             {currentModal === 'announceWinner' && <Modal isOpen={currentModal === 'announceWinner'} onRequestClose={close}>
                 <Suspense fallback={<Loading />}>
                     <WinnerAnnouncement />
+                </Suspense>
+            </Modal>}
+
+            {/* Check your email */}
+            {currentModal === 'checkYourEmail' && <Modal isOpen={currentModal === 'checkYourEmail'} onRequestClose={close}>
+                <Suspense fallback={<Loading />}>
+                    <CheckYourEmail />
+                </Suspense>
+            </Modal>}
+
+            {/* Already Received Credit */}
+            {currentModal === 'freeCreditEmailInUseError' && <Modal isOpen={currentModal === 'freeCreditEmailInUseError'} onRequestClose={close}>
+                <Suspense fallback={<Loading />}>
+                    <AlreadyReceivedCredits />
+                </Suspense>
+            </Modal>}
+
+            {/* Submit question */}
+            {currentModal === 'submitQuestion' && <Modal isOpen={currentModal === 'submitQuestion'} onRequestClose={close}>
+                <Suspense fallback={<Loading />}>
+                    <SubmitQuestion />
                 </Suspense>
             </Modal>}
         </>

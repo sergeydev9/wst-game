@@ -4,7 +4,7 @@ import { FaRegThumbsDown } from '@react-icons/all-files/fa/FaRegThumbsDown'
 import { FaRegThumbsUp } from '@react-icons/all-files/fa/FaRegThumbsUp';
 import { useAppDispatch } from '../../app/hooks';
 import { UserRating } from '@whosaidtrue/app-interfaces';
-import { setHasRatedApp } from '../game/gameSlice';
+import { setHasRatedApp } from './ratingsSlice';
 import { showSuccess, showError } from '../modal/modalSlice';
 import { api } from '../../api';
 

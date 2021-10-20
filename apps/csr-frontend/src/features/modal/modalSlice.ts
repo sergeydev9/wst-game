@@ -23,6 +23,9 @@ export type FullModal = "createAccount"
     | "confirmSkipQuestion"
     | "confirmTakeOverReading"
     | "announceWinner"
+    | "freeCreditEmailInUseError"
+    | "checkYourEmail"
+    | "submitQuestion"
     | ""
 
 export type MessageType = ''
@@ -32,6 +35,7 @@ export type MessageType = ''
     | "playerJoined"
     | "playerLeft"
     | "playerRemoved"
+    | "scoreToolTip"
 
 
 export interface ModalState {
@@ -39,6 +43,8 @@ export interface ModalState {
     messageType: MessageType;
     messageContent: string;
     isPersistent: boolean;
+    scoreTooltipDismissed: boolean; // sets whether user will see it again next question
+    scoreTooltipShowing: boolean; // sets whether should be showing right now
 
 }
 
@@ -46,7 +52,9 @@ export const initialState: ModalState = {
     fullModal: '',
     messageType: '',
     messageContent: '',
-    isPersistent: false
+    isPersistent: false,
+    scoreTooltipDismissed: false,
+    scoreTooltipShowing: false
 }
 
 export const modalSlice = createSlice({
@@ -95,6 +103,16 @@ export const modalSlice = createSlice({
             state.messageType = 'playerRemoved';
             state.messageContent = `${action.payload} has been removed from the game`;
             state.isPersistent = false;
+        },
+        setShowScoreTooltip: (state, action) => {
+            state.scoreTooltipShowing = action.payload;
+        },
+        dismissScoreTooltip: (state) => {
+            state.scoreTooltipDismissed = true;
+            state.scoreTooltipShowing = false;
+        },
+        clearScoreTooltipDismissed: (state) => { // so that the tooltip will show again next game
+            state.scoreTooltipDismissed = false;
         }
     }
 })
@@ -108,7 +126,10 @@ export const {
     showError,
     showPlayerJoined,
     showPlayerLeft,
-    showPlayerRemoved
+    showPlayerRemoved,
+    setShowScoreTooltip,
+    dismissScoreTooltip,
+    clearScoreTooltipDismissed,
 } = modalSlice.actions;
 
 // selectors
@@ -116,5 +137,7 @@ export const selectFullModal = (state: RootState) => state.modals.fullModal;
 export const selectMessageType = (state: RootState) => state.modals.messageType;
 export const selectMessageContent = (state: RootState) => state.modals.messageContent;
 export const selectIsPersistent = (state: RootState) => state.modals.isPersistent;
+export const selectScoreTooltipDismissed = (state: RootState) => state.modals.scoreTooltipDismissed;
+export const selectScoreTooltipShowing = (state: RootState) => state.modals.scoreTooltipShowing;
 
 export default modalSlice.reducer;

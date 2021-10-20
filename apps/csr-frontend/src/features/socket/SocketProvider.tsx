@@ -11,6 +11,7 @@ import {
     showSuccess,
     selectPlayerId,
     showError,
+    isLoggedIn,
 } from '..';
 import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal } from "../modal/modalSlice";
 import {
@@ -59,6 +60,7 @@ export const SocketProvider: React.FC = ({ children }) => {
     const playerName = useAppSelector(selectPlayerName)
     const accessCode = useAppSelector(selectAccessCode);
     const token = useAppSelector(selectGameToken);
+    const loggedIn = useAppSelector(isLoggedIn);
 
     useEffect(() => {
 
@@ -167,8 +169,10 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             // updates question state
             connection.on(types.SET_QUESTION_STATE, (message: payloads.SetQuestionState) => {
-                dispatch(setCurrentQuestion(message))
-                dispatch(checkHasRatedQuestion(message.gameQuestionId))
+                dispatch(setCurrentQuestion(message));
+
+                // if user is logged in, check if they have rated the new question
+                loggedIn && dispatch(checkHasRatedQuestion(message.gameQuestionId))
                 if (playerStatus === 'lobby' && message.status === 'question') {
                     dispatch(setPlayerStatus('inGame'))
                 }
@@ -226,7 +230,7 @@ export const SocketProvider: React.FC = ({ children }) => {
         }
 
 
-    }, [history, token, setSocket, accessCode, playerId, dispatch, gameStatus, socket, location, playerName, playerStatus])
+    }, [history, token, setSocket, accessCode, playerId, dispatch, gameStatus, socket, location, playerName, playerStatus, loggedIn])
 
 
     // Send a message to the socket server, and passes acknowledgement to optional callback

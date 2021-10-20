@@ -12,7 +12,11 @@ import {
     clearCurrentQuestion,
     selectFullModal,
     useSocket,
-    FinalResults
+    FinalResults,
+    isLoggedIn,
+    checkHasRatedApp,
+    selectAppRatingChecked,
+    clearScoreTooltipDismissed
 } from '../../features';
 
 const Play: React.FC = () => {
@@ -23,6 +27,8 @@ const Play: React.FC = () => {
     const isHost = useAppSelector(selectIsHost);
     const gameStatus = useAppSelector(selectGameStatus);
     const modal = useAppSelector(selectFullModal)
+    const loggedIn = useAppSelector(isLoggedIn);
+    const ratingChecked = useAppSelector(selectAppRatingChecked);
 
     // memoize to prevent re-rendering every time modal changes
     const shouldBlock = useMemo(() => {
@@ -31,8 +37,14 @@ const Play: React.FC = () => {
 
     useEffect(() => {
 
+        // if user is logged in, and a request hasn't been made to check if they have rated the app
+        // send the request.
+        if (loggedIn && !ratingChecked) {
+            dispatch(checkHasRatedApp());
+        }
+
         // show confirmation dialog and clear game state if confirmed
-        const unblock = history.block((...args: any[]) => {
+        const unblock = history.block((_) => {
 
             // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
             // has to be used here to prevent compiler errors
@@ -44,11 +56,13 @@ const Play: React.FC = () => {
                 if (window.confirm(confirmMessage)) {
                     dispatch(clearGame());
                     dispatch(clearCurrentQuestion());
+
                     return true;
                 }
 
                 return false
             }
+            dispatch(clearScoreTooltipDismissed());
             return true
         })
 
@@ -60,7 +74,7 @@ const Play: React.FC = () => {
             }
             unblock();
         }
-    }, [dispatch, isHost, history, setSocket, socket, shouldBlock])
+    }, [dispatch, isHost, history, setSocket, socket, shouldBlock, loggedIn, ratingChecked])
 
     return (
         <>

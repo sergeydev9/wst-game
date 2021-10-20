@@ -24,7 +24,7 @@ import { selectHasRatedQuestion, showError, useSocket } from "..";
 import { payloads, types } from "@whosaidtrue/api-interfaces";
 import QuestionResults from './QuestionResults';
 import { isLoggedIn } from "../auth/authSlice";
-import RateQuestion from "./RateQuestion";
+import RateQuestion from "../ratings/RateQuestion";
 
 /**
  * This component controls what the user sees over the course

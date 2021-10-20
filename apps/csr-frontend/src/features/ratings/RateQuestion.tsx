@@ -1,7 +1,7 @@
 import { SubmitRating } from '@whosaidtrue/ui';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { UserRating } from '@whosaidtrue/app-interfaces';
-import { selectQuestionId, setHasRated } from './questionSlice';
+import { selectQuestionId, setHasRated } from '../question/questionSlice';
 import { showSuccess, showError } from '../modal/modalSlice';
 import { api } from '../../api';
 
@@ -10,7 +10,7 @@ const RateQuestion: React.FC = () => {
     const questionId = useAppSelector(selectQuestionId)
 
     const submitHandler = (rating: UserRating) => {
-        api.post(`ratings/question`, { questionId, rating }).then(response => {
+        api.post(`ratings/question`, { questionId, rating }).then(_ => {
             dispatch(showSuccess('Thanks for the feedback!'))
             dispatch(setHasRated(true))
         }).catch(err => {

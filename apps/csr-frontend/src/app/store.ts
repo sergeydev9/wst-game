@@ -9,8 +9,8 @@ import {
     cartReducer,
     questionReducer,
     hostReducer,
-    initialGameState,
-    initialQuestionState
+    freeCreditsReducer,
+    ratingsReducer
 } from "../features";
 import { enhancer } from "addon-redux";
 import jwt_decode, { JwtPayload } from "jwt-decode";
@@ -53,7 +53,9 @@ export const store = configureStore({
         resetPassword: resetPasswordReducer,
         cart: cartReducer,
         question: questionReducer,
-        host: hostReducer
+        host: hostReducer,
+        freeCredits: freeCreditsReducer,
+        ratings: ratingsReducer
     },
     preloadedState: persistedState,
     enhancers
@@ -69,8 +71,8 @@ if (window.Cypress) {
 let storeTimer: ReturnType<typeof setTimeout>;
 store.subscribe(() => {
     clearTimeout(storeTimer)
-    const { auth, game, question } = store.getState()
-    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game, question })), 50)
+    const { auth, game, question, freeCredits, ratings, modals } = store.getState()
+    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game, question, freeCredits, ratings, modals })), 50)
 })
 
 export type AppDispatch = typeof store.dispatch;

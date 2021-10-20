@@ -20,7 +20,8 @@ export {
   selectFullModal,
   selectMessageContent,
   selectMessageType,
-  selectIsPersistent
+  selectIsPersistent,
+  clearScoreTooltipDismissed
 } from './modal/modalSlice';
 export { default as gameReducer } from './game/gameSlice';
 export { default as Lobby } from './game/Lobby';
@@ -43,6 +44,11 @@ export { default as SocketProvider } from './socket/SocketProvider';
 export { default as HostActions } from './host/HostActions';
 export { default as Question } from './question/Question';
 export { default as FinalResults } from './question/FinalResults';
+export { default as freeCreditsReducer } from './free-credit-requests/freeCreditsSlice';
+export { default as ratingsReducer } from './ratings/ratingsSlice';
+export { default as ScoreTooltip } from './modal/ScoreTooltip';
 export * from './choose-name/chooseNameSlice';
 export * from './question/questionSlice';
 export * from './game/gameSlice';
+export * from './free-credit-requests/freeCreditsSlice';
+export * from './ratings/ratingsSlice';

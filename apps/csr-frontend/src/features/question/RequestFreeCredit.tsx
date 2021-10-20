@@ -12,6 +12,7 @@ import {
 } from "@whosaidtrue/ui";
 import { api } from '../../api';
 import { setFullModal, showError } from '../modal/modalSlice';
+import { requestCreditsForEmail } from '..';
 
 const RequestFreeCredit: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -27,11 +28,12 @@ const RequestFreeCredit: React.FC = () => {
         onSubmit: async (values) => {
             const { email } = values
 
-            return api.post('/user/free-credit-signup', { email }).then(response => {
+            return api.post('/user/free-credit-signup', { email }).then(_ => {
                 // on success, show "check your email modal"
                 dispatch(setFullModal('checkYourEmail'))
+                dispatch(requestCreditsForEmail(email))
             }).catch(e => {
-                if (e.response.data === 'email already in use') {
+                if (e.response.data === 'email has already received free credits') {
                     dispatch(setFullModal('freeCreditEmailInUseError'))
                 } else {
                     dispatch(showError('Oops, something went '))

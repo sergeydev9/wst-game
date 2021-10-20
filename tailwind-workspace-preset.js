@@ -110,7 +110,7 @@ module.exports = {
                 }
             },
             animation: {
-                grow: 'grow 75ms ease-in-out',
+                grow: 'grow 400ms ease-in forwards',
                 shrink: 'shrink 2s ease-in-out'
 
             },
