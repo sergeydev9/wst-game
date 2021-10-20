@@ -1,6 +1,7 @@
 import {pool, jobs} from './db'
 import {Notification, PoolClient} from "pg";
 import {logger} from '@whosaidtrue/logger';
+import {createTask} from "./task";
 
 class Worker {
     private readonly POLL_MAX_MS = 60 * 1000; // 1 min
@@ -47,43 +48,44 @@ class Worker {
 
         // have job?
         if (job) {
-            status = 'pending';
-            scheduledAt = job.scheduled_at.getTime();
 
             // can execute?
-            if (scheduledAt <= Date.now()) {
+            if (job.scheduled_at.getTime() <= Date.now()) {
+
                 try {
                     logger.info(`executing job ${job.id}, ${job.type}`);
                     await job.startJob();
 
-                    // TODO: run worker task
+                    const result = await createTask(job).execute();
 
-                    // TODO: add retries
+                    // TODO: add retries?
 
                     // finish with completed or failed
-                    await job.finishJob('completed');
-                    status = 'completed';
+                    await job.finishJob(result);
+                    status = 'done';
                 } catch (e) {
                     logger.error(`executing job failed ${job.id}, ${job.type}`, e);
                     await job.abortJob();
                     status = 'error';
                 }
+
             } else {
                 logger.info(`not executing job too early ${job.id}, ${job.type}`);
                 await job.abortJob();
+                status = 'scheduled';
+                scheduledAt = job.scheduled_at.getTime();
             }
         }
 
 
         switch (status) {
 
-            case 'completed':
-            case 'failed':
+            case 'done':
                 this.exponentialBackoff = 0;
                 this.scheduleNextPoll();
                 break;
 
-            case 'pending':
+            case 'scheduled':
                 this.exponentialBackoff = 0;
                 this.scheduleNextPoll(scheduledAt);
                 break;
