@@ -258,7 +258,7 @@ export interface Job {
 
 export interface JobTransaction extends Job {
     startJob();
-    finishJob(status?: JobStatus);
+    finishJob(status?: 'completed' | 'failed');
     abortJob();
 }
 

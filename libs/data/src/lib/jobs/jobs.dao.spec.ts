@@ -177,6 +177,110 @@ describe('Jobs', () => {
         })
     })
 
+    describe('listen/notify', () => {
+
+        it('should notify on insert', async () => {
+            const client = await jobs.pool.connect();
+            try {
+                const messages = [];
+                client.on('notification', (msg) => messages.push(msg));
+                await client.query('LISTEN jobs');
+
+                await jobs.insertOne('type', 'data');
+                await jobs.insertOne('type', 'data');
+
+                await delay(100);
+                expect(messages.length).toEqual(2);
+            } finally {
+                client.release();
+            }
+        })
+
+        it('should only notify pending tasks', async () => {
+            const client = await jobs.pool.connect();
+            try {
+                const messages = [];
+                client.on('notification', (msg) => messages.push(msg));
+                await client.query('LISTEN jobs');
+
+                const now = new Date();
+                await jobs.insertOne('completed', 'data', now, 'completed');
+                await jobs.insertOne('failed', 'data', now, 'failed');
+                await jobs.insertOne('canceled', 'data', now, 'canceled');
+
+                await delay(100);
+                expect(messages.length).toEqual(0);
+            } finally {
+                client.release();
+            }
+        })
+
+        it('should notify on reschedule', async () => {
+            const client = await jobs.pool.connect();
+            try {
+                const messages = [];
+                client.on('notification', (msg) => messages.push(msg));
+                await client.query('LISTEN jobs');
+
+                const job = (await jobs.insertOne('type', 'data')).rows[0];
+                await jobs.rescheduleJob(job.id, new Date(Date.now() + 1000));
+
+                await delay(100);
+                expect(messages.length).toEqual(2);
+            } finally {
+                client.release();
+            }
+        })
+
+        it('should not notify on reschedule if completed', async () => {
+            const client = await jobs.pool.connect();
+            try {
+                const messages = [];
+                client.on('notification', (msg) => messages.push(msg));
+                await client.query('LISTEN jobs');
+
+                const job = (await jobs.insertOne('type', 'data', new Date(), 'completed')).rows[0];
+                await jobs.rescheduleJob(job.id, new Date(Date.now() + 1000));
+
+                await delay(100);
+                expect(messages.length).toEqual(0);
+            } finally {
+                client.release();
+            }
+        })
+
+        it('should not notify throughout job lifecycle', async () => {
+            const client = await jobs.pool.connect();
+            try {
+                await jobs.insertOne('type', 'data');
+                await jobs.insertOne('type', 'data');
+
+                const messages = [];
+                client.on('notification', (msg) => messages.push(msg));
+                await client.query('LISTEN jobs');
+
+                // scenario 1: abort
+                const s1 = await jobs.pollJob();
+                await s1.abortJob();
+
+                // scenario 2: success
+                const s2 = await jobs.pollJob();
+                await s2.startJob();
+                await s2.finishJob('completed');
+
+                // scenario 3: fail
+                const s3 = await jobs.pollJob();
+                await s3.startJob();
+                await s3.finishJob('failed');
+
+                await delay(100);
+                expect(messages.length).toEqual(0);
+            } finally {
+                client.release();
+            }
+        })
+    })
+
 })
 
 function expectJobsEqual(actual: Job, expected: Job) {
@@ -189,4 +293,8 @@ function expectJobsEqual(actual: Job, expected: Job) {
     expect(actual.scheduled_at).toEqual(expected.scheduled_at);
     expect(actual.created_at).toEqual(expected.created_at);
     expect(actual.updated_at).toEqual(expected.updated_at);
+}
+
+async function delay(ms: number) {
+    await new Promise((r) => setTimeout(r, ms));
 }

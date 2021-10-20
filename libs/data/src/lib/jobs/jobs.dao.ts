@@ -17,6 +17,15 @@ class Jobs extends Dao {
         return this.pool.query(query);
     }
 
+    public rescheduleJob(jobId: number, scheduledAt = new Date()): Promise<QueryResult<Job>> {
+        const query = {
+            text: `UPDATE jobs SET scheduled_at = $1 WHERE id = $2 RETURNING *`,
+            values: [scheduledAt, jobId]
+        };
+
+        return this.pool.query(query);
+    }
+
     /**
      * Query the next job to execute. The returned job must call finishJob() or abortJob() to end the transaction.
      *

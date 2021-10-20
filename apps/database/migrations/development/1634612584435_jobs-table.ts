@@ -35,7 +35,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     DECLARE
         channel TEXT := TG_ARGV[0];
     BEGIN
-        IF (NEW.status = 'pending') THEN
+        IF NEW.status = 'pending' AND (
+            NEW.status IS DISTINCT FROM OLD.status
+            OR NEW.scheduled_at IS DISTINCT FROM OLD.scheduled_at )
+        THEN
            PERFORM pg_notify(channel, row_to_json(NEW)::text);
         END IF;
 
