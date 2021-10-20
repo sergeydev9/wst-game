@@ -32,7 +32,10 @@ class Worker {
         });
 
         await this.notifyClient.query("LISTEN jobs");
-        logger.info("LISTEN jobs");
+        logger.info(`=================================`);
+        logger.info(`======= ENV: ${process.env.NODE_ENV} =========`);
+        logger.info(`🚀 Worker listening on table jobs`);
+        logger.info(`=================================`);
 
         this.scheduleNextPoll();
     };
