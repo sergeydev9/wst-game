@@ -2,12 +2,21 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Title2, Headline, Divider } from "@whosaidtrue/ui";
 import { Deck } from '@whosaidtrue/app-interfaces';
-
 import { useAppSelector } from "../../app/hooks";
-
 import { isLoggedIn } from '../auth/authSlice';
-import { selectFilteredNotOwned, selectFilteredOwned, selectOwned, selectNotOwned, selectShowAll, selectSfwOnly } from "./deckSlice";
-
+import {
+    selectOwned,
+    selectNotOwned,
+    selectShowAll,
+    selectSfwOnly,
+    selectShouldApplyFilters,
+    movieFilteredSFWOwned,
+    movieFilteredSFWNotOwned,
+    sfwOwned,
+    sfwNotOwned,
+    movieFilteredOwned,
+    movieFilteredNotOwned
+} from "./deckSlice";
 import DeckCardSet from './DeckCardSet'
 
 const DeckList: React.FC = () => {
@@ -15,29 +24,45 @@ const DeckList: React.FC = () => {
     const isSfwOnly = useAppSelector(selectSfwOnly);
     const allOwned = useAppSelector(selectOwned);
     const allNotOwned = useAppSelector(selectNotOwned);
-    const filteredOwned = useAppSelector(selectFilteredOwned);
-    const filteredNotOwned = useAppSelector(selectFilteredNotOwned);
     const loggedIn = useAppSelector(isLoggedIn);
+    const shouldApply = useAppSelector(selectShouldApplyFilters);
+    const filteredOwned = useAppSelector(movieFilteredOwned);
+    const filteredNotOwned = useAppSelector(movieFilteredNotOwned)
+    const sfwFilteredOwned = useAppSelector(movieFilteredSFWOwned);
+    const sfwFiltredNotOwned = useAppSelector(movieFilteredSFWNotOwned);
+    const sfwOwnedNotFiltered = useAppSelector(sfwOwned);
+    const sfwNotOwnedNotFiltered = useAppSelector(sfwNotOwned);
+
 
     const [owned, setOwned] = useState<Deck[]>([]);
     const [notOwned, setNotOwned] = useState<Deck[]>([])
 
     useEffect(() => {
+        // if show all button is pressed.
         if (isShowAll) {
             setOwned(allOwned);
             setNotOwned(allNotOwned)
         } else {
+            // if sfw button is pressed, show only sfw decks
             if (isSfwOnly) {
-                const own = filteredOwned.filter(d => d.sfw)
-                const nOwn = filteredNotOwned.filter(d => d.sfw)
-                setOwned(own);
-                setNotOwned(nOwn);
+
+                // if movie filters are selected
+                if (shouldApply) {
+                    setOwned(sfwFilteredOwned);
+                    setNotOwned(sfwFiltredNotOwned);
+                } else {
+                    // if sfw is the only selected filter
+                    setOwned(sfwOwnedNotFiltered);
+                    setNotOwned(sfwNotOwnedNotFiltered);
+                }
+
             } else {
+                // apply only movie rating filters if not sfw only
                 setOwned(filteredOwned);
                 setNotOwned(filteredNotOwned);
             }
         }
-    }, [isShowAll, allOwned, allNotOwned, filteredOwned, filteredNotOwned, isSfwOnly])
+    }, [isShowAll, shouldApply, sfwFilteredOwned, sfwFiltredNotOwned, sfwNotOwnedNotFiltered, sfwOwnedNotFiltered, allOwned, allNotOwned, filteredOwned, filteredNotOwned, isSfwOnly])
 
     return (
         <>

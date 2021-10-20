@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
+import { games } from "./db";
 import { logger, logIncoming, logOutgoing, logError } from '@whosaidtrue/logger';
 import { playerValueString } from './util';
 import { pubClient } from "./redis";
@@ -8,8 +9,8 @@ import startGame from "./listener-helpers/startGame";
 import submitAnswerPart1 from "./listener-helpers/submitAnswerPart1";
 import submitAnswerPart2 from "./listener-helpers/submitAnswerPart2";
 import saveScores from "./listener-helpers/saveScores";
-import { games } from "./db";
 import nextQuestion from "./listener-helpers/nextQuestion";
+import endGame from './listener-helpers/endGame';
 
 
 const registerListeners = (socket: Socket, io: Server) => {
@@ -130,7 +131,6 @@ const registerListeners = (socket: Socket, io: Server) => {
 
     if (socket.isHost) {
 
-
         /**
          * START GAME
          */
@@ -162,36 +162,19 @@ const registerListeners = (socket: Socket, io: Server) => {
         socket.on(types.END_GAME, async (ack) => {
             logIncoming(types.END_GAME, {}, source);
 
-            // use game status as a sort of lock to deduplicate requests
-            const status = await pubClient.get(gameStatus);
-
-            // if status is anything other than 'inProgress', do nothing.
-            if (status !== 'inProgress') return;
-
             try {
+                // calculate results
+                const result = await endGame(socket);
 
-                const [, questionIdResult] = await pubClient
-                    .pipeline()
-                    .set(gameStatus, 'calculatingScores')
-                    .get(`${currentQuestion}:id`)
-                    .exec()
+                if (result) {
+                    // send results
+                    sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd)
 
-                const currentQuestionId = questionIdResult[1];
-                const result = await saveScores(currentQuestionId, socket.gameId);
+                    // acknowledge complete
+                    ack('ok')
+                }
 
-                // end game in DB
-                await games.endGame(socket.gameId);
-
-                await pubClient.pipeline()
-                    .set(latestResults, JSON.stringify(result), 'EX', ONE_DAY)
-                    .set(gameStatus, 'finished')
-                    .exec()
-
-                // send results
-                sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd)
-
-                // acknowledge complete
-                ack('ok')
+                ack('game not in progress')
             } catch (e) {
                 logError('Error while ending game', e);
                 await pubClient.set(gameStatus, 'inProgress'); // reset so request can be sent again
