@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { passwordValidationObject } from '@whosaidtrue/util';
@@ -17,10 +16,8 @@ import { useAppDispatch } from '../../../app/hooks';
 import { setFullModal, showError } from '../modalSlice';
 import { Link } from 'react-router-dom';
 
-
 const ChangePassword: React.FC = () => {
     const dispatch = useAppDispatch();
-    const [changeErr] = useState('')
 
     const formik = useFormik({
         initialValues: {
@@ -83,7 +80,13 @@ const ChangePassword: React.FC = () => {
                     <Button type="submit" >Change Password</Button>
                 </div>
             </form>
-            <Headline onClick={() => dispatch(setFullModal(''))} className="text-basic-gray underline cursor-pointer mt-10"><Link to="/reset/send-email">Forgot Password?</Link></Headline>
+
+            {/* forgot password link */}
+            <Headline
+                onClick={() => dispatch(setFullModal(''))}
+                className="text-basic-gray underline cursor-pointer mt-10">
+                <Link to="/reset/send-email">Forgot Password?</Link>
+            </Headline>
         </ModalContent>
     )
 }

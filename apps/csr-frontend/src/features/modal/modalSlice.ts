@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
-
 export type FullModal = "createAccount"
     | "preGameAuth"
     | "login"
@@ -114,7 +113,7 @@ export const modalSlice = createSlice({
         clearScoreTooltipDismissed: (state) => { // so that the tooltip will show again next game
             state.scoreTooltipDismissed = false;
         }
-    }
+    },
 })
 
 // actions

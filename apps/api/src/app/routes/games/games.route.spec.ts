@@ -158,14 +158,13 @@ describe('games routes', () => {
             mockedGames.join.mockResolvedValue({
                 playerId: 1,
                 playerName: 'name',
-                players: [],
                 gameId: 2,
                 access_code: '12345',
                 totalQuestions: 9,
                 deck: {} as Deck,
                 status: 'finished',
                 isHost: false,
-                currentHostName: 'hostname',
+                hostName: 'hostname',
                 currentQuestionIndex: 1
             })
 

@@ -58,9 +58,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
 
                 // login
                 dispatch(login({ ...user, token }))
-
-                // call optional callback
-                onSuccess()
+            }).then(() => {
+                onSuccess();
             }).catch(e => {
                 const { status, data } = e.response
                 if ((status === 422 || status === 401) && data) {

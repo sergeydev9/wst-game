@@ -62,7 +62,19 @@ const DeckList: React.FC = () => {
                 setNotOwned(filteredNotOwned);
             }
         }
-    }, [isShowAll, shouldApply, sfwFilteredOwned, sfwFiltredNotOwned, sfwNotOwnedNotFiltered, sfwOwnedNotFiltered, allOwned, allNotOwned, filteredOwned, filteredNotOwned, isSfwOnly])
+    }, [
+        isShowAll,
+        shouldApply,
+        sfwFilteredOwned,
+        sfwFiltredNotOwned,
+        sfwNotOwnedNotFiltered,
+        sfwOwnedNotFiltered,
+        allOwned,
+        allNotOwned,
+        filteredOwned,
+        filteredNotOwned,
+        isSfwOnly
+    ])
 
     return (
         <>

@@ -1,24 +1,44 @@
+import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import * as Yup from 'yup';
+import { CreateGameResponse, CreateGameRequest } from '@whosaidtrue/api-interfaces';
 import { api } from '../../../api'
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { AuthForm } from '../..'
-import { TextInput, Headline, FormGroup, InputLabel, ErrorText, Button, Divider, Title2, ModalContent } from "@whosaidtrue/ui";
-import { setFullModal, } from '../modalSlice';
+import {
+    TextInput,
+    Headline,
+    FormGroup,
+    InputLabel,
+    ErrorText,
+    Button,
+    Divider,
+    Title2,
+    ModalContent
+} from "@whosaidtrue/ui";
+import { setFullModal, showError, } from '../modalSlice';
 import { useFormik } from 'formik';
-import { setGameDeck, createGame } from '../../game/gameSlice';
-import { clearCart, selectCartDeck } from '../../cart/cartSlice';
+import { setGameDeck, createGame, setGameStatus } from '../../game/gameSlice';
+import { getSelectedDeck } from '../../decks/deckSlice';
 import { AuthenticationResponse } from '@whosaidtrue/api-interfaces';
 import { decodeUserToken } from '../../../util/functions';
-import { login } from '../../auth/authSlice';
+import { login, isLoggedIn } from '../../auth/authSlice';
 
 const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     const history = useHistory()
     const dispatch = useAppDispatch()
-    const cartDeck = useAppSelector(selectCartDeck)
+    const deck = useAppSelector(getSelectedDeck)
+    const loggedIn = useAppSelector(isLoggedIn);
+
+    // close if logged in
+    useEffect(() => {
+        if (loggedIn) {
+            dispatch(setFullModal(''))
+        }
+    }, [loggedIn, dispatch])
 
     // Form
-    const formik = useFormik(
+    const guestFormik = useFormik(
         {
             initialValues: {
                 email: ''
@@ -27,7 +47,7 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 email: Yup.string().email('Invalid email address').required('Email is required'),
             }),
             onSubmit: (values) => {
-                api.post<AuthenticationResponse>('/user/guest', { email: values.email }).then(response => {
+                return api.post<AuthenticationResponse>('/user/guest', { email: values.email }).then(response => {
                     const token = response.data.token
                     const decoded = decodeUserToken(token)
                     const { user } = decoded;
@@ -46,28 +66,36 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
         }
     );
 
-    const startGame = () => {
-        dispatch(setGameDeck(cartDeck)) // get deck from cart and add it to game
-        dispatch(createGame(cartDeck.id)) // create the game
-        dispatch(clearCart()) // clear cart
-        dispatch(setFullModal('')) // close modals
-        history.push('/game/invite') // go to invite page
+    // send create request
+    const startGame = async () => {
+        try {
+            const response = await api.post<CreateGameResponse>('/games/create', { deckId: deck.id } as CreateGameRequest)
+            dispatch(createGame(response.data))
+            dispatch(setGameStatus('gameCreateSuccess'))
+            dispatch(setGameDeck(deck))
+            history.push(`/game/invite`)
+            dispatch(setFullModal(''))
+        } catch (e) {
+            console.error(e)
+            dispatch(showError('An error occured while creating the game'))
+            dispatch(setGameStatus('gameCreateError'))
+            history.push('/')
+        }
     }
 
-
-    const emailErr = formik.touched.email && formik.errors.email ? true : undefined;
+    const guestEmailErr = guestFormik.touched.email && guestFormik.errors.email ? true : undefined;
     // render
     return (
         <ModalContent $narrow>
             <Title2 className="mx-8 text-center mt-2">Play as Guest Host</Title2>
-            <form className="w-full flex flex-col gap-6" onSubmit={formik.handleSubmit}>
+            <form className="w-full flex flex-col gap-6" onSubmit={guestFormik.handleSubmit}>
 
                 {/* Guest host email login */}
                 <FormGroup className="mb-6">
                     <InputLabel>Email Address</InputLabel>
-                    <TextInput {...formik.getFieldProps('email')} $hasError={emailErr} id="guest-email" $border name="email" type="email" />
+                    <TextInput {...guestFormik.getFieldProps('email')} $hasError={guestEmailErr} id="guest-email" $border name="email" type="email" />
                     <Headline className="text-basic-gray mt-2">(We'll send you the game results)</Headline>
-                    {emailErr && <ErrorText >{formik.errors.email}</ErrorText>}
+                    {guestEmailErr && <ErrorText >{guestFormik.errors.email}</ErrorText>}
                 </FormGroup>
                 <Button type="submit">Continue</Button>
             </form>
