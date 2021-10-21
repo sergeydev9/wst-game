@@ -13,7 +13,7 @@ import {
     showError,
     isLoggedIn,
 } from '..';
-import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal } from "../modal/modalSlice";
+import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal, setReconnecting } from "../modal/modalSlice";
 import {
     addPlayer,
     clearGame,
@@ -25,7 +25,8 @@ import {
     selectGameStatus,
     setPlayers,
     setPlayerStatus,
-    endGame
+    endGame,
+    setShouldBlock
 } from "../game/gameSlice";
 import {
     clearCurrentQuestion,
@@ -67,6 +68,8 @@ export const SocketProvider: React.FC = ({ children }) => {
         // if game status is one of these values, then user should have a socket connection
         const shouldHaveConnection = ['inGame', 'lobby', 'gameCreateSuccess', 'choosingName'].includes(playerStatus) && playerId;
 
+
+
         // if user should, but doesn't, have a socket connection, create one and register listeners
         if (shouldHaveConnection && !socket) {
 
@@ -90,7 +93,15 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             connection.on("connect_error", () => {
+                dispatch(setReconnecting(false))
+                dispatch(setShouldBlock(false))
                 dispatch(showError('Could not connect to game server')); // initial connection failed
+                dispatch(clearGame()); // clear state
+                dispatch(clearCurrentQuestion())
+                history.push('/')
+                connection.close() // close  and delete the socket
+                setSocket(null);
+
             })
 
             connection.on("disconnect", () => {
@@ -98,15 +109,24 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             connection.io.on("reconnect_attempt", () => {
-                dispatch(showInfo(`Reconnecting to game server...`)); // reconnecting
+                dispatch(setShouldBlock(false))
+                dispatch(setReconnecting(true))
             })
 
             connection.io.on("reconnect_failed", () => {
+                dispatch(setReconnecting(false))
+                dispatch(setShouldBlock(false))
                 dispatch(showError('Could not reconnect to game server.')); // when all reconnect attempts have failed
+                dispatch(clearGame()); // clear state
+                dispatch(clearCurrentQuestion())
+                history.push('/') // nav home
+                connection.close() // close  and delete the socket
+                setSocket(null);
+
             })
 
             connection.io.on('reconnect', () => {
-                dispatch(showSuccess('Reconnected to game server!')); // reconnect success
+                dispatch(showInfo('Reconnected to game server. Welcome back!')); // reconnect success
             })
 
             /**
@@ -118,6 +138,8 @@ export const SocketProvider: React.FC = ({ children }) => {
                 dispatch(clearGame());
                 dispatch(clearHost());
                 dispatch(showError('Error while connecting to game'));
+                dispatch(setShouldBlock(false))
+                dispatch(clearCurrentQuestion())
                 history.push('/')
             })
 
@@ -149,12 +171,13 @@ export const SocketProvider: React.FC = ({ children }) => {
                 if (playerId === id) {
                     // If current player is the one that was removed
                     dispatch(setFullModal("removedFromGame")) // show modal
+                    dispatch(setShouldBlock(false))
                     dispatch(clearGame()); // clear state
                     dispatch(clearCurrentQuestion())
+                    history.push('/') // nav home;
+
                     connection.close() // close  and delete the socket
                     setSocket(null);
-
-                    history.push('/') // nav home
                 } else {
                     // otherwise, show player has been removed message
                     dispatch(showPlayerRemoved(player_name));

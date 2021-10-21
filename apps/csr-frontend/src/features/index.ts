@@ -47,6 +47,7 @@ export { default as FinalResults } from './question/FinalResults';
 export { default as freeCreditsReducer } from './free-credit-requests/freeCreditsSlice';
 export { default as ratingsReducer } from './ratings/ratingsSlice';
 export { default as ScoreTooltip } from './modal/ScoreTooltip';
+export { default as Reconnecting } from './modal/Reconnecting';
 export * from './choose-name/chooseNameSlice';
 export * from './question/questionSlice';
 export * from './game/gameSlice';

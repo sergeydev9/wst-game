@@ -16,7 +16,8 @@ import {
     isLoggedIn,
     checkHasRatedApp,
     selectAppRatingChecked,
-    clearScoreTooltipDismissed
+    clearScoreTooltipDismissed,
+    selectShouldBlock
 } from '../../features';
 
 const Play: React.FC = () => {
@@ -26,14 +27,10 @@ const Play: React.FC = () => {
     const playerStatus = useAppSelector(selectPlayerStatus);
     const isHost = useAppSelector(selectIsHost);
     const gameStatus = useAppSelector(selectGameStatus);
-    const modal = useAppSelector(selectFullModal)
     const loggedIn = useAppSelector(isLoggedIn);
     const ratingChecked = useAppSelector(selectAppRatingChecked);
+    const shouldBlock = useAppSelector(selectShouldBlock);
 
-    // memoize to prevent re-rendering every time modal changes
-    const shouldBlock = useMemo(() => {
-        return modal !== 'confirmEndGame'
-    }, [modal])
 
     useEffect(() => {
 
@@ -42,29 +39,33 @@ const Play: React.FC = () => {
         if (loggedIn && !ratingChecked) {
             dispatch(checkHasRatedApp());
         }
+        let unblock: () => void | undefined;
 
-        // show confirmation dialog and clear game state if confirmed
-        const unblock = history.block((_) => {
+        if (shouldBlock) {
+            unblock = history.block((_) => {
 
-            // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
-            // has to be used here to prevent compiler errors
-            // args[0] is a location object, and args[1] is a navigation action type
-            if (shouldBlock) {
-                const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
-                    'Are you sure you want to leave the game?';
+                // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
+                // has to be used here to prevent compiler errors
+                // args[0] is a location object, and args[1] is a navigation action type
+                if (shouldBlock) {
+                    const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
+                        'Are you sure you want to leave the game?';
 
-                if (window.confirm(confirmMessage)) {
-                    dispatch(clearGame());
-                    dispatch(clearCurrentQuestion());
+                    if (window.confirm(confirmMessage)) {
+                        dispatch(clearGame());
+                        dispatch(clearCurrentQuestion());
 
-                    return true;
+                        return true;
+                    }
+
+                    return false
                 }
+                dispatch(clearScoreTooltipDismissed());
+                return true
+            })
+        }
+        // show confirmation dialog and clear game state if confirmed
 
-                return false
-            }
-            dispatch(clearScoreTooltipDismissed());
-            return true
-        })
 
         // close socket when leaving
         return () => {
@@ -72,7 +73,10 @@ const Play: React.FC = () => {
                 socket.close();
                 setSocket(null);
             }
-            unblock();
+            if (unblock) {
+                unblock();
+
+            }
         }
     }, [dispatch, isHost, history, setSocket, socket, shouldBlock, loggedIn, ratingChecked])
 

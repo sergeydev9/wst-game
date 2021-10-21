@@ -2,14 +2,14 @@ import { useEffect, } from 'react';
 import { createPortal } from "react-dom";
 import { MessageModal, } from "@whosaidtrue/ui";
 import MessageContainer from './MessageContainer';
-import trophy from '../../assets/trophy.png';
+import { ImSpinner6 } from '@react-icons/all-files/im/ImSpinner6';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectScoreTooltipShowing, dismissScoreTooltip } from '../modal/modalSlice';
+import { selectScoreTooltipShowing, dismissScoreTooltip, selectReconnecting } from '../modal/modalSlice';
 
 const FlashMessage: React.FC = () => {
     const dispatch = useAppDispatch();
 
-    const showScoreTooltip = useAppSelector(selectScoreTooltipShowing);
+    const reconnecting = useAppSelector(selectReconnecting);
     const mount = document.getElementById("tooltip")
     const el = document.createElement("div")
 
@@ -33,11 +33,11 @@ const FlashMessage: React.FC = () => {
         dispatch(dismissScoreTooltip());
     }
 
-    return createPortal((showScoreTooltip &&
+    return createPortal((reconnecting &&
         <MessageContainer>
-            <MessageModal closeFn={tooltipHandler} >
-                <img width="20px" height="20px" src={trophy} alt="trophy" aria-label="trophy" />
-                Points are earned based on how close you are to the correct answer.
+            <MessageModal>
+                <ImSpinner6 className="text-yellow-gradient-to animate-spin text-md" height="24px" width="24px" />
+                Connection to game server lost. Reconnecting...
             </MessageModal>
         </MessageContainer>), el)
 

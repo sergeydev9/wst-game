@@ -9,6 +9,7 @@ import {
     fetchDetails,
     updateAccount,
     logout,
+    selectIsGuest,
 } from '../../features';
 import {
     Form,
@@ -28,10 +29,17 @@ const MyAccount: React.FC = () => {
     const dispatch = useAppDispatch();
     const deckCredits = useAppSelector(selectDeckCredits)
     const email = useAppSelector(selectEmail)
+    const isGuest = useAppSelector(selectIsGuest);
 
     useEffect(() => {
+        // if any guest users get here, log them out
+        if (isGuest) {
+            dispatch(logout())
+            history.push('/')
+        }
+
         dispatch(fetchDetails())
-    }, [dispatch])
+    }, [dispatch, isGuest, history])
 
     const formik = useFormik({
         initialValues: {

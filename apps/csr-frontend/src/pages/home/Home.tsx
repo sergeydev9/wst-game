@@ -1,15 +1,27 @@
-import React from "react";
-import { Link } from 'react-router-dom';
+import { useEffect } from "react";
+import { Link, useHistory } from 'react-router-dom';
 import { LargeTitle, Box, Title1, FaqCarousel, Carousel } from "@whosaidtrue/ui";
+import { logout, selectIsGuest } from '../../features';
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import JoinGame from "../../features/join-game/JoinGame";
 import SetUpGame from "../../features/setup-game/SetupGame";
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 
-// TODO: Delete this and the dummy data when it's not needed anymore
 type UserStory = {
   lines: string[]
 }
 const Home: React.FC = () => {
+  const history = useHistory();
+  const dispatch = useAppDispatch();
+  const isGuest = useAppSelector(selectIsGuest);
+
+  useEffect(() => {
+    // if any guest users get here, log them out
+    if (isGuest) {
+      dispatch(logout())
+      history.push('/')
+    }
+  }, [dispatch, isGuest, history])
 
   const tempStories = [
     {
