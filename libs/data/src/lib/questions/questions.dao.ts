@@ -45,17 +45,20 @@ class Question extends Dao {
             follow_up,
             deck_id,
             age_rating,
-            status
+            status,
+            category
         } = question;
+
         const query = {
-            text: 'INSERT INTO questions (text, text_for_guess, follow_up, deck_id, age_rating, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+            text: 'INSERT INTO questions (text, text_for_guess, follow_up, deck_id, age_rating, status, category) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
             values: [
                 text,
                 text_for_guess,
                 follow_up,
                 deck_id,
                 age_rating,
-                status
+                status,
+                category
             ]
         }
         return this.pool.query(query)

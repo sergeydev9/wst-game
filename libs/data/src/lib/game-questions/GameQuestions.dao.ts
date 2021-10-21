@@ -68,6 +68,7 @@ class GameQuestions extends Dao {
                 text: questionRow.text,
                 textForGuess: questionRow.text_for_guess,
                 followUp: questionRow.follow_up,
+                category: questionRow.category,
                 globalTrue: Math.round(questionRow.global_true) || 0
 
             }

@@ -1,6 +1,5 @@
 import { Server, Socket } from "socket.io";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
-import { games } from "./db";
 import { logger, logIncoming, logOutgoing, logError } from '@whosaidtrue/logger';
 import { playerValueString } from './util';
 import { pubClient } from "./redis";
@@ -183,7 +182,7 @@ const registerListeners = (socket: Socket, io: Server) => {
         /**
         * REMOVE PLAYER
         */
-        socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent) => {
+        socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent, ack) => {
             logIncoming(types.REMOVE_PLAYER, msg, source)
 
             // add player to removed players set
@@ -195,6 +194,7 @@ const registerListeners = (socket: Socket, io: Server) => {
             // remove player from current players
             await pubClient.srem(currentPlayers, JSON.stringify(msg)); // remove from redis
             sendToAll(types.REMOVE_PLAYER, msg);
+            ack('ok')
         })
 
         /**

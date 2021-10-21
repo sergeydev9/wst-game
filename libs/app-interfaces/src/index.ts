@@ -160,6 +160,7 @@ export interface Game {
 export interface Question {
     id: number;
     text: string;
+    category: string;
     text_for_guess: string;
     follow_up: string;
     deck_id: number;
@@ -281,6 +282,7 @@ export interface NextQuestionResult {
     questionId: number;
     gameQuestionId: number;
     numPlayers: number;
+    category: string
     sequenceIndex: number;
     readerId: number;
     readerName: string;

@@ -109,6 +109,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     // questions
     pgm.createTable('questions', {
         id: 'id',
+        category: { type: 'varchar(1000)', notNull: true },
         text: { type: 'text', notNull: true },
         text_for_guess: { type: 'text', notNull: true },
         follow_up: { type: 'text', notNull: true },

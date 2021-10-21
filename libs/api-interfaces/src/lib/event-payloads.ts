@@ -52,6 +52,7 @@ export interface SetQuestionState {
     text: string;
     followUp: string;
     textForGuess: string;
+    category: string;
     sequenceIndex: number;
     numPlayers: number;
     globalTrue: number;

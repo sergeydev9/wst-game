@@ -16,7 +16,8 @@ import {
     selectGlobalTrue,
     selectGroupTrue,
     selectCorrectAnswer,
-    selectFollowUp
+    selectFollowUp,
+    selectCategory
 } from '../question/questionSlice';
 import { selectHasPassed, selectTotalQuestions, setHasPassed } from '../game/gameSlice';
 import ReaderAnnouncement from "./ReaderAnnouncement";
@@ -52,6 +53,7 @@ const Question: React.FC = () => {
     const correctAnswer = useAppSelector(selectCorrectAnswer);
     const followUp = useAppSelector(selectFollowUp);
     const hasRated = useAppSelector(selectHasRatedQuestion);
+    const category = useAppSelector(selectCategory);
 
     // submit true/false answer
     const answerHandler = (value: string) => {
@@ -88,7 +90,7 @@ const Question: React.FC = () => {
             <QuestionCard
                 totalQuestions={totalQuestions}
                 questionNumber={questionNumber}
-                category="Entertainment">
+                category={category}>
                 {screen === 'answerSubmit' && <TrueFalse submitHandler={answerHandler} text={text} isReader={isReader} hasPasses={!hasPassed} />}
                 {screen === 'guess' && <NumberTrueGuess questionText={guessText} submitHandler={guessHandler} totalPlayers={totalPlayers} />}
                 {screen === 'waitingRoom' && <WaitingRoom totalPlayers={totalPlayers} numberHaveGuessed={numHaveGuessed} guessValue={guessVal} questionText={guessText} />}

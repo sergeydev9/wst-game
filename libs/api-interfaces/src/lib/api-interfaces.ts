@@ -1,4 +1,4 @@
-import { Deck, NameObject, PlayerRef, GameStatus, UserRating } from '@whosaidtrue/app-interfaces';
+import { Deck, NameObject, GameStatus, UserRating } from '@whosaidtrue/app-interfaces';
 
 export interface GameTokenPayload {
   playerId: number;

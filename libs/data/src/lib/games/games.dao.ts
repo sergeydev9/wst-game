@@ -274,14 +274,7 @@ class Games extends Dao {
             const gameQuestion = gqUpdateResult.rows[0];
 
             // throw if no game_question data
-            if (!gameQuestion) throw new Error(
-                `[start game] Game question update failed.
-                game id: ${gameId},
-                reader id: ${readerId},
-                reader name: ${readerName},
-                number snapshot: ${playerNumberSnapshot}`
-            );
-
+            if (!gameQuestion) throw new Error(`[start game] Game question update failed.`);
 
             const questionResult = await client.query(getQuestionData(gameQuestion.question_id))
 
@@ -308,6 +301,7 @@ class Games extends Dao {
                     text: questionRow.text,
                     textForGuess: questionRow.text_for_guess,
                     followUp: questionRow.follow_up,
+                    category: questionRow.category,
                     globalTrue: Math.round(questionRow.global_true) || 0
                 }
             }

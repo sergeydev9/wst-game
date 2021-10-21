@@ -86,13 +86,19 @@ export function* testQuestions(num: number, deckId: number) {
     let count = 0;
 
     while (count < num) {
+
+        const categories = ["Entertainment", "Civics", "Spicy"];
+
+        const randNum = Math.floor(Math.random() * categories.length);
+
         yield {
             text: `Primary question text for ${count + 1}`,
             deck_id: deckId,
             text_for_guess: 'Text for guess',
             status: 'active' as QuestionStatus,
             age_rating: 13,
-            follow_up: 'Follow up'
+            follow_up: 'Follow up',
+            category: categories[randNum]
         }
         count += 1;
     }

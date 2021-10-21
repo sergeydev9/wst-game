@@ -10,6 +10,7 @@ export interface CurrentQuestionState {
     questionId: number;
     gameQuestionId: number;
     hasRated: boolean;
+    category: string;
     status: GameQuestionStatus;
     correctAnswer: number;
     sequenceIndex: number;
@@ -37,6 +38,7 @@ export const initialQuestionState: CurrentQuestionState = {
     questionId: 0,
     gameQuestionId: 0,
     hasRated: false,
+    category: '',
     status: '',
     pointsEarned: {},
     numPlayers: 0,
@@ -85,6 +87,7 @@ const currentQuestionSlice = createSlice({
                 questionId,
                 gameQuestionId,
                 sequenceIndex,
+                category,
                 followUp,
                 text,
                 textForGuess,
@@ -111,6 +114,7 @@ const currentQuestionSlice = createSlice({
             state.hasGuessed = false;
             state.correctAnswer = 0;
             state.guessValue = 0;
+            state.category = category;
         },
         setReader: (state, action: PayloadAction<payloads.PlayerEvent>) => {
             const { id, player_name } = action.payload;
@@ -209,6 +213,7 @@ export const selectScoreboard = (state: RootState) => state.question.scoreboard;
 export const selectFollowUp = (state: RootState) => state.question.followUp;
 export const selectQuestionId = (state: RootState) => state.question.questionId;
 export const selectHasRatedQuestion = (state: RootState) => state.question.hasRated;
+export const selectCategory = (state: RootState) => state.question.category;
 
 export const selectPlayerScore = createSelector([selectPlayerName, selectScoreMap], (name, scores,) => {
     return scores[name];

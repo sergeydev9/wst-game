@@ -124,14 +124,14 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 const { status, data } = e.response
                 if ((status === 422 || status === 401) && data) {
                     if (status === 401) {
-                        dispatch(showError("Incorrect email/password"))
+                        dispatch(showError("Incorrect email/password"));
                     } else {
-                        dispatch(showError('Invalid credentials'))
+                        dispatch(showError('Invalid credentials'));
                     }
                 } else {
                     // show error message
-                    dispatch(showError('An unknown error has occurred, please try again later'))
-                    console.error(e)
+                    dispatch(showError('An unknown error has occurred, please try again later'));
+                    console.error(e);
                 }
             })
         },

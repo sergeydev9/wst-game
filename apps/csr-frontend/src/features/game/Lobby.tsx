@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { types } from '@whosaidtrue/api-interfaces';
 import { PlayerRef } from '@whosaidtrue/app-interfaces';
 import { Lobby as LobbyUi } from "@whosaidtrue/ui";
@@ -16,8 +15,7 @@ const Lobby: React.FC = () => {
     const playerName = useAppSelector(selectPlayerName)
 
     // get all players other than current user. Current user's name is displayed differently
-    const otherPlayers = useMemo(() => players.filter(p => p.id !== playerId), [players, playerId])
-
+    const otherPlayers = () => players.filter(p => p.id !== playerId)
     // Creates buttons to remove players if a player is host
     const handlerFactory = (player: PlayerRef) => {
         if (isHost) {
@@ -37,7 +35,7 @@ const Lobby: React.FC = () => {
     return (
         <LobbyUi
             isHost={isHost}
-            otherPlayers={otherPlayers}
+            otherPlayers={otherPlayers()}
             playerName={playerName}
             footerMessage={'The host will start the game once all players have joined.'}
             handlerFactory={handlerFactory} />
