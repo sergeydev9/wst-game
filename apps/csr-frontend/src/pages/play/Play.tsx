@@ -10,7 +10,7 @@ import {
     Question,
     clearGame,
     clearCurrentQuestion,
-    selectFullModal,
+    currentScreen,
     useSocket,
     FinalResults,
     isLoggedIn,
@@ -30,6 +30,7 @@ const Play: React.FC = () => {
     const loggedIn = useAppSelector(isLoggedIn);
     const ratingChecked = useAppSelector(selectAppRatingChecked);
     const shouldBlock = useAppSelector(selectShouldBlock);
+    const screen = useAppSelector(currentScreen);
 
 
     useEffect(() => {
@@ -85,7 +86,7 @@ const Play: React.FC = () => {
             {playerStatus === "lobby" && <Lobby />}
             {playerStatus === 'inGame' && gameStatus === 'inProgress' && <Question />}
             {gameStatus === 'postGame' && <FinalResults />}
-            {isHost && gameStatus !== 'postGame' && <HostActions />}
+            {isHost && gameStatus !== 'postGame' && screen !== 'guess' && <HostActions />}
         </>
     )
 }

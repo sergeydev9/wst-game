@@ -88,6 +88,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             * CONNECTION LISTENERS
             */
             connection.on("connect", () => {
+                dispatch(setReconnecting(false))
                 console.log('Game server connection successful!'); // connection success
                 connection.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName })
             })
@@ -132,7 +133,6 @@ export const SocketProvider: React.FC = ({ children }) => {
             /**
              * GAME EVENT LISTENERS
              */
-
             // game not found in DB
             connection.on(types.GAME_NOT_FOUND, () => {
                 dispatch(clearGame());

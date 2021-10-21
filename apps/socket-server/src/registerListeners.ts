@@ -20,8 +20,6 @@ const registerListeners = (socket: Socket, io: Server) => {
         currentSequenceIndex,
         totalQuestions,
         gameStatus,
-        latestResults,
-        currentQuestion
     } = socket.keys;
 
     // source info
@@ -238,7 +236,7 @@ const registerListeners = (socket: Socket, io: Server) => {
          * END QUESTION AND MOVE TO ANSWERS
          */
         socket.on(types.MOVE_TO_ANSWER, async (msg: payloads.QuestionSkip, ack) => {
-            logIncoming(types.MOVE_TO_ANSWER, undefined, source)
+            logIncoming(types.MOVE_TO_ANSWER, msg, source)
 
             try {
 

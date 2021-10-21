@@ -58,35 +58,31 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
 
 
     // list of scores
-    const list = useMemo(() => {
-
-
-        return scores.map((p, i) => {
-            return (
-                <li key={i} className={`
+    const list = scores.map((p, i) => {
+        return (
+            <li key={i} className={`
                 ${scoreClass}
                 border-b
                 border-purple-subtle-stroke
                 `}>
-                    <span>{p.rank}</span>
-                    <span className="flex flex-col sm:flex-row  items-center">{p.name} {showDiff && diffHelper(p.rankDiff)}</span>
-                    <span>{p.points.toLocaleString('en-US')}</span>
-                </li>
-            )
-        })
-    }, [scores, diffHelper, showDiff])
-
-    return (
+                <span>{p.rank}</span>
+                <span className="flex flex-col sm:flex-row  items-center">{p.name} {showDiff && diffHelper(p.rankDiff)}</span>
+                <span>{p.points.toLocaleString('en-US')}</span>
+            </li>
+        )
+    })
+    // only render if there are scores, otherwise app crashes
+    return (scores.length > 0 ?
         <div className="bg-purple-subtle-fill rounded-3xl w-full p-1 sm:p-3 mb-5">
             <ul className='bg-purple-card-bg rounded-3xl border border-purple-subtle-stroke filter drop-shadow-subtle-stroke'>
                 {list}
             </ul>
-            <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mt-4 mb-2`}>
+            {currentPlayerScore && currentPlayerScore.rank && <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mt-4 mb-2`}>
                 <span>{currentPlayerScore.rank}</span>
                 <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.name} (You) {showDiff && diffHelper(currentPlayerScore.rankDiff)}</span>
                 <span>{currentPlayerScore.points.toLocaleString('en-US')}</span>
-            </div>
-        </div>
+            </div>}
+        </div> : null
     )
 }
 

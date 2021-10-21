@@ -94,7 +94,7 @@ const Question: React.FC = () => {
                 {screen === 'waitingRoom' && <WaitingRoom totalPlayers={totalPlayers} numberHaveGuessed={numHaveGuessed} guessValue={guessVal} questionText={guessText} />}
                 {screen === 'answerResults' && (<QuestionAnswers
                     globalTruePercent={globalTrue}
-                    groupTruePercent={groupTrue}
+                    groupTruePercent={Math.floor(groupTrue)}
                     correctAnswer={correctAnswer}
                     questionText={guessText}
                     followUp={followUp}

@@ -10,6 +10,7 @@ import {
     selectPlayerPointsEarned
 } from "./questionSlice";
 import { selectScoreTooltipDismissed, setShowScoreTooltip } from "../modal/modalSlice";
+import { selectHasGuessed } from "..";
 
 const QuestionResults: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -17,6 +18,7 @@ const QuestionResults: React.FC = () => {
     const playerScore = useAppSelector(selectPlayerScore);
     const correctAnswer = useAppSelector(selectCorrectAnswer);
     const guess = useAppSelector(selectGuessValue);
+    const hasGuessed = useAppSelector(selectHasGuessed);
     const scoreboard = useAppSelector(selectScoreboard);
     const points = useAppSelector(selectPlayerPointsEarned);
     const index = useAppSelector(selectSequenceIndex);
@@ -32,7 +34,7 @@ const QuestionResults: React.FC = () => {
 
     // TODO: put an error boundary here
     return (
-        <QuestionScores guess={guess} correctAnswer={correctAnswer} pointsEarned={points}>
+        <QuestionScores guess={guess} correctAnswer={correctAnswer} pointsEarned={points} hasGuessed={hasGuessed}>
             <Scoreboard scores={scoreboard} showDiff={index !== 1} currentPlayerScore={playerScore} />
         </QuestionScores>
 
