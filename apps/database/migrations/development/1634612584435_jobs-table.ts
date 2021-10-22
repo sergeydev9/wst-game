@@ -11,13 +11,16 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         type: { type: 'varchar(100)', notNull: true },
         status: { type: 'job_status', notNull: true, default: 'pending' },
         data: { type: 'text', notNull: false },
-        started_at: { type: 'timestamptz', notNull: false },
-        completed_at: { type: 'timestamptz', notNull: false },
+        task_table: { type: 'varchar(100)' },
+        task_id: { type: 'integer' },
         scheduled_at: {
             type: 'timestamptz',
             notNull: true,
             default: pgm.func('now()'),
         },
+        started_at: { type: 'timestamptz' },
+        completed_at: { type: 'timestamptz' },
+        canceled_at: { type: 'timestamptz' },
         created_at: {
             type: 'timestamptz',
             notNull: true,
