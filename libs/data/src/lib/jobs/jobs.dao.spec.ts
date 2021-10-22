@@ -3,6 +3,7 @@ import {TEST_DB_CONNECTION} from '@whosaidtrue/util';
 import {cleanDb} from '../util/cleanDb';
 import Jobs from "./jobs.dao";
 import {Job} from "@whosaidtrue/app-interfaces";
+import _ from "lodash";
 
 describe('Jobs', () => {
     let pool: Pool;
@@ -303,18 +304,12 @@ describe('Jobs', () => {
 })
 
 function expectJobsEqual(actual: Job, expected: Job, exclude: string[] = []) {
-    exclude.includes('id') || expect(actual.id).toEqual(expected.id);
-    exclude.includes('type') || expect(actual.type).toEqual(expected.type);
-    exclude.includes('status') || expect(actual.status).toEqual(expected.status);
-    exclude.includes('data') || expect(actual.data).toEqual(expected.data);
-    exclude.includes('task_table') || expect(actual.task_table).toEqual(expected.task_table);
-    exclude.includes('task_id') || expect(actual.task_id).toEqual(expected.task_id);
-    exclude.includes('scheduled_at') || expect(actual.scheduled_at).toEqual(expected.scheduled_at);
-    exclude.includes('started_at') || expect(actual.started_at).toEqual(expected.started_at);
-    exclude.includes('completed_at') || expect(actual.completed_at).toEqual(expected.completed_at);
-    exclude.includes('canceled_at') || expect(actual.canceled_at).toEqual(expected.canceled_at);
-    exclude.includes('created_at') || expect(actual.created_at).toEqual(expected.created_at);
-    exclude.includes('updated_at') || expect(actual.updated_at).toEqual(expected.updated_at);
+    const all = ['id', 'type', 'status', 'data', 'task_table', 'task_id', 'scheduled_at', 'started_at', 'completed_at', 'canceled_at', 'created_at', 'updated_at'];
+    const check = _.difference(all, exclude);
+
+    for (const prop of check) {
+        expect(actual[prop]).toEqual(expected[prop]);
+    }
 }
 
 async function delay(ms: number) {
