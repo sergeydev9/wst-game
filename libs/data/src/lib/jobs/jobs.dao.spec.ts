@@ -137,11 +137,8 @@ describe('Jobs', () => {
             await job.finishJob();
 
             const actual = (await jobs.getById(job.id)).rows[0] as Job;
-            expect(actual.id).toEqual(expected.id);
-            expect(actual.type).toEqual(expected.type);
-            expect(actual.data).toEqual(expected.data);
-            expect(actual.started_at).not.toBeNull();
-            expect(actual.scheduled_at).toEqual(expected.scheduled_at);
+
+            expectJobsEqual(actual, expected, ['status', 'started_at', 'completed_at', 'updated_at']);
         })
     })
 
@@ -154,13 +151,8 @@ describe('Jobs', () => {
             await job.finishJob('failed');
 
             const actual = (await jobs.getById(job.id)).rows[0] as Job;
-            expect(actual.id).toEqual(expected.id);
-            expect(actual.type).toEqual(expected.type);
-            expect(actual.status).toEqual('failed');
-            expect(actual.data).toEqual(expected.data);
-            expect(actual.started_at).toBeNull();
-            expect(actual.completed_at).not.toBeNull();
-            expect(actual.scheduled_at).toEqual(expected.scheduled_at);
+
+            expectJobsEqual(actual, expected, ['status', 'completed_at', 'updated_at']);
         })
     })
 
@@ -282,18 +274,47 @@ describe('Jobs', () => {
         })
     })
 
+    describe('cancelJob', () => {
+
+        it('should only update status and canceled_at', async () => {
+            const expected = (await jobs.insertOne('type', 'data')).rows[0];
+
+            const actual = (await jobs.cancelJob(expected.id)).rows[0];
+
+            expect(actual.status).toEqual('canceled');
+            expect(actual.canceled_at).toBeDefined();
+            expectJobsEqual(actual, expected, ['canceled_at', 'status', 'updated_at']);
+        })
+
+        it('should only cancel pending jobs', async () => {
+            const job1 = (await jobs.insertOne('completed', 'data', new Date(), 'completed')).rows[0];
+            const job2 = (await jobs.insertOne('failed', 'data', new Date(), 'failed')).rows[0];
+            const job3 = (await jobs.insertOne('canceled', 'data', new Date(), 'canceled')).rows[0];
+
+            await jobs.cancelJob(job1.id);
+            await jobs.cancelJob(job2.id);
+            await jobs.cancelJob(job3.id);
+
+            const actual = (await jobs.pool.query("SELECT * FROM jobs WHERE canceled_at IS NOT NULL")).rows;
+            expect(actual.length).toEqual(0);
+        })
+    })
+
 })
 
-function expectJobsEqual(actual: Job, expected: Job) {
-    expect(actual.id).toEqual(expected.id);
-    expect(actual.type).toEqual(expected.type);
-    expect(actual.status).toEqual(expected.status);
-    expect(actual.data).toEqual(expected.data);
-    expect(actual.started_at).toBeNull();
-    expect(actual.completed_at).toBeNull();
-    expect(actual.scheduled_at).toEqual(expected.scheduled_at);
-    expect(actual.created_at).toEqual(expected.created_at);
-    expect(actual.updated_at).toEqual(expected.updated_at);
+function expectJobsEqual(actual: Job, expected: Job, exclude: string[] = []) {
+    exclude.includes('id') || expect(actual.id).toEqual(expected.id);
+    exclude.includes('type') || expect(actual.type).toEqual(expected.type);
+    exclude.includes('status') || expect(actual.status).toEqual(expected.status);
+    exclude.includes('data') || expect(actual.data).toEqual(expected.data);
+    exclude.includes('task_table') || expect(actual.task_table).toEqual(expected.task_table);
+    exclude.includes('task_id') || expect(actual.task_id).toEqual(expected.task_id);
+    exclude.includes('scheduled_at') || expect(actual.scheduled_at).toEqual(expected.scheduled_at);
+    exclude.includes('started_at') || expect(actual.started_at).toEqual(expected.started_at);
+    exclude.includes('completed_at') || expect(actual.completed_at).toEqual(expected.completed_at);
+    exclude.includes('canceled_at') || expect(actual.canceled_at).toEqual(expected.canceled_at);
+    exclude.includes('created_at') || expect(actual.created_at).toEqual(expected.created_at);
+    exclude.includes('updated_at') || expect(actual.updated_at).toEqual(expected.updated_at);
 }
 
 async function delay(ms: number) {

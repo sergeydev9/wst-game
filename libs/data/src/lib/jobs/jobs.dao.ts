@@ -26,6 +26,15 @@ class Jobs extends Dao {
         return this.pool.query(query);
     }
 
+    public cancelJob(jobId): Promise<QueryResult<Job>> {
+        const query = {
+            text: `UPDATE jobs SET status = 'canceled', canceled_at = NOW() WHERE id = $1 AND status = 'pending' RETURNING *`,
+            values: [jobId]
+        };
+
+        return this.pool.query(query);
+    }
+
     /**
      * Query the next job to execute. The returned job must call finishJob() or abortJob() to end the transaction.
      *

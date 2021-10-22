@@ -249,9 +249,12 @@ export interface Job {
     type: string;
     status: JobStatus;
     data?: string;
+    task_table?: string;
+    task_id?: number;
+    scheduled_at: Date;
     started_at?: Date;
     completed_at?: Date;
-    scheduled_at: Date;
+    canceled_at: Date;
     created_at: Date;
     updated_at: Date;
 }
