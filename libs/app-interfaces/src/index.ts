@@ -265,6 +265,22 @@ export interface JobTransaction extends Job {
     abortJob();
 }
 
+export interface Email {
+    id: number;
+    user_id: number;
+    from?: string;
+    to: string;
+    cc?: string;
+    bcc?: string;
+    subject?: string;
+    text?: string;
+    html?: string;
+    template_key?: string;
+    template_data?: string;
+    created_at: string;
+    updated_at: string;
+}
+
 export type InsertUserQuestionRating = Insert<UserQuestionRating>;
 export type InsertQuestionRating = Insert<UserQuestionRating>;
 export type InsertOrder = Insert<Order>;
@@ -277,6 +293,7 @@ export type InsertAnwser = Insert<GameAnswer>;
 export type InsertDeck = Insert<Deck>;
 export type InsertQuestion = Insert<Question>;
 export type InsertGame = Insert<Game>;
+export type InsertEmail = Insert<Email>;
 
 export interface JoinGameResult {
     status: GameStatus
