@@ -43,6 +43,7 @@ describe('GamePlayers', () => {
             game_id += 1; // shouldn't exist
             try {
                 await players.insertOne({ ...player, game_id })
+                fail()
             } catch (e) {
                 const expected = new DatabaseError('insert or update on table "game_players" violates foreign key constraint "game_players_game_id_fkey"', 1, 'error');
                 expect(e).toEqual(expected)
@@ -54,6 +55,7 @@ describe('GamePlayers', () => {
 
             try {
                 await players.insertOne({ ...player, game_id })
+                fail()
             } catch (e) {
                 const expected = new DatabaseError('duplicate key value violates unique constraint "game_players_game_id_player_name_unique_index"', 1, 'error');
                 expect(e).toEqual(expected)
@@ -67,6 +69,7 @@ describe('GamePlayers', () => {
             try {
                 const { player_name } = player;
                 await players.insertOne({ ...player, game_id, player_name: player_name.toUpperCase() })
+                fail()
             } catch (e) {
                 const expected = new DatabaseError('duplicate key value violates unique constraint "game_players_game_id_player_name_unique_index"', 1, 'error');
                 expect(e).toEqual(expected)
