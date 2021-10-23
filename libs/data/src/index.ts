@@ -10,6 +10,7 @@ export { default as Orders } from './lib/orders/Orders.dao';
 export { default as Questions } from './lib/questions/Questions.dao';
 export { default as UserQuestionRating } from './lib/user-question-ratings/UserQuestionRatings.dao';
 export { default as Jobs } from './lib/jobs/jobs.dao';
+export { default as Emails } from './lib/emails/emails.dao';
 
 /* Utils */
 export * from './lib/util/testEntityGenerators'

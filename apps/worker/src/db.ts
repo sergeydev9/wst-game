@@ -1,5 +1,5 @@
-import { Pool } from 'pg'
-import { Jobs } from '@whosaidtrue/data';
+import {Pool} from 'pg'
+import {Emails, Jobs} from '@whosaidtrue/data';
 
 const pool = new Pool({
     user: process.env.POSTGRES_USER,
@@ -10,5 +10,6 @@ const pool = new Pool({
 });
 
 const jobs = new Jobs(pool);
+const emails = new Emails(pool);
 
-export { pool, jobs };
+export {pool, jobs, emails};
