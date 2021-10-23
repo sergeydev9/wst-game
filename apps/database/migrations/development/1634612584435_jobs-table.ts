@@ -10,7 +10,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         id: 'id',
         type: { type: 'varchar(100)', notNull: true },
         status: { type: 'job_status', notNull: true, default: 'pending' },
-        data: { type: 'text', notNull: false },
+        result: { type: 'text' },
         task_table: { type: 'varchar(100)' },
         task_id: { type: 'integer' },
         scheduled_at: {

@@ -27,12 +27,12 @@ describe('Jobs', () => {
         it('should return job details', async () => {
             const now = new Date();
 
-            const actual = (await jobs.insertOne('type', 'data', now)).rows[0];
+            const actual = (await jobs.insertOne('type', now)).rows[0];
 
             expect(actual.id).toBeDefined();
             expect(actual.type).toEqual('type');
             expect(actual.status).toEqual('pending');
-            expect(actual.data).toEqual('data');
+            expect(actual.result).toBeNull();
             expect(actual.started_at).toBeNull();
             expect(actual.completed_at).toBeNull();
             expect(actual.scheduled_at).toEqual(now);
@@ -43,7 +43,7 @@ describe('Jobs', () => {
 
         it('should create job in db', async () => {
             const now = new Date();
-            const expected = (await jobs.insertOne('type', 'data', now)).rows[0];
+            const expected = (await jobs.insertOne('type', now)).rows[0];
 
             const actual = (await jobs.getById(expected.id)).rows[0];
 
@@ -54,7 +54,7 @@ describe('Jobs', () => {
     describe('pollJob', () => {
 
         it('should return job details', async () => {
-            const expected = (await jobs.insertOne('type', 'data')).rows[0];
+            const expected = (await jobs.insertOne('type')).rows[0];
 
             const actual = await jobs.pollJob();
             await actual.abortJob();
@@ -65,11 +65,11 @@ describe('Jobs', () => {
 
         it('should return first pending job', async () => {
             const now = new Date();
-            await jobs.insertOne('completed', 'data', now, 'completed');
-            await jobs.insertOne('failed', 'data', now, 'failed');
-            await jobs.insertOne('canceled', 'data', now, 'canceled');
-            await jobs.insertOne('pending_1', 'data', now, 'pending');
-            await jobs.insertOne('pending_2', 'data', now, 'pending');
+            await jobs.insertOne('completed', now, 'completed');
+            await jobs.insertOne('failed', now, 'failed');
+            await jobs.insertOne('canceled', now, 'canceled');
+            await jobs.insertOne('pending_1', now, 'pending');
+            await jobs.insertOne('pending_2', now, 'pending');
 
             const actual = await jobs.pollJob();
             await actual.abortJob();
@@ -79,9 +79,9 @@ describe('Jobs', () => {
 
         it('should return null when no next pending job', async () => {
             const now = new Date();
-            await jobs.insertOne('completed', 'data', now, 'completed');
-            await jobs.insertOne('failed', 'data', now, 'failed');
-            await jobs.insertOne('canceled', 'data', now, 'canceled');
+            await jobs.insertOne('completed', now, 'completed');
+            await jobs.insertOne('failed', now, 'failed');
+            await jobs.insertOne('canceled', now, 'canceled');
 
             const actual = await jobs.pollJob();
 
@@ -91,8 +91,8 @@ describe('Jobs', () => {
 
         it('should return first scheduled job', async () => {
             const now = new Date();
-            await jobs.insertOne('later', 'data', new Date(now.getTime() + 1), 'pending');
-            await jobs.insertOne('sooner', 'data', now, 'pending');
+            await jobs.insertOne('later', new Date(now.getTime() + 1), 'pending');
+            await jobs.insertOne('sooner', now, 'pending');
 
             const actual = await jobs.pollJob();
             await actual.abortJob();
@@ -101,7 +101,7 @@ describe('Jobs', () => {
         })
 
         it('should be exclusive', async () => {
-            await jobs.insertOne('type', 'data');
+            await jobs.insertOne('type');
 
             const first = await jobs.pollJob();
             delay(500);
@@ -114,8 +114,8 @@ describe('Jobs', () => {
         })
 
         it('should allow concurrency', async () => {
-            await jobs.insertOne('first', 'data');
-            await jobs.insertOne('second', 'data');
+            await jobs.insertOne('first');
+            await jobs.insertOne('second');
 
             const first = await jobs.pollJob();
             const second = await jobs.pollJob();
@@ -131,7 +131,7 @@ describe('Jobs', () => {
     describe('startJob', () => {
 
         it('should update started_at', async () => {
-            const expected = (await jobs.insertOne('type', 'data')).rows[0];
+            const expected = (await jobs.insertOne('type')).rows[0];
 
             const job = await jobs.pollJob();
             await job.startJob();
@@ -146,7 +146,7 @@ describe('Jobs', () => {
     describe('finishJob', () => {
 
         it('should update status and completed_at', async () => {
-            const expected = (await jobs.insertOne('type', 'data')).rows[0];
+            const expected = (await jobs.insertOne('type')).rows[0];
 
             const job = await jobs.pollJob();
             await job.finishJob('failed');
@@ -160,7 +160,7 @@ describe('Jobs', () => {
     describe('abortJob', () => {
 
         it('should not change job details', async () => {
-            const expected = (await jobs.insertOne('type', 'data')).rows[0];
+            const expected = (await jobs.insertOne('type')).rows[0];
 
             const job = await jobs.pollJob();
             job.startJob();
@@ -180,8 +180,8 @@ describe('Jobs', () => {
                 client.on('notification', (msg) => messages.push(msg));
                 await client.query('LISTEN jobs');
 
-                await jobs.insertOne('type', 'data');
-                await jobs.insertOne('type', 'data');
+                await jobs.insertOne('type');
+                await jobs.insertOne('type');
 
                 await delay(100);
                 expect(messages.length).toEqual(2);
@@ -198,9 +198,9 @@ describe('Jobs', () => {
                 await client.query('LISTEN jobs');
 
                 const now = new Date();
-                await jobs.insertOne('completed', 'data', now, 'completed');
-                await jobs.insertOne('failed', 'data', now, 'failed');
-                await jobs.insertOne('canceled', 'data', now, 'canceled');
+                await jobs.insertOne('completed', now, 'completed');
+                await jobs.insertOne('failed', now, 'failed');
+                await jobs.insertOne('canceled', now, 'canceled');
 
                 await delay(100);
                 expect(messages.length).toEqual(0);
@@ -216,7 +216,7 @@ describe('Jobs', () => {
                 client.on('notification', (msg) => messages.push(msg));
                 await client.query('LISTEN jobs');
 
-                const job = (await jobs.insertOne('type', 'data')).rows[0];
+                const job = (await jobs.insertOne('type')).rows[0];
                 await jobs.rescheduleJob(job.id, new Date(Date.now() + 1000));
 
                 await delay(100);
@@ -233,7 +233,7 @@ describe('Jobs', () => {
                 client.on('notification', (msg) => messages.push(msg));
                 await client.query('LISTEN jobs');
 
-                const job = (await jobs.insertOne('type', 'data', new Date(), 'completed')).rows[0];
+                const job = (await jobs.insertOne('type', new Date(), 'completed')).rows[0];
                 await jobs.rescheduleJob(job.id, new Date(Date.now() + 1000));
 
                 await delay(100);
@@ -246,8 +246,8 @@ describe('Jobs', () => {
         it('should not notify throughout job lifecycle', async () => {
             const client = await jobs.pool.connect();
             try {
-                await jobs.insertOne('type', 'data');
-                await jobs.insertOne('type', 'data');
+                await jobs.insertOne('type');
+                await jobs.insertOne('type');
 
                 const messages = [];
                 client.on('notification', (msg) => messages.push(msg));
@@ -278,7 +278,7 @@ describe('Jobs', () => {
     describe('cancelJob', () => {
 
         it('should only update status and canceled_at', async () => {
-            const expected = (await jobs.insertOne('type', 'data')).rows[0];
+            const expected = (await jobs.insertOne('type')).rows[0];
 
             const actual = (await jobs.cancelJob(expected.id)).rows[0];
 
@@ -288,9 +288,10 @@ describe('Jobs', () => {
         })
 
         it('should only cancel pending jobs', async () => {
-            const job1 = (await jobs.insertOne('completed', 'data', new Date(), 'completed')).rows[0];
-            const job2 = (await jobs.insertOne('failed', 'data', new Date(), 'failed')).rows[0];
-            const job3 = (await jobs.insertOne('canceled', 'data', new Date(), 'canceled')).rows[0];
+            const now = new Date();
+            const job1 = (await jobs.insertOne('completed', now, 'completed')).rows[0];
+            const job2 = (await jobs.insertOne('failed', now, 'failed')).rows[0];
+            const job3 = (await jobs.insertOne('canceled', now, 'canceled')).rows[0];
 
             await jobs.cancelJob(job1.id);
             await jobs.cancelJob(job2.id);
@@ -304,7 +305,7 @@ describe('Jobs', () => {
 })
 
 function expectJobsEqual(actual: Job, expected: Job, exclude: string[] = []) {
-    const all = ['id', 'type', 'status', 'data', 'task_table', 'task_id', 'scheduled_at', 'started_at', 'completed_at', 'canceled_at', 'created_at', 'updated_at'];
+    const all = ['id', 'type', 'status', 'result', 'task_table', 'task_id', 'scheduled_at', 'started_at', 'completed_at', 'canceled_at', 'created_at', 'updated_at'];
     const check = _.difference(all, exclude);
 
     for (const prop of check) {

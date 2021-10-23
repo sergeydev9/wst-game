@@ -248,7 +248,7 @@ export interface Job {
     id: number;
     type: string;
     status: JobStatus;
-    data?: string;
+    result?: string;
     task_table?: string;
     task_id?: number;
     scheduled_at: Date;
