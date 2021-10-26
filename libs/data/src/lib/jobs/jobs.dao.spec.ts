@@ -103,6 +103,7 @@ describe('Jobs', () => {
             await jobs.insertOne('type', 'data');
 
             const first = await jobs.pollJob();
+            delay(500);
             const second = await jobs.pollJob();
 
             expect(first).not.toBeNull();
