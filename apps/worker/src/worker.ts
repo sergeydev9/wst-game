@@ -1,6 +1,6 @@
 import {pool, jobs} from './db'
 import {Notification, PoolClient} from "pg";
-import {logger} from '@whosaidtrue/logger';
+import {logError, logger} from '@whosaidtrue/logger';
 import {createTask} from "./task";
 
 class Worker {
@@ -25,7 +25,7 @@ class Worker {
                     const job = JSON.parse(message.payload);
                     time = new Date(job.scheduled_at).getTime();
                 } catch (e) {
-                    logger.error(e);
+                    logError('JSON.parse error', e);
                 }
             }
             this.scheduleNextPoll(time);
@@ -67,7 +67,7 @@ class Worker {
                     await job.finishJob(result);
                     status = 'done';
                 } catch (e) {
-                    logger.error(`executing job failed ${job.id}, ${job.type}`, e);
+                    logError(`executing job failed ${job.id}, ${job.type}`, e);
                     await job.abortJob();
                     status = 'error';
                 }
@@ -108,11 +108,11 @@ class Worker {
     }
 
     private scheduleNextPoll(pollTime = Date.now()) {
-        logger.trace("scheduleNextPoll()", pollTime);
+        logger.trace(`scheduleNextPoll(): ${pollTime}`);
 
         // ignore requests later than the next scheduled poll
         if (this.nextTimeout && pollTime >= this.nextTime) {
-            logger.debug("abort scheduleNextPoll()", pollTime);
+            logger.debug(`abort scheduleNextPoll(): ${pollTime}`);
             return;
         }
 
