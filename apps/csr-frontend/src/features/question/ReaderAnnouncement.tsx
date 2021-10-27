@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { createPortal } from "react-dom";
 import { ReaderAnnouncement as Announcement } from '@whosaidtrue/ui';
-import { MessageModal, } from "@whosaidtrue/ui";
 
 const ReaderAnnouncement: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     const mount = document.getElementById("flash-message")

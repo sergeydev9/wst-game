@@ -150,7 +150,7 @@ router.patch('/change-password', [...validatePasswordChange], passport.authentic
 /**
  * Send a reset token to user email
  */
-router.patch('/send-reset', [...validateResetEmail], async (req: Request, res: Response) => {
+router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Response) => {
     const { email } = req.body as WithEmailBody;
     const code = `${Math.floor(1000 + Math.random() * 9000)}` // generate a random 4 digit string.
 

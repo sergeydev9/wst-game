@@ -181,6 +181,8 @@ export const SocketProvider: React.FC = ({ children }) => {
                 } else {
                     // otherwise, show player has been removed message
                     dispatch(showPlayerRemoved(player_name));
+                    dispatch(removePlayer(id))
+
                 }
             })
 

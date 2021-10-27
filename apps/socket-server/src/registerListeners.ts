@@ -103,15 +103,21 @@ const registerListeners = (socket: Socket, io: Server) => {
                     // calculate scores
                     const result = await saveScores(msg.gameQuestionId, socket.gameId);
 
+                    logger.debug({
+                        message: 'Score calculation results',
+                        event: types.ANSWER_PART_2,
+                        ...result
+                    })
+
                     // end game
-                    sendToAll(types.GAME_END, result as payloads.QuestionEnd)
+                    sendToAll(types.GAME_END, result as payloads.QuestionEnd);
                 } else {
 
                     // calculate scores
                     const result = await saveScores(msg.gameQuestionId, socket.gameId);
 
                     // send result
-                    sendToAll(types.QUESTION_END, result as payloads.QuestionEnd)
+                    sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);
                 }
             }
 
@@ -182,7 +188,7 @@ const registerListeners = (socket: Socket, io: Server) => {
         /**
         * REMOVE PLAYER
         */
-        socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent, ack) => {
+        socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent) => {
             logIncoming(types.REMOVE_PLAYER, msg, source)
 
             // add player to removed players set
@@ -194,7 +200,9 @@ const registerListeners = (socket: Socket, io: Server) => {
             // remove player from current players
             await pubClient.srem(currentPlayers, JSON.stringify(msg)); // remove from redis
             sendToAll(types.REMOVE_PLAYER, msg);
-            ack('ok')
+
+            // TODO: if last player, and during question, move to results
+
         })
 
         /**
@@ -236,19 +244,24 @@ const registerListeners = (socket: Socket, io: Server) => {
          * END QUESTION AND MOVE TO ANSWERS
          */
         socket.on(types.MOVE_TO_ANSWER, async (msg: payloads.QuestionSkip, ack) => {
-            logIncoming(types.MOVE_TO_ANSWER, msg, source)
+            logIncoming(types.MOVE_TO_ANSWER, msg, source);
 
             try {
 
                 // calculate scores
                 const result = await saveScores(msg.gameQuestionId, socket.gameId);
 
+                logger.debug({
+                    message: 'Score calculation results',
+                    ...result
+                })
+
                 // send result
                 sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);
                 ack('ok')
             } catch (e) {
-                logError('Error skipping to results', e)
-                ack('error')
+                logError('Error skipping to results', e);
+                ack('error');
             }
         });
 
@@ -256,19 +269,19 @@ const registerListeners = (socket: Socket, io: Server) => {
         * NEXT QUESTION
         */
         socket.on(types.START_NEXT_QUESTION, async (_, ack) => {
-            logIncoming(types.START_NEXT_QUESTION, {}, source)
+            logIncoming(types.START_NEXT_QUESTION, {}, source);
 
             try {
-                const nextQuestionResult = await nextQuestion(socket)
+                const nextQuestionResult = await nextQuestion(socket);
                 sendToAll(types.SET_QUESTION_STATE, {
                     ...nextQuestionResult,
                     status: 'question'
-                } as payloads.SetQuestionState)
+                } as payloads.SetQuestionState);
 
                 ack('ok')
             } catch (e) {
-                logError('Error while starting question', e)
-                ack('error')
+                logError('Error while starting question', e);
+                ack('error');
             }
         })
 

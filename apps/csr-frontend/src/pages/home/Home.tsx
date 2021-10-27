@@ -19,7 +19,6 @@ const Home: React.FC = () => {
     // if any guest users get here, log them out
     if (isGuest) {
       dispatch(logout())
-      history.push('/')
     }
   }, [dispatch, isGuest, history])
 
@@ -73,9 +72,6 @@ const Home: React.FC = () => {
         <FaqCarousel question="How long does a game take?">
           Games usually take between 15 and 30 minutes depending on how many stories and conversation there is between each question.
         </FaqCarousel>
-        <FaqCarousel question="Are my answers anonymous?">
-          Well technically, yes, but if you’re only playing with one other person, it’s pretty easy to figure out how they answered.  But any group larger than 2 players is completely anonymous.
-        </FaqCarousel>
         <FaqCarousel question="How are points awarded?">
           Points are awarded based on how close your guess of the number of people who answered 'True' is to how many actually answered 'True'.
           If you guess the number exactly, you earn 1,500 points.
@@ -110,9 +106,6 @@ const Home: React.FC = () => {
         </FaqCarousel>
         <FaqCarousel question="Is Who Said True available in other languages?">
           Not yet, but I’m working on adding additional languages. <Link className="text-blue-base underline" to="/contact-us">Contact me</Link> to vote for the language you want to be added.
-        </FaqCarousel>
-        <FaqCarousel question="Why do you need my email address?">
-          After a game is over, you’ll receive a “Game Results” email which tells how your group compares to the rest of the world.
         </FaqCarousel>
         <FaqCarousel question="What happened to 9 Truths?">
           It grew up and blossomed into Who Said True

@@ -1,97 +1,150 @@
-import { logger } from '@whosaidtrue/logger';
 import { payloads } from '@whosaidtrue/api-interfaces';
 import { Keys } from '../keys';
 import { pubClient } from '../redis';
 import { answers } from "../db";
-import { calculateScore } from '../util';
+import { calculateScore, buildScoreMap, scoreBoardFromMap } from '../util';
+import { PlayerRef } from '@whosaidtrue/app-interfaces';
+import { ONE_DAY } from '../constants';
+import { logger } from '@whosaidtrue/logger';
 
-interface PlayerWithGuess {
-    id: number;
-    player_name: string;
+interface PlayerWithGuess extends PlayerRef {
     guess: number;
 }
 
 const saveScores = async (questionId: number, gameId: number) => {
     const haveAnswered = Keys.haveAnswered(questionId);
-    const players = (await pubClient.smembers(haveAnswered)).map(p => JSON.parse(p)) as PlayerWithGuess[];
+    const haveNotAnswered = Keys.haveNotAnswered(questionId);
+    const haveAnsweredPlayers = (await pubClient.smembers(haveAnswered)).map(p => JSON.parse(p)) as PlayerWithGuess[];
+    const haveNotAnsweredPlayers = (await pubClient.smembers(haveNotAnswered)).map(p => JSON.parse(p)) as PlayerRef[];
     const totalPlayers = Number(await pubClient.get(Keys.totalPlayers(questionId)));
     const totalTrue = Number(await pubClient.get(Keys.totalTrue(questionId)));
 
-    // calculate and update data for each player that submitted a guess
-    const promises = players.map(async player => {
-        const score = calculateScore(player.guess, totalPlayers, totalTrue) // calculate
-        const answerIdSpace = Keys.answerIdsForPlayer(player.id);
-        const answerId = await pubClient.get(`${answerIdSpace}:${questionId}`) // player's answerId
+    // updates for players that have answered
+    const haveAnsweredPromises = updatePlayersThatHaveAnswered(haveAnsweredPlayers, gameId, questionId, totalPlayers, totalTrue);
 
-        logger.debug({
-            score,
-            player,
-            answerId,
-            answerIdSpace,
-            totalPlayers,
-            totalTrue
-        })
-        await answers.setScore(Number(answerId), score); // save score in DB
-
-        const oldRank = await pubClient.zrevrank(`games:${gameId}:scoreboard`, player.player_name)
-
-        // save score for question, increment total score, return old and new ranks
-        const [, , rankRes] = await pubClient
-            .pipeline()
-            .hset(`gameQuestions:${questionId}:pointsByPlayer`, player.player_name, score)
-            .zincrby(`games:${gameId}:scoreboard`, score, player.player_name)
-            .zrevrank(`games:${gameId}:scoreboard`, player.player_name)
-            .exec();
-
-        const newRank = rankRes[1];
-
-        // save rank dif
-        const rankDif = oldRank - newRank;
-
-        logger.debug({
-            newRank,
-            oldRank,
-            rankDif
-        })
-        return pubClient.hset(`gameQuestions:${questionId}:rankDifferences`, player.player_name, rankDif);
-
-    })
+    // updates for players that haven't answered
+    const haveNotAnsweredPromises = updateHaventAnswered(haveNotAnsweredPlayers, gameId, questionId);
 
     // wait until updates are done for all players
-    await Promise.all(promises);
+    await Promise.all([haveNotAnsweredPromises, haveAnsweredPromises]);
 
-    const [r1, r2, r3, r4, r5] = await pubClient
+
+    const [r1, r2, r3] = await pubClient
         .pipeline()
-        .zrevrange(`games:${gameId}:scoreboard`, 0, -1, 'WITHSCORES')
-        .hgetall(`gameQuestions:${questionId}:rankDifferences`)
+        .zrevrange(`games:${gameId}:rankedlist`, 0, -1, 'WITHSCORES')
         .hgetall(`gameQuestions:${questionId}:pointsByPlayer`)
         .get(Keys.totalTrue(questionId))
-        .scard(Keys.haveAnswered(questionId))
         .exec()
 
     // scores come in an ordered array, with the first element having the highest
     // score.
     const scores = r1[1];
-    const rankDifferences = r2[1];
-    const pointsEarned = r3[1];
+    const pointsEarned = r2[1];
 
     // percent true for group
-    let groupTrueNum = r4[1];
+    let groupTrueNum = r3[1];
 
     if (groupTrueNum === null) {
         groupTrueNum = 0;
     }
-    const groupTotal = r5[1];
-    const groupTrue = (groupTrueNum / groupTotal) * 100;
+    const groupTrue = (groupTrueNum / totalPlayers) * 100;
+
+    // build score map object
+    const [map, stringifiedMap] = buildScoreMap(scores);
+
+    logger.debug({
+        message: 'score map',
+        map,
+        stringifiedMap,
+        scores,
+        pointsEarned
+    })
+
+    // build scoreboard array
+    const scoreboard = scoreBoardFromMap(map);
+
+    // save new rank for each player, and calculate rank change
+    for (const score of scoreboard) {
+        const { player_name, rank } = score;
+
+        const playerKey = `games:${gameId}:playerRanks:${player_name}`;
+
+        const [oldRank] = await pubClient
+            .pipeline()
+            .getset(playerKey, rank)
+            .expire(playerKey, ONE_DAY)
+            .exec()
+
+        score.rankDifference = oldRank[1] ? oldRank[1] - rank : 0;
+    }
+
+    // save latest scoreboard in redis
+    await pubClient.set(`games:${gameId}:latestResults`, stringifiedMap);
 
     return {
-        rankDifferences,
-        scores,
+        scores: scoreboard,
         pointsEarned,
         groupTrue, // percentage of players that answered 'true'
         correctAnswer: groupTrueNum, // number of players that answered 'true'
     } as payloads.QuestionEnd
 
+}
+
+/**
+ * Perform the necessary updates in the DB and in Redis for
+ * players that did submit an answer
+ *
+ * @returns an array of promises that perform updates for each player
+ */
+async function updatePlayersThatHaveAnswered(
+    players: PlayerWithGuess[],
+    gameId: number,
+    questionId: number,
+    totalPlayers: number,
+    totalTrue: number
+) {
+    const haveAnsweredPromises = players.map(async player => {
+
+        // calculate player score
+        const score = calculateScore(player.guess, totalPlayers, totalTrue);
+
+        // get player's answer ID
+        const answerIdSpace = Keys.answerIdsForPlayer(player.id);
+        const answerId = await pubClient.get(`${answerIdSpace}:${questionId}`) // player's answerId
+
+        // save score in DB
+        await answers.setScore(Number(answerId), score);
+
+        // add score to the ranked set
+        return pubClient
+            .pipeline()
+            .hset(`gameQuestions:${questionId}:pointsByPlayer`, player.player_name, score) // for points earned
+            .zincrby(`games:${gameId}:rankedlist`, score, player.player_name)
+            .exec();
+
+    })
+
+    return await Promise.all(haveAnsweredPromises);
+}
+
+/**
+ * Perform the necessary updates in Redis for
+ * players that did NOT submit an answer
+ *
+ * @returns an array of promises that perform updates for each player
+ */
+async function updateHaventAnswered(players: PlayerRef[], gameId: number, questionId: number) {
+    const haveNotAnsweredPromises = players.map(async player => {
+
+        // set players that haven't answered as having earned 0 points
+        await pubClient
+            .pipeline()
+            .hset(`gameQuestions:${questionId}:pointsByPlayer`, player.player_name, 0)
+            .zincrby(`games:${gameId}:rankedlist`, 0, player.player_name)
+            .exec();
+
+    })
+    return await Promise.all(haveNotAnsweredPromises);
 }
 
 export default saveScores;

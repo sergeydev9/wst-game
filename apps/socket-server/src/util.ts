@@ -1,3 +1,4 @@
+import { ScoreboardEntry } from '@whosaidtrue/app-interfaces';
 import { Socket } from 'socket.io';
 
 // turn player object into string so it can be stored in redis set
@@ -29,4 +30,49 @@ export function calculateScore(playerGuess: number, numPlayers: number, totalTru
     const points = beforeRounding - (beforeRounding % STEP); // make divisible by 50
 
     return points >= 0 ? points : 0;
+}
+
+/**
+ * JSON stringified object with scores as the keys,
+ * and player name arrays as the values
+ */
+export function buildScoreMap(scores: string[]): [Record<string, string[]>, string] {
+    const map = {};
+
+    scores.forEach((str, index) => {
+
+        // odd indices are scores
+        if (index % 2 === 0) {
+
+            // add each name to an array, stored at the key of their score
+            const score = scores[index + 1];
+            if (score) {
+                const playerNameArray = map[score]
+                playerNameArray ? map[score] = [...playerNameArray, str] : map[score] = [str];
+            }
+        }
+    })
+
+    return [map, JSON.stringify(map)];
+}
+
+/**
+ * score map (object with score as keys, and player name array as values) to generate
+ * a scoreboard array e.g. [ {player_name: "Some Name", rank: 1, score: 1000}]
+ *
+ */
+export function scoreBoardFromMap(scoreMap: Record<string, string[]>): ScoreboardEntry[] {
+    const result = [];
+
+    const sortedKeys = Object.keys(scoreMap).sort().reverse();
+
+    sortedKeys.forEach((key, index) => {
+        const names = scoreMap[key];
+
+        names.forEach((name: string) => {
+            result.push({ player_name: name, rank: index + 1, score: Number(key) })
+        })
+    })
+
+    return result;
 }

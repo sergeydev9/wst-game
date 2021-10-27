@@ -92,13 +92,11 @@ export interface UserDeckSelectionOptions extends DeckSelectionOptions {
     userId: number;
 }
 
-export type ScoreMap = Record<string, PlayerScore>
-
-export interface PlayerScore {
+export interface ScoreboardEntry {
+    player_name: string;
+    score: number;
     rank: number;
-    name: string;
-    points: number;
-    rankDiff: number;
+    rankDifference: number;
 }
 
 export interface PlayerRef {

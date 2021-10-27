@@ -31,8 +31,8 @@ export class Keys {
         this.hasPassed = `${this.playerKey}:hasPassed`; // used to track whether or not a player has passed
         this.totalQuestions = `${this.gameKey}:totalQuestions`; // total number of questions for a game
         this.currentSequenceIndex = `${this.gameKey}:currentSequenceIndex`;
-        this.scoreboard = `${this.gameKey}:scoreboard`; // sorted set of player names / scores
-        this.latestResults = `${this.gameKey}:latestResults`
+        this.scoreboard = `${this.gameKey}:rankedlist`; // sorted set of player names / scores
+        this.latestResults = `${this.gameKey}:latestResults`;
     }
 
     static totalTrue(questionId: number) {

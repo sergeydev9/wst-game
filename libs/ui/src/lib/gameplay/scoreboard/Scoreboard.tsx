@@ -1,15 +1,15 @@
-import { useMemo, useCallback } from 'react';
+import { useCallback } from 'react';
 import tw from 'tailwind-styled-components';
-import { PlayerScore } from '@whosaidtrue/app-interfaces';
+import { ScoreboardEntry } from '@whosaidtrue/app-interfaces';
 import { RiArrowUpLine } from '@react-icons/all-files/ri/RiArrowUpLine';
 import { RiArrowDownLine } from '@react-icons/all-files/ri/RiArrowDownLine';
 
 
 
 export interface ScoreBoardProps {
-    scores: PlayerScore[];
+    scores: ScoreboardEntry[];
     showDiff?: boolean;
-    currentPlayerScore: PlayerScore
+    currentPlayerScore: ScoreboardEntry
 }
 
 const diffStyleBase = tw.div`
@@ -66,8 +66,8 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
                 border-purple-subtle-stroke
                 `}>
                 <span>{p.rank}</span>
-                <span className="flex flex-col sm:flex-row  items-center">{p.name} {showDiff && diffHelper(p.rankDiff)}</span>
-                <span>{p.points.toLocaleString('en-US')}</span>
+                <span className="flex flex-col sm:flex-row  items-center">{p.player_name} {showDiff && diffHelper(p.rankDifference)}</span>
+                <span>{p.score.toLocaleString('en-US')}</span>
             </li>
         )
     })
@@ -79,8 +79,8 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
             </ul>
             {currentPlayerScore && currentPlayerScore.rank && <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mt-4 mb-2`}>
                 <span>{currentPlayerScore.rank}</span>
-                <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.name} (You) {showDiff && diffHelper(currentPlayerScore.rankDiff)}</span>
-                <span>{currentPlayerScore.points.toLocaleString('en-US')}</span>
+                <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.player_name} (You) {showDiff && diffHelper(currentPlayerScore.rankDifference)}</span>
+                <span>{currentPlayerScore.score.toLocaleString('en-US')}</span>
             </div>}
         </div> : null
     )

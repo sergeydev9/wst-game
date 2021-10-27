@@ -1,15 +1,7 @@
-import { AnswerValue, GameQuestionStatus, GameStatus, PlayerRef } from "@whosaidtrue/app-interfaces";
+import { AnswerValue, GameQuestionStatus, GameStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
 
 export interface SetCurrentPlayers {
     players: PlayerRef[]
-}
-export interface PlayerScore {
-    player_id: number,
-    player_name: string,
-    current_rank: number,
-    current_score: number,
-    previous_rank: number,
-    previous_score: number,
 }
 
 // e.g. PlayerLeftGame, PlayerJoinedgame, RemovePlayer
@@ -29,9 +21,8 @@ export interface UpdateDisconnectedPlayers {
 
 export interface QuestionEnd {
     groupTrue: number;
-    rankDifferences: Record<string, string>;
     pointsEarned: Record<string, string>;
-    scores: string[];
+    scores: ScoreboardEntry[];
     correctAnswer: number
 }
 
@@ -77,9 +68,4 @@ export interface SetGameState {
 
 export interface SetHaveNotAnswered {
     haveNotAnswered: PlayerRef[];
-}
-
-export interface SetGameResults {
-    winner: string;
-    results: PlayerScore[];
 }

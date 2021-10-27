@@ -202,10 +202,10 @@ describe('user routes', () => {
         })
     })
 
-    describe('[PATCH] /send-reset', () => {
+    describe('[POST] /send-reset', () => {
         it('should return 422 if email is not valid', async () => {
             const { body } = await supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email' })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -220,7 +220,7 @@ describe('user routes', () => {
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
             mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 202 } as ClientResponse, {}])
             supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
                 .expect(202, done)
         })
@@ -229,7 +229,7 @@ describe('user routes', () => {
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
             mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 400 } as ClientResponse, {}])
             supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
                 .expect(500, done)
         })
@@ -237,7 +237,7 @@ describe('user routes', () => {
         it('should respond with 500 if DB request fails', (done) => {
             mockedUsers.upsertResetCode.mockRejectedValue(new DatabaseError('error', 1, 'error'))
             supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
                 .expect(500, done)
         })
@@ -246,7 +246,7 @@ describe('user routes', () => {
         it('should respond with 404 if no records returned', (done) => {
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [] } as QueryResult)
             supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
                 .expect(404, done)
         })

@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { CheckRatingResponse, payloads } from "@whosaidtrue/api-interfaces";
-import { GameQuestionStatus, PlayerRef, PlayerScore } from "@whosaidtrue/app-interfaces";
+import { GameQuestionStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
-import { buildScoreboardAndMap } from "../../util/functions";
 import { selectPlayerId, selectPlayerName } from "../game/gameSlice";
 import { api } from '../../api';
 
@@ -25,10 +24,9 @@ export interface CurrentQuestionState {
     ratingSubmitted: boolean;
     globalTrue: number;
     groupTrue: number;
-    rankDifferences: Record<string, string>;
     scores: string[];
-    scoreMap: Record<string, PlayerScore>; // index scores by player_name
-    scoreboard: PlayerScore[];
+    scoreMap: Record<string, ScoreboardEntry>; // index scores by player_name
+    scoreboard: ScoreboardEntry[];
     haveNotAnswered: PlayerRef[];
     guessValue: number;
     pointsEarned: Record<string, string>;
@@ -57,7 +55,6 @@ export const initialQuestionState: CurrentQuestionState = {
     scores: [],
     scoreMap: {},
     scoreboard: [],
-    rankDifferences: {},
     haveNotAnswered: [],
     guessValue: 0
 }
@@ -151,7 +148,6 @@ const currentQuestionSlice = createSlice({
                 groupTrue,
                 pointsEarned,
                 scores,
-                rankDifferences,
                 correctAnswer
             } = action.payload;
 
@@ -159,12 +155,12 @@ const currentQuestionSlice = createSlice({
             state.groupTrue = groupTrue;
             state.pointsEarned = pointsEarned;
             state.correctAnswer = correctAnswer;
-            state.scores = scores;
-            state.rankDifferences = rankDifferences;
+            state.scoreboard = scores;
 
-            const [scoreMap, scoreboard] = buildScoreboardAndMap(scores, rankDifferences);
-            state.scoreMap = scoreMap;
-            state.scoreboard = scoreboard;
+            // index score by player_name
+            state.scoreMap = scores.reduce((acc, curr) => {
+                return { ...acc, [curr.player_name]: curr }
+            }, {})
         }
     },
     extraReducers: (builder) => {
@@ -207,7 +203,6 @@ export const selectCorrectAnswer = (state: RootState) => state.question.correctA
 export const selectGroupTrue = (state: RootState) => state.question.groupTrue;
 export const selectGlobalTrue = (state: RootState) => state.question.globalTrue;
 export const selectNumPlayers = (state: RootState) => state.question.numPlayers;
-export const selectRankDifferences = (state: RootState) => state.question.rankDifferences;
 export const selectScoreMap = (state: RootState) => state.question.scoreMap;
 export const selectScoreboard = (state: RootState) => state.question.scoreboard;
 export const selectFollowUp = (state: RootState) => state.question.followUp;
