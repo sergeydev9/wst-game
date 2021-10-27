@@ -53,7 +53,6 @@ const FlashMessage: React.FC = () => {
         }
     }
 
-
     // TODO: This logic could be cleaned up
     return createPortal((content &&
         <div className={`fixed mx-auto top-24 w-max z-50 left-0 right-0 transform scale-0 ${isPersistent ? 'animate-grow' : 'animate-shrink'}`}>

@@ -134,7 +134,7 @@ export const {
     setShowScoreTooltip,
     dismissScoreTooltip,
     clearScoreTooltipDismissed,
-    setReconnecting
+    setReconnecting,
 } = modalSlice.actions;
 
 // selectors

@@ -20,7 +20,6 @@ import { showError } from '../modal/modalSlice';
 const SendResetForm: React.FC = () => {
     const history = useHistory();
     const dispatch = useAppDispatch();
-    const [error, setError] = useState('')
 
     const formik = useFormik({
         initialValues: {
@@ -30,27 +29,26 @@ const SendResetForm: React.FC = () => {
             email: Yup.string().email('Email is invalid').required('Email is required')
         }),
         onSubmit: (values) => {
-
-            api.post('/user/send-reset', { email: values.email }).then(response => {
-                dispatch(setEmail(values.email))
+            const { email } = values;
+            api.post('/user/send-reset', { email }).then(response => {
+                dispatch(setEmail(email))
                 history.push('/reset/enter-code')
             }).catch(e => {
                 if (e.response.status === 400) {
                     dispatch(showError('Could not find a user with that email'))
                 } else {
-                    dispatch(showError('Oops, somethign went wrong. Please try again later'))
+                    dispatch(showError('Oops, something went wrong. Please try again later'))
                 }
             })
         }
     })
 
-    const emailErr = formik.touched.email && formik.errors.email ? true : false
+    const emailErr = formik.touched.email && formik.errors.email ? true : false;
     return (
-        <Form className="bg-white-ish rounded-3xl mx-auto filter drop-shadow-card px-8 py-6" onSubmit={formik.handleSubmit}>
+        <Form className="bg-white-ish rounded-3xl w-max mx-auto filter drop-shadow-card px-8 py-6" onSubmit={formik.handleSubmit}>
             <div>
                 <Title1>Reset Password</Title1>
                 <BodySmall>Please enter your email</BodySmall>
-                {error && <ErrorText>{error}</ErrorText>}
             </div>
 
             <FormGroup>

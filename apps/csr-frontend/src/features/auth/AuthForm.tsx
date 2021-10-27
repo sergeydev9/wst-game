@@ -30,7 +30,15 @@ export interface AuthFormProps {
     onSuccess: () => void;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, title, $showMinLength, $showForgotPassword, $smallTitle }) => {
+const AuthForm: React.FC<AuthFormProps> = ({
+    endpoint,
+    onSuccess,
+    buttonlabel,
+    title,
+    $showMinLength,
+    $showForgotPassword,
+    $smallTitle
+}) => {
     const dispatch = useAppDispatch();
 
     // Form
@@ -85,7 +93,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ endpoint, onSuccess, buttonlabel, t
     }
     // render
     return (
-        <form className="w-full" onSubmit={formik.handleSubmit}>
+        <form className="w-full px-2 md:mt-2" onSubmit={formik.handleSubmit}>
             {/* title */}
             {$smallTitle ? <Title2 className="text-center mb-3">{title}</Title2> : <LargeTitle className="text-center mb-3">{title}</LargeTitle>}
 
