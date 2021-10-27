@@ -11,6 +11,9 @@ interface PlayerWithGuess extends PlayerRef {
     guess: number;
 }
 
+/**
+ * Calculate and save scores for all players at the end of a question.
+ */
 const saveScores = async (questionId: number, gameId: number) => {
     const haveAnswered = Keys.haveAnswered(questionId);
     const haveNotAnswered = Keys.haveNotAnswered(questionId);

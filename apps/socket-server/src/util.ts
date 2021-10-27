@@ -70,7 +70,7 @@ export function scoreBoardFromMap(scoreMap: Record<string, string[]>): Scoreboar
         const names = scoreMap[key];
 
         names.forEach((name: string) => {
-            result.push({ player_name: name, rank: index + 1, score: Number(key) })
+            result.push({ player_name: name, rank: index + 1, score: Number(key) });
         })
     })
 

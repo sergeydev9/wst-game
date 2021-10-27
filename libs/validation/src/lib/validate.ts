@@ -15,6 +15,11 @@ const validate = (req: Request, res: Response, next: NextFunction) => {
         validationResult(req).throw();
         next();
     } catch (err) {
+        // log in dev only
+        if (process.env.NODE_ENV === 'development') {
+            console.info(`Validation Errors:`, err.errors)
+        }
+
         // send error report and 422 status
         const report = err.array().map((error: ValidationError) => ({ msg: error.msg, param: error.param })); // never return 'value' here. Could leak sensitive info on password errors.
         res.status(422).json(report)

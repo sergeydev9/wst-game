@@ -26,19 +26,25 @@ const ChangePassword: React.FC = () => {
             confPass: ''
         },
         validationSchema: Yup.object({
-            oldPass: Yup.string().required('You must enter your old password'),
+            oldPass: passwordValidationObject.required('You must enter your old password'),
             newPass: passwordValidationObject,
             confPass: Yup.string().oneOf([Yup.ref('newPass'), null], 'Passwords do not match').required('Must confirm new password')
         }),
         onSubmit: async (values) => {
             const { oldPass, newPass } = values
-            try {
-                await api.patch('/user/change-password', { oldPass, newPass })
+
+            return api.patch('/user/change-password', { oldPass, newPass }).then(() => {
                 dispatch(setFullModal(''))
-            } catch (e) {
-                console.error(e);
-                dispatch(showError('An unexpected error occurred while changing password. Please try again later.'))
-            }
+
+            }).catch(e => {
+
+                if (e.response && e.response.status === 401) {
+                    dispatch(showError('Old password incorrect'))
+                } else {
+                    dispatch(showError('An unexpected error occurred while changing password. Please try again later.'))
+                }
+
+            })
         }
     })
 
