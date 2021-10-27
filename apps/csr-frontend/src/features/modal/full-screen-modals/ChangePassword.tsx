@@ -13,7 +13,7 @@ import {
     ModalContent
 } from '@whosaidtrue/ui';
 import { useAppDispatch } from '../../../app/hooks';
-import { setFullModal, showError } from '../modalSlice';
+import { setFullModal, showError, showSuccess } from '../modalSlice';
 import { Link } from 'react-router-dom';
 
 const ChangePassword: React.FC = () => {
@@ -34,6 +34,7 @@ const ChangePassword: React.FC = () => {
             const { oldPass, newPass } = values
 
             return api.patch('/user/change-password', { oldPass, newPass }).then(() => {
+                dispatch(showSuccess('Password successfully changed!'))
                 dispatch(setFullModal(''))
 
             }).catch(e => {
