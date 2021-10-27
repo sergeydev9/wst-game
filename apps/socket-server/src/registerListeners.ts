@@ -98,11 +98,14 @@ const registerListeners = (socket: Socket, io: Server) => {
             sendToAll(types.SET_HAVE_NOT_ANSWERED, pendingList)
 
             if (!pendingList.length) {
-                const current = await pubClient.get(currentSequenceIndex)
-                const total = await pubClient.get(totalQuestions)
+                const [current, total] = await pubClient
+                    .pipeline()
+                    .get(currentSequenceIndex)
+                    .get(totalQuestions)
+                    .exec()
 
                 // if last question, move to game results
-                if (current === total) {
+                if (current[1] === total[1]) {
 
                     // calculate scores
                     const result = await saveScores(msg.gameQuestionId, socket.gameId);
@@ -209,12 +212,14 @@ const registerListeners = (socket: Socket, io: Server) => {
             const playerString = JSON.stringify(msg);
 
             // remove player from current players, and count the number of players that haven't answered
-            const [, , , count] = await pubClient
+            const [, , , count, sequenceIndex, totalQuestionNum] = await pubClient
                 .pipeline()
                 .srem(currentPlayers, playerString)
                 .srem(readerList, playerString)
                 .srem(haveNotAnswered, playerString)
                 .scard(haveNotAnswered)
+                .get(currentSequenceIndex)
+                .get(totalQuestions)
                 .exec()
 
             sendToAll(types.REMOVE_PLAYER, msg);
@@ -226,17 +231,36 @@ const registerListeners = (socket: Socket, io: Server) => {
                 playerString
             })
 
+            // if player was last
             if (count[1] == 0) {
-                // calculate scores
-                const result = await saveScores(Number(questionId), socket.gameId);
 
-                logger.debug({
-                    message: '[Remove Player] Score calculation results',
-                    ...result
-                })
+                // if this is the last question, end the game
+                if (sequenceIndex[1] === totalQuestionNum[1]) {
 
-                // send result
-                sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);
+                    // calculate scores
+                    const result = await saveScores(Number(questionId), socket.gameId);
+
+                    logger.debug({
+                        message: 'Score calculation results',
+                        event: types.ANSWER_PART_2,
+                        ...result
+                    })
+
+                    // end game
+                    sendToAll(types.GAME_END, result as payloads.QuestionEnd);
+                } else {
+                    // calculate scores
+                    const result = await saveScores(Number(questionId), socket.gameId);
+
+                    logger.debug({
+                        message: '[Remove Player] Score calculation results',
+                        ...result
+                    })
+
+                    // send result
+                    sendToAll(types.QUESTION_END, result);
+                }
+
             }
         })
 
