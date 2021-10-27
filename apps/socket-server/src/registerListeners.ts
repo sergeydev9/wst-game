@@ -10,15 +10,18 @@ import submitAnswerPart2 from "./listener-helpers/submitAnswerPart2";
 import saveScores from "./listener-helpers/saveScores";
 import nextQuestion from "./listener-helpers/nextQuestion";
 import endGame from './listener-helpers/endGame';
+import Keys from "./keys";
 
 
 const registerListeners = (socket: Socket, io: Server) => {
     const {
         currentPlayers,
         removedPlayers,
+        readerList,
+        currentQuestionId,
         currentSequenceIndex,
         totalQuestions,
-        gameStatus,
+        gameStatus
     } = socket.keys;
 
     // source info
@@ -34,9 +37,10 @@ const registerListeners = (socket: Socket, io: Server) => {
         logger.debug(`number of players removed in disconnect handler: ${res}`);
     })
 
-    /**
+    /****************************
      * MESSAGE HELPERS
-     */
+     ****************************/
+
     // send to connected clients excluding sender
     const sendToOthers = (type: string, payload?: unknown) => {
         socket.to(`${socket.gameId}`).emit(type, payload)
@@ -197,12 +201,43 @@ const registerListeners = (socket: Socket, io: Server) => {
 
             logger.debug(`Player added to removed list: ${remResponse}`)
 
-            // remove player from current players
-            await pubClient.srem(currentPlayers, JSON.stringify(msg)); // remove from redis
+            // get id of current question
+            const questionId = await pubClient.get(currentQuestionId)
+
+            const haveNotAnswered = Keys.haveNotAnswered(Number(questionId));
+
+            const playerString = JSON.stringify(msg);
+
+            // remove player from current players, and count the number of players that haven't answered
+            const [, , , count] = await pubClient
+                .pipeline()
+                .srem(currentPlayers, playerString)
+                .srem(readerList, playerString)
+                .srem(haveNotAnswered, playerString)
+                .scard(haveNotAnswered)
+                .exec()
+
             sendToAll(types.REMOVE_PLAYER, msg);
 
-            // TODO: if last player, and during question, move to results
+            logger.debug({
+                message: '[Remove Player] have not answered count',
+                count,
+                haveNotAnswered,
+                playerString
+            })
 
+            if (count[1] == 0) {
+                // calculate scores
+                const result = await saveScores(Number(questionId), socket.gameId);
+
+                logger.debug({
+                    message: '[Remove Player] Score calculation results',
+                    ...result
+                })
+
+                // send result
+                sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);
+            }
         })
 
         /**
