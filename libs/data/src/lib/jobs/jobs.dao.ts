@@ -44,9 +44,9 @@ class Jobs extends Dao {
      *     try {
      *         job.startJob();
      *         // do work
-     *         job.finishJob();
+     *         job.finishJob(); // or job.abortJob()
      *     } catch(e) {
-     *         job.abortJob();
+     *         job.finishJob('failed');
      *     }
      * }
      * {code}

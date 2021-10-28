@@ -69,8 +69,8 @@ class Worker {
                     status = 'done';
                 } catch (e) {
                     logError(`executing job failed ${job.id}, ${job.type}`, e);
-                    await job.abortJob();
-                    status = 'error';
+                    await job.finishJob('failed', JSON.stringify(e));
+                    status = 'done';
                 }
 
             } else {
@@ -94,8 +94,7 @@ class Worker {
                 this.scheduleNextPoll(scheduledAt);
                 break;
 
-            case 'empty':
-            case 'error': {
+            case 'empty': {
                 this.exponentialBackoff++;
                 const timeout = Math.min(50 * 2 ** this.exponentialBackoff, this.POLL_MAX_MS);
                 this.scheduleNextPoll(Date.now() + timeout);
