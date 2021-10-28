@@ -27,7 +27,7 @@ services:
       - 4001:4001
 
   worker:
-    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/worker:20211020-183f6f3
+    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/worker:20211027-ec2755a
     container_name: worker
     restart: always
     env_file:
