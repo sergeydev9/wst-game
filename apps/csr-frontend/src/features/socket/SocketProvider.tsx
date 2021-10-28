@@ -13,7 +13,7 @@ import {
     showError,
     isLoggedIn,
 } from '..';
-import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal, setReconnecting } from "../modal/modalSlice";
+import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal, setReconnecting, setConnecting } from "../modal/modalSlice";
 import {
     addPlayer,
     clearGame,
@@ -64,7 +64,15 @@ export const SocketProvider: React.FC = ({ children }) => {
     const token = useAppSelector(selectGameToken);
     const loggedIn = useAppSelector(isLoggedIn);
 
+
+
     useEffect(() => {
+        const clear = () => {
+            dispatch(setReconnecting(false))
+            dispatch(setShouldBlock(false))
+            dispatch(clearGame());
+            dispatch(clearCurrentQuestion())
+        }
 
         // if game status is one of these values, then user should have a socket connection
         const shouldHaveConnection = ['inGame', 'lobby', 'gameCreateSuccess', 'choosingName'].includes(playerStatus) && playerId;
@@ -95,35 +103,37 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             connection.on("connect_error", () => {
-                console.log('connect_error')
-                dispatch(setReconnecting(false))
-                dispatch(setShouldBlock(false))
-                dispatch(showError('Could not connect to game server')); // initial connection failed
-                dispatch(clearGame()); // clear state
-                dispatch(clearCurrentQuestion())
+                clear();
                 history.push('/')
                 connection.close() // close  and delete the socket
                 setSocket(null);
 
             })
 
-            connection.on("disconnect", () => {
-                console.log('Disconnected from game server'); // disconnected from game server. Could happen if player leaves, or is removed.
+            // disconnected from game server.
+            // see https://socket.io/docs/v3/client-socket-instance/ for list of reasons why this could happen
+            connection.on("disconnect", reason => {
+                console.log('Disconnected from game server');
+
+                if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
+                    setReconnecting(true)
+                } else {
+                    clear();
+                    history.push('/') // nav home
+                    connection.close() // close  and delete the socket
+                    setSocket(null);
+                }
+
             })
 
             connection.io.on("reconnect_attempt", () => {
-                console.log('reconnect attempt')
                 dispatch(setShouldBlock(false))
                 dispatch(setReconnecting(true))
             })
 
             connection.io.on("reconnect_failed", () => {
                 console.log('reconnect failed')
-                dispatch(setReconnecting(false))
-                dispatch(setShouldBlock(false))
-                dispatch(showError('Could not reconnect to game server.')); // when all reconnect attempts have failed
-                dispatch(clearGame()); // clear state
-                dispatch(clearCurrentQuestion())
+                clear();
                 history.push('/') // nav home
                 connection.close() // close  and delete the socket
                 setSocket(null);

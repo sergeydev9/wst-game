@@ -92,7 +92,7 @@ const Play: React.FC = () => {
             {playerStatus === "lobby" && gameStatus !== 'postGame' && <Lobby />}
             {playerStatus === 'inGame' && gameStatus === 'inProgress' && <Question />}
             {gameStatus === 'postGame' && <FinalResults />}
-            {isHost && gameStatus !== 'postGame' && screen !== 'guess' && <HostActions />}
+            {isHost && gameStatus !== 'postGame' && screen !== 'guess' && socket && socket.connected && <HostActions />}
         </>
     )
 }
