@@ -51,6 +51,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         check: 'text IS NOT NULL OR html IS NOT NULL OR template_key IS NOT NULL'
     });
 
+    pgm.createConstraint('emails', 'email_subject_required', {
+        check: 'subject IS NOT NULL OR template_key IS NOT NULL'
+    });
+
     pgm.createTrigger('emails', 'update_updated_at_trigger', {
         when: 'BEFORE',
         operation: 'UPDATE',
