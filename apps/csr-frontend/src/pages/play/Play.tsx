@@ -19,6 +19,7 @@ import {
     clearScoreTooltipDismissed,
     selectShouldBlock
 } from '../../features';
+import { setReconnecting, setConnecting } from '../../features/modal/modalSlice';
 
 const Play: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -40,33 +41,39 @@ const Play: React.FC = () => {
         if (loggedIn && !ratingChecked) {
             dispatch(checkHasRatedApp());
         }
-        let unblock: () => void | undefined;
 
-        if (shouldBlock) {
+
+        if (socket && !socket.connected) {
+
+            dispatch(setConnecting(true))
+        }
+        let unblock: () => void;
+
+        if (playerStatus === 'removed' || !shouldBlock) {
+            dispatch(clearGame());
+            dispatch(clearCurrentQuestion());
+            history.push('/');
+        } else {
             unblock = history.block((_) => {
 
                 // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
                 // has to be used here to prevent compiler errors
                 // args[0] is a location object, and args[1] is a navigation action type
-                if (shouldBlock) {
-                    const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
-                        'Are you sure you want to leave the game?';
 
-                    if (window.confirm(confirmMessage)) {
-                        dispatch(clearGame());
-                        dispatch(clearCurrentQuestion());
+                const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
+                    'Are you sure you want to leave the game?';
 
-                        return true;
-                    }
+                if (window.confirm(confirmMessage)) {
+                    dispatch(clearGame());
+                    dispatch(clearCurrentQuestion());
 
-                    return false
+                    return true;
                 }
+
                 dispatch(clearScoreTooltipDismissed());
-                return true
+                return false
             })
         }
-        // show confirmation dialog and clear game state if confirmed
-
 
         // close socket when leaving
         return () => {
@@ -74,16 +81,15 @@ const Play: React.FC = () => {
                 socket.close();
                 setSocket(null);
             }
-            if (unblock) {
-                unblock();
-
-            }
+            unblock && unblock();
+            dispatch(setReconnecting(false))
+            dispatch(setConnecting(false))
         }
-    }, [dispatch, isHost, history, setSocket, socket, shouldBlock, loggedIn, ratingChecked])
+    }, [dispatch, isHost, history, setSocket, socket, shouldBlock, loggedIn, ratingChecked, playerStatus])
 
     return (
         <>
-            {playerStatus === "lobby" && <Lobby />}
+            {playerStatus === "lobby" && gameStatus !== 'postGame' && <Lobby />}
             {playerStatus === 'inGame' && gameStatus === 'inProgress' && <Question />}
             {gameStatus === 'postGame' && <FinalResults />}
             {isHost && gameStatus !== 'postGame' && screen !== 'guess' && <HostActions />}

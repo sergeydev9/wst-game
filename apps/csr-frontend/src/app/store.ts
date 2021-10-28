@@ -72,7 +72,18 @@ let storeTimer: ReturnType<typeof setTimeout>;
 store.subscribe(() => {
     clearTimeout(storeTimer)
     const { auth, game, question, freeCredits, ratings, modals } = store.getState()
-    storeTimer = setTimeout(() => localStorage.setItem('wstState', JSON.stringify({ auth, game, question, freeCredits, ratings, modals })), 50)
+    storeTimer = setTimeout(() => {
+        localStorage.setItem(
+            'wstState',
+            JSON.stringify({
+                auth,
+                game,
+                question,
+                freeCredits,
+                ratings,
+                modals: { ...modals, reconnecting: false, isPersistent: false, connecting: false }  // remove unwanted properties
+            }))
+    }, 50)
 })
 
 export type AppDispatch = typeof store.dispatch;

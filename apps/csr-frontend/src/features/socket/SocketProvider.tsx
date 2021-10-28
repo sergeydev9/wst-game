@@ -26,7 +26,8 @@ import {
     setPlayers,
     setPlayerStatus,
     endGame,
-    setShouldBlock
+    setShouldBlock,
+    removeFromGame
 } from "../game/gameSlice";
 import {
     clearCurrentQuestion,
@@ -94,6 +95,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             connection.on("connect_error", () => {
+                console.log('connect_error')
                 dispatch(setReconnecting(false))
                 dispatch(setShouldBlock(false))
                 dispatch(showError('Could not connect to game server')); // initial connection failed
@@ -110,11 +112,13 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             connection.io.on("reconnect_attempt", () => {
+                console.log('reconnect attempt')
                 dispatch(setShouldBlock(false))
                 dispatch(setReconnecting(true))
             })
 
             connection.io.on("reconnect_failed", () => {
+                console.log('reconnect failed')
                 dispatch(setReconnecting(false))
                 dispatch(setShouldBlock(false))
                 dispatch(showError('Could not reconnect to game server.')); // when all reconnect attempts have failed
@@ -171,13 +175,11 @@ export const SocketProvider: React.FC = ({ children }) => {
                 if (playerId === id) {
                     // If current player is the one that was removed
                     dispatch(setFullModal("removedFromGame")) // show modal
-                    dispatch(setShouldBlock(false))
-                    dispatch(clearGame()); // clear state
+                    dispatch(setShouldBlock(false)) // turn off page exit blocking
+                    dispatch(removeFromGame());
                     dispatch(clearCurrentQuestion())
-                    history.push('/') // nav home;
 
-                    connection.close() // close  and delete the socket
-                    setSocket(null);
+                    connection.close() // close connection. Component sets socket to null on dismount
                 } else {
                     // otherwise, show player has been removed message
                     dispatch(showPlayerRemoved(player_name));
@@ -255,7 +257,20 @@ export const SocketProvider: React.FC = ({ children }) => {
         }
 
 
-    }, [history, token, setSocket, accessCode, playerId, dispatch, gameStatus, socket, location, playerName, playerStatus, loggedIn])
+    }, [
+        history,
+        token,
+        setSocket,
+        accessCode,
+        playerId,
+        dispatch,
+        gameStatus,
+        socket,
+        location,
+        playerName,
+        playerStatus,
+        loggedIn
+    ])
 
 
     // Send a message to the socket server, and passes acknowledgement to optional callback

@@ -158,7 +158,6 @@ router.post('/webhook', raw({ type: 'application/json' }), async (req: Request, 
     }
 
     res.sendStatus(200);
-
 });
 
 /**

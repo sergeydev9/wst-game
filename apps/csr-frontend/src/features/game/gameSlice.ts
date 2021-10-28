@@ -128,6 +128,9 @@ export const gameSlice = createSlice({
         setHasRatedApp: (state, action) => {
             state.hasRatedApp = action.payload
         },
+        removeFromGame: (state) => {
+            state.playerStatus = 'removed';
+        },
         setInactive: (state, action) => {
             state.inactivePlayers = [...action.payload]
         },
@@ -169,6 +172,7 @@ export const gameSlice = createSlice({
 
 // actions
 export const {
+    removeFromGame,
     setPlayerName,
     initialRequest,
     setGameStatus,

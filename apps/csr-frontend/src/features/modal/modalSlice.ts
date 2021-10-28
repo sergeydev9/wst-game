@@ -42,6 +42,7 @@ export interface ModalState {
     messageType: MessageType;
     messageContent: string;
     isPersistent: boolean;
+    connecting: boolean;
     scoreTooltipDismissed: boolean; // sets whether user will see it again next question
     scoreTooltipShowing: boolean; // sets whether should be showing right now
     reconnecting: boolean;
@@ -52,6 +53,7 @@ export const initialState: ModalState = {
     fullModal: '',
     messageType: '',
     messageContent: '',
+    connecting: false,
     isPersistent: false,
     scoreTooltipDismissed: false,
     scoreTooltipShowing: false,
@@ -112,8 +114,12 @@ export const modalSlice = createSlice({
             state.scoreTooltipDismissed = true;
             state.scoreTooltipShowing = false;
         },
+        setConnecting: (state, action) => {
+            state.connecting = action.payload // if true, but reconnecting = false, plain connection message shows
+        },
         setReconnecting: (state, action) => {
             state.reconnecting = action.payload;
+            state.connecting = action.payload
         },
         clearScoreTooltipDismissed: (state) => { // so that the tooltip will show again next game
             state.scoreTooltipDismissed = false;
@@ -135,6 +141,7 @@ export const {
     dismissScoreTooltip,
     clearScoreTooltipDismissed,
     setReconnecting,
+    setConnecting
 } = modalSlice.actions;
 
 // selectors
@@ -145,5 +152,6 @@ export const selectIsPersistent = (state: RootState) => state.modals.isPersisten
 export const selectScoreTooltipDismissed = (state: RootState) => state.modals.scoreTooltipDismissed;
 export const selectScoreTooltipShowing = (state: RootState) => state.modals.scoreTooltipShowing;
 export const selectReconnecting = (state: RootState) => state.modals.reconnecting;
+export const selectConnecting = (state: RootState) => state.modals.connecting;
 
 export default modalSlice.reducer;
