@@ -1,6 +1,6 @@
 import {Pool, QueryResult} from 'pg';
 import Dao from '../base.dao';
-import {Email, InsertEmail} from "@whosaidtrue/app-interfaces";
+import {Email, InsertEmail, Template} from "@whosaidtrue/app-interfaces";
 
 class Emails extends Dao {
     constructor(pool: Pool) {
@@ -33,6 +33,18 @@ class Emails extends Dao {
                 email.template_key,
                 email.template_data
             ]
+        };
+
+        return this.pool.query(query);
+    }
+
+    public getDetails(id: number): Promise<QueryResult<Email & Template>> {
+        const query = {
+            text: `SELECT *
+                   FROM emails
+                            LEFT JOIN email_templates ON "key" = template_key
+                   WHERE id = $1`,
+            values: [id]
         };
 
         return this.pool.query(query);

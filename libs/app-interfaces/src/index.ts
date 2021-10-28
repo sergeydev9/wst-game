@@ -255,8 +255,8 @@ export interface Job {
     started_at?: Date;
     completed_at?: Date;
     canceled_at: Date;
-    created_at: Date;
-    updated_at: Date;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface JobTransaction extends Job {
@@ -277,8 +277,15 @@ export interface Email {
     html?: string;
     template_key?: string;
     template_data?: string;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Template {
+    key: string,
+    sendgrid_template_id: string,
+    created_at?: string;
+    updated_at?: string;
 }
 
 export type InsertUserQuestionRating = Insert<UserQuestionRating>;
