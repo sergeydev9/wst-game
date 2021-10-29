@@ -10,7 +10,7 @@ import {
     selectSeen,
     sendReport
 } from './chooseNameSlice';
-import { setGameStatus, clearGame, joinGame, selectIsHost } from '../game/gameSlice';
+import { setGameStatus, clearGame, joinGame, selectIsHost, setShouldBlock } from '../game/gameSlice';
 import {
     Button,
     RerollNamesButton,

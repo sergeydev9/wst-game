@@ -19,7 +19,7 @@ import {
     clearScoreTooltipDismissed,
     selectShouldBlock
 } from '../../features';
-import { setReconnecting, setConnecting } from '../../features/modal/modalSlice';
+import { setReconnecting, setConnecting, selectConnecting } from '../../features/modal/modalSlice';
 
 const Play: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -30,6 +30,7 @@ const Play: React.FC = () => {
     const gameStatus = useAppSelector(selectGameStatus);
     const loggedIn = useAppSelector(isLoggedIn);
     const ratingChecked = useAppSelector(selectAppRatingChecked);
+    const connecting = useAppSelector(selectConnecting);
     const shouldBlock = useAppSelector(selectShouldBlock);
     const screen = useAppSelector(currentScreen);
 
@@ -44,16 +45,17 @@ const Play: React.FC = () => {
 
 
         if (socket && !socket.connected) {
-
             dispatch(setConnecting(true))
         }
+
+
         let unblock: () => void;
 
-        if (playerStatus === 'removed' || !shouldBlock) {
+        if (playerStatus === 'removed') {
             dispatch(clearGame());
             dispatch(clearCurrentQuestion());
             history.push('/');
-        } else {
+        } else if (shouldBlock) {
             unblock = history.block((_) => {
 
                 // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
@@ -77,22 +79,23 @@ const Play: React.FC = () => {
 
         // close socket when leaving
         return () => {
-            if (socket) {
-                socket.close();
-                setSocket(null);
-            }
+
             unblock && unblock();
-            dispatch(setReconnecting(false))
-            dispatch(setConnecting(false))
+
+            if (connecting) {
+                dispatch(setReconnecting(false)) // stops any connecting modals from showing after user leaves
+                dispatch(setConnecting(false))
+            }
+
         }
-    }, [dispatch, isHost, history, setSocket, socket, shouldBlock, loggedIn, ratingChecked, playerStatus])
+    }, [dispatch, isHost, history, setSocket, socket, shouldBlock, loggedIn, ratingChecked, playerStatus, connecting])
 
     return (
         <>
             {playerStatus === "lobby" && gameStatus !== 'postGame' && <Lobby />}
             {playerStatus === 'inGame' && gameStatus === 'inProgress' && <Question />}
             {gameStatus === 'postGame' && <FinalResults />}
-            {isHost && gameStatus !== 'postGame' && screen !== 'guess' && socket && socket.connected && <HostActions />}
+            {isHost && gameStatus !== 'postGame' && screen !== 'guess' && <HostActions />}
         </>
     )
 }

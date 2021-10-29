@@ -8,12 +8,17 @@ import {
     selectGameToken,
     selectAccessCode,
     showInfo,
-    showSuccess,
     selectPlayerId,
     showError,
     isLoggedIn,
 } from '..';
-import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal, setReconnecting, setConnecting } from "../modal/modalSlice";
+import {
+    showPlayerJoined,
+    showPlayerLeft,
+    showPlayerRemoved,
+    setFullModal,
+    setReconnecting
+} from "../modal/modalSlice";
 import {
     addPlayer,
     clearGame,
@@ -103,6 +108,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             connection.on("connect_error", () => {
+                dispatch(showError('Could not connect to game server'))
                 clear();
                 history.push('/')
                 connection.close() // close  and delete the socket
@@ -113,16 +119,20 @@ export const SocketProvider: React.FC = ({ children }) => {
             // disconnected from game server.
             // see https://socket.io/docs/v3/client-socket-instance/ for list of reasons why this could happen
             connection.on("disconnect", reason => {
-                console.log('Disconnected from game server');
+                console.error('Disconnected from game server')
+                // if (reason !== 'io client disconnect') {
+                //     dispatch(showError('Disconnected from game server'))
+                //     console.error('Disconnected from game server')
+                // }
 
-                if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
-                    setReconnecting(true)
-                } else {
-                    clear();
-                    history.push('/') // nav home
-                    connection.close() // close  and delete the socket
-                    setSocket(null);
-                }
+                // if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
+                //     setReconnecting(true)
+                // } else {
+                //     clear();
+                //     history.push('/') // nav home
+                //     connection.close() // close  and delete the socket
+                //     setSocket(null);
+                // }
 
             })
 

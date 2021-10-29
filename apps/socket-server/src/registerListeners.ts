@@ -2,8 +2,9 @@ import { Server, Socket } from "socket.io";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { logger, logIncoming, logOutgoing, logError } from '@whosaidtrue/logger';
 import { playerValueString } from './util';
+import { games } from './db';
 import { pubClient } from "./redis";
-import { ONE_DAY } from "./constants";
+import { ONE_DAY, ONE_WEEK } from "./constants";
 import startGame from "./listener-helpers/startGame";
 import submitAnswerPart1 from "./listener-helpers/submitAnswerPart1";
 import submitAnswerPart2 from "./listener-helpers/submitAnswerPart2";
@@ -33,8 +34,27 @@ const registerListeners = (socket: Socket, io: Server) => {
 
     // handle disconnect
     socket.on('disconnect', async () => {
-        const res = await pubClient.srem(currentPlayers, playerValueString(socket));
-        logger.debug(`number of players removed in disconnect handler: ${res}`);
+
+        logger.debug({
+            message: '[disconnect] Player disconnected',
+            playerId: socket.playerId,
+            playerName: socket.playerName,
+            isHost: socket.isHost
+        })
+        const [, numPlayers] = await pubClient
+            .pipeline()
+            .srem(currentPlayers, playerValueString(socket))
+            .scard(currentPlayers)
+            .exec();
+
+
+        if (!numPlayers[1]) {
+
+            // set status to finished in DB and redis
+            await pubClient.set(gameStatus, 'finished', 'EX', ONE_WEEK);
+            await games.setStatus(socket.gameId, 'finished');
+
+        }
     })
 
     /****************************
