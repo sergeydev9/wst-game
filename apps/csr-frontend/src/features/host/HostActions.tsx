@@ -19,7 +19,7 @@ const HostActions: React.FC = () => {
         <HostActionsBox required={isRequired}>
             {gameStatus === 'lobby' && <StartGame />}
             {screen === 'answerSubmit' && <DuringQuestion />}
-            {screen === 'waitingRoom' && <MoveToAnswer />}
+            {screen === 'waitingRoom' && gameStatus === 'inProgress' && <MoveToAnswer />}
             {screen === 'answerResults' && <MoveToQuestionScores />}
             {screen === 'scoreResults' && gameStatus !== 'lobby' && <StartNextQuestion />}
         </HostActionsBox>

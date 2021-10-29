@@ -3,8 +3,7 @@ version: '3.7'
 services:
 
   redis:
-    image: redis:6.0
-    container_name: redis
+    image: redis:6.2-bullseye
     restart: unless-stopped
     ports:
       - '6379:6379'

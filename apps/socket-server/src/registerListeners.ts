@@ -33,13 +33,14 @@ const registerListeners = (socket: Socket, io: Server) => {
     }
 
     // handle disconnect
-    socket.on('disconnect', async () => {
+    socket.on('disconnect', async (reason) => {
 
         logger.debug({
             message: '[disconnect] Player disconnected',
             playerId: socket.playerId,
             playerName: socket.playerName,
-            isHost: socket.isHost
+            isHost: socket.isHost,
+            reason
         })
         const [, numPlayers] = await pubClient
             .pipeline()
@@ -53,6 +54,10 @@ const registerListeners = (socket: Socket, io: Server) => {
             // set status to finished in DB and redis
             await pubClient.set(gameStatus, 'finished', 'EX', ONE_WEEK);
             await games.setStatus(socket.gameId, 'finished');
+
+            logger.debug({
+                message: '[disconnect] last player disconnected. Ending game.',
+            })
 
         }
     })
