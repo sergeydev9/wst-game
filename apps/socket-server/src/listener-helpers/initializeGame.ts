@@ -15,8 +15,21 @@ const initializeGame = async (socket: Socket) => {
 
     const lock = await pubClient.set(status, 1, 'EX', 10, 'NX');
 
-    // if game data already exists, or another socket is already fetching it, exit
-    if (!lock) return;
+    // if game data already exists
+    if (!lock) {
+
+        // check if game is finished
+        const gameStatus = await pubClient.get(status);
+
+        if (gameStatus === 'finished') {
+            socket.emit(types.GAME_FINISHED);
+            return;
+        }
+
+        // if not finished, just return
+        return;
+    }
+
 
     try {
         const { rows } = await games.getById(socket.gameId);
@@ -29,6 +42,10 @@ const initializeGame = async (socket: Socket) => {
         }
 
         const game = rows[0]
+
+        if (game.status === 'finished') {
+            socket.emit(types.GAME_FINISHED);
+        }
 
         // set total questions value
         await pubClient.set(socket.keys.totalQuestions, game.total_questions, 'EX', ONE_DAY)

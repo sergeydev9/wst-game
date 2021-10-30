@@ -32,7 +32,9 @@ const registerListeners = (socket: Socket, io: Server) => {
         gameId: socket.gameId
     }
 
-    // handle disconnect
+    /**
+     * DISCONNECT
+     */
     socket.on('disconnect', async (reason) => {
 
         logger.debug({
@@ -40,8 +42,9 @@ const registerListeners = (socket: Socket, io: Server) => {
             playerId: socket.playerId,
             playerName: socket.playerName,
             isHost: socket.isHost,
-            reason
-        })
+            reason // "client namespace disconnect" = intentional, e.g. player leaves game
+        });
+
         const [, numPlayers] = await pubClient
             .pipeline()
             .srem(currentPlayers, playerValueString(socket))
@@ -53,11 +56,40 @@ const registerListeners = (socket: Socket, io: Server) => {
 
             // set status to finished in DB and redis
             await pubClient.set(gameStatus, 'finished', 'EX', ONE_WEEK);
-            await games.setStatus(socket.gameId, 'finished');
+            await games.endGame(socket.gameId);
 
             logger.debug({
                 message: '[disconnect] last player disconnected. Ending game.',
             })
+
+            // host left on purpose
+        } else if (socket.isHost && reason === "client namespace disconnect") {
+            const [questionId, idx] = await pubClient
+                .pipeline()
+                .get(currentQuestionId)
+                .get(currentSequenceIndex)
+                .set(gameStatus, 'postGame')
+                .exec()
+
+            if (idx[1] > 1) {
+                // calculate scores
+                const result = await saveScores(Number(questionId[1]), socket.gameId);
+
+                logger.debug({
+                    message: '[HostDisconnect] Score calculation results',
+                    ...result
+                })
+
+                // end game
+                sendToOthers(types.GAME_END, result as payloads.QuestionEnd);
+                sendToOthers(types.HOST_LEFT);
+
+            } else {
+                logger.debug({
+                    message: '[HostDisconnect] Host left before first question'
+                })
+                sendToOthers(types.HOST_LEFT_NO_RESULTS) // host left before first question was over. No need to save
+            }
 
         }
     })

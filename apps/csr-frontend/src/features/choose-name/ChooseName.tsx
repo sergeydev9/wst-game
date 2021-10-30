@@ -21,13 +21,15 @@ import {
     Title1
 } from '@whosaidtrue/ui';
 import { NameObject } from '@whosaidtrue/app-interfaces';
-import { JoinGameResponse, NameRequestResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
+import { JoinGameResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
 import { showError } from '../modal/modalSlice';
 import { clearCurrentQuestion, clearNameChoices } from '..';
+import { clearHost } from '../host/hostSlice';
 
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
+    const [shouldBlock, setShouldBlock] = useState(true);
     const { access_code } = useParams<{ access_code: string }>()
     const history = useHistory();
     const names = useAppSelector(selectCurrentNameOptions);
@@ -46,9 +48,8 @@ const ChooseName: React.FC = () => {
             // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
             // has to be used here to prevent compiler errors
             // args[0] is a location object, and args[1] is a navigation action type
-
             const path = args[0].pathname as any
-            if (path !== '/play') {
+            if (path !== '/play' && shouldBlock) {
                 const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
                     'Are you sure you want to leave the game?';
 
@@ -88,7 +89,7 @@ const ChooseName: React.FC = () => {
             dispatch(clearNameChoices());
             unblock();
         }
-    }, [dispatch, history, access_code, isHost])
+    }, [dispatch, history, access_code, isHost, shouldBlock])
 
     // send request to join the game
     const join = async (name: string) => {
@@ -96,9 +97,20 @@ const ChooseName: React.FC = () => {
             dispatch(joinGame(result.data))
             history.push('/play')
         }).catch(e => {
-            if (e.status === 401) {
+            setShouldBlock(false);
+            if (e.response.status === 401) {
                 dispatch(showError('That name is no longer available. Please select another'))
-            } else {
+
+
+            } else if (e.response.status === 403) {
+                dispatch(showError('The game you are atempting to join has already finished'));
+                dispatch(clearGame());
+                dispatch(clearCurrentQuestion());
+                dispatch(clearHost());
+                history.push('/')
+
+            }
+            else {
                 dispatch(showError('An error occurred while attempting to join game'))
                 history.push('/')
             }

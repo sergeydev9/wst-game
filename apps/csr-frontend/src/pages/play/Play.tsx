@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
@@ -17,21 +17,19 @@ import {
     checkHasRatedApp,
     selectAppRatingChecked,
     clearScoreTooltipDismissed,
-    selectShouldBlock
 } from '../../features';
 import { setReconnecting, setConnecting, selectConnecting } from '../../features/modal/modalSlice';
 
 const Play: React.FC = () => {
     const dispatch = useAppDispatch();
     const history = useHistory();
-    const { socket, setSocket } = useSocket();
+    const { socket, setSocket, shouldBlock } = useSocket();
     const playerStatus = useAppSelector(selectPlayerStatus);
     const isHost = useAppSelector(selectIsHost);
     const gameStatus = useAppSelector(selectGameStatus);
     const loggedIn = useAppSelector(isLoggedIn);
     const ratingChecked = useAppSelector(selectAppRatingChecked);
     const connecting = useAppSelector(selectConnecting);
-    const shouldBlock = useAppSelector(selectShouldBlock);
     const screen = useAppSelector(currentScreen);
 
 
@@ -56,37 +54,38 @@ const Play: React.FC = () => {
             dispatch(clearCurrentQuestion());
             history.push('/');
         } else if (shouldBlock) {
-            unblock = history.block((_) => {
+            unblock = history.block((...args: any[]) => {
 
                 // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
                 // has to be used here to prevent compiler errors
                 // args[0] is a location object, and args[1] is a navigation action type
 
-                const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
-                    'Are you sure you want to leave the game?';
+                const path = args[0].pathname as any
+                if (path !== '/play') {
+                    const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
+                        'Are you sure you want to leave the game?';
 
-                if (window.confirm(confirmMessage)) {
-                    dispatch(clearGame());
-                    dispatch(clearCurrentQuestion());
+                    if (window.confirm(confirmMessage)) {
+                        dispatch(clearGame());
+                        dispatch(clearCurrentQuestion());
 
-                    return true;
+                        return true;
+                    }
+
+                    dispatch(clearScoreTooltipDismissed());
+                    return false
+                } else {
+                    return false
                 }
 
-                dispatch(clearScoreTooltipDismissed());
-                return false
             })
         }
 
         // close socket when leaving
         return () => {
-
             unblock && unblock();
-
-            if (connecting) {
-                dispatch(setReconnecting(false)) // stops any connecting modals from showing after user leaves
-                dispatch(setConnecting(false))
-            }
-
+            dispatch(setReconnecting(false)) // stops any connecting modals from showing after user leaves
+            dispatch(setConnecting(false))
         }
     }, [dispatch, isHost, history, setSocket, socket, shouldBlock, loggedIn, ratingChecked, playerStatus, connecting])
 

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createSelector, createAsyncThunk } from "@r
 import { CheckRatingResponse, payloads } from "@whosaidtrue/api-interfaces";
 import { GameQuestionStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
-import { selectPlayerId, selectPlayerName } from "../game/gameSlice";
+import { selectPlayerId, selectPlayerName, selectGameStatus } from "../game/gameSlice";
 import { api } from '../../api';
 
 export interface CurrentQuestionState {
@@ -24,7 +24,6 @@ export interface CurrentQuestionState {
     ratingSubmitted: boolean;
     globalTrue: number;
     groupTrue: number;
-    scores: string[];
     scoreMap: Record<string, ScoreboardEntry>; // index scores by player_name
     scoreboard: ScoreboardEntry[];
     haveNotAnswered: PlayerRef[];
@@ -52,7 +51,6 @@ export const initialQuestionState: CurrentQuestionState = {
     ratingSubmitted: false,
     globalTrue: 0,
     groupTrue: 0,
-    scores: [],
     scoreMap: {},
     scoreboard: [],
     haveNotAnswered: [],
@@ -198,7 +196,6 @@ export const selectQuestionStatus = (state: RootState) => state.question.status;
 export const selectGamequestionId = (state: RootState) => state.question.gameQuestionId;
 export const selectGuessValue = (state: RootState) => state.question.guessValue;
 export const selectPointsEarned = (state: RootState) => state.question.pointsEarned;
-export const selectScores = (state: RootState) => state.question.scores;
 export const selectCorrectAnswer = (state: RootState) => state.question.correctAnswer;
 export const selectGroupTrue = (state: RootState) => state.question.groupTrue;
 export const selectGlobalTrue = (state: RootState) => state.question.globalTrue;
@@ -214,7 +211,22 @@ export const selectPlayerScore = createSelector([selectPlayerName, selectScoreMa
     return scores[name];
 })
 
-export const selectWinner = createSelector([selectScores], (scores) => scores[0]);
+export const selectWinner = createSelector([selectScoreboard], (scores) => {
+    const winners = scores.filter(score => score.rank === 1);
+
+    let result = ""
+
+    winners.forEach((winner, index) => {
+        if (index > 0) {
+            result += `& ${winner.player_name}`
+        } else {
+            result += winner.player_name;
+        }
+
+    })
+
+    return result;
+});
 
 export const selectIsReader = createSelector([selectPlayerId, selectReaderId], (playerId, readerId) => {
     return playerId === readerId;
@@ -234,8 +246,9 @@ export const currentScreen = createSelector(
     [
         selectQuestionStatus,
         selectHasAnswered,
-        selectHasGuessed
-    ], (status, hasAnswered, hasGuessed) => {
+        selectHasGuessed,
+        selectGameStatus
+    ], (status, hasAnswered, hasGuessed, gameStatus) => {
 
         // if in question (i.e. not results)
         if (status === 'question') {
@@ -248,11 +261,11 @@ export const currentScreen = createSelector(
             // if they have answered, but haven't guessed
             // show guess, else show waiting room
             return hasGuessed ? 'waitingRoom' : 'guess';
-        } else if (status === 'answer') {
+        } else if (status === 'answer' && gameStatus !== 'lobby') {
             return 'answerResults'
         }
 
-        return 'scoreResults'
+        return gameStatus === 'lobby' ? 'lobby' : 'scoreResults'
     })
 
 export default currentQuestionSlice.reducer;

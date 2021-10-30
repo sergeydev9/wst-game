@@ -6,7 +6,9 @@ import { Socket } from "socket.io-client";
 const socketContext = createContext<{
     socket: Socket | null,
     setSocket: Dispatch<SetStateAction<Socket | null>>,
-    sendMessage: SendMessageFunction
+    sendMessage: SendMessageFunction,
+    shouldBlock: boolean,
+    setShouldBlock: Dispatch<SetStateAction<boolean>>
 } | undefined>(undefined);
 
 export default socketContext;

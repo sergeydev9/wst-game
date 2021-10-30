@@ -162,7 +162,7 @@ describe('games routes', () => {
                 access_code: '12345',
                 totalQuestions: 9,
                 deck: {} as Deck,
-                status: 'finished',
+                status: 'lobby',
                 isHost: false,
                 hostName: 'hostname',
                 currentQuestionIndex: 1
@@ -173,6 +173,26 @@ describe('games routes', () => {
                 .send({ access_code: '123abb', name: 'name' })
                 .expect('Content-Type', /json/)
                 .expect(201, done)
+        })
+
+        it('should respond with 403 if status = finished', done => {
+            mockedGames.join.mockResolvedValue({
+                playerId: 1,
+                playerName: 'name',
+                gameId: 2,
+                access_code: '12345',
+                totalQuestions: 9,
+                deck: {} as Deck,
+                status: 'finished',
+                isHost: false,
+                hostName: 'hostname',
+                currentQuestionIndex: 1
+            })
+
+            supertest(app)
+                .post('/games/join')
+                .send({ access_code: '123abb', name: 'name' })
+                .expect(403, done)
         })
     })
 })
