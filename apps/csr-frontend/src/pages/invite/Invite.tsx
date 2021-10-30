@@ -25,12 +25,17 @@ const Invite: React.FC = () => {
         history.push(`/x/${accessCode}`)
         dispatch(setGameStatus('choosingName'));
     }
+
+    const isForSchools = process.env.NX_IS_FOR_SCHOOLS === 'true';
+    const domain = isForSchools ? 'whosaidtrueforschools.com/x' : 'whosaidtrue.com/x';
+    const titleDomain = isForSchools ? 'WhoSaidTrueForSchools.com' : 'WhoSaidTrue.com';
+
     return (
         <NoFlexBox className="md:w-max mx-2 md:mx-auto text-basic-black text-center pb-16">
 
             <Title1 className="mb-8">Invite Players</Title1>
-            <Title3 className="mb-8">Tell Players to Enter Game Code at WhoSaidTrue.com</Title3>
-            <InviteLinks accessCode={accessCode}>
+            <Title3 className="mb-8">Tell Players to Enter Game Code at {titleDomain}</Title3>
+            <InviteLinks domain={domain} accessCode={accessCode}>
                 <Button type="button" onClick={goToChooseName} >Choose Your Player Name</Button>
             </InviteLinks>
         </NoFlexBox>

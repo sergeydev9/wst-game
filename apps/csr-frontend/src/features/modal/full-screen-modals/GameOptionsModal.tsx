@@ -21,10 +21,12 @@ const GameOptionsModal: React.FC = () => {
         dispatch(setFullModal(''));
         history.push('/');
     }
+
+    const domain = process.env.NX_IS_FOR_SCHOOLS === 'true' ? 'whosaidtrueforschools.com/x' : 'whosaidtrue.com/x';
     return (
         <ModalContent>
             <Title1 className="mt-1 mb-10">Game Options</Title1>
-            <InviteLinks accessCode={accessCode}>
+            <InviteLinks domain={domain} accessCode={accessCode}>
 
                 {/* buttons */}
                 {isHost ? <HostGameOptionsButtons /> :
