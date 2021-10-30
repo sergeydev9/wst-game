@@ -32,7 +32,7 @@ const ConnectionMessage: React.FC = () => {
         <MessageContainer>
             <MessageModal>
                 <ImSpinner6 className="text-yellow-gradient-to animate-spin text-md" height="24px" width="24px" />
-                {reconnecting ? 'Connection to game server lost. Reconnecting...' : 'Connecting to game server'}
+                {reconnecting ? 'Reconnecting...' : 'Connecting to game server'}
             </MessageModal>
         </MessageContainer>), el)
 

@@ -53,3 +53,4 @@ export * from './question/questionSlice';
 export * from './game/gameSlice';
 export * from './free-credit-requests/freeCreditsSlice';
 export * from './ratings/ratingsSlice';
+export * from './host/hostSlice';

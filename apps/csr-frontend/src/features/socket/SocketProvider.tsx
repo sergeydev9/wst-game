@@ -31,7 +31,6 @@ import {
     setPlayers,
     setPlayerStatus,
     endGame,
-    setShouldBlock,
     removeFromGame
 } from "../game/gameSlice";
 import {
@@ -123,7 +122,6 @@ export const SocketProvider: React.FC = ({ children }) => {
                 if (reason !== 'io client disconnect') {
                     setShouldBlock(false)
                     dispatch(showError('Disconnected from game server'))
-                    console.error('Disconnected from game server')
                 }
 
                 if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
@@ -149,11 +147,10 @@ export const SocketProvider: React.FC = ({ children }) => {
                 history.push('/') // nav home
                 connection.close() // close  and delete the socket
                 setSocket(null);
-
             })
 
             connection.io.on('reconnect', () => {
-                dispatch(showInfo('Reconnected to game server. Welcome back!')); // reconnect success
+                dispatch(showInfo('Reconnected. Welcome back!')); // reconnect success
                 setShouldBlock(true);
             })
 

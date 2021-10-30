@@ -12,6 +12,7 @@ import saveScores from "./listener-helpers/saveScores";
 import nextQuestion from "./listener-helpers/nextQuestion";
 import endGame from './listener-helpers/endGame';
 import Keys from "./keys";
+import { PlayerRef } from "@whosaidtrue/app-interfaces";
 
 
 const registerListeners = (socket: Socket, io: Server) => {
@@ -68,7 +69,7 @@ const registerListeners = (socket: Socket, io: Server) => {
                 .pipeline()
                 .get(currentQuestionId)
                 .get(currentSequenceIndex)
-                .set(gameStatus, 'postGame')
+                .set(gameStatus, 'postGame', 'EX', ONE_DAY)
                 .exec()
 
             if (idx[1] > 1) {
@@ -91,6 +92,13 @@ const registerListeners = (socket: Socket, io: Server) => {
                 sendToOthers(types.HOST_LEFT_NO_RESULTS) // host left before first question was over. No need to save
             }
 
+        } else if (!socket.isHost && reason === "client namespace disconnect") {
+            const isRemoved = await pubClient.sismember(socket.keys.removedPlayers, `${socket.playerId}`);
+
+            if (!isRemoved) {
+                sendToOthers(types.PLAYER_LEFT_GAME, { id: socket.playerId, player_name: socket.playerName } as PlayerRef)
+
+            }
         }
     })
 

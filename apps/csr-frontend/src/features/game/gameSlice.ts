@@ -9,7 +9,6 @@ import { RootState } from "../../app/store";
 export interface GameState {
     gameStatus: GameStatus | '';
     hasRatedApp: boolean;
-    shouldBlock: boolean;
     playerStatus: UserGameStatus;
     shouldAnnounce: boolean;
     hasPassed: boolean;
@@ -35,7 +34,6 @@ export const initialGameState: GameState = {
     shouldAnnounce: false, // should there be a winner announcement when user gets to results
     gameToken: '',
     hasRatedApp: false,
-    shouldBlock: true, // should confirm leave game.
     hasPassed: false,
     gameId: 0,
     deck: {
@@ -140,9 +138,7 @@ export const gameSlice = createSlice({
                 return { ...acc, [player.id]: player }
             }, {});
         },
-        setShouldBlock: (state, action) => {
-            state.shouldBlock = action.payload;
-        },
+
         joinGame: (state, action: PayloadAction<JoinGameResponse>) => {
             const {
                 status,
@@ -188,7 +184,6 @@ export const {
     setPlayerStatus,
     setHasPassed,
     endGame,
-    setShouldBlock
 } = gameSlice.actions;
 
 // selectors
@@ -207,7 +202,6 @@ export const selectPlayerStatus = (state: RootState) => state.game.playerStatus;
 export const selectPlayers = (state: RootState) => state.game.players;
 export const selectTotalQuestions = (state: RootState) => state.game.totalQuestions;
 export const selectShouldAnnounce = (state: RootState) => state.game.shouldAnnounce;
-export const selectShouldBlock = (state: RootState) => state.game.shouldBlock;
 
 export const selectPlayerList = createSelector(selectPlayers, (players) => {
     return Object.values(players);

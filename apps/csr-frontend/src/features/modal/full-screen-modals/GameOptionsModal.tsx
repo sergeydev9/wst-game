@@ -5,18 +5,21 @@ import { clearGame, selectAccessCode, selectIsHost } from '../../game/gameSlice'
 import HostGameOptionsButtons from '../../host/HostGameOptionsButtons';
 import { setFullModal } from '../modalSlice';
 import { clearCurrentQuestion } from '../../question/questionSlice';
+import { useSocket } from '../..';
 
 const GameOptionsModal: React.FC = () => {
     const dispatch = useAppDispatch()
     const history = useHistory();
+    const { setShouldBlock } = useSocket();
     const accessCode = useAppSelector(selectAccessCode)
     const isHost = useAppSelector(selectIsHost);
 
     const leaveGame = () => {
-        dispatch(clearGame())
+        setShouldBlock(false);
+        dispatch(clearGame());
         dispatch(clearCurrentQuestion());
-        dispatch(setFullModal(''))
-        history.push('/')
+        dispatch(setFullModal(''));
+        history.push('/');
     }
     return (
         <ModalContent>

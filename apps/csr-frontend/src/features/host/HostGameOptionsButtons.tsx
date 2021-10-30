@@ -1,13 +1,14 @@
 import { Button } from '@whosaidtrue/ui';
 import { setFullModal } from '../modal/modalSlice';
-import { setShouldBlock } from '../game/gameSlice';
+import useSocket from '../socket/useSocket'
 import { useAppDispatch } from '../../app/hooks';
 
 const HostGameOptionsButtons: React.FC = () => {
     const dispatch = useAppDispatch();
+    const { setShouldBlock } = useSocket()
 
     const confEndGame = () => {
-        dispatch(setShouldBlock(false));
+        setShouldBlock(false);
         dispatch(setFullModal('confirmEndGame'))
     }
     return (
