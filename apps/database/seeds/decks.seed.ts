@@ -13,12 +13,16 @@ const insertDecks = async (pool: Pool, num: number) => {
 
     // need array of the values for each deck object
     const decks = deckObjects.map((obj, i) => {
-        if (i % 5 === 0) {
-            obj.purchase_price = '0.00' // make 1/5 decks free
+        if (i < 3) {
+            obj.purchase_price = '0.00' // make 3 decks free
         }
 
         if (i % 3 == 0) {
             obj.movie_rating = 'PG'
+
+            if (i % 2 === 0) {
+                obj.sfw = true; // some pg decks are sfw
+            }
         }
 
         if (i % 2) {

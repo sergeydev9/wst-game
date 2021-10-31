@@ -15,6 +15,7 @@ declare global {
     interface Chainable<Subject> {
       loginUser(): void;
       getBySel(selector: string): any;
+      fillInValidAuth(): void;
       store(): Store;
       getState(): any;
       subscribe(): any;
@@ -26,15 +27,19 @@ Cypress.Commands.add("getBySel", (selector, ...args) => {
   return cy.get(`[data-cy=${selector}]`, ...args);
 });
 
+
+/**
+ * loginUser
+ */
 Cypress.Commands.add("loginUser", () => {
   const log = Cypress.log({
     name: "loginUser",
     displayName: "LOGIN USER",
     message: [`🔐 Authenticating | User`],
-    autoEnd: false,
+    autoEnd: true,
   });
 
-  cy.intercept("POST", "http://localhost:3000/user/login").as("loginUser");
+  cy.intercept("POST", "http://localhost:3000/user/login").as("login");
 
   cy.visit("/login", { log: false }).then(() => {
     log.snapshot("before");
@@ -44,7 +49,7 @@ Cypress.Commands.add("loginUser", () => {
   cy.getBySel('password-input').type('Password123');
   cy.getBySel('login-submit').click()
 
-  cy.wait("@loginUser").then((loginUser) => {
+  cy.wait("@login").then((loginUser) => {
     log.set({
       consoleProps() {
         return {
@@ -56,6 +61,28 @@ Cypress.Commands.add("loginUser", () => {
 
 });
 
+
+/**
+ * Fill in auth
+ */
+Cypress.Commands.add('fillInValidAuth', () => {
+  const log = Cypress.log({
+    name: "fillInValidAuth",
+    displayName: "ENTER CREDENTIALS",
+    message: [`✏️ |  Filling Inputs`],
+    autoEnd: true,
+  });
+
+  log.snapshot('before')
+  cy.getBySel('email-input').type('cypress-test-user@email.com');
+  cy.getBySel('password-input').type('Password123');
+
+  log.snapshot('after')
+})
+
+/**
+ * store
+ */
 Cypress.Commands.add('store', () => {
   return cy
     .log('Redux - Store')
@@ -63,6 +90,10 @@ Cypress.Commands.add('store', () => {
     .its('store')
 })
 
+
+/**
+ * get state
+ */
 Cypress.Commands.add('getState', (node) => {
   return node
     ? cy

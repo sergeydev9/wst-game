@@ -1,5 +1,4 @@
 import { Pool, QueryResult } from 'pg';
-import { NameObject } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
 export interface NameChoice {

@@ -277,9 +277,7 @@ class Games extends Dao {
             if (!gameQuestion) throw new Error(`[start game] Game question update failed.`);
 
             const questionResult = await client.query(getQuestionData(gameQuestion.question_id))
-
             const questionRow = questionResult.rows[0];
-
 
             // throw if no question data
             if (!questionRow) throw new Error(`Question not found. question id: ${gameQuestion.question_id}`)

@@ -17,7 +17,7 @@ const GuestButtons = () => {
     return (
         <>
             <Button onClick={openLoginModal} type="button" buttonStyle='small' $secondary>Log In</Button>
-            <Button onClick={openCreateAccModal} type="button" buttonStyle='small' $secondary>Create Account</Button>
+            <Button onClick={openCreateAccModal} type="button" data-cy="create-account" buttonStyle='small' $secondary>Create Account</Button>
 
         </>
     )

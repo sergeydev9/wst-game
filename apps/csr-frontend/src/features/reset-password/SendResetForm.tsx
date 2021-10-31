@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -30,12 +29,15 @@ const SendResetForm: React.FC = () => {
         }),
         onSubmit: (values) => {
             const { email } = values;
-            api.post('/user/send-reset', { email }).then(response => {
+            api.post('/user/send-reset', { email }).then(() => {
                 dispatch(setEmail(email))
                 history.push('/reset/enter-code')
             }).catch(e => {
-                if (e.response.status === 400) {
+                const { status, data } = e.response;
+                if (status === 400) {
                     dispatch(showError('Could not find a user with that email'))
+                } else if (status === 403 && data === 'Reset limit reached') {
+                    dispatch(showError('Daily reset attempt limit reached. You can try again in 24 hours.'))
                 } else {
                     dispatch(showError('Oops, something went wrong. Please try again later'))
                 }
@@ -57,7 +59,7 @@ const SendResetForm: React.FC = () => {
                 {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
             </FormGroup>
 
-            <Button type="submit">Send Reset Email</Button>
+            <Button data-cy="submit-send-reset" type="submit">Send Reset Email</Button>
         </Form>
     )
 }

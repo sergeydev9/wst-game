@@ -4,7 +4,6 @@ import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import useNames from './useNames';
 import {
     selectNameRerolls,
-    setRemainingNameOptions,
     setCurrentNameOptions,
     selectCurrentNameOptions,
     selectSeen,

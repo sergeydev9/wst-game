@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { createPortal } from "react-dom";
 import { MessageModal, } from "@whosaidtrue/ui";
 import partypopper from '../../assets/party-popper-emoji.png';

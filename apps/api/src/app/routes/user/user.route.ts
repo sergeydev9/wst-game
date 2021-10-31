@@ -12,7 +12,7 @@ import {
 import { passport, signResetPayload } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { signUserPayload, signGuestPayload } from '@whosaidtrue/middleware';
-import { logger } from '@whosaidtrue/logger';
+import { logger, logError } from '@whosaidtrue/logger';
 import { users, creditSignup } from '../../db';
 import { emailService } from '../../services';
 import {
@@ -52,7 +52,7 @@ router.post('/login', [...validateAuth], async (req: Request, res: Response) => 
             res.status(201).json({ token } as AuthenticationResponse);
         }
     } catch (e) {
-        logger.error(e)
+        logError('Error during login', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 
@@ -78,7 +78,7 @@ router.post('/register', [...validateAuth], async (req: Request, res: Response) 
         if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
             res.status(422).send("A user already exists with that email")
         } else {
-            logger.error(e)
+            logError('Error during registration', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
@@ -103,7 +103,7 @@ router.get('/details', passport.authenticate('jwt', { session: false }), async (
             res.status(200).json(rows[0] as AccountDetailsResponse)
         }
     } catch (e) {
-        logger.error(e)
+        logError('Error fetching details', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
@@ -123,7 +123,7 @@ router.patch('/update', [...validateUserUpdate], passport.authenticate('jwt', { 
         if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
             res.status(422).send("A user already exists with that email")
         } else {
-            logger.error(e)
+            logError('Error updating profile', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
@@ -141,7 +141,7 @@ router.patch('/change-password', [...validatePasswordChange], passport.authentic
             res.status(204).send()
         }
     } catch (e) {
-        logger.error(e)
+        logError('Error changing password', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
@@ -173,7 +173,7 @@ router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Re
             }
         }
     } catch (e) {
-        logger.error(e);
+        logError('Error sending reset code', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
@@ -200,7 +200,7 @@ router.post('/validate-reset', [...validateResetCode], async (req: Request, res:
             res.status(202).json({ resetToken } as ResetCodeVerificationResponse)
         }
     } catch (e) {
-        logger.error(e)
+        logError('Error validating reset code', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
@@ -234,6 +234,7 @@ router.patch('/reset', [...validateReset], async (req: Request, res: Response) =
         if (e instanceof JsonWebTokenError) {
             res.status(401).send('Unauthorized')
         } else {
+            logError('Error resetting password', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
 
@@ -257,7 +258,7 @@ router.post('/guest', [...emailOnly], async (req: Request, res: Response) => {
         if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
             res.status(422).send("A user already exists with that email")
         } else {
-            logger.error(e)
+            logError('Error registering guest', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
@@ -282,7 +283,7 @@ router.post('/free-credit-signup', [...emailOnly], async (req: Request, res: Res
         if (e.message === "duplicate key value violates unique constraint \"free_credit_signups_email_key\"") {
             res.status(422).send("email has already received free credits")
         } else {
-            logger.error(e)
+            logError('Error in free credit signup', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
