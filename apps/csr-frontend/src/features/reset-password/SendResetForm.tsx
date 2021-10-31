@@ -16,6 +16,9 @@ import {
 } from "@whosaidtrue/ui";
 import { showError } from '../modal/modalSlice';
 
+/**
+ * Make a request to send a code via email.
+ */
 const SendResetForm: React.FC = () => {
     const history = useHistory();
     const dispatch = useAppDispatch();
@@ -29,6 +32,8 @@ const SendResetForm: React.FC = () => {
         }),
         onSubmit: (values) => {
             const { email } = values;
+
+            // send request
             api.post('/user/send-reset', { email }).then(() => {
                 dispatch(setEmail(email))
                 history.push('/reset/enter-code')
@@ -36,7 +41,7 @@ const SendResetForm: React.FC = () => {
                 const { status, data } = e.response;
                 if (status === 400) {
                     dispatch(showError('Could not find a user with that email'))
-                } else if (status === 403 && data === 'Reset limit reached') {
+                } else if (status === 403 && data === 'Reset limit reached') { // if user has sent 3 code requests in the last 24 hours
                     dispatch(showError('Daily reset attempt limit reached. You can try again in 24 hours.'))
                 } else {
                     dispatch(showError('Oops, something went wrong. Please try again later'))

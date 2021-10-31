@@ -17,7 +17,7 @@ import {
     NoFlexBox
 } from "@whosaidtrue/ui";
 import { api } from '../../api';
-import { clear } from './resetPasswordSlice';
+import { clearReset } from './resetPasswordSlice';
 import { useHistory } from 'react-router-dom';
 
 
@@ -60,7 +60,7 @@ const NewPassword: React.FC = () => {
 
                 // login
                 dispatch(login({ ...user, token }))
-                dispatch(clear())
+                dispatch(clearReset())
 
                 history.push('/')
             } catch (e) {

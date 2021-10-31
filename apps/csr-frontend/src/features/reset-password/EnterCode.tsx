@@ -1,18 +1,19 @@
-import React, { useState, useRef, useEffect, forwardRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import * as Yup from 'yup';
 import { useHistory } from 'react-router';
 import { ResetCodeVerificationResponse } from '@whosaidtrue/api-interfaces';
 import { Formik, useFormikContext } from 'formik';
 import { api } from '../../api';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setToken, selectResetEmail, clear } from './resetPasswordSlice';
-import { Form, SecurityCodeDigit as Digit, Title3, Title1, ErrorText } from '@whosaidtrue/ui';
+import { setToken, selectResetEmail, clearReset } from './resetPasswordSlice';
+import { SecurityCodeDigit as Digit, Title3, Title1, ErrorText, Headline } from '@whosaidtrue/ui';
 
 // get the form, and methods from context. Submit as soon
 // as form is valid
-const AutoSubmit = () => {
+const AutoSubmit: React.FC = () => {
     const { values, submitForm, isValid, } = useFormikContext<{ char1: string, char2: string, char3: string, char4: string }>();
-    React.useEffect(() => {
+
+    useEffect(() => {
         if (values.char1 && values.char2 && values.char3 && values.char4) {
             isValid && submitForm();
         }
@@ -46,6 +47,11 @@ const EnterCode: React.FC = () => {
             history.push('/')
         }
     })
+
+    const sendAgain = () => {
+        dispatch(clearReset());
+        history.push('/reset/send-email')
+    }
 
     // Input Refs
     const char1Ref = useRef<HTMLInputElement>(null);
@@ -89,7 +95,7 @@ const EnterCode: React.FC = () => {
                         // This only happens if there is a server side problem
                         setError('An unexpected error has occurred, please try again later')
                         setTimeout(() => {
-                            dispatch(clear())
+                            dispatch(clearReset())
                             history.push('/')
                         }, 3000)
                     }
@@ -101,15 +107,15 @@ const EnterCode: React.FC = () => {
             const validationErr = (props.touched.char1 && props.touched.char2 && props.touched.char3 && props.touched.char4) && (props.errors.char1 || props.errors.char2 || props.errors.char3 || props.errors.char4)
 
             return (
-                <Form className="w-2/3 mx-auto py-10 bg-white-ish rounded-3xl filter drop-shadow-card items-center">
+                <div className="w-2/3 mx-auto py-10 bg-white-ish rounded-3xl filter drop-shadow-card items-center px-6 sm:px-10">
                     <div className="text-center">
                         <Title1 className="text-basic-black">We sent an email to {email}</Title1>
                         {validationErr && <ErrorText>Invalid Code</ErrorText>}
                         {error && <ErrorText>{error}</ErrorText>}
                     </div>
-                    <div className="flex flex-col gap-8 rounded-3xl my-10 py-10 px-8 bg-purple-subtle-fill">
-                        <Title3 className="text-purple-base self-center">Enter the 4-digit code you received to continue</Title3>
-                        <div className="flex flex-row gap-4 justify-center">
+                    <div className="flex flex-col gap-8 rounded-3xl my-6 sm:my-10 py-6 sm:py-10 px-4 sm:px-8 bg-purple-subtle-fill select-none">
+                        <Title3 className="text-purple-base self-center text-center">Enter the 4-digit code you received to continue</Title3>
+                        <div className="flex flex-row gap-2 sm:gap-4 justify-center select-none">
                             <SecurityCodeDigit name="char1" $hasError={(error || validationErr) ? true : false} forwardRef={char1Ref} onChange={(e: React.ChangeEvent) => {
                                 char2Ref.current?.focus();
                                 return props.handleChange(e)
@@ -124,9 +130,11 @@ const EnterCode: React.FC = () => {
                             }} />
                             <SecurityCodeDigit name="char4" $hasError={(error || validationErr) ? true : false} forwardRef={char4Ref} onChange={props.handleChange} />
                         </div>
+
+                        <Headline data-cy="send-again" className="text-basic-black underline self-center cursor-pointer text-center" onClick={sendAgain}>Didn’t receive an email? Click here to send again</Headline>
                     </div>
                     <AutoSubmit />
-                </Form>
+                </div>
             )
         }}
 
