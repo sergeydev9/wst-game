@@ -2,8 +2,8 @@ import { Request, Response, Router } from 'express';
 import { passport, signGameToken } from '@whosaidtrue/middleware';
 import jwt from 'jsonwebtoken';
 import { ExtractJwt } from 'passport-jwt';
-import { deckId, accessCodeQuery, joinGame } from '@whosaidtrue/validation'
-import { logger } from '@whosaidtrue/logger';
+import { deckId, accessCodeQuery, joinGame, gameIdBody } from '@whosaidtrue/validation'
+import { logError } from '@whosaidtrue/logger';
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
 import { games } from '../../db';
 import {
@@ -48,7 +48,7 @@ router.post('/join', [...joinGame], async (req: Request, res: Response) => {
         if (e.message === 'Game not found') {
             res.status(404).send('Game not found')
         } else {
-            logger.error('error joining game', e)
+            logError('error joining game', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
@@ -73,7 +73,7 @@ router.post('/create', [...deckId], passport.authenticate('jwt', { session: fals
             res.status(201).json({ game_id: rows[0].id, access_code: rows[0].access_code } as CreateGameResponse)
         }
     } catch (e) {
-        logger.error('error creating game', e)
+        logError('error creating game', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 });
@@ -86,7 +86,7 @@ router.post('/create', [...deckId], passport.authenticate('jwt', { session: fals
  */
 
 router.get('/status', [...accessCodeQuery], async (req: Request, res: Response) => {
-    const { access_code } = req.query as any;
+    const { access_code } = req.query as { access_code: string };
 
     try {
         const { rows } = await games.gameStatusByAccessCode(access_code)
@@ -96,8 +96,36 @@ router.get('/status', [...accessCodeQuery], async (req: Request, res: Response) 
             res.status(200).json({ status: rows[0].status } as StatusRequestResponse)
         }
     } catch (e) {
-        res.status(500).send(ERROR_MESSAGES.unexpected)
+        logError('Error fetching game status', e);
+        res.status(500).send(ERROR_MESSAGES.unexpected);
     }
 });
+
+/**
+ * End a game early. This endpoint gets called if a host leaves intentionally
+ * while on either the "invite" or the "choose name" screens.
+ *
+ * When they are on those pages, they haven't joined the socket server yet,
+ * so that server can't handle the event.
+ */
+router.patch('/end', [...gameIdBody], passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
+    const { gameId } = req.body;
+    const { id } = req.user as TokenPayload;
+
+    try {
+        const result = await games.endGameIfHost(gameId, id);
+
+        if (result.rowCount === 1) {
+            res.sendStatus(204);
+
+        } else {
+            res.sendStatus(400);
+        }
+    } catch (e) {
+        logError('Error ending game', e);
+        res.status(500).send(ERROR_MESSAGES.unexpected);
+    }
+
+})
 
 export default router;

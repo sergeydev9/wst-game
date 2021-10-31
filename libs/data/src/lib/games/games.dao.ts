@@ -330,6 +330,25 @@ class Games extends Dao {
 
         return this.pool.query(query);
     }
+
+    /**
+     * End a game if host.
+     *
+     * This query is used by the '/end' endpoint. The user Id parameter is added
+     * to prevent users from being able to end arbitrary games through the endpoint.
+     */
+    public endGameIfHost(gameId: number, userId: number): Promise<QueryResult> {
+        const query = {
+            text: `
+            UPDATE games
+            SET end_date = $1, status = 'finished'
+            WHERE id = $2
+            AND host_id = $3`,
+            values: [new Date().toISOString(), gameId, userId]
+        }
+
+        return this.pool.query(query);
+    }
 }
 
 export default Games;

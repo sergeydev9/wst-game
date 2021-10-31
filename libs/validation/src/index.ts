@@ -12,4 +12,5 @@ export * from './lib/joinGame';
 export * from './lib/createPaymentIntent';
 export * from './lib/paypalOrder';
 export * from './lib/ratings';
+export * from './lib/gameIdBody';
 export { default as validate } from './lib/validate';

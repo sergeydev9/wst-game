@@ -10,7 +10,7 @@ import {
     selectSeen,
     sendReport
 } from './chooseNameSlice';
-import { setGameStatus, clearGame, joinGame, selectIsHost } from '../game/gameSlice';
+import { setGameStatus, clearGame, joinGame, selectIsHost, endGameFromApi, selectGameId } from '../game/gameSlice';
 import {
     Button,
     RerollNamesButton,
@@ -36,6 +36,7 @@ const ChooseName: React.FC = () => {
     const rerolls = useAppSelector(selectNameRerolls);
     const seen = useAppSelector(selectSeen)
     const isHost = useAppSelector(selectIsHost);
+    const gameId = useAppSelector(selectGameId);
 
     useNames();
 
@@ -43,11 +44,14 @@ const ChooseName: React.FC = () => {
         dispatch(setGameStatus('choosingName'));
 
         // show confirmation dialog and clear game state if confirmed
+        // eslint-disable-next-line
         const unblock = history.block((...args: any[]) => {
 
             // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
             // has to be used here to prevent compiler errors
             // args[0] is a location object, and args[1] is a navigation action type
+
+            // eslint-disable-next-line
             const path = args[0].pathname as any
             if (path !== '/play' && shouldBlock) {
                 const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
@@ -56,6 +60,10 @@ const ChooseName: React.FC = () => {
                 if (window.confirm(confirmMessage)) {
                     dispatch(clearGame());
                     dispatch(clearCurrentQuestion());
+
+                    if (isHost) {
+                        dispatch(endGameFromApi(gameId))
+                    }
                     return true;
                 }
 
@@ -89,7 +97,7 @@ const ChooseName: React.FC = () => {
             dispatch(clearNameChoices());
             unblock();
         }
-    }, [dispatch, history, access_code, isHost, shouldBlock])
+    }, [dispatch, history, access_code, isHost, shouldBlock, gameId])
 
     // send request to join the game
     const join = async (name: string) => {
@@ -107,8 +115,7 @@ const ChooseName: React.FC = () => {
                 dispatch(clearGame());
                 dispatch(clearCurrentQuestion());
                 dispatch(clearHost());
-                history.push('/')
-
+                history.push('/');
             }
             else {
                 dispatch(showError('An error occurred while attempting to join game'))
@@ -136,7 +143,7 @@ const ChooseName: React.FC = () => {
 
     // get the next set of names
     const rerollHandler = (e: React.MouseEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         dispatch(setCurrentNameOptions());
     }
 

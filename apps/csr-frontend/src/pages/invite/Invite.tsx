@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { NoFlexBox, Button, InviteLinks, Title1, Title3 } from '@whosaidtrue/ui';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectAccessCode, setGameStatus, selectIsHost, selectPlayerStatus } from '../../features';
+import { selectAccessCode, setGameStatus, selectIsHost, selectPlayerStatus, clearGame, clearHost, selectGameId, endGameFromApi, endGame } from '../../features';
 import { useHistory } from "react-router";
 
 
@@ -10,6 +10,7 @@ const Invite: React.FC = () => {
     const history = useHistory()
     const isHost = useAppSelector(selectIsHost)
     const status = useAppSelector(selectPlayerStatus)
+    const gameId = useAppSelector(selectGameId)
 
     // this page should only be accessed by users that
     // have just successfully created a game.
@@ -17,7 +18,39 @@ const Invite: React.FC = () => {
         if (!isHost || !(status === 'gameCreateSuccess')) {
             history.push('/')
         }
-    }, [dispatch, history, isHost, status])
+
+        // show confirmation dialog and clear game state if confirmed
+        // eslint-disable-next-line
+        const unblock = history.block((...args: any[]) => {
+
+            // DEV_NOTE: react-router-dom's type definitions are incorrect at the moment, so any type
+            // has to be used here to prevent compiler errors
+            // args[0] is a location object, and args[1] is a navigation action type
+
+            // eslint-disable-next-line
+            const path = args[0].pathname as any
+            if (!path.includes('/x/')) {
+                const confirmMessage = 'Are you sure you want to leave? If you leave now the game will be cancelled';
+
+                if (window.confirm(confirmMessage)) {
+                    dispatch(clearGame());
+                    dispatch(clearHost());
+                    dispatch(endGameFromApi(gameId))
+                    return true;
+                }
+
+                return false
+            }
+            return true
+        })
+
+
+        return () => {
+            unblock();
+        }
+    }, [dispatch, history, isHost, status, gameId])
+
+
 
     const accessCode = useAppSelector(selectAccessCode)
 

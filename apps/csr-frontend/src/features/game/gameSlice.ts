@@ -1,6 +1,7 @@
-import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createSelector, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { JoinGameResponse } from '@whosaidtrue/api-interfaces';
 import { Deck, UserGameStatus, PlayerRef, GameStatus } from '@whosaidtrue/app-interfaces';
+import { api } from '../../api';
 import omit from 'lodash.omit'
 
 // local imports
@@ -61,6 +62,17 @@ export const initialGameState: GameState = {
     winner: '',
 }
 
+/**
+ * Used to end a game from the API. This is useful
+ * when a game
+ */
+export const endGameFromApi = createAsyncThunk<void, number>(
+    'game/endGameFromApi',
+    async (gameId) => {
+        await api.patch('/games/end', { gameId });
+    }
+)
+
 export const gameSlice = createSlice({
     name: "game",
     initialState: initialGameState,
@@ -115,6 +127,7 @@ export const gameSlice = createSlice({
                 disconnectedPlayers,
                 totalQuestions
             } = action.payload;
+
             state.gameId = gameId;
             state.access_code = access_code;
             state.gameStatus = status;

@@ -195,4 +195,46 @@ describe('games routes', () => {
                 .expect(403, done)
         })
     })
+
+    describe('[PATCH] /end', () => {
+
+        it('should return 204 if success', done => {
+
+            mockedGames.endGameIfHost.mockResolvedValue({ rowCount: 1 } as QueryResult);
+            supertest(app)
+                .patch('/games/end')
+                .set('Authorization', `Bearer ${validToken}`)
+                .send({ gameId: 1523 })
+                .expect(204, done)
+        })
+
+        it('should return 400 if no rows affected', done => {
+
+            mockedGames.endGameIfHost.mockResolvedValue({ rowCount: 0 } as QueryResult);
+            supertest(app)
+                .patch('/games/end')
+                .set('Authorization', `Bearer ${validToken}`)
+                .send({ gameId: 1523 })
+                .expect(400, done)
+        })
+
+        it('should return 500 if query throws', done => {
+
+            mockedGames.endGameIfHost.mockRejectedValue(new Error());
+            supertest(app)
+                .patch('/games/end')
+                .set('Authorization', `Bearer ${validToken}`)
+                .send({ gameId: 1523 })
+                .expect(500, done)
+        })
+
+        it('should return 401 if no valid token', done => {
+
+            mockedGames.endGameIfHost.mockRejectedValue(new Error());
+            supertest(app)
+                .patch('/games/end')
+                .send({ gameId: 1523 })
+                .expect(401, done)
+        })
+    })
 })
