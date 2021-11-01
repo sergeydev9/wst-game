@@ -22,7 +22,7 @@ const PurchaseSuccess: React.FC = () => {
 
             {/* card */}
             <DeckCard
-                className="drop-shadow-sm border relative p-2 pb-8 border-purple-subtle-stroke place-items-center rounded-3xl mb-10"
+                className="drop-shadow-sm border relative p-2 pb-8 border-purple-subtle-stroke rounded-3xl mb-10"
                 noPointer={true}
                 name={deck.name}
                 thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'}

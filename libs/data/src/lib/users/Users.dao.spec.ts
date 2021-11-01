@@ -270,10 +270,10 @@ describe('Users', () => {
         })
 
         it('should return auth object', async () => {
-            const { rows } = await users.resetPassword(userEmail, 'password12345');
-            expect(rows[0].id).toBeDefined();
-            expect(rows[0].email).toEqual(userEmail)
-            expect(rows[0].roles[0]).toEqual('user')
+            const user = await users.resetPassword(userEmail, 'password12345');
+            expect(user.id).toBeDefined();
+            expect(user.email).toEqual(userEmail)
+            expect(user.roles[0]).toEqual('user')
         })
 
         it('should change the password', async () => {
@@ -281,9 +281,18 @@ describe('Users', () => {
             const fail = await users.login(userEmail, 'password123')
             const succeed = await users.login(userEmail, 'password12345');
 
-            expect(fail.rows.length).toEqual(0)
-            expect(succeed.rows.length).toEqual(1)
+            expect(fail.rows.length).toEqual(0);
+            expect(succeed.rows.length).toEqual(1);
+        })
 
+        it('should upgrade guest account to user account', async () => {
+            const guestEmail = 'testguest@test.com'
+            await users.createGuest(guestEmail);
+
+            const actual = await users.resetPassword(guestEmail, 'password123454');
+
+            expect(actual.roles.includes('guest')).toBe(false);
+            expect(actual.roles.includes('user')).toBe(true);
 
         })
 

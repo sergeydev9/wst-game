@@ -12,7 +12,7 @@ import {
 import { passport, signResetPayload } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { signUserPayload, signGuestPayload } from '@whosaidtrue/middleware';
-import { logger, logError } from '@whosaidtrue/logger';
+import { logError } from '@whosaidtrue/logger';
 import { users, creditSignup } from '../../db';
 import { emailService } from '../../services';
 import {
@@ -179,23 +179,23 @@ router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Re
 
         // if no user was updated, that account doesn't exist
         if (!rows.length) {
-            res.status(404).send('Could not find a user with that email')
+            return res.status(404).send('Could not find a user with that email')
         } else {
-            res.status(202).send('Reset code sent')
+
             // if code was set, send reset email
             const resetResponse = await emailService.sendResetCode(rows[0].email, code);
 
             // Sendgrid responds with 202 if email was sent
             if (resetResponse[0].statusCode === 202) {
-                res.status(202).send('Reset code sent')
+                return res.status(202).send('Reset code sent')
             } else {
                 logError('Error while attempting to send password reset email', resetResponse);
-                res.status(500).send(ERROR_MESSAGES.unexpected)
+                return res.status(500).send(ERROR_MESSAGES.unexpected)
             }
         }
     } catch (e) {
         logError('Error sending reset code', e)
-        res.status(500).send(ERROR_MESSAGES.unexpected)
+        return res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
 
@@ -237,19 +237,14 @@ router.patch('/reset', [...validateReset], async (req: Request, res: Response) =
         // using a token here guarantees that the reset code submitted
         // earlier was verified by the server, and the user has permission
         // to set a new password.
-        const { email } = jwt.verify(resetToken, process.env.JWT_SECRET) as { email: string };
-        const result = await users.resetPassword(email, password);
+        const decoded = jwt.verify(resetToken, process.env.JWT_SECRET) as { email: string };
+        const updatedUser = await users.resetPassword(decoded.email, password);
 
-        // can only happen if user row is deleted, or email is changed
-        if (!result.rows.length) {
-            res.status(400).send('Could not reset password')
-        } else {
+        // send token if success
+        const { id, email, roles } = updatedUser;
+        const token = signUserPayload({ id, email, roles })
+        res.status(202).json({ token } as AuthenticationResponse);
 
-            // send token if success
-            const { id, email, roles } = result.rows[0];
-            const token = signUserPayload({ id, email, roles })
-            res.status(202).json({ token } as AuthenticationResponse);
-        }
     } catch (e) {
 
         if (e instanceof JsonWebTokenError) {

@@ -17,11 +17,12 @@ const mockedUsers = mocked(users, true)
 const mockedSendgrid = mocked(emailService, true);
 const mockedCreditSignups = mocked(creditSignup, true);
 const mockedRedis = mocked(redisClient, true);
+const mockedJwt = mocked(jwt, true);
 
 jest.mock('../../db');
 jest.mock('../../services');
 jest.mock('../../redis');
-jest.mock('ioredis')
+jest.mock('ioredis');
 
 describe('user routes', () => {
     let app: Application;
@@ -38,20 +39,21 @@ describe('user routes', () => {
 
         it('should return 201 and a token if login call has result in rows', async () => {
             // set mock value
-            mockedUsers.login.mockResolvedValue({ rows: [{ id: 1, email: 'email@email.com', roles: ["user"], notifications: false }] } as QueryResult)
+            mockedUsers.login.mockResolvedValue({ rows: [{ id: 1, email: 'email@email.com', roles: ["user"] }] } as QueryResult);
 
-            const { body } = await supertest(app)
+            const response = await supertest(app)
                 .post('/user/login')
                 .send({ email: 'email@test.com', password: 'password123' })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(201)
 
+
             // response should be a valid JWT token
-            expect(validator.isJWT(body.token)).toEqual(true)
+            expect(validator.isJWT(response.body.token)).toEqual(true)
 
             // JWT token payload has expected attributes
-            const { user } = jwt.decode(body.token, { json: true })
+            const { user } = jwt.decode(response.body.token, { json: true })
             expect(user.id).toEqual(1)
             expect(user.email).toEqual('email@email.com')
             expect(user.roles).toEqual(["user"])
@@ -442,17 +444,8 @@ describe('user routes', () => {
 
         })
 
-        it("should respond with 400 if nothing returned from query", (done) => {
-            mockedUsers.resetPassword.mockResolvedValue({ rows: [] } as QueryResult);
-            supertest(app)
-                .patch('/user/reset')
-                .send({ resetToken, password })
-                .expect(400, done)
-
-        })
-
         it("should respond with 401 if token invalid", (done) => {
-            mockedUsers.resetPassword.mockResolvedValue({ rows: [] } as QueryResult);
+
             const token = jwt.sign('xyz', 'abc');
             supertest(app)
                 .patch('/user/reset')
@@ -462,7 +455,7 @@ describe('user routes', () => {
         })
 
         it("should return 202 and a token on success", async () => {
-            mockedUsers.resetPassword.mockResolvedValue({ rows: [{ id: 1, email, roles: ['user'] }] } as QueryResult);
+            mockedUsers.resetPassword.mockResolvedValue({ id: 1, email, roles: ['user'] });
             const result = await supertest(app)
                 .patch('/user/reset')
                 .send({ resetToken, password })
