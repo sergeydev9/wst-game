@@ -61,7 +61,7 @@ const SendResetForm: React.FC = () => {
             <FormGroup>
                 <InputLabel htmlFor='email'>Email</InputLabel>
                 <TextInput className="mb-3" $border $hasError={emailErr} type="email" id="email" {...formik.getFieldProps('email')} />
-                {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
+                {emailErr && <ErrorText className="block">{formik.errors.email}</ErrorText>}
             </FormGroup>
 
             <Button data-cy="submit-send-reset" type="submit">Send Reset Email</Button>

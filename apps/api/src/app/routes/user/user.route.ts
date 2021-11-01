@@ -26,6 +26,7 @@ import {
     TokenPayload,
     WithEmailBody
 } from '@whosaidtrue/api-interfaces';
+import { redisClient } from '../../redis';
 
 const router = Router();
 
@@ -149,18 +150,38 @@ router.patch('/change-password', [...validatePasswordChange], passport.authentic
 
 /**
  * Send a reset token to user email
+ *
+ * Uses Redis to limit users to 3 resets every 24 hours.
+ *
+ * If user's reset count is above 3, responds with 403 and 'Rest limit reached'.
+ * The front end depends on exactly this response to show the correct error.
  */
 router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Response) => {
     const { email } = req.body as WithEmailBody;
     const code = `${Math.floor(1000 + Math.random() * 9000)}` // generate a random 4 digit string.
 
     try {
+
+        const resetKey = `resetRequests:${email}`;
+
+        // check Redis for reset requests. Returns value after increment
+        const resetCount = await redisClient.incr(resetKey);
+
+        if (resetCount > 3) {
+            return res.status(403).send('Reset limit reached')
+        }
+
+        // expire the key
+        const ONE_DAY = 60 * 60 * 24 // in seconds
+        await redisClient.expire(resetKey, ONE_DAY);
+
         const { rows } = await users.upsertResetCode(email, code);
 
         // if no user was updated, that account doesn't exist
         if (!rows.length) {
             res.status(404).send('Could not find a user with that email')
         } else {
+            res.status(202).send('Reset code sent')
             // if code was set, send reset email
             const resetResponse = await emailService.sendResetCode(rows[0].email, code);
 
@@ -168,7 +189,7 @@ router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Re
             if (resetResponse[0].statusCode === 202) {
                 res.status(202).send('Reset code sent')
             } else {
-                logger.error(resetResponse);
+                logError('Error while attempting to send password reset email', resetResponse);
                 res.status(500).send(ERROR_MESSAGES.unexpected)
             }
         }

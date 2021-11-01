@@ -7,6 +7,7 @@ import validator from 'validator';
 
 // local
 import App from '../../App';
+import { redisClient } from '../../redis';
 import { creditSignup, users } from '../../db';
 import { emailService } from '../../services';
 import { signUserPayload } from '@whosaidtrue/middleware';
@@ -15,10 +16,12 @@ import { ClientResponse } from '@sendgrid/mail';
 const mockedUsers = mocked(users, true)
 const mockedSendgrid = mocked(emailService, true);
 const mockedCreditSignups = mocked(creditSignup, true);
+const mockedRedis = mocked(redisClient, true);
 
-jest.mock('../../db')
-jest.mock('../../services')
-
+jest.mock('../../db');
+jest.mock('../../services');
+jest.mock('../../redis');
+jest.mock('ioredis')
 
 describe('user routes', () => {
     let app: Application;
@@ -217,8 +220,10 @@ describe('user routes', () => {
         })
 
         it('should respond with 202 if sendgrid responds with 202', (done) => {
+            mockedRedis.incr.mockResolvedValue(1)
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
             mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 202 } as ClientResponse, {}])
+
             supertest(app)
                 .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
@@ -226,6 +231,7 @@ describe('user routes', () => {
         })
 
         it('should respond with 500 if sendgrid responds with something other than 202', (done) => {
+            mockedRedis.incr.mockResolvedValue(1)
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
             mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 400 } as ClientResponse, {}])
             supertest(app)
@@ -235,6 +241,7 @@ describe('user routes', () => {
         })
 
         it('should respond with 500 if DB request fails', (done) => {
+            mockedRedis.incr.mockResolvedValue(1)
             mockedUsers.upsertResetCode.mockRejectedValue(new DatabaseError('error', 1, 'error'))
             supertest(app)
                 .post('/user/send-reset')
@@ -244,11 +251,25 @@ describe('user routes', () => {
 
 
         it('should respond with 404 if no records returned', (done) => {
-            mockedUsers.upsertResetCode.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedRedis.incr.mockResolvedValue(1)
+            mockedUsers.upsertResetCode.mockResolvedValue({ rows: [] } as QueryResult);
+
             supertest(app)
                 .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
                 .expect(404, done)
+        })
+
+        it('should respond with 403 if reset count > 3', async () => {
+            mockedRedis.incr.mockResolvedValue(4)
+
+            const response = await supertest(app)
+                .post('/user/send-reset')
+                .send({ email: 'email@test.com' })
+                .expect(403)
+
+            expect(response.text).toEqual('Reset limit reached')
+
         })
     })
 
@@ -256,7 +277,17 @@ describe('user routes', () => {
     describe('[GET] /details', () => {
 
         it('should return 200 if successful', async () => {
-            mockedUsers.getDetails.mockResolvedValue({ rows: [{ id: 1, email: 'email@email.com', notifications: false, question_deck_credits: 1, roles: ['user'] }] } as QueryResult)
+            mockedUsers.getDetails.mockResolvedValue({
+                rows: [
+                    {
+                        id: 1,
+                        email: 'email@email.com',
+                        notifications: false,
+                        question_deck_credits: 1,
+                        roles: ['user']
+                    }
+                ]
+            } as QueryResult)
             const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
             const response = await supertest(app)
                 .get('/user/details')
