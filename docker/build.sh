@@ -47,6 +47,10 @@ SOCKET_IMAGE="${REGISTRY}/whosaidtrue/socket-server:${TAG}"
 echo "building: ${SOCKET_IMAGE}"
 docker build . -t ${SOCKET_IMAGE} -f docker/socket-server/Dockerfile
 
+WORKER_IMAGE="${REGISTRY}/whosaidtrue/worker:${TAG}"
+echo "building: ${WORKER_IMAGE}"
+docker build . -t ${WORKER_IMAGE} -f docker/worker/Dockerfile
+
 
 if [[ -n "$push_flag" ]]; then
 	echo "pushing: ${API_IMAGE}"
@@ -54,4 +58,7 @@ if [[ -n "$push_flag" ]]; then
 
 	echo "pushing: ${SOCKET_IMAGE}"
 	docker push "${SOCKET_IMAGE}"
+
+	echo "pushing: ${WORKER_IMAGE}"
+	docker push "${WORKER_IMAGE}"
 fi
