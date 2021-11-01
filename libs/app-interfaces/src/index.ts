@@ -20,6 +20,7 @@ export type UserRating = 'great' | 'bad';
 export type DeckStatus = 'active' | 'inactive' | 'pending';
 export type AnswerValue = 'true' | 'false' | 'pass';
 export type UserRole = 'user' | 'admin' | 'test' | 'guest';
+export type JobStatus = 'pending' | 'completed' | 'failed' | 'canceled';
 
 export type GameStatus = 'lobby'
     | 'inProgress'
@@ -241,6 +242,24 @@ export interface UserQuestionRating {
     rating: UserRating;
     created_at?: Date;
     updated_at?: Date;
+}
+
+export interface Job {
+    id: number;
+    type: string;
+    status: JobStatus;
+    data?: string;
+    started_at?: Date;
+    completed_at?: Date;
+    scheduled_at: Date;
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface JobTransaction extends Job {
+    startJob();
+    finishJob(status?: 'completed' | 'failed');
+    abortJob();
 }
 
 export type InsertUserQuestionRating = Insert<UserQuestionRating>;
