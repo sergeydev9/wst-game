@@ -17,7 +17,6 @@ const mockedUsers = mocked(users, true)
 const mockedSendgrid = mocked(emailService, true);
 const mockedCreditSignups = mocked(creditSignup, true);
 const mockedRedis = mocked(redisClient, true);
-const mockedJwt = mocked(jwt, true);
 
 jest.mock('../../db');
 jest.mock('../../services');

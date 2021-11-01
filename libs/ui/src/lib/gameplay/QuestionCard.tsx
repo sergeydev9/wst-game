@@ -19,8 +19,9 @@ md:mt-12
 md:w-40rem
 md:mx-auto
 sm:mx-8
-mx-4
-
+mx-2
+pb-12
+mb-36
 `
 
 const Body = tw.div`
@@ -33,7 +34,6 @@ lg:pl-10
 lg:pr-10
 lg:pb-14
 lg:pt-6
-mb-36
 `
 
 const Top = tw.div`
