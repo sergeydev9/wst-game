@@ -56,24 +56,25 @@ class Worker {
             if (job.scheduled_at.getTime() <= Date.now()) {
 
                 try {
-                    logger.info(`executing job ${job.id}, ${job.type}`);
+                    logger.info(`Execute job=${job.id}, type=${job.type}, start`);
                     await job.startJob();
 
                     const result = await createTask(job).execute();
-
                     // TODO: add retries?
 
-                    // finish with completed or failed
-                    await job.finishJob(result);
+                    // finish job
+                    const stringResult = (typeof result.result === 'string') ? result.result : JSON.stringify(result.result);
+                    await job.finishJob(result.status, stringResult);
+                    logger.info(`Execute job=${job.id}, type=${job.type}, status=${result.status}`);
                     status = 'done';
                 } catch (e) {
                     logError(`executing job failed ${job.id}, ${job.type}`, e);
-                    await job.abortJob();
-                    status = 'error';
+                    await job.finishJob('failed', JSON.stringify(e));
+                    status = 'done';
                 }
 
             } else {
-                logger.info(`not executing job too early ${job.id}, ${job.type}`);
+                logger.info(`Execute job=${job.id}, type=${job.type}, aborting - scheduled at: ${job.scheduled_at}`);
                 await job.abortJob();
                 status = 'scheduled';
                 scheduledAt = job.scheduled_at.getTime();
@@ -93,8 +94,7 @@ class Worker {
                 this.scheduleNextPoll(scheduledAt);
                 break;
 
-            case 'empty':
-            case 'error': {
+            case 'empty': {
                 this.exponentialBackoff++;
                 const timeout = Math.min(50 * 2 ** this.exponentialBackoff, this.POLL_MAX_MS);
                 this.scheduleNextPoll(Date.now() + timeout);

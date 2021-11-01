@@ -7,11 +7,11 @@ class Jobs extends Dao {
         super(pool, 'jobs')
     }
 
-    public insertOne(type: string, data: string, scheduledAt = new Date(), status: JobStatus = 'pending'): Promise<QueryResult<Job>> {
+    public insertOne(type: string, scheduledAt = new Date(), status: JobStatus = 'pending'): Promise<QueryResult<Job>> {
         const query = {
-            text: `INSERT INTO jobs (type, data, scheduled_at, status)
-                   VALUES ($1, $2, $3, $4) RETURNING *`,
-            values: [type, data, scheduledAt, status]
+            text: `INSERT INTO jobs (type, scheduled_at, status)
+                   VALUES ($1, $2, $3) RETURNING *`,
+            values: [type, scheduledAt, status]
         };
 
         return this.pool.query(query);
@@ -26,6 +26,15 @@ class Jobs extends Dao {
         return this.pool.query(query);
     }
 
+    public cancelJob(jobId): Promise<QueryResult<Job>> {
+        const query = {
+            text: `UPDATE jobs SET status = 'canceled', canceled_at = NOW() WHERE id = $1 AND status = 'pending' RETURNING *`,
+            values: [jobId]
+        };
+
+        return this.pool.query(query);
+    }
+
     /**
      * Query the next job to execute. The returned job must call finishJob() or abortJob() to end the transaction.
      *
@@ -35,9 +44,9 @@ class Jobs extends Dao {
      *     try {
      *         job.startJob();
      *         // do work
-     *         job.finishJob();
+     *         job.finishJob(); // or job.abortJob()
      *     } catch(e) {
-     *         job.abortJob();
+     *         job.finishJob('failed');
      *     }
      * }
      * {code}
@@ -64,7 +73,7 @@ class Jobs extends Dao {
         return {
             ...job,
             startJob: () => this.startJob(job, client),
-            finishJob: (status: JobStatus = 'completed') => this.finishJob(job, status, client),
+            finishJob: (status: JobStatus = 'completed', result: string = null) => this.finishJob(job, status, result, client),
             abortJob: () => this.rollbackJob(client)
         };
     }
@@ -77,10 +86,10 @@ class Jobs extends Dao {
         return client.query(query);
     }
 
-    private async finishJob(job: Job, status: JobStatus, client: PoolClient) {
+    private async finishJob(job: Job, status: JobStatus, result: string, client: PoolClient) {
         const query = {
-            text:`UPDATE jobs SET status = $1, completed_at = NOW() WHERE id = $2`,
-            values: [status, job.id]
+            text:`UPDATE jobs SET status = $1, result = $2, completed_at = NOW() WHERE id = $3`,
+            values: [status, result, job.id]
         };
 
         try {

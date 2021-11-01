@@ -253,6 +253,7 @@ describe('Orders', () => {
             await users.setCredits(userId, 5)
             try {
                 await orders.purchaseWithCredits(userId, 0)
+                fail()
             } catch (e) {
                 expect(e).toEqual(new DatabaseError('insert or update on table "orders" violates foreign key constraint "orders_deck_id_fkey"', 1, 'error'))
             }

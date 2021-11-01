@@ -156,6 +156,7 @@ describe('Users', () => {
             try {
                 // attempt duplicate
                 await users.register('test@test.com', 'passwordx')
+                fail()
             } catch (e) {
                 expect(e).toEqual(new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error"))
             }
@@ -191,6 +192,7 @@ describe('Users', () => {
             try {
                 // try to duplicate
                 await users.createGuest('test@test.com')
+                fail()
             } catch (e) {
                 expect(e).toEqual(new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error"))
             }

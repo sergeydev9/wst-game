@@ -248,18 +248,44 @@ export interface Job {
     id: number;
     type: string;
     status: JobStatus;
-    data?: string;
+    result?: string;
+    task_table?: string;
+    task_id?: number;
+    scheduled_at: Date;
     started_at?: Date;
     completed_at?: Date;
-    scheduled_at: Date;
-    created_at: Date;
-    updated_at: Date;
+    canceled_at: Date;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface JobTransaction extends Job {
     startJob();
-    finishJob(status?: 'completed' | 'failed');
+    finishJob(status?: 'completed' | 'failed', result?: string);
     abortJob();
+}
+
+export interface Email {
+    id: number;
+    user_id: number;
+    from?: string;
+    to: string;
+    cc?: string;
+    bcc?: string;
+    subject?: string;
+    text?: string;
+    html?: string;
+    template_key?: string;
+    template_data?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Template {
+    key: string,
+    sendgrid_template_id: string,
+    created_at?: string;
+    updated_at?: string;
 }
 
 export type InsertUserQuestionRating = Insert<UserQuestionRating>;
@@ -274,6 +300,7 @@ export type InsertAnwser = Insert<GameAnswer>;
 export type InsertDeck = Insert<Deck>;
 export type InsertQuestion = Insert<Question>;
 export type InsertGame = Insert<Game>;
+export type InsertEmail = Insert<Email>;
 
 export interface JoinGameResult {
     status: GameStatus
