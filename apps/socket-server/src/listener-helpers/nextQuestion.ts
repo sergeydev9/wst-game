@@ -30,12 +30,15 @@ const nextQuestion = async (socket: Socket) => {
     // if no readers left in list
     if (!readerString) {
 
-        // set readers list from players list
-        await pubClient.sunionstore(readerList, currentPlayers)
-        await pubClient.expire(readerList, ONE_DAY)
+        const [, , readerResult] = await pubClient
+            .pipeline()
+            .sunionstore(readerList, currentPlayers)
+            .expire(readerList, ONE_DAY)
+            .spop(readerList)
+            .exec()
 
         // pop a reader from the list to assign them as the reader
-        readerString = await pubClient.spop(readerList);
+        readerString = readerResult[1];
     } else {
 
         // check if reader is still connected
@@ -49,14 +52,17 @@ const nextQuestion = async (socket: Socket) => {
 
             // if no readers left, copy
             if (!readerCard) {
-                await pubClient.sunionstore(readerList, currentPlayers)
-                await pubClient.expire(readerList, ONE_DAY)
+                const [, , readerResult] = await pubClient
+                    .pipeline()
+                    .sunionstore(readerList, currentPlayers)
+                    .expire(readerList, ONE_DAY)
+                    .spop(readerList)
+                    .exec()
 
                 // pop a reader from the list to assign them as the reader
-                readerString = await pubClient.spop(readerList);
+                readerString = readerResult[1];
             }
         }
-
     }
 
     const reader = JSON.parse(readerString) as PlayerRef;

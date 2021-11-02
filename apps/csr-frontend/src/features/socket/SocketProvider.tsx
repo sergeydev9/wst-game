@@ -45,6 +45,7 @@ import {
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
+import { clearFunFacts, setFunFacts } from '../fun-facts/funFactsSlice';
 
 /**
  * Provider component for socket context.
@@ -289,6 +290,10 @@ export const SocketProvider: React.FC = ({ children }) => {
                 connection.close() // close  and delete the socket
                 setSocket(null);
                 history.push('/')
+            })
+
+            connection.on(types.FUN_FACTS, (msg: payloads.FunFacts) => {
+                dispatch(setFunFacts(msg))
             })
 
 

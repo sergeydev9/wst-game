@@ -81,8 +81,52 @@ const saveScores = async (questionId: number, gameId: number) => {
         score.rankDifference = oldRank[1] ? oldRank[1] - rank : 0;
     }
 
-    // save latest scoreboard in redis
-    await pubClient.set(`games:${gameId}:latestResults`, stringifiedMap);
+    // save latest scoreboard in redis, and get the global true % so it can be compared
+    const [, bucketList, groupVworld, questionStr] = await pubClient
+        .pipeline()
+        .set(`games:${gameId}:latestResults`, stringifiedMap, 'EX', ONE_DAY)
+        .hget(`games:${gameId}:bucketList`, 'difference')
+        .hget(`games:${gameId}:groupVworld`, 'difference')
+        .get(`games:${gameId}:currentQuestion`)
+        .exec()
+
+    const question = JSON.parse(questionStr[1]); // current question
+    const currentQuestionDifference = question.globalTrue - groupTrue;
+
+    logger.debug({
+        message: 'Fetching differences for fun facts',
+        question,
+        groupVworld: groupVworld[1],
+        bucketList: bucketList[1]
+    })
+
+    // if there is a bucket list, calculate difference and change bucket list if appropriate
+    if (!bucketList[1] || bucketList[1] > currentQuestionDifference) {
+
+        await pubClient
+            .pipeline()
+            .hset(
+                `games:${gameId}:bucketList`,
+                "difference", currentQuestionDifference,
+                "textForGuess", question.textForGuess,
+                "globalTrue", question.globalTrue,
+                "groupTrue", groupTrue)
+            .expire(`games:${gameId}:bucketList`, ONE_DAY)
+            .exec()
+    }
+
+    if (!groupVworld[1] || groupVworld[1] < currentQuestionDifference) {
+        await pubClient
+            .pipeline()
+            .hset(
+                `games:${gameId}:groupVworld`,
+                "difference", currentQuestionDifference,
+                "textForGuess", question.textForGuess,
+                "globalTrue", question.globalTrue,
+                "groupTrue", groupTrue)
+            .expire(`games:${gameId}:bucketList`, ONE_DAY)
+            .exec()
+    }
 
     return {
         scores: scoreboard,

@@ -44,21 +44,20 @@ const startGame = async (socket: Socket) => {
         startDate
     )
     const { game, question } = gameStartResult;
+    const notAnsweredKey = Keys.haveNotAnswered(question.gameQuestionId);
 
     // update game status
-    await pubClient.set(gameStatus, game.status);
+    const [, , , , , notAnsweredStrings] = await pubClient
+        .pipeline()
+        .set(gameStatus, game.status, 'EX', ONE_DAY)
+        .set(Keys.totalPlayers(question.gameQuestionId), currentCount, 'EX', ONE_DAY)
+        .set(`gameQuestions:${question.gameQuestionId}:globalTrue`, question.globalTrue, 'EX', ONE_DAY)
+        .sunionstore(notAnsweredKey, currentPlayers)
+        .expire(notAnsweredKey, ONE_DAY)
+        .smembers(notAnsweredKey)
+        .exec()
 
-    // set player count
-    await pubClient.set(Keys.totalPlayers(question.gameQuestionId), currentCount, 'EX', ONE_DAY);
-
-    // set have not answered list from players list
-    const notAnsweredKey = Keys.haveNotAnswered(question.gameQuestionId);
-    await pubClient.sunionstore(notAnsweredKey, currentPlayers);
-    await pubClient.expire(notAnsweredKey, ONE_DAY);
-
-    // get and parse set of players that have not answered
-    const notAnsweredStrings = await pubClient.smembers(notAnsweredKey);
-    const notAnsweredParsed = notAnsweredStrings.map(s => JSON.parse(s));
+    const notAnsweredParsed = notAnsweredStrings[1].map(s => JSON.parse(s));
 
     logger.debug({ message: 'Game start result', gameStartResult });
 

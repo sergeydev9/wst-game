@@ -48,3 +48,4 @@ export { default as SubmitRating } from './lib/submit-rating/SubmitRating';
 export { default as WinnerAnnouncement } from './lib/gameplay/winner-announcement/WinnerAnnouncement';
 export { default as FinalScores } from './lib/gameplay/final-scores/FinalScores';
 export * from './lib/typography/Typography';
+export * from './lib/fun-facts';

@@ -23,7 +23,9 @@ const registerListeners = (socket: Socket, io: Server) => {
         currentQuestionId,
         currentSequenceIndex,
         totalQuestions,
-        gameStatus
+        gameStatus,
+        bucketList,
+        groupVworld
     } = socket.keys;
 
     // source info
@@ -169,6 +171,21 @@ const registerListeners = (socket: Socket, io: Server) => {
                     .get(totalQuestions)
                     .exec()
 
+                // after 4th question, start sending facts
+                if (current[1] && Number(current[1]) > 4) {
+                    const [bucketListResponse, groupVworldResponse] = await pubClient
+                        .pipeline()
+                        .hgetall(groupVworld)
+                        .hgetall(bucketList)
+                        .exec()
+
+                    sendToAll(types.FUN_FACTS,
+                        {
+                            bucketList: bucketListResponse[1],
+                            groupVworld: groupVworldResponse[1]
+                        })
+                }
+
                 // if last question, move to game results
                 if (current[1] === total[1]) {
 
@@ -242,6 +259,25 @@ const registerListeners = (socket: Socket, io: Server) => {
                 const result = await endGame(socket);
 
                 if (result) {
+
+
+                    const sequenceIndex = await pubClient.get(currentSequenceIndex);
+
+                    // after 4th question, start sending facts
+                    if (sequenceIndex && Number(sequenceIndex) > 4) {
+                        const [bucketListResponse, groupVworldResponse] = await pubClient
+                            .pipeline()
+                            .hgetall(groupVworld)
+                            .hgetall(bucketList)
+                            .exec()
+
+                        sendToAll(types.FUN_FACTS,
+                            {
+                                bucketList: bucketListResponse[1],
+                                groupVworld: groupVworldResponse[1]
+                            })
+                    }
+
                     // send results
                     sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd)
 
@@ -298,6 +334,21 @@ const registerListeners = (socket: Socket, io: Server) => {
 
             // if player was last
             if (count[1] == 0) {
+
+                // after 4th question, start sending facts
+                if (sequenceIndex[1] && Number(sequenceIndex[1]) > 4) {
+                    const [bucketListResponse, groupVworldResponse] = await pubClient
+                        .pipeline()
+                        .hgetall(groupVworld)
+                        .hgetall(bucketList)
+                        .exec()
+
+                    sendToAll(types.FUN_FACTS,
+                        {
+                            bucketList: bucketListResponse[1],
+                            groupVworld: groupVworldResponse[1]
+                        })
+                }
 
                 // if this is the last question, end the game
                 if (sequenceIndex[1] === totalQuestionNum[1]) {
@@ -379,6 +430,24 @@ const registerListeners = (socket: Socket, io: Server) => {
                     message: 'Score calculation results',
                     ...result
                 })
+
+                const sequenceIndex = await pubClient.get(currentSequenceIndex);
+
+                // after 4th question, start sending facts
+                if (sequenceIndex && Number(sequenceIndex) > 4) {
+                    const [bucketListResponse, groupVworldResponse] = await pubClient
+                        .pipeline()
+                        .hgetall(groupVworld)
+                        .hgetall(bucketList)
+                        .exec()
+
+                    sendToAll(types.FUN_FACTS,
+                        {
+                            bucketList: bucketListResponse[1],
+                            groupVworld: groupVworldResponse[1]
+                        })
+                }
+
 
                 // send result
                 sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);

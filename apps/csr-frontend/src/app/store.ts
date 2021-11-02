@@ -10,7 +10,8 @@ import {
     questionReducer,
     hostReducer,
     freeCreditsReducer,
-    ratingsReducer
+    ratingsReducer,
+    funFactsReducer
 } from "../features";
 import { enhancer } from "addon-redux";
 import jwt_decode, { JwtPayload } from "jwt-decode";
@@ -55,7 +56,8 @@ export const store = configureStore({
         question: questionReducer,
         host: hostReducer,
         freeCredits: freeCreditsReducer,
-        ratings: ratingsReducer
+        ratings: ratingsReducer,
+        funFacts: funFactsReducer
     },
     preloadedState: persistedState,
     enhancers

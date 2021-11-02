@@ -1,4 +1,4 @@
-import { AnswerValue, GameQuestionStatus, GameStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
+import { AnswerValue, GameQuestionStatus, GameStatus, PlayerRef, ScoreboardEntry, GroupComparison } from "@whosaidtrue/app-interfaces";
 
 export interface SetCurrentPlayers {
     players: PlayerRef[]
@@ -68,4 +68,9 @@ export interface SetGameState {
 
 export interface SetHaveNotAnswered {
     haveNotAnswered: PlayerRef[];
+}
+
+export interface FunFacts {
+    bucketList: GroupComparison;
+    groupVworld: GroupComparison;
 }

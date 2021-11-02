@@ -46,7 +46,7 @@ const RequestFreeCredit: React.FC = () => {
 
     // render
     return (
-        <NoFlexBox className="w-11/12 sm:w-96 mx-auto">
+        <NoFlexBox className="w-11/12 sm:w-96 mx-auto my-10">
             <form className="text-center" onSubmit={formik.handleSubmit}>
                 {/* title */}
                 <Title1 className="text-center mb-3">Want a FREE Question Deck?!</Title1>

@@ -26,6 +26,7 @@ import { payloads, types } from "@whosaidtrue/api-interfaces";
 import QuestionResults from './QuestionResults';
 import { isLoggedIn } from "../auth/authSlice";
 import RateQuestion from "../ratings/RateQuestion";
+import FunFacts from "../fun-facts/FunFacts";
 
 /**
  * This component controls what the user sees over the course
@@ -101,6 +102,7 @@ const Question: React.FC = () => {
                     questionText={guessText}
                     followUp={followUp}
                 >
+                    {questionNumber > 4 && <FunFacts />}
                     {loggedIn && !hasRated && <RateQuestion />}
                 </QuestionAnswers>
                 )}

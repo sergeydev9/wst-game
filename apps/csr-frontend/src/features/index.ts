@@ -48,9 +48,11 @@ export { default as freeCreditsReducer } from './free-credit-requests/freeCredit
 export { default as ratingsReducer } from './ratings/ratingsSlice';
 export { default as ScoreTooltip } from './modal/ScoreTooltip';
 export { default as Reconnecting } from './modal/Reconnecting';
+export { default as funFactsReducer } from './fun-facts/funFactsSlice';
 export * from './choose-name/chooseNameSlice';
 export * from './question/questionSlice';
 export * from './game/gameSlice';
 export * from './free-credit-requests/freeCreditsSlice';
 export * from './ratings/ratingsSlice';
 export * from './host/hostSlice';
+export * from './fun-facts/funFactsSlice';

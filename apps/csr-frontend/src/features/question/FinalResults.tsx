@@ -9,10 +9,11 @@ import {
     selectScoreboard,
     useSocket
 } from "..";
+import { clearHost } from '../host/hostSlice';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import RateApp from "../ratings/RateApp";
+import FunFacts from '../fun-facts/FunFacts';
 import RequestFreeCredit from "./RequestFreeCredit";
-import { clearHost } from '../host/hostSlice';
 
 const FinalResults: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -36,6 +37,7 @@ const FinalResults: React.FC = () => {
     return (
         <FinalScores>
             <Scoreboard scores={scoreboard} currentPlayerScore={playerScore} />
+            <FunFacts />
             {!loggedIn && <RequestFreeCredit />}
             {loggedIn && !hasRatedApp && <RateApp />}
         </FinalScores>

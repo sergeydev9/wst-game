@@ -289,3 +289,9 @@ export interface NextQuestionResult {
     textForGuess: string;
     globalTrue: number;
 }
+
+export interface GroupComparison {
+    textForGuess: string;
+    groupTrue: number;
+    globalTrue: number;
+}

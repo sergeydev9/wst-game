@@ -19,6 +19,8 @@ export class Keys {
     readonly scoreboard: string;
     readonly latestResults: string;
     readonly currentQuestionId: string;
+    readonly bucketList: string;
+    readonly groupVworld: string;
 
     constructor(socket: Socket) {
         this.gameKey = `games:${socket.gameId}`; // keyspace for the game
@@ -35,6 +37,8 @@ export class Keys {
         this.currentSequenceIndex = `${this.gameKey}:currentSequenceIndex`;
         this.scoreboard = `${this.gameKey}:rankedlist`; // sorted set of player names / scores
         this.latestResults = `${this.gameKey}:latestResults`;
+        this.bucketList = `${this.gameKey}:bucketList`;
+        this.groupVworld = `${this.gameKey}:groupVworld`;
     }
 
     static totalTrue(questionId: number) {
