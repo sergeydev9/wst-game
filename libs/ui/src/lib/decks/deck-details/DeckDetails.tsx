@@ -15,7 +15,6 @@ const Label = tw.span`
     px-3
     py-1
     text-center
-    bg-purple-dark
     text-true-white
     text-sm
     font-semibold
@@ -23,12 +22,26 @@ const Label = tw.span`
 
 // The UI says sample question, but in the DB, and everywhere else, it's example_question
 const DeckDetails: React.FC<DetailsProps> = ({ description, sfw, example_question, movie_rating }) => {
+
+    const backgroundHelper = () => {
+        switch (movie_rating) {
+            case 'PG13':
+                return 'bg-yellow-base border-yellow-base';
+            case 'PG':
+                return 'bg-green-base border-green-base';
+            case 'R':
+                return 'bg-pink-base border-pink-base';
+            default:
+                return 'bg-purple-base border-purple-base';
+        }
+
+    }
     return (
         <Box boxstyle='purple-subtle' className="w-full py-5 px-8 gap-4 text-center">
             <Title3 >{description}</Title3>
             <div className="flex flex-row gap-2">
-                <Label>{movie_rating}</Label>
-                {sfw && <Label>SFW</Label>}
+                <Label className={backgroundHelper()}>{movie_rating}</Label>
+                {sfw && <Label className="bg-blue-base border-blue-base">SFW</Label>}
             </div>
             {example_question && <div>
                 <Headline>Sample Question</Headline>
