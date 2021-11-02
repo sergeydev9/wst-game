@@ -264,6 +264,8 @@ const registerListeners = (socket: Socket, io: Server) => {
          */
         socket.on(types.START_GAME, async (_, cb) => {
 
+            logIncoming(types.START_GAME, _, socket)
+
             try {
                 // update and fetch data from db
                 const startResult = await startGame(socket);

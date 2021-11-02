@@ -38,7 +38,7 @@ export const chooseNameSlice = createSlice({
         },
         setRemainingNameOptions: (state, action) => {
             state.remainingNameOptions = action.payload;
-            state.rerolls = Math.floor(action.payload.length / 3);
+            state.rerolls = action.payload.length;
         },
         setCurrentNameOptions: (state) => {
             const newCurrent = state.remainingNameOptions.slice(0, 3);

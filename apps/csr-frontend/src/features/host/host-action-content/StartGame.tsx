@@ -9,7 +9,9 @@ const StartGame: React.FC = () => {
     const { sendMessage } = useSocket();
 
     const handler = () => {
+
         sendMessage(types.START_GAME, undefined, (ack) => {
+
             if (ack === 'error') {
                 dispatch(showError('Oops, something went wrong...'))
             }

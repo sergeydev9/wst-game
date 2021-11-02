@@ -6,7 +6,7 @@ const ReaderAnnouncement: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = (
         absolute
          mx-auto
          top-24
-         z-50
+         z-10
          left-0
          right-0
          rounded-full

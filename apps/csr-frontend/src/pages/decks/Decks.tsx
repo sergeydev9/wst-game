@@ -1,25 +1,21 @@
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { DeckSelection, selectIsGuest, logout } from '../../features';
-import { clearDecks } from '../../features/decks/deckSlice';
+import { DeckSelection, selectIsGuest } from '../../features';
+import { clearSelectedDeck } from '../../features/decks/deckSlice';
+import { selectIsHost } from '../../features';
 
 
 const Decks: React.FC = () => {
     const dispatch = useAppDispatch();
-    const isGuest = useAppSelector(selectIsGuest)
+    const isGuest = useAppSelector(selectIsGuest);
+    const isHost = useAppSelector(selectIsHost);
 
     // clear state when unmount
     useEffect(() => {
-
-        // if any guest users get here, log them out
-        if (isGuest) {
-            dispatch(logout())
-        }
-
         return () => {
-            dispatch(clearDecks())
+            dispatch(clearSelectedDeck())
         }
-    }, [dispatch, isGuest])
+    }, [dispatch, isGuest, isHost])
 
     return (
         <DeckSelection />
