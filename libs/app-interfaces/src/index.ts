@@ -259,9 +259,9 @@ export interface Job {
 }
 
 export interface JobTransaction extends Job {
-    startJob();
-    finishJob(status?: 'completed' | 'failed', result?: string);
-    abortJob();
+    startJob(): Promise<any>;
+    finishJob(status?: 'completed' | 'failed', result?: string): Promise<any>;
+    abortJob(): Promise<any>;
 }
 
 export interface Email {
