@@ -69,7 +69,7 @@ const Invite: React.FC = () => {
             <Title1 className="mb-8">Invite Players</Title1>
             <Title3 className="mb-8">Tell Players to Enter Game Code at {titleDomain}</Title3>
             <InviteLinks domain={domain} accessCode={accessCode}>
-                <Button type="button" onClick={goToChooseName} >Choose Your Player Name</Button>
+                <Button type="button" onClick={goToChooseName} >Next: Choose Your Player Name</Button>
             </InviteLinks>
         </NoFlexBox>
     )
