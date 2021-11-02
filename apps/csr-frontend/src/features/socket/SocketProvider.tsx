@@ -45,7 +45,7 @@ import {
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
-import { clearFunFacts, setFunFacts } from '../fun-facts/funFactsSlice';
+import { clearFunFacts, setFunFacts, setMostSimilar, setFetchSimilarStatus } from '../fun-facts/funFactsSlice';
 
 /**
  * Provider component for socket context.
@@ -156,6 +156,21 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             /**
+             * HELPERS
+             */
+            const fetchMostSimilar = () => {
+                dispatch(setFetchSimilarStatus('loading'))
+
+                connection.emit(types.FETCH_MOST_SIMILAR, {}, (cb: string | payloads.FetchMostSimilar) => {
+                    if (cb === 'error' || typeof cb === 'string') {
+                        dispatch(setFetchSimilarStatus('error'))
+                    } else {
+                        dispatch(setMostSimilar(cb))
+                    }
+                })
+            }
+
+            /**
              * GAME EVENT LISTENERS
              */
             // game not found in DB
@@ -234,6 +249,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             // question is done, store results
             connection.on(types.QUESTION_END, (message: payloads.QuestionEnd) => {
                 dispatch(questionEnd(message))
+                fetchMostSimilar();
             })
 
 
@@ -252,6 +268,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             connection.on(types.GAME_END_NO_ANNOUNCE, (message: payloads.QuestionEnd) => {
                 dispatch(setGameStatus('postGame'))
                 dispatch(questionEnd(message))
+                fetchMostSimilar();
             })
 
             // move from answer to scores at the end of a question
@@ -261,6 +278,7 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             connection.on(types.GAME_END, (message: payloads.QuestionEnd) => {
                 dispatch(questionEnd(message))
+                fetchMostSimilar();
                 dispatch(endGame())
                 dispatch(setFullModal('announceWinner'))
             })

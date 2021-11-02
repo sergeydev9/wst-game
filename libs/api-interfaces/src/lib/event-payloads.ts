@@ -74,3 +74,10 @@ export interface FunFacts {
     bucketList: GroupComparison;
     groupVworld: GroupComparison;
 }
+
+export interface FetchMostSimilar {
+    numSameAnswer: number;
+    name: string;
+    groupMostSimilarNames: string;
+    groupMostSimilarNumber: number;
+}

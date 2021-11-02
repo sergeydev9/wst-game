@@ -10,22 +10,21 @@ import submitAnswerPart1 from "./listener-helpers/submitAnswerPart1";
 import submitAnswerPart2 from "./listener-helpers/submitAnswerPart2";
 import saveScores from "./listener-helpers/saveScores";
 import nextQuestion from "./listener-helpers/nextQuestion";
+import removePlayer from "./listener-helpers/removePlayer";
 import endGame from './listener-helpers/endGame';
-import Keys from "./keys";
 import { PlayerRef } from "@whosaidtrue/app-interfaces";
 
 
 const registerListeners = (socket: Socket, io: Server) => {
     const {
         currentPlayers,
-        removedPlayers,
-        readerList,
         currentQuestionId,
         currentSequenceIndex,
         totalQuestions,
         gameStatus,
         bucketList,
-        groupVworld
+        groupVworld,
+        playerMostSimilar
     } = socket.keys;
 
     // source info
@@ -115,11 +114,15 @@ const registerListeners = (socket: Socket, io: Server) => {
         logOutgoing(type, payload, "others", source);
     }
 
+    socket.sendToOthers = sendToOthers;
+
     // send to connected clients including sender
     const sendToAll = (type: string, payload?: unknown) => {
         io.to(`${socket.gameId}`).emit(type, payload);
         logOutgoing(type, payload, "all", source);
     }
+
+    socket.sendToAll = sendToAll
 
     /*******************************************************************
      * EVENT LISTENERS
@@ -173,6 +176,7 @@ const registerListeners = (socket: Socket, io: Server) => {
 
                 // after 4th question, start sending facts
                 if (current[1] && Number(current[1]) > 4) {
+
                     const [bucketListResponse, groupVworldResponse] = await pubClient
                         .pipeline()
                         .hgetall(groupVworld)
@@ -215,6 +219,38 @@ const registerListeners = (socket: Socket, io: Server) => {
             logError('[submitAnswerPart2] Error', e)
             cb('error')
         }
+    })
+
+    // sent by client after receiving a question/game end request. Gets the player most similar to them.
+    socket.on(types.FETCH_MOST_SIMILAR, async (_, cb) => {
+        try {
+            const [r1, r2] = await pubClient
+                .pipeline()
+                .zrevrange(playerMostSimilar, -1, -1, 'WITHSCORES')
+                .hgetall(`games:${socket.gameId}:mostSimilar`)
+                .exec()
+
+            const mostSimilar = r1[1];
+            const groupMostSimilar = r2[1];
+
+            const result: payloads.FetchMostSimilar = {
+                name: mostSimilar[0],
+                numSameAnswer: Number(mostSimilar[1]),
+                groupMostSimilarNames: groupMostSimilar.players,
+                groupMostSimilarNumber: Number(groupMostSimilar.numSameAnswer)
+            }
+
+            logger.debug({
+                message: '[FetchMostSimilar] result',
+                source: socket.playerName,
+                result
+            })
+            cb(result) // send result back to client
+        } catch (e) {
+            logError('Error while fetching most similar player', e)
+            cb('error')
+        }
+
     })
 
     /*******************************************************************
@@ -298,45 +334,23 @@ const registerListeners = (socket: Socket, io: Server) => {
         */
         socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent) => {
             logIncoming(types.REMOVE_PLAYER, msg, source)
+            removePlayer(socket, msg);
+        })
 
-            // add player to removed players set
-            const remResponse = await pubClient.sadd(removedPlayers, msg.id);
-            await pubClient.expire(removedPlayers, ONE_DAY);
+        /**
+        * SKIP QUESTION
+        */
+        socket.on(types.SKIP_QUESTION, async (msg: payloads.QuestionSkip, ack) => {
+            logIncoming(types.SKIP_QUESTION, msg, source)
 
-            logger.debug(`Player added to removed list: ${remResponse}`)
+            try {
+                // check if last question
+                const [currentIndex, total] = await pubClient.mget(currentSequenceIndex, totalQuestions);
 
-            // get id of current question
-            const questionId = await pubClient.get(currentQuestionId)
+                if (Number(currentIndex) >= Number(total)) {
+                    // calculate results
+                    const result = await endGame(socket);
 
-            const haveNotAnswered = Keys.haveNotAnswered(Number(questionId));
-
-            const playerString = JSON.stringify(msg);
-
-            // remove player from current players, and count the number of players that haven't answered
-            const [, , , count, sequenceIndex, totalQuestionNum] = await pubClient
-                .pipeline()
-                .srem(currentPlayers, playerString)
-                .srem(readerList, playerString)
-                .srem(haveNotAnswered, playerString)
-                .scard(haveNotAnswered)
-                .get(currentSequenceIndex)
-                .get(totalQuestions)
-                .exec()
-
-            sendToAll(types.REMOVE_PLAYER, msg);
-
-            logger.debug({
-                message: '[Remove Player] have not answered count',
-                count,
-                haveNotAnswered,
-                playerString
-            })
-
-            // if player was last
-            if (count[1] == 0) {
-
-                // after 4th question, start sending facts
-                if (sequenceIndex[1] && Number(sequenceIndex[1]) > 4) {
                     const [bucketListResponse, groupVworldResponse] = await pubClient
                         .pipeline()
                         .hgetall(groupVworld)
@@ -348,52 +362,24 @@ const registerListeners = (socket: Socket, io: Server) => {
                             bucketList: bucketListResponse[1],
                             groupVworld: groupVworldResponse[1]
                         })
-                }
 
-                // if this is the last question, end the game
-                if (sequenceIndex[1] === totalQuestionNum[1]) {
+                    // send results
+                    sendToAll(types.GAME_END, result as payloads.QuestionEnd)
 
-                    // calculate scores
-                    const result = await saveScores(Number(questionId), socket.gameId);
+                    // acknowledge complete
+                    ack('ok')
 
-                    logger.debug({
-                        message: 'Score calculation results',
-                        event: types.ANSWER_PART_2,
-                        ...result
-                    })
-
-                    // end game
-                    sendToAll(types.GAME_END, result as payloads.QuestionEnd);
                 } else {
-                    // calculate scores
-                    const result = await saveScores(Number(questionId), socket.gameId);
 
-                    logger.debug({
-                        message: '[Remove Player] Score calculation results',
-                        ...result
-                    })
+                    const nextQuestionResult = await nextQuestion(socket)
+                    sendToAll(types.SET_QUESTION_STATE, {
+                        ...nextQuestionResult,
+                        status: 'question'
+                    } as payloads.SetQuestionState)
 
-                    // send result
-                    sendToAll(types.QUESTION_END, result);
+                    ack('ok')
                 }
 
-            }
-        })
-
-        /**
-        * SKIP QUESTION
-        */
-        socket.on(types.SKIP_QUESTION, async (msg: payloads.QuestionSkip, ack) => {
-            logIncoming(types.SKIP_QUESTION, msg, source)
-
-            try {
-                const nextQuestionResult = await nextQuestion(socket)
-                sendToAll(types.SET_QUESTION_STATE, {
-                    ...nextQuestionResult,
-                    status: 'question'
-                } as payloads.SetQuestionState)
-
-                ack('ok')
             } catch (e) {
                 logError('Error while skipping question', e)
                 ack('error')
@@ -420,18 +406,31 @@ const registerListeners = (socket: Socket, io: Server) => {
          */
         socket.on(types.MOVE_TO_ANSWER, async (msg: payloads.QuestionSkip, ack) => {
             logIncoming(types.MOVE_TO_ANSWER, msg, source);
-
+            let lastQuestion = false;
             try {
 
-                // calculate scores
-                const result = await saveScores(msg.gameQuestionId, socket.gameId);
+                let result: payloads.QuestionEnd;
+                const [sequenceIndex, total] = await pubClient.mget(currentSequenceIndex, totalQuestions);
 
-                logger.debug({
-                    message: 'Score calculation results',
-                    ...result
-                })
+                if ((sequenceIndex && total) && Number(sequenceIndex) >= Number(total)) {
+                    lastQuestion = true;
+                    result = await endGame(socket);
+                    logger.debug({
+                        message: '[EndQuestion/last] Score calculation results',
+                        ...result
+                    })
+                } else {
 
-                const sequenceIndex = await pubClient.get(currentSequenceIndex);
+                    // calculate scores
+                    result = await saveScores(msg.gameQuestionId, socket.gameId);
+
+                    logger.debug({
+                        message: '[EndQuestion/notLast] Score calculation results',
+                        ...result
+                    })
+
+
+                }
 
                 // after 4th question, start sending facts
                 if (sequenceIndex && Number(sequenceIndex) > 4) {
@@ -450,7 +449,7 @@ const registerListeners = (socket: Socket, io: Server) => {
 
 
                 // send result
-                sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);
+                sendToAll(lastQuestion ? types.END_GAME : types.QUESTION_END, result as payloads.QuestionEnd);
                 ack('ok')
             } catch (e) {
                 logError('Error skipping to results', e);

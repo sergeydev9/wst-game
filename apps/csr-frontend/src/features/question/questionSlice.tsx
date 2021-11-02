@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createSelector, createAsyncThunk } from "@r
 import { CheckRatingResponse, payloads } from "@whosaidtrue/api-interfaces";
 import { GameQuestionStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
-import { selectPlayerId, selectPlayerName, selectGameStatus } from "../game/gameSlice";
+import { selectPlayerId, selectPlayerName, selectGameStatus, selectTotalQuestions } from "../game/gameSlice";
 import { api } from '../../api';
 
 export interface CurrentQuestionState {
@@ -267,5 +267,9 @@ export const currentScreen = createSelector(
 
         return gameStatus === 'lobby' ? 'lobby' : 'scoreResults'
     })
+
+export const selectIsLastQuestion = createSelector([selectTotalQuestions, selectSequenceIndex], (total, current) => {
+    return total === current
+})
 
 export default currentQuestionSlice.reducer;

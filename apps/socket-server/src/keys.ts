@@ -21,6 +21,7 @@ export class Keys {
     readonly currentQuestionId: string;
     readonly bucketList: string;
     readonly groupVworld: string;
+    readonly playerMostSimilar: string;
 
     constructor(socket: Socket) {
         this.gameKey = `games:${socket.gameId}`; // keyspace for the game
@@ -39,6 +40,7 @@ export class Keys {
         this.latestResults = `${this.gameKey}:latestResults`;
         this.bucketList = `${this.gameKey}:bucketList`;
         this.groupVworld = `${this.gameKey}:groupVworld`;
+        this.playerMostSimilar = `${this.gameKey}:similaritySets:${socket.playerName}`
     }
 
     static totalTrue(questionId: number) {
