@@ -34,8 +34,8 @@ const DeckDetails: React.FC<DetailsProps> = ({ description, sfw, example_questio
             default:
                 return 'bg-purple-base border-purple-base';
         }
-
     }
+
     return (
         <Box boxstyle='purple-subtle' className="w-full py-5 px-8 gap-4 text-center">
             <Title3 >{description}</Title3>
