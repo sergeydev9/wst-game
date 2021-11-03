@@ -45,7 +45,7 @@ export const chooseNameSlice = createSlice({
             const newRemaining = state.remainingNameOptions.filter(el => newCurrent.every(item => item.id !== el.id)) // remove current options from set of remaining options.
             state.currentNameOptions = newCurrent // First 3 remainingOptions are the new current options.
             state.remainingNameOptions = newRemaining;
-            state.rerolls = Math.floor(newRemaining.length / 3);
+            state.rerolls = newRemaining.length;
             state.seen = [...state.seen, ...newCurrent]
         },
     }

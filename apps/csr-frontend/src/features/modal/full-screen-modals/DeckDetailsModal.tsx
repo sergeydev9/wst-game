@@ -55,4 +55,4 @@ const DeckDetailsModal: React.FC = () => {
     )
 }
 
-export default DeckDetailsModal
+export default DeckDetailsModal;
