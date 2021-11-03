@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as Yup from 'yup';
 import { CreateGameResponse, CreateGameRequest } from '@whosaidtrue/api-interfaces';
 import { api } from '../../../api'
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { AuthForm } from '../..'
 import {
     TextInput,
     Headline,
@@ -24,10 +23,12 @@ import { getSelectedDeck } from '../../decks/deckSlice';
 import { AuthenticationResponse } from '@whosaidtrue/api-interfaces';
 import { decodeUserToken } from '../../../util/functions';
 import { login, isLoggedIn } from '../../auth/authSlice';
+import EmailInUse from '../../auth/EmailInUse';
 
 const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
-    const history = useHistory()
-    const dispatch = useAppDispatch()
+    const history = useHistory();
+    const [inUse, setInUse] = useState(false); // if email in use
+    const dispatch = useAppDispatch();
     const deck = useAppSelector(getSelectedDeck)
     const loggedIn = useAppSelector(isLoggedIn);
 
@@ -62,10 +63,11 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                     startGame(token);
                 }).catch(e => {
                     if (e.response.data === "A user already exists with that email") {
-                        dispatch(showError('An account already exists with that email'))
+                        setInUse(true);
+                    } else {
+                        dispatch(showError('Oops, an unexpected error has occured. Please try again later.'));
+                        dispatch(setFullModal(''))
                     }
-                }).finally(() => {
-                    dispatch(setFullModal(''))
                 })
             }
         }
@@ -153,6 +155,7 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                     <TextInput {...guestFormik.getFieldProps('email')} $hasError={guestEmailErr} id="guest-email" $border name="email" type="email" />
                     <Headline className="text-basic-gray mt-2">(We'll send you the game results)</Headline>
                     {guestEmailErr && <ErrorText >{guestFormik.errors.email}</ErrorText>}
+                    {inUse && <EmailInUse />}
                 </FormGroup>
                 <Button type="submit">Continue</Button>
             </form>

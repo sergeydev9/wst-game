@@ -20,6 +20,7 @@ import { clearError } from './authSlice';
 import { Link } from 'react-router-dom';
 import { setFullModal, showError } from '../modal/modalSlice';
 import { clearCart } from '../cart/cartSlice';
+import EmailInUse from './EmailInUse';
 
 export interface AuthFormProps {
     endpoint: string;
@@ -104,15 +105,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
             {$smallTitle ? <Title2 className="text-center mb-3">{title}</Title2> : <LargeTitle className="text-center mb-3">{title}</LargeTitle>}
 
             {/* message when email in use */}
-            {showGuestMessage && (
-                <Headline data-cy="email-in-use" className="mt-2" >
-                    That email address is already in use. If you forgot your password, or if you previously hosted a game as a guest, <Link
-                        className={linkClass}
-                        onClick={clearCartAndDetails}
-                        to="/reset/send-email" data-cy="in-use-reset-link">click here</Link> to reset your password.
-                </Headline>
-            )
-            }
+            {showGuestMessage && <EmailInUse />}
 
             {/* email */}
             <FormGroup>
