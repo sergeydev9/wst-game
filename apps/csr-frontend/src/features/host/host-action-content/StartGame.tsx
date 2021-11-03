@@ -10,8 +10,6 @@ const StartGame: React.FC = () => {
     const [enabled, setEnabled] = useState(true);
     const { sendMessage } = useSocket();
 
-
-
     const handler = () => {
         dispatch(showLoaderMessage('Starting game'))
 
@@ -22,9 +20,8 @@ const StartGame: React.FC = () => {
 
             if (ack !== 'ok') {
                 dispatch(showError('Oops, something went wrong...'))
+                setEnabled(true)
             }
-
-            setEnabled(true)
         })
     }
 
