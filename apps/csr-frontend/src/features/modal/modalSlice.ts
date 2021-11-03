@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
 export type FullModal = "createAccount"
@@ -42,10 +42,10 @@ export interface ModalState {
     messageType: MessageType;
     messageContent: string;
     isPersistent: boolean;
-    connecting: boolean;
+    loaderMessage: string;
+    showLoaderMessage: boolean;
     scoreTooltipDismissed: boolean; // sets whether user will see it again next question
     scoreTooltipShowing: boolean; // sets whether should be showing right now
-    reconnecting: boolean;
 
 }
 
@@ -53,11 +53,11 @@ export const initialState: ModalState = {
     fullModal: '',
     messageType: '',
     messageContent: '',
-    connecting: false,
+    loaderMessage: '',
+    showLoaderMessage: false,
     isPersistent: false,
     scoreTooltipDismissed: false,
     scoreTooltipShowing: false,
-    reconnecting: false
 }
 
 export const modalSlice = createSlice({
@@ -92,6 +92,15 @@ export const modalSlice = createSlice({
             state.messageContent = action.payload;
         },
 
+        showLoaderMessage: (state, action: PayloadAction<string>) => {
+            state.showLoaderMessage = true;
+            state.loaderMessage = action.payload;
+        },
+
+        clearLoaderMessage: (state) => {
+            state.showLoaderMessage = false;
+            state.loaderMessage = '';
+        },
         showPlayerJoined: (state, action) => {
             state.messageType = 'playerJoined';
             state.messageContent = `${action.payload} has joined the game!`;
@@ -114,13 +123,6 @@ export const modalSlice = createSlice({
             state.scoreTooltipDismissed = true;
             state.scoreTooltipShowing = false;
         },
-        setConnecting: (state, action) => {
-            state.connecting = action.payload // if true, but reconnecting = false, plain connection message shows
-        },
-        setReconnecting: (state, action) => {
-            state.reconnecting = action.payload;
-            state.connecting = action.payload
-        },
         clearScoreTooltipDismissed: (state) => { // so that the tooltip will show again next game
             state.scoreTooltipDismissed = false;
         }
@@ -140,8 +142,8 @@ export const {
     setShowScoreTooltip,
     dismissScoreTooltip,
     clearScoreTooltipDismissed,
-    setReconnecting,
-    setConnecting
+    showLoaderMessage,
+    clearLoaderMessage
 } = modalSlice.actions;
 
 // selectors
@@ -151,7 +153,6 @@ export const selectMessageContent = (state: RootState) => state.modals.messageCo
 export const selectIsPersistent = (state: RootState) => state.modals.isPersistent;
 export const selectScoreTooltipDismissed = (state: RootState) => state.modals.scoreTooltipDismissed;
 export const selectScoreTooltipShowing = (state: RootState) => state.modals.scoreTooltipShowing;
-export const selectReconnecting = (state: RootState) => state.modals.reconnecting;
-export const selectConnecting = (state: RootState) => state.modals.connecting;
+export const selectLoaderMessage = (state: RootState) => state.modals.loaderMessage
 
 export default modalSlice.reducer;

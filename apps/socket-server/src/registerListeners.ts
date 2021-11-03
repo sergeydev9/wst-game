@@ -24,7 +24,8 @@ const registerListeners = (socket: Socket, io: Server) => {
         gameStatus,
         bucketList,
         groupVworld,
-        playerMostSimilar
+        playerMostSimilar,
+        locks
     } = socket.keys;
 
     // source info
@@ -263,10 +264,15 @@ const registerListeners = (socket: Socket, io: Server) => {
          * START GAME
          */
         socket.on(types.START_GAME, async (_, cb) => {
-
-            logIncoming(types.START_GAME, _, socket)
+            logIncoming(types.START_GAME, {}, source);
 
             try {
+                const startLock = await pubClient.set(`${locks}:start`, 1, 'EX', 5, 'NX')
+
+                if (!startLock) {
+                    cb('already started');
+                    return;
+                }
                 // update and fetch data from db
                 const startResult = await startGame(socket);
                 const { game, question, currentCount, haveNotAnswered } = startResult;
@@ -280,9 +286,13 @@ const registerListeners = (socket: Socket, io: Server) => {
                     status: 'question'
                 } as payloads.SetQuestionState)
 
+                cb('ok')
+
             } catch (e) {
                 logError(`Error while starting  game: ${socket.gameId}.`, e)
                 cb('error')
+            } finally {
+                await pubClient.del(`${locks}:start`);
             }
         })
 
@@ -291,6 +301,13 @@ const registerListeners = (socket: Socket, io: Server) => {
          */
         socket.on(types.END_GAME, async (ack) => {
             logIncoming(types.END_GAME, {}, source);
+
+            const endGameLock = await pubClient.set(`${locks}:endGame`, 1, 'EX', 5, 'NX')
+
+            if (!endGameLock) {
+                ack('already ending');
+                return;
+            }
 
             try {
                 // calculate results
@@ -317,17 +334,21 @@ const registerListeners = (socket: Socket, io: Server) => {
                     }
 
                     // send results
-                    sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd)
+                    sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd);
 
                     // acknowledge complete
-                    ack('ok')
+                    ack('ok');
+                    return;
                 }
 
                 ack('game not in progress')
+
             } catch (e) {
                 logError('Error while ending game', e);
                 await pubClient.set(gameStatus, 'inProgress'); // reset so request can be sent again
                 ack('error')
+            } finally {
+                await pubClient.del(`${locks}:endGame`)
             }
         })
 
@@ -344,6 +365,13 @@ const registerListeners = (socket: Socket, io: Server) => {
         */
         socket.on(types.SKIP_QUESTION, async (msg: payloads.QuestionSkip, ack) => {
             logIncoming(types.SKIP_QUESTION, msg, source)
+
+            const skipLock = await pubClient.set(`${locks}:skipQuestion`, 1, 'EX', 5, 'NX');
+
+            if (!skipLock) {
+                ack('already in progress');
+                return;
+            }
 
             try {
                 // check if last question
@@ -385,6 +413,9 @@ const registerListeners = (socket: Socket, io: Server) => {
             } catch (e) {
                 logError('Error while skipping question', e)
                 ack('error')
+            } finally {
+                // release lock no matter what
+                await pubClient.del(`${locks}:skipQuestion`);
             }
         })
 
@@ -408,6 +439,15 @@ const registerListeners = (socket: Socket, io: Server) => {
          */
         socket.on(types.MOVE_TO_ANSWER, async (msg: payloads.QuestionSkip, ack) => {
             logIncoming(types.MOVE_TO_ANSWER, msg, source);
+
+            // acquire lock
+            const endQuestionLock = await pubClient.set(`${locks}:endQuestion`, 1, 'EX', 5, 'NX');
+
+            if (!endQuestionLock) {
+                ack('in progress');
+                return;
+            }
+
             let lastQuestion = false;
             try {
 
@@ -450,12 +490,14 @@ const registerListeners = (socket: Socket, io: Server) => {
                 }
 
 
-                // send result
                 sendToAll(lastQuestion ? types.END_GAME : types.QUESTION_END, result as payloads.QuestionEnd);
                 ack('ok')
             } catch (e) {
                 logError('Error skipping to results', e);
                 ack('error');
+            } finally {
+                // release lock
+                await pubClient.del(`${locks}:endQuestion`);
             }
         });
 
@@ -464,6 +506,14 @@ const registerListeners = (socket: Socket, io: Server) => {
         */
         socket.on(types.START_NEXT_QUESTION, async (_, ack) => {
             logIncoming(types.START_NEXT_QUESTION, {}, source);
+
+            // acquire lock
+            const nextQuestionLock = await pubClient.set(`${locks}:nextQuestion`, 1, 'EX', 5, 'NX');
+
+            if (!nextQuestionLock) {
+                ack('in progress');
+                return;
+            }
 
             try {
                 const nextQuestionResult = await nextQuestion(socket);
@@ -476,6 +526,10 @@ const registerListeners = (socket: Socket, io: Server) => {
             } catch (e) {
                 logError('Error while starting question', e);
                 ack('error');
+            } finally {
+                // release lock
+                await pubClient.del(`${locks}:nextQuestion`);
+
             }
         })
 

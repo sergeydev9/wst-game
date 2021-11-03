@@ -17,7 +17,8 @@ import {
     showPlayerLeft,
     showPlayerRemoved,
     setFullModal,
-    setReconnecting
+    showLoaderMessage,
+    clearLoaderMessage
 } from "../modal/modalSlice";
 import {
     addPlayer,
@@ -74,7 +75,7 @@ export const SocketProvider: React.FC = ({ children }) => {
 
     useEffect(() => {
         const clear = () => {
-            dispatch(setReconnecting(false))
+            dispatch(clearLoaderMessage());
             setShouldBlock(false)
             dispatch(clearGame());
             dispatch(clearHost());
@@ -102,7 +103,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             * CONNECTION LISTENERS
             */
             connection.on("connect", () => {
-                dispatch(setReconnecting(false))
+                dispatch(clearLoaderMessage());
                 console.log('Game server connection successful!'); // connection success
                 connection.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName })
             })
@@ -127,7 +128,7 @@ export const SocketProvider: React.FC = ({ children }) => {
 
                 if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
                     setShouldBlock(false);
-                    setReconnecting(true)
+                    dispatch(showLoaderMessage('Connection to server lost, reconnecting...'))
                 } else {
                     clear();
                     history.push('/') // nav home
@@ -139,7 +140,6 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             connection.io.on("reconnect_attempt", () => {
                 setShouldBlock(false)
-                dispatch(setReconnecting(true))
             })
 
             connection.io.on("reconnect_failed", () => {

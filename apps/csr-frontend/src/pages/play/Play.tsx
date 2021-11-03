@@ -18,9 +18,8 @@ import {
     checkHasRatedApp,
     selectAppRatingChecked,
     clearScoreTooltipDismissed,
-    clearHost
 } from '../../features';
-import { setReconnecting, setConnecting, selectConnecting } from '../../features/modal/modalSlice';
+import { clearLoaderMessage } from '../../features/modal/modalSlice';
 
 const Play: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -31,9 +30,7 @@ const Play: React.FC = () => {
     const gameStatus = useAppSelector(selectGameStatus);
     const loggedIn = useAppSelector(isLoggedIn);
     const ratingChecked = useAppSelector(selectAppRatingChecked);
-    const connecting = useAppSelector(selectConnecting);
     const screen = useAppSelector(currentScreen);
-
 
     useEffect(() => {
 
@@ -76,8 +73,7 @@ const Play: React.FC = () => {
         // close socket when leaving
         return () => {
             unblock && unblock();
-            dispatch(setReconnecting(false)) // stops any connecting modals from showing after user leaves
-            dispatch(setConnecting(false))
+            dispatch(clearLoaderMessage()) // stops any connecting modals from showing after user leaves
         }
     }, [
         dispatch,
@@ -89,7 +85,6 @@ const Play: React.FC = () => {
         loggedIn,
         ratingChecked,
         playerStatus,
-        connecting,
         setShouldBlock
     ])
 

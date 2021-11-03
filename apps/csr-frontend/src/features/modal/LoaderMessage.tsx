@@ -4,13 +4,13 @@ import { MessageModal, } from "@whosaidtrue/ui";
 import MessageContainer from './MessageContainer';
 import { ImSpinner6 } from '@react-icons/all-files/im/ImSpinner6';
 import { useAppSelector } from '../../app/hooks';
-import { selectReconnecting, selectConnecting } from '../modal/modalSlice';
+import { selectLoaderMessage } from './modalSlice';
 
-const ConnectionMessage: React.FC = () => {
-    const reconnecting = useAppSelector(selectReconnecting);
-    const showMessage = useAppSelector(selectConnecting);
+const LoaderMessage: React.FC = () => {
+
     const mount = document.getElementById("tooltip")
     const el = document.createElement("div")
+    const message = useAppSelector(selectLoaderMessage);
 
     useEffect(() => {
 
@@ -28,14 +28,14 @@ const ConnectionMessage: React.FC = () => {
 
     }, [el, mount])
 
-    return createPortal((showMessage &&
+    return createPortal((message &&
         <MessageContainer>
             <MessageModal>
                 <ImSpinner6 className="text-yellow-gradient-to animate-spin text-md" height="24px" width="24px" />
-                {reconnecting ? 'Reconnecting...' : 'Connecting to game server'}
+                {message}
             </MessageModal>
         </MessageContainer>), el)
 
 }
 
-export default ConnectionMessage;
+export default LoaderMessage;
