@@ -11,7 +11,7 @@ const Label = tw.span`
     rounded-full
     py-1
     px-3
-    text-md
+    text-sm
     font-bold
     text-center
     `
