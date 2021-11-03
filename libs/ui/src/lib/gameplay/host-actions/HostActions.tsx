@@ -24,7 +24,7 @@ const HostActions: React.FC<HostActionsProps> = ({ actionText, children, require
             fixed
             rounded-t-3xl
             pb-5
-            bg-purple-subtle-fill
+            bg-purple-subtle-stroke
             flex
             flex-col
             gap-4

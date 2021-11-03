@@ -32,7 +32,7 @@ const NumberTrueGuess: React.FC<NumberTrueGuessProps> = ({ submitHandler, questi
                 </div>
             </GameContentCard>
             <div className={`w-52 mx-auto ${!isChanged && 'opacity-40 pointer-events-none'}`}>
-                <Button disabled={!isChanged} onClick={() => submitHandler(value)} type="button">Submit</Button>
+                <Button disabled={!isChanged} onClick={() => submitHandler(value)} type="button">Final Answer?!</Button>
             </div>
 
         </>
