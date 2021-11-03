@@ -46,7 +46,7 @@ export function* testDecks(num: number, extra = '-') {
             status: 'active' as DeckStatus,
             description: 'A deck for testing',
             purchase_price: '2.00',
-            example_question: 'An example question',
+            sample_question: 'An sample question',
             thumbnail_url: './assets/placeholder.svg'
         }
         count += 1;

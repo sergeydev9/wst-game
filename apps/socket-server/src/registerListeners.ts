@@ -48,14 +48,15 @@ const registerListeners = (socket: Socket, io: Server) => {
             reason // "client namespace disconnect" = intentional, e.g. player leaves game
         });
 
-        const [, numPlayers] = await pubClient
+        const [, numPlayers, status] = await pubClient
             .pipeline()
             .srem(currentPlayers, playerValueString(socket))
             .scard(currentPlayers)
+            .get(gameStatus)
             .exec();
 
 
-        if (!numPlayers[1]) {
+        if (!numPlayers[1] && status[1] !== 'finished') {
 
             // set status to finished in DB and redis
             await pubClient.set(gameStatus, 'finished', 'EX', ONE_WEEK);

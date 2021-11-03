@@ -128,12 +128,13 @@ The following is a comprehensive list of the current list of tables in the Datab
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-email | varchar(1000) | no | yes
+email | citext | no | yes
 password | varchar(1000) | yes | no
 roles | user_role[] | no | no |
-question_deck_credits | smallint | no | no | 0
+question_deck_credits | smallint | no | no | 1
 test_account | boolean | no | no | false
-notifiactions | boolean | no | no | false
+notifications | boolean | no | no | false
+domain | varchar(1000) | no | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
@@ -151,7 +152,7 @@ sfw | boolean | no | no
 status | deck_status | no | no
 description | text | no | no
 purchase_price | money | no | no
-example_question | text | no | no
+sample_question | text | no | no
 thumbnail_url | varchar(1000) | no | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
@@ -170,6 +171,7 @@ host_id | integer | yes | no | | users | SET NULL
 deck_id | integer | yes | no | | decks | SET NULL
 start_date | timestamptz | yes | no
 end_date | timestamptz | yes | no
+domain | varchar(1000) | no | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 

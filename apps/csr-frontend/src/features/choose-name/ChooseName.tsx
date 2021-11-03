@@ -105,19 +105,18 @@ const ChooseName: React.FC = () => {
             history.push('/play')
         }).catch(e => {
             setShouldBlock(false);
+            dispatch(clearGame());
+            dispatch(clearCurrentQuestion());
+            dispatch(clearHost());
+
             if (e.response.status === 401) {
                 dispatch(showError('That name is no longer available. Please select another'))
-
-
             } else if (e.response.status === 403) {
                 dispatch(showError('The game you are atempting to join has already finished'));
-                dispatch(clearGame());
-                dispatch(clearCurrentQuestion());
-                dispatch(clearHost());
                 history.push('/');
             }
             else {
-                dispatch(showError('An error occurred while attempting to join game'))
+                dispatch(showError('An error occurred while attempting to join game'));
                 history.push('/')
             }
         })

@@ -3,7 +3,7 @@ import { backgroundColorPicker } from '@whosaidtrue/util';
 import { MovieRating } from "@whosaidtrue/app-interfaces";
 
 export interface RatingLabelProps extends React.HtmlHTMLAttributes<HTMLSpanElement> {
-    rating: MovieRating;
+    rating: MovieRating | "SFW";
 }
 
 const Label = tw.span`

@@ -6,7 +6,7 @@ import { Title3, Headline } from '../../typography/Typography';
 export interface DetailsProps {
     description: string;
     sfw: boolean;
-    example_question?: string;
+    sample_question?: string;
     movie_rating: MovieRating
 }
 
@@ -20,8 +20,8 @@ const Label = tw.span`
     font-semibold
 `
 
-// The UI says sample question, but in the DB, and everywhere else, it's example_question
-const DeckDetails: React.FC<DetailsProps> = ({ description, sfw, example_question, movie_rating }) => {
+// The UI says sample question, but in the DB, and everywhere else, it's sample_question
+const DeckDetails: React.FC<DetailsProps> = ({ description, sfw, sample_question, movie_rating }) => {
 
     const backgroundHelper = () => {
         switch (movie_rating) {
@@ -43,9 +43,9 @@ const DeckDetails: React.FC<DetailsProps> = ({ description, sfw, example_questio
                 <Label className={backgroundHelper()}>{movie_rating}</Label>
                 {sfw && <Label className="bg-blue-base border-blue-base">SFW</Label>}
             </div>
-            {example_question && <div>
+            {sample_question && <div>
                 <Headline>Sample Question</Headline>
-                <p>"{example_question}"</p>
+                <p>"{sample_question}"</p>
             </div>}
         </Box>
     )

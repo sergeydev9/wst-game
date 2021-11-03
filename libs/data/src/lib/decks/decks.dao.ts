@@ -18,7 +18,21 @@ class Decks extends Dao {
      */
     public getDetails(id: number): Promise<QueryResult> {
         const query = {
-            text: 'SELECT id, name, sort_order, clean, age_rating, movie_rating, sfw, status, description, purchase_price, example_question, thumbnail_url FROM active_decks WHERE id = $1',
+            text: `
+            SELECT
+                id,
+                name,
+                sort_order,
+                clean,
+                age_rating,
+                movie_rating,
+                sfw,
+                status,
+                description,
+                purchase_price,
+                sample_question,
+                thumbnail_url
+            FROM active_decks WHERE id = $1`,
             values: [id]
         }
         return this.pool.query(query);
@@ -35,7 +49,7 @@ class Decks extends Dao {
             status,
             description,
             clean,
-            example_question,
+            sample_question,
             thumbnail_url,
         } = deck;
         const query = {
@@ -49,7 +63,7 @@ class Decks extends Dao {
                 status,
                 description,
                 clean,
-                example_question,
+                sample_question,
                 thumbnail_url
                 )
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
@@ -63,7 +77,7 @@ class Decks extends Dao {
                 status,
                 description,
                 clean,
-                example_question,
+                sample_question,
                 thumbnail_url,
             ]
         }
@@ -89,7 +103,7 @@ class Decks extends Dao {
                 sfw,
                 description,
                 purchase_price,
-                example_question,
+                sample_question,
                 thumbnail_url
                 )
                 FROM active_decks AS decks
@@ -117,7 +131,7 @@ class Decks extends Dao {
                 sfw,
                 description,
                 purchase_price,
-                example_question,
+                sample_question,
                 thumbnail_url
                 )
                 FROM active_decks AS decks

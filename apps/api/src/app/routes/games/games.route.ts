@@ -14,6 +14,7 @@ import {
     JoinGameRequest,
     JoinGameResponse
 } from '@whosaidtrue/api-interfaces';
+import { getDomain } from '../../getDomain';
 
 const router = Router();
 
@@ -63,7 +64,8 @@ router.post('/create', [...deckId], passport.authenticate('jwt', { session: fals
     const { id } = req.user as TokenPayload;
 
     try {
-        const { rows } = await games.create(id, deckId);
+        const domain = getDomain(req)
+        const { rows } = await games.create(id, deckId, domain);
 
         // should never happen. If game creation failed,
         // db will throw. But this is here just in case.

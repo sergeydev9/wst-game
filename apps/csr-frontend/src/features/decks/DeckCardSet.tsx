@@ -17,6 +17,7 @@ const DeckCardSet: React.FC<DeckCardSetProps> = ({ decks, owned }) => {
                 <DeckCard
                     key={i}
                     name={deck.name}
+                    sfw={deck.sfw}
                     thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'}
                     movieRating={deck.movie_rating}
                     onClick={() => {

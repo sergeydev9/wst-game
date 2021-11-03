@@ -20,12 +20,16 @@ const DeckDetailsModal: React.FC = () => {
         if (isGuest) {
             dispatch(logout())
         }
+
+        if (!deck.id) {
+            dispatch(setFullModal(''))
+        }
         // If user is logged in, refresh account details.
         // This is to make sure deck credits value is up to date.
         if (loggedIn) {
             dispatch(fetchDetails())
         }
-    }, [loggedIn, dispatch, isGuest])
+    }, [loggedIn, dispatch, isGuest, deck])
 
     const loginClick = () => {
         dispatch(setFullModal('login'))

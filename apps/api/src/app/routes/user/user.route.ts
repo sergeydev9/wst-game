@@ -27,6 +27,7 @@ import {
     WithEmailBody
 } from '@whosaidtrue/api-interfaces';
 import { redisClient } from '../../redis';
+import { getDomain } from '../../getDomain';
 
 const router = Router();
 
@@ -66,8 +67,9 @@ router.post('/login', [...validateAuth], async (req: Request, res: Response) => 
 router.post('/register', [...validateAuth], async (req: Request, res: Response) => {
     const { email, password } = req.body as AuthenticationRequest;
     try {
+        const domain = getDomain(req);
         // Register new user.
-        const { rows } = await users.register(email, password);
+        const { rows } = await users.register(email, password, domain);
 
         // send token if success
         const { id, roles } = rows[0]
@@ -264,7 +266,8 @@ router.patch('/reset', [...validateReset], async (req: Request, res: Response) =
  */
 router.post('/guest', [...emailOnly], async (req: Request, res: Response) => {
     try {
-        const { rows } = await users.createGuest(req.body.email);
+        const domain = getDomain(req);
+        const { rows } = await users.createGuest(req.body.email, domain);
         const { id, email, roles } = rows[0]
         const token = signGuestPayload({ id, email, roles }) // token only valid for 1 day
 

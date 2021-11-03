@@ -26,10 +26,10 @@ class Users extends Dao {
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public register(email: string, password: string, role: UserRole = "user"): Promise<QueryResult> {
+    public register(email: string, password: string, domain: string, role: UserRole = "user"): Promise<QueryResult> {
         const query = {
-            text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, array_to_json(roles) AS roles",
-            values: [email, password, [role]]
+            text: "INSERT INTO users (email, password, roles, domain) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3, $4) RETURNING id, email, array_to_json(roles) AS roles",
+            values: [email, password, [role], domain]
         }
         return this._pool.query(query);
     }
@@ -144,7 +144,6 @@ class Users extends Dao {
 
     }
 
-    // TODO: add notifications to this when that feature is rolled out.
     public updateDetails(id: number, update: UserDetailsUpdate): Promise<QueryResult> {
         const { email } = update
         const query = {
@@ -260,10 +259,10 @@ class Users extends Dao {
      * @param email
      * @returns
      */
-    public createGuest(email: string): Promise<QueryResult> {
+    public createGuest(email: string, domain: string): Promise<QueryResult> {
         const query = {
-            text: 'INSERT INTO users (email, roles) VALUES ( $1, $2) RETURNING id, email, array_to_json(roles) AS roles',
-            values: [email, ['guest']]
+            text: 'INSERT INTO users (email, roles, domain) VALUES ( $1, $2, $3) RETURNING id, email, array_to_json(roles) AS roles',
+            values: [email, ['guest'], domain]
         }
 
         return this._pool.query(query)

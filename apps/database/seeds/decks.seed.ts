@@ -32,7 +32,7 @@ const insertDecks = async (pool: Pool, num: number) => {
         return [...Object.values(obj)]
     })
     const query = {
-        text: format('INSERT INTO decks (name, sort_order, clean, age_rating, movie_rating, sfw, status, description, purchase_price, example_question, thumbnail_url) VALUES %L RETURNING id', decks),
+        text: format('INSERT INTO decks (name, sort_order, clean, age_rating, movie_rating, sfw, status, description, purchase_price, sample_question, thumbnail_url) VALUES %L RETURNING id', decks),
     }
 
     return pool.query(query);

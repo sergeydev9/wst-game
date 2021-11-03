@@ -53,7 +53,7 @@ export type Insert<T> = Omit<T, 'id' | 'created_at' | 'updated_at'>;
 /**
  * Type used to define the movie rating column on decks
  */
-export type MovieRating = "PG" | "PG13" | "R"
+export type MovieRating = "PG" | "PG13" | "R" | "NC17"
 
 
 /**
@@ -121,6 +121,7 @@ export interface User {
     roles: UserRole[];
     question_deck_credits: number;
     test_account: boolean;
+    domain: string;
     created_at?: Date;
     updated_at?: Date
 }
@@ -137,7 +138,7 @@ export interface Deck {
     description: string;
     thumbnail_url?: string;
     purchase_price: string; // needs to be a string with decimals. Postgres will convert to higher precision number in the DB.
-    example_question?: string;
+    sample_question?: string;
     created_at?: Date;
     updated_at?: Date
 }
@@ -150,6 +151,7 @@ export interface Game {
     start_date?: Date;
     host_name?: string;
     host_id: number;
+    domain: string;
     end_date?: Date;
     created_at?: Date;
     updated_at?: Date

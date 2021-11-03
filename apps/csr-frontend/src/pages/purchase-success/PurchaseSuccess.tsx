@@ -22,6 +22,7 @@ const PurchaseSuccess: React.FC = () => {
 
             {/* card */}
             <DeckCard
+                sfw={deck.sfw}
                 className="drop-shadow-sm border relative p-2 pb-8 border-purple-subtle-stroke rounded-3xl mb-10"
                 noPointer={true}
                 name={deck.name}

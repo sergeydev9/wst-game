@@ -11,7 +11,7 @@ const decks: Deck[] = [
         status: 'active',
         description: 'A deck for testing',
         purchase_price: '1.00',
-        example_question: 'An example question',
+        sample_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     },
     {
@@ -25,7 +25,7 @@ const decks: Deck[] = [
         status: 'active',
         description: 'A deck for testing',
         purchase_price: '1.00',
-        example_question: 'An example question',
+        sample_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     },
     {
@@ -39,7 +39,7 @@ const decks: Deck[] = [
         status: 'active',
         description: 'A deck for testing',
         purchase_price: '1.00',
-        example_question: 'An example question',
+        sample_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     },
     {
@@ -53,7 +53,7 @@ const decks: Deck[] = [
         status: 'active',
         description: 'A deck for testing',
         purchase_price: '1.00',
-        example_question: 'An example question',
+        sample_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     },
     {
@@ -67,7 +67,7 @@ const decks: Deck[] = [
         status: 'active',
         description: 'A deck for testing',
         purchase_price: '1.00',
-        example_question: 'An example question',
+        sample_question: 'An example question',
         thumbnail_url: './placeholder.svg'
     }
 ]

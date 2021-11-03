@@ -58,7 +58,7 @@ import { clearFunFacts, setFunFacts, setMostSimilar, setFetchSimilarStatus } fro
  */
 export const SocketProvider: React.FC = ({ children }) => {
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [shouldBlock, setShouldBlock] = useState(true)
+    const [shouldBlock, setShouldBlock] = useState(false)
 
     const location = useLocation();
     const history = useHistory();
@@ -105,10 +105,12 @@ export const SocketProvider: React.FC = ({ children }) => {
             connection.on("connect", () => {
                 dispatch(clearLoaderMessage());
                 console.log('Game server connection successful!'); // connection success
-                connection.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName })
+                connection.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName });
+                setShouldBlock(true);
             })
 
             connection.on("connect_error", () => {
+                setShouldBlock(false);
                 dispatch(showError('Could not connect to game server'))
                 clear();
                 history.push('/')
@@ -121,14 +123,11 @@ export const SocketProvider: React.FC = ({ children }) => {
             // see https://socket.io/docs/v3/client-socket-instance/ for list of reasons why this could happen
             connection.on("disconnect", reason => {
                 console.error('Disconnected from game server')
-                if (reason !== 'io client disconnect') {
-                    setShouldBlock(false)
-                    dispatch(showError('Disconnected from game server'))
-                }
+                setShouldBlock(false);
 
                 if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
-                    setShouldBlock(false);
                     dispatch(showLoaderMessage('Connection to server lost, reconnecting...'))
+
                 } else {
                     clear();
                     history.push('/') // nav home
@@ -144,6 +143,7 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             connection.io.on("reconnect_failed", () => {
                 console.log('reconnect failed')
+                setShouldBlock(false)
                 clear();
                 history.push('/') // nav home
                 connection.close() // close  and delete the socket

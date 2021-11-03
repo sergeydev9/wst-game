@@ -12,6 +12,9 @@ export const backgroundColorPicker = (rating: MovieRating | 'ALL' | 'SFW') => {
             return 'bg-blue-base border-blue-base'
         case 'ALL':
             return 'bg-purple-base border-purple-base'
+        default:
+            return 'bg-purple-base border-purple-base'
+
     }
 }
 
@@ -27,5 +30,7 @@ export const borderAndTextColorPicker = (rating: MovieRating | 'ALL' | 'SFW') =>
             return 'text-blue-base border-blue-base'
         case 'ALL':
             return 'text-purple-base border-purple-base'
+        default:
+            return 'bg-purple-base border-purple-base'
     }
 }

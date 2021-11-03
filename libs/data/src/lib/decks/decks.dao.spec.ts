@@ -28,7 +28,7 @@ describe('Decks', () => {
     })
 
     it("should return an empty array if user doesn't own any decks", async () => {
-        const { rows } = await users.register('test_decks@test.com', 'password');
+        const { rows } = await users.register('test_decks@test.com', 'password', 'www.test.com');
         const userId = rows[0].id;
 
         const actual = await decks.getUserDecks(userId);
@@ -62,7 +62,7 @@ describe('Decks', () => {
                 status,
                 description,
                 purchase_price,
-                example_question,
+                sample_question,
                 thumbnail_url
             } = rows[0];
 
@@ -77,7 +77,7 @@ describe('Decks', () => {
             expect(status).toBeDefined()
             expect(description).toBeDefined()
             expect(purchase_price).toBeDefined()
-            expect(example_question).toBeDefined()
+            expect(sample_question).toBeDefined()
             expect(thumbnail_url).toBeDefined()
         })
     })

@@ -17,7 +17,7 @@ const JoinGame: React.FC = () => {
         },
 
         validationSchema: Yup.object({
-            accessCode: Yup.string().length(6, errMsg).required(errMsg)
+            accessCode: Yup.string().length(4, errMsg).required(errMsg)
         }),
         onSubmit: values => {
             dispatch(initialRequest(values.accessCode))

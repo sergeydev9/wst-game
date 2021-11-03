@@ -1,5 +1,5 @@
 import { Pool, QueryResult } from 'pg';
-import { logger } from '@whosaidtrue/logger';
+import { logger, logError } from '@whosaidtrue/logger';
 import { getAndUpdateQuery, } from '../game-questions/GameQuestions.dao';
 import { getQuestionData } from '../questions/Questions.dao';
 import { Deck, GameStatus, InsertGame, JoinGameResult, StartGameResult } from '@whosaidtrue/app-interfaces';
@@ -11,14 +11,15 @@ class Games extends Dao {
     }
 
     public insertOne(game: InsertGame): Promise<QueryResult> {
-        const { deck_id, status, access_code } = game;
+        const { deck_id, status, access_code, domain } = game;
         const query = {
             text: `INSERT INTO games (
                 deck_id,
                 status,
-                access_code
-            ) VALUES ($1, $2, $3) RETURNING id`,
-            values: [deck_id, status, access_code]
+                access_code,
+                domain
+            ) VALUES ($1, $2, $3, $4) RETURNING id`,
+            values: [deck_id, status, access_code, domain]
         }
 
         return this.pool.query(query);
@@ -76,25 +77,50 @@ class Games extends Dao {
      * @return {id: number, access_code: string}
      * @memberof Games
      */
-    public async create(userId: number, deckId: number): Promise<QueryResult> {
+    public async create(userId: number, deckId: number, domain: string): Promise<QueryResult> {
 
         const client = await this.pool.connect();
         try {
             await client.query('BEGIN');
 
+            const code = [];
+            const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+
+            while (code.length < 4) {
+                const index = Math.floor(Math.random() * 23);
+                code.push(letters[index])
+            }
+
             // create the game and questions.
             const createGameQuery = {
-                text: 'SELECT * FROM create_game($1, $2)',
-                values: [userId, deckId]
+                text: `
+                    WITH d_questions AS ( --get all active questions for the deck
+                        SELECT * FROM active_questions WHERE deck_id = $2 ORDER BY random()
+                    ),
+                    new_game AS ( --create new game
+                        INSERT INTO games (access_code, status, deck_id, host_id, domain)
+                        VALUES ($4, 'lobby', $2, $1, $3)
+                        RETURNING games.id, games.access_code
+                    ), ins AS (
+                        INSERT INTO game_questions (game_id, question_id)
+                        SELECT new_game.id, d_questions.id
+                        FROM d_questions
+                        CROSS JOIN new_game
+                    )
+                    SELECT * from new_game;`,
+                name: 'createGame',
+                values: [userId, deckId, domain, code.join('')]
             }
             const gameResult = await client.query(createGameQuery);
 
+            if (!gameResult) {
+                throw new Error('no game created')
+            }
             // count the questions and update the total on the game row
             const setTotalQuestions = {
-                text: 'UPDATE games SET total_questions = (SELECT count(id) FROM game_questions WHERE game_questions.game_id = $1) WHERE games.id = $1',
+                text: `UPDATE games SET total_questions = (SELECT count(id) FROM game_questions WHERE game_questions.game_id = $1) WHERE games.id = $1`,
                 values: [gameResult.rows[0].id]
             }
-
             await client.query(setTotalQuestions)
             await client.query('COMMIT')
             return gameResult;

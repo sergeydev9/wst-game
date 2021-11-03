@@ -26,7 +26,7 @@ describe('Users', () => {
 
         beforeEach(async () => {
             // save user and store id
-            const { rows } = await users.register('test@test.com', 'password');
+            const { rows } = await users.register('test@test.com', 'password', 'www.test.com');
             userId = rows[0].id;
         })
 
@@ -39,7 +39,7 @@ describe('Users', () => {
     describe('register', () => {
         const userEmail = 'test_register@test.com';
         it('should register user', async () => {
-            const { rows } = await users.register(userEmail, 'password');
+            const { rows } = await users.register(userEmail, 'password', 'www.test.com');
             expect(rows.length).toEqual(1);
             expect(rows[0].id).toBeDefined();
             expect(rows[0].email).toEqual(userEmail);
@@ -49,7 +49,7 @@ describe('Users', () => {
         })
 
         it('should encrypt the password', async () => {
-            await users.register(userEmail, 'password');
+            await users.register(userEmail, 'password', 'www.test.com');
             const { rows } = await users.pool.query({ text: 'SELECT * FROM users WHERE email = $1', values: [userEmail] });
             const { password } = rows[0];
 
@@ -63,7 +63,7 @@ describe('Users', () => {
         let userId: number;
 
         beforeEach(async () => {
-            const { rows } = await users.register(email, password);
+            const { rows } = await users.register(email, password, 'www.test.com');
             userId = rows[0].id;
         })
 
@@ -103,7 +103,7 @@ describe('Users', () => {
         let userId: number;
 
         beforeEach(async () => {
-            const { rows } = await users.register(email, password);
+            const { rows } = await users.register(email, password, 'www.test.com');
             userId = rows[0].id;
         })
 
@@ -125,7 +125,7 @@ describe('Users', () => {
         const password = 'password';
         const email = 'test@test.com';
         beforeEach(async () => {
-            await users.register(email, password);
+            await users.register(email, password, 'www.test.com');
         })
 
         it('should return user data if password is correct', async () => {
@@ -149,13 +149,13 @@ describe('Users', () => {
 
         beforeEach(async () => {
             // save user and store id
-            const { rows } = await users.register('test@test.com', 'password');
+            const { rows } = await users.register('test@test.com', 'password', 'www.test.com');
             userId = rows[0].id;
         })
         it('should throw error if email is duplicate', async () => {
             try {
                 // attempt duplicate
-                await users.register('test@test.com', 'passwordx')
+                await users.register('test@test.com', 'passwordx', 'www.test.com')
             } catch (e) {
                 expect(e).toEqual(new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error"))
             }
@@ -170,14 +170,14 @@ describe('Users', () => {
 
             expect(rows[0].email).toEqual('test@test.com');
             expect(rows[0].notifications).toEqual(false);
-            expect(rows[0].question_deck_credits).toEqual(0);
+            expect(rows[0].question_deck_credits).toEqual(1);
         })
 
     })
 
     describe('createGuest', () => {
         it('should create a guest and return id, email, and array of roles', async () => {
-            const { rows } = await users.createGuest('test@test.com')
+            const { rows } = await users.createGuest('test@test.com', 'www.test.com')
 
             expect(rows[0].id).toBeDefined()
             expect(rows[0].email).toEqual('test@test.com')
@@ -187,10 +187,10 @@ describe('Users', () => {
         })
 
         it('should throw duplicate key error if user already exists with that email', async () => {
-            await users.register('test@test.com', 'abcd'); // register user
+            await users.register('test@test.com', 'abcd', 'www.test.com'); // register user
             try {
                 // try to duplicate
-                await users.createGuest('test@test.com')
+                await users.createGuest('test@test.com', 'www.test.com')
             } catch (e) {
                 expect(e).toEqual(new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error"))
             }
@@ -202,7 +202,7 @@ describe('Users', () => {
 
         beforeEach(async () => {
             // insert initial user before each test
-            await users.register(userEmail, 'password123');
+            await users.register(userEmail, 'password123', 'www.test.com');
         })
 
         it('should create a new reset code and return the email address', async () => {
@@ -235,7 +235,7 @@ describe('Users', () => {
 
         beforeEach(async () => {
             // insert initial user before each test
-            await users.register(userEmail, 'password123');
+            await users.register(userEmail, 'password123', 'www.test.com');
             await users.upsertResetCode(userEmail, code);
         })
 
@@ -252,7 +252,7 @@ describe('Users', () => {
 
         it('should match using email AND reset code, not just code', async () => {
             const secondEmail = 'test2@test.com';
-            await users.register(secondEmail, 'password123');
+            await users.register(secondEmail, 'password123', 'www.test.com');
             await users.upsertResetCode(secondEmail, code);
             const { rows } = await users.verifyResetCode(secondEmail, code)
 
@@ -266,7 +266,7 @@ describe('Users', () => {
 
         beforeEach(async () => {
             // insert initial user before each test
-            await users.register(userEmail, 'password123');
+            await users.register(userEmail, 'password123', 'www.test.com');
         })
 
         it('should return auth object', async () => {
@@ -287,7 +287,7 @@ describe('Users', () => {
 
         it('should upgrade guest account to user account', async () => {
             const guestEmail = 'testguest@test.com'
-            await users.createGuest(guestEmail);
+            await users.createGuest(guestEmail, 'www.test.com');
 
             const actual = await users.resetPassword(guestEmail, 'password123454');
 

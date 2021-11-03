@@ -11,6 +11,8 @@ export interface DeckState {
     currentSetName: DeckSet;
     owned: Deck[];
     notOwned: Deck[];
+    ownedByRating: Record<DeckSet, Deck[]>;
+    notOwnedByRating: Record<DeckSet, Deck[]>;
     selectedDeck: Deck;
     isSelectedOwned: boolean;
 }
@@ -19,6 +21,22 @@ export const initialState: DeckState = {
     currentSetName: 'all',
     owned: [],
     notOwned: [],
+    ownedByRating: {
+        "all": [],
+        "PG": [],
+        "NC17": [],
+        "PG13": [],
+        "R": [],
+        "sfw": []
+    },
+    notOwnedByRating: {
+        "all": [],
+        "PG": [],
+        "NC17": [],
+        "PG13": [],
+        "R": [],
+        "sfw": []
+    },
     selectedDeck: {
         id: 0,
         name: '',
@@ -30,7 +48,8 @@ export const initialState: DeckState = {
         movie_rating: 'PG',
         sfw: true,
         thumbnail_url: '',
-        purchase_price: ''
+        purchase_price: '',
+        sample_question: ''
     },
     isSelectedOwned: false
 }
@@ -75,6 +94,79 @@ export const deckSlice = createSlice({
             const { owned, notOwned } = action.payload;
             state.owned = owned;
             state.notOwned = notOwned;
+
+            const ownedSfw: Deck[] = [];
+            const ownedR: Deck[] = [];
+            const ownedPG: Deck[] = [];
+            const ownedPG13: Deck[] = [];
+            const ownedNC17: Deck[] = [];
+
+            owned.forEach(deck => {
+                if (deck.sfw) {
+                    ownedSfw.push(deck);
+                } else {
+                    switch (deck.movie_rating) {
+                        case 'NC17':
+                            ownedNC17.push(deck);
+                            break;
+                        case 'R':
+                            ownedR.push(deck);
+                            break;
+                        case 'PG13':
+                            ownedPG13.push(deck);
+                            break;
+                        case 'PG':
+                            ownedPG.push(deck);
+                            break;
+                    }
+                }
+
+            })
+
+
+
+            const notOwnedSfw: Deck[] = [];
+            const notOwnedR: Deck[] = [];
+            const notOwnedPG: Deck[] = [];
+            const notOwnedPG13: Deck[] = [];
+            const notOwnedNC17: Deck[] = [];
+
+            notOwned.forEach(deck => {
+                if (deck.sfw) {
+                    notOwnedSfw.push(deck);
+                } else {
+                    switch (deck.movie_rating) {
+                        case 'NC17':
+                            notOwnedNC17.push(deck);
+                            break;
+                        case 'R':
+                            notOwnedR.push(deck);
+                            break;
+                        case 'PG13':
+                            notOwnedPG13.push(deck);
+                            break;
+                        case 'PG':
+                            notOwnedPG.push(deck);
+                            break;
+                    }
+                }
+
+            })
+
+            state.ownedByRating.all = owned;
+            state.ownedByRating.NC17 = ownedNC17;
+            state.ownedByRating.PG = ownedPG;
+            state.ownedByRating.PG13 = ownedPG13;
+            state.ownedByRating.R = ownedR;
+            state.ownedByRating.sfw = ownedSfw;
+
+            state.notOwnedByRating.all = notOwned;
+            state.notOwnedByRating.NC17 = notOwnedNC17;
+            state.notOwnedByRating.PG = notOwnedPG;
+            state.notOwnedByRating.PG13 = notOwnedPG13;
+            state.notOwnedByRating.R = notOwnedR;
+            state.notOwnedByRating.sfw = notOwnedSfw;
+
         })
 
     }
@@ -94,35 +186,15 @@ export const selectNotOwned = (state: RootState) => state.decks.notOwned;
 export const getSelectedDeck = (state: RootState) => state.decks.selectedDeck;
 export const selectIsOwned = (state: RootState) => state.decks.isSelectedOwned;
 export const selectCurrentSetName = (state: RootState) => state.decks.currentSetName;
+export const selectOwnedByRating = (state: RootState) => state.decks.ownedByRating;
+export const selectNotOwnedByRating = (state: RootState) => state.decks.notOwnedByRating;
 
-export const selectCurrentOwned = createSelector([selectCurrentSetName, selectOwned], (name, decks) => {
-
-    switch (name) {
-        case 'all':
-            return decks;
-
-        case 'sfw':
-            return decks.filter(deck => deck.sfw)
-
-        default:
-            return decks.filter(deck => deck.movie_rating === name)
-    }
-
+export const selectCurrentOwned = createSelector([selectCurrentSetName, selectOwnedByRating], (name, decks) => {
+    return decks[name];
 })
 
-export const selectCurrentNotOwned = createSelector([selectCurrentSetName, selectNotOwned], (name, decks) => {
-
-    switch (name) {
-        case 'all':
-            return decks;
-
-        case 'sfw':
-            return decks.filter(deck => deck.sfw)
-
-        default:
-            return decks.filter(deck => deck.movie_rating === name)
-    }
-
+export const selectCurrentNotOwned = createSelector([selectCurrentSetName, selectNotOwnedByRating], (name, decks) => {
+    return decks[name];
 })
 
 
