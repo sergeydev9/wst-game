@@ -35,7 +35,13 @@ router.post('/join', [...joinGame], async (req: Request, res: Response) => {
 
     try {
         const result = await games.join(access_code, name, id);
-        const { playerId, playerName, gameId, isHost } = result;
+        const { playerId, playerName, gameId, isHost, status } = result;
+
+        // if player trying to join a finished game
+        if (status === 'finished') {
+            return res.status(403).send('Game Finished')
+        }
+
         const gameToken = signGameToken(playerId, playerName, isHost, gameId); // put game info in signed token
         res.status(201).json({ ...result, gameToken } as JoinGameResponse)
     } catch (e) {

@@ -13,7 +13,7 @@ import { passport, signResetPayload } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { signUserPayload, signGuestPayload } from '@whosaidtrue/middleware';
 import { logger } from '@whosaidtrue/logger';
-import { users } from '../../db';
+import { users, creditSignup } from '../../db';
 import { emailService } from '../../services';
 import {
     AccountDetailsResponse,
@@ -150,7 +150,7 @@ router.patch('/change-password', [...validatePasswordChange], passport.authentic
 /**
  * Send a reset token to user email
  */
-router.patch('/send-reset', [...validateResetEmail], async (req: Request, res: Response) => {
+router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Response) => {
     const { email } = req.body as WithEmailBody;
     const code = `${Math.floor(1000 + Math.random() * 9000)}` // generate a random 4 digit string.
 
@@ -256,6 +256,31 @@ router.post('/guest', [...emailOnly], async (req: Request, res: Response) => {
     } catch (e) {
         if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
             res.status(422).send("A user already exists with that email")
+        } else {
+            logger.error(e)
+            res.status(500).send(ERROR_MESSAGES.unexpected)
+        }
+    }
+})
+
+/**
+ * Save a free credit signup request for a specfied email
+ */
+
+router.post('/free-credit-signup', [...emailOnly], async (req: Request, res: Response) => {
+    try {
+        const { email } = req.body;
+        const { rowCount } = await creditSignup.insertOne(email);
+
+        if (rowCount) {
+            return res.status(201).send();
+        }
+
+        return res.status(500).send(ERROR_MESSAGES.unexpected);
+
+    } catch (e) {
+        if (e.message === "duplicate key value violates unique constraint \"free_credit_signups_email_key\"") {
+            res.status(422).send("email has already received free credits")
         } else {
             logger.error(e)
             res.status(500).send(ERROR_MESSAGES.unexpected)

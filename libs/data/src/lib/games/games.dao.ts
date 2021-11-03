@@ -2,7 +2,7 @@ import { Pool, QueryResult } from 'pg';
 import { logger } from '@whosaidtrue/logger';
 import { getAndUpdateQuery, } from '../game-questions/GameQuestions.dao';
 import { getQuestionData } from '../questions/Questions.dao';
-import { Deck, GameStatus, InsertGame, JoinGameResult, PlayerRef, StartGameResult } from '@whosaidtrue/app-interfaces';
+import { Deck, GameStatus, InsertGame, JoinGameResult, StartGameResult } from '@whosaidtrue/app-interfaces';
 import Dao from '../base.dao';
 
 class Games extends Dao {
@@ -250,7 +250,6 @@ class Games extends Dao {
         const client = await this.pool.connect();
 
         try {
-
             await client.query('BEGIN');
 
             const gameQuery = `
@@ -271,21 +270,11 @@ class Games extends Dao {
             // throw if no game data
             if (!gameRow) throw new Error(`[start game] game update failed. gameId: ${gameId}`)
 
-
-
             const gqUpdateResult = await client.query(getAndUpdateQuery(gameId, readerId, readerName, playerNumberSnapshot));
-
             const gameQuestion = gqUpdateResult.rows[0];
 
             // throw if no game_question data
-            if (!gameQuestion) throw new Error(
-                `[start game] Game question update failed.
-                game id: ${gameId},
-                reader id: ${readerId},
-                reader name: ${readerName},
-                number snapshot: ${playerNumberSnapshot}`
-            );
-
+            if (!gameQuestion) throw new Error(`[start game] Game question update failed.`);
 
             const questionResult = await client.query(getQuestionData(gameQuestion.question_id))
 
@@ -312,6 +301,7 @@ class Games extends Dao {
                     text: questionRow.text,
                     textForGuess: questionRow.text_for_guess,
                     followUp: questionRow.follow_up,
+                    category: questionRow.category,
                     globalTrue: Math.round(questionRow.global_true) || 0
                 }
             }

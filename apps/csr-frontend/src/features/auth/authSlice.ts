@@ -13,6 +13,8 @@ export interface AuthState {
   authError: string;
   fetchDetailsError: string;
   updateError: string;
+  hasRequestedCredits: boolean;
+  creditRequestEmail: string;
 }
 
 export interface UserDetailsUpdate {
@@ -41,7 +43,9 @@ export const initialState: AuthState = {
   email: '',
   authError: '',
   fetchDetailsError: '',
-  updateError: ''
+  updateError: '',
+  hasRequestedCredits: false,
+  creditRequestEmail: ''
 };
 
 
@@ -98,6 +102,7 @@ export const authSlice = createSlice({
       state.fetchDetailsError = '';
       state.updateError = ''
     }
+
   },
 
   extraReducers: (builder) => {

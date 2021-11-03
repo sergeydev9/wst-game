@@ -93,13 +93,11 @@ export interface UserDeckSelectionOptions extends DeckSelectionOptions {
     userId: number;
 }
 
-export type ScoreMap = Record<string, PlayerScore>
-
-export interface PlayerScore {
+export interface ScoreboardEntry {
+    player_name: string;
+    score: number;
     rank: number;
-    name: string;
-    points: number;
-    rankDiff: number;
+    rankDifference: number;
 }
 
 export interface PlayerRef {
@@ -161,6 +159,7 @@ export interface Game {
 export interface Question {
     id: number;
     text: string;
+    category: string;
     text_for_guess: string;
     follow_up: string;
     deck_id: number;
@@ -260,9 +259,9 @@ export interface Job {
 }
 
 export interface JobTransaction extends Job {
-    startJob();
-    finishJob(status?: 'completed' | 'failed', result?: string);
-    abortJob();
+    startJob(): Promise<any>;
+    finishJob(status?: 'completed' | 'failed', result?: string): Promise<any>;
+    abortJob(): Promise<any>;
 }
 
 export interface Email {
@@ -327,6 +326,7 @@ export interface NextQuestionResult {
     questionId: number;
     gameQuestionId: number;
     numPlayers: number;
+    category: string
     sequenceIndex: number;
     readerId: number;
     readerName: string;

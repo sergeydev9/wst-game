@@ -27,11 +27,13 @@ module.exports = {
                 'p99': '99%', // custom width for buttons. Full width breaks the style.
                 '40rem': '40rem',
                 '52rem': '52rem',
-                '28rem': '28rem'
+                '28rem': '28rem',
+                '4-1/2': '4.5rem'
             },
             height: {
                 '32rem': '32rem',
-                '36rem': '36rem'
+                '36rem': '36rem',
+                '4-1/2': '4.5rem'
             },
 
             fontSize: {
@@ -108,7 +110,7 @@ module.exports = {
                 }
             },
             animation: {
-                grow: 'grow 75ms ease-in-out',
+                grow: 'grow 400ms ease-in forwards',
                 shrink: 'shrink 2s ease-in-out'
 
             },

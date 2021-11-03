@@ -11,4 +11,5 @@ export * from './lib/emailOnly';
 export * from './lib/joinGame';
 export * from './lib/createPaymentIntent';
 export * from './lib/paypalOrder';
+export * from './lib/ratings';
 export { default as validate } from './lib/validate';

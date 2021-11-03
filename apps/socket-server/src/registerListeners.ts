@@ -2,25 +2,27 @@ import { Server, Socket } from "socket.io";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { logger, logIncoming, logOutgoing, logError } from '@whosaidtrue/logger';
 import { playerValueString } from './util';
+import { games } from './db';
 import { pubClient } from "./redis";
-import { ONE_DAY } from "./constants";
+import { ONE_DAY, ONE_WEEK } from "./constants";
 import startGame from "./listener-helpers/startGame";
 import submitAnswerPart1 from "./listener-helpers/submitAnswerPart1";
 import submitAnswerPart2 from "./listener-helpers/submitAnswerPart2";
 import saveScores from "./listener-helpers/saveScores";
-import { games } from "./db";
 import nextQuestion from "./listener-helpers/nextQuestion";
+import endGame from './listener-helpers/endGame';
+import Keys from "./keys";
 
 
 const registerListeners = (socket: Socket, io: Server) => {
     const {
         currentPlayers,
         removedPlayers,
+        readerList,
+        currentQuestionId,
         currentSequenceIndex,
         totalQuestions,
-        gameStatus,
-        latestResults,
-        currentQuestion
+        gameStatus
     } = socket.keys;
 
     // source info
@@ -30,15 +32,72 @@ const registerListeners = (socket: Socket, io: Server) => {
         gameId: socket.gameId
     }
 
-    // handle disconnect
-    socket.on('disconnect', async () => {
-        const res = await pubClient.srem(currentPlayers, playerValueString(socket));
-        logger.debug(`number of players removed in disconnect handler: ${res}`);
+    /**
+     * DISCONNECT
+     */
+    socket.on('disconnect', async (reason) => {
+
+        logger.debug({
+            message: '[disconnect] Player disconnected',
+            playerId: socket.playerId,
+            playerName: socket.playerName,
+            isHost: socket.isHost,
+            reason // "client namespace disconnect" = intentional, e.g. player leaves game
+        });
+
+        const [, numPlayers] = await pubClient
+            .pipeline()
+            .srem(currentPlayers, playerValueString(socket))
+            .scard(currentPlayers)
+            .exec();
+
+
+        if (!numPlayers[1]) {
+
+            // set status to finished in DB and redis
+            await pubClient.set(gameStatus, 'finished', 'EX', ONE_WEEK);
+            await games.endGame(socket.gameId);
+
+            logger.debug({
+                message: '[disconnect] last player disconnected. Ending game.',
+            })
+
+            // host left on purpose
+        } else if (socket.isHost && reason === "client namespace disconnect") {
+            const [questionId, idx] = await pubClient
+                .pipeline()
+                .get(currentQuestionId)
+                .get(currentSequenceIndex)
+                .set(gameStatus, 'postGame')
+                .exec()
+
+            if (idx[1] > 1) {
+                // calculate scores
+                const result = await saveScores(Number(questionId[1]), socket.gameId);
+
+                logger.debug({
+                    message: '[HostDisconnect] Score calculation results',
+                    ...result
+                })
+
+                // end game
+                sendToOthers(types.GAME_END, result as payloads.QuestionEnd);
+                sendToOthers(types.HOST_LEFT);
+
+            } else {
+                logger.debug({
+                    message: '[HostDisconnect] Host left before first question'
+                })
+                sendToOthers(types.HOST_LEFT_NO_RESULTS) // host left before first question was over. No need to save
+            }
+
+        }
     })
 
-    /**
+    /****************************
      * MESSAGE HELPERS
-     */
+     ****************************/
+
     // send to connected clients excluding sender
     const sendToOthers = (type: string, payload?: unknown) => {
         socket.to(`${socket.gameId}`).emit(type, payload)
@@ -96,24 +155,33 @@ const registerListeners = (socket: Socket, io: Server) => {
             sendToAll(types.SET_HAVE_NOT_ANSWERED, pendingList)
 
             if (!pendingList.length) {
-                const current = await pubClient.get(currentSequenceIndex)
-                const total = await pubClient.get(totalQuestions)
+                const [current, total] = await pubClient
+                    .pipeline()
+                    .get(currentSequenceIndex)
+                    .get(totalQuestions)
+                    .exec()
 
                 // if last question, move to game results
-                if (current === total) {
+                if (current[1] === total[1]) {
 
                     // calculate scores
                     const result = await saveScores(msg.gameQuestionId, socket.gameId);
 
+                    logger.debug({
+                        message: 'Score calculation results',
+                        event: types.ANSWER_PART_2,
+                        ...result
+                    })
+
                     // end game
-                    sendToAll(types.GAME_END, result as payloads.QuestionEnd)
+                    sendToAll(types.GAME_END, result as payloads.QuestionEnd);
                 } else {
 
                     // calculate scores
                     const result = await saveScores(msg.gameQuestionId, socket.gameId);
 
                     // send result
-                    sendToAll(types.QUESTION_END, result as payloads.QuestionEnd)
+                    sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);
                 }
             }
 
@@ -129,7 +197,6 @@ const registerListeners = (socket: Socket, io: Server) => {
      ********************************************************************/
 
     if (socket.isHost) {
-
 
         /**
          * START GAME
@@ -162,36 +229,19 @@ const registerListeners = (socket: Socket, io: Server) => {
         socket.on(types.END_GAME, async (ack) => {
             logIncoming(types.END_GAME, {}, source);
 
-            // use game status as a sort of lock to deduplicate requests
-            const status = await pubClient.get(gameStatus);
-
-            // if status is anything other than 'inProgress', do nothing.
-            if (status !== 'inProgress') return;
-
             try {
+                // calculate results
+                const result = await endGame(socket);
 
-                const [, questionIdResult] = await pubClient
-                    .pipeline()
-                    .set(gameStatus, 'calculatingScores')
-                    .get(`${currentQuestion}:id`)
-                    .exec()
+                if (result) {
+                    // send results
+                    sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd)
 
-                const currentQuestionId = questionIdResult[1];
-                const result = await saveScores(currentQuestionId, socket.gameId);
+                    // acknowledge complete
+                    ack('ok')
+                }
 
-                // end game in DB
-                await games.endGame(socket.gameId);
-
-                await pubClient.pipeline()
-                    .set(latestResults, JSON.stringify(result), 'EX', ONE_DAY)
-                    .set(gameStatus, 'finished')
-                    .exec()
-
-                // send results
-                sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd)
-
-                // acknowledge complete
-                ack('ok')
+                ack('game not in progress')
             } catch (e) {
                 logError('Error while ending game', e);
                 await pubClient.set(gameStatus, 'inProgress'); // reset so request can be sent again
@@ -211,9 +261,64 @@ const registerListeners = (socket: Socket, io: Server) => {
 
             logger.debug(`Player added to removed list: ${remResponse}`)
 
-            // remove player from current players
-            await pubClient.srem(currentPlayers, JSON.stringify(msg)); // remove from redis
+            // get id of current question
+            const questionId = await pubClient.get(currentQuestionId)
+
+            const haveNotAnswered = Keys.haveNotAnswered(Number(questionId));
+
+            const playerString = JSON.stringify(msg);
+
+            // remove player from current players, and count the number of players that haven't answered
+            const [, , , count, sequenceIndex, totalQuestionNum] = await pubClient
+                .pipeline()
+                .srem(currentPlayers, playerString)
+                .srem(readerList, playerString)
+                .srem(haveNotAnswered, playerString)
+                .scard(haveNotAnswered)
+                .get(currentSequenceIndex)
+                .get(totalQuestions)
+                .exec()
+
             sendToAll(types.REMOVE_PLAYER, msg);
+
+            logger.debug({
+                message: '[Remove Player] have not answered count',
+                count,
+                haveNotAnswered,
+                playerString
+            })
+
+            // if player was last
+            if (count[1] == 0) {
+
+                // if this is the last question, end the game
+                if (sequenceIndex[1] === totalQuestionNum[1]) {
+
+                    // calculate scores
+                    const result = await saveScores(Number(questionId), socket.gameId);
+
+                    logger.debug({
+                        message: 'Score calculation results',
+                        event: types.ANSWER_PART_2,
+                        ...result
+                    })
+
+                    // end game
+                    sendToAll(types.GAME_END, result as payloads.QuestionEnd);
+                } else {
+                    // calculate scores
+                    const result = await saveScores(Number(questionId), socket.gameId);
+
+                    logger.debug({
+                        message: '[Remove Player] Score calculation results',
+                        ...result
+                    })
+
+                    // send result
+                    sendToAll(types.QUESTION_END, result);
+                }
+
+            }
         })
 
         /**
@@ -255,19 +360,24 @@ const registerListeners = (socket: Socket, io: Server) => {
          * END QUESTION AND MOVE TO ANSWERS
          */
         socket.on(types.MOVE_TO_ANSWER, async (msg: payloads.QuestionSkip, ack) => {
-            logIncoming(types.MOVE_TO_ANSWER, undefined, source)
+            logIncoming(types.MOVE_TO_ANSWER, msg, source);
 
             try {
 
                 // calculate scores
                 const result = await saveScores(msg.gameQuestionId, socket.gameId);
 
+                logger.debug({
+                    message: 'Score calculation results',
+                    ...result
+                })
+
                 // send result
                 sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);
                 ack('ok')
             } catch (e) {
-                logError('Error skipping to results', e)
-                ack('error')
+                logError('Error skipping to results', e);
+                ack('error');
             }
         });
 
@@ -275,19 +385,19 @@ const registerListeners = (socket: Socket, io: Server) => {
         * NEXT QUESTION
         */
         socket.on(types.START_NEXT_QUESTION, async (_, ack) => {
-            logIncoming(types.START_NEXT_QUESTION, {}, source)
+            logIncoming(types.START_NEXT_QUESTION, {}, source);
 
             try {
-                const nextQuestionResult = await nextQuestion(socket)
+                const nextQuestionResult = await nextQuestion(socket);
                 sendToAll(types.SET_QUESTION_STATE, {
                     ...nextQuestionResult,
                     status: 'question'
-                } as payloads.SetQuestionState)
+                } as payloads.SetQuestionState);
 
                 ack('ok')
             } catch (e) {
-                logError('Error while starting question', e)
-                ack('error')
+                logError('Error while starting question', e);
+                ack('error');
             }
         })
 

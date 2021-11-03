@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { createPortal } from "react-dom";
 import { MessageModal, } from "@whosaidtrue/ui";
 import partypopper from '../../assets/party-popper-emoji.png';
@@ -53,11 +53,12 @@ const FlashMessage: React.FC = () => {
         }
     }
 
-
+    // TODO: This logic could be cleaned up
     return createPortal((content &&
         <div className={`fixed mx-auto top-24 w-max z-50 left-0 right-0 transform scale-0 ${isPersistent ? 'animate-grow' : 'animate-shrink'}`}>
             <MessageModal
-                error={messageType === 'error'}>
+                error={messageType === 'error'}
+                success={messageType === 'success'}>
                 {emojiHelper()}
                 {content}
             </MessageModal>

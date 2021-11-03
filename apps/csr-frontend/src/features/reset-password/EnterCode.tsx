@@ -73,13 +73,14 @@ const EnterCode: React.FC = () => {
             onSubmit={async (values, actions) => {
                 const { char1, char2, char3, char4 } = values
                 const code = `${char1}${char2}${char3}${char4}`
-                try {
-                    const response = await api.post<ResetCodeVerificationResponse>('/user/verify-code', { code })
+
+                return api.post<ResetCodeVerificationResponse>('/user/verify-code', { code }).then(response => {
                     const { resetToken } = response.data
                     dispatch(setToken(resetToken))
                     history.push('/reset/new-pass')
-                } catch (e) {
-                    if (e.response?.status === 401) {
+
+                }).catch(e => {
+                    if (e.response && e.response.status === 401) {
                         // if 401, code was wrong. Show message, reset form.
                         setError('Incorrect reset code')
                         actions.resetForm();
@@ -92,8 +93,7 @@ const EnterCode: React.FC = () => {
                             history.push('/')
                         }, 3000)
                     }
-                }
-
+                })
             }}
 
         >{(props) => {

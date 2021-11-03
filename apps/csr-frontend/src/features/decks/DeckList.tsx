@@ -2,42 +2,85 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Title2, Headline, Divider } from "@whosaidtrue/ui";
 import { Deck } from '@whosaidtrue/app-interfaces';
-
-import { useAppSelector } from "../../app/hooks";
-
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { isLoggedIn } from '../auth/authSlice';
-import { selectFilteredNotOwned, selectFilteredOwned, selectOwned, selectNotOwned, selectShowAll, selectSfwOnly } from "./deckSlice";
-
+import {
+    selectOwned,
+    selectNotOwned,
+    selectShowAll,
+    selectSfwOnly,
+    selectShouldApplyFilters,
+    movieFilteredSFWOwned,
+    movieFilteredSFWNotOwned,
+    sfwOwned,
+    sfwNotOwned,
+    movieFilteredOwned,
+    movieFilteredNotOwned
+} from "./deckSlice";
 import DeckCardSet from './DeckCardSet'
+import { setFullModal } from '../modal/modalSlice';
 
 const DeckList: React.FC = () => {
+    const dispatch = useAppDispatch();
     const isShowAll = useAppSelector(selectShowAll);
     const isSfwOnly = useAppSelector(selectSfwOnly);
     const allOwned = useAppSelector(selectOwned);
     const allNotOwned = useAppSelector(selectNotOwned);
-    const filteredOwned = useAppSelector(selectFilteredOwned);
-    const filteredNotOwned = useAppSelector(selectFilteredNotOwned);
     const loggedIn = useAppSelector(isLoggedIn);
+    const shouldApply = useAppSelector(selectShouldApplyFilters);
+    const filteredOwned = useAppSelector(movieFilteredOwned);
+    const filteredNotOwned = useAppSelector(movieFilteredNotOwned)
+    const sfwFilteredOwned = useAppSelector(movieFilteredSFWOwned);
+    const sfwFiltredNotOwned = useAppSelector(movieFilteredSFWNotOwned);
+    const sfwOwnedNotFiltered = useAppSelector(sfwOwned);
+    const sfwNotOwnedNotFiltered = useAppSelector(sfwNotOwned);
+
 
     const [owned, setOwned] = useState<Deck[]>([]);
     const [notOwned, setNotOwned] = useState<Deck[]>([])
 
     useEffect(() => {
+        // if show all button is pressed.
         if (isShowAll) {
             setOwned(allOwned);
             setNotOwned(allNotOwned)
         } else {
+            // if sfw button is pressed, show only sfw decks
             if (isSfwOnly) {
-                const own = filteredOwned.filter(d => d.sfw)
-                const nOwn = filteredNotOwned.filter(d => d.sfw)
-                setOwned(own);
-                setNotOwned(nOwn);
+
+                // if movie filters are selected
+                if (shouldApply) {
+                    setOwned(sfwFilteredOwned);
+                    setNotOwned(sfwFiltredNotOwned);
+                } else {
+                    // if sfw is the only selected filter
+                    setOwned(sfwOwnedNotFiltered);
+                    setNotOwned(sfwNotOwnedNotFiltered);
+                }
+
             } else {
+                // apply only movie rating filters if not sfw only
                 setOwned(filteredOwned);
                 setNotOwned(filteredNotOwned);
             }
         }
-    }, [isShowAll, allOwned, allNotOwned, filteredOwned, filteredNotOwned, isSfwOnly])
+    }, [
+        isShowAll,
+        shouldApply,
+        sfwFilteredOwned,
+        sfwFiltredNotOwned,
+        sfwNotOwnedNotFiltered,
+        sfwOwnedNotFiltered,
+        allOwned,
+        allNotOwned,
+        filteredOwned,
+        filteredNotOwned,
+        isSfwOnly
+    ])
+
+    const loginHandler = () => {
+        dispatch(setFullModal('login'))
+    }
 
     return (
         <>
@@ -49,7 +92,7 @@ const DeckList: React.FC = () => {
             )}
             {!loggedIn && (<div className="w-2/3 lg:w-full flex flex-row place-items-center gap-4 text-white-ish h-8">
                 <Divider dividerColor='white' />
-                <Headline className="w-max flex-shrink-0 select-none">Can't find your decks? <Link className="cursor-pointer underline" to="/login">Log In</Link></Headline>
+                <Headline className="w-max flex-shrink-0 select-none">Can't find your decks? <span className="cursor-pointer underline" onClick={loginHandler}>Log In</span></Headline>
                 <Divider dividerColor='white' />
             </div>)}
             <Title2 className="text-true-white">{owned.length > 0 ? 'Play Other ' : ''}Decks</Title2>

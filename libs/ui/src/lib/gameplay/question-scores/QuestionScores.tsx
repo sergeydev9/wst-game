@@ -18,9 +18,10 @@ text-center
 export interface QuestionResultsProps {
     guess: number;
     correctAnswer: number;
-    pointsEarned: number;
+    pointsEarned?: number;
+    hasGuessed: boolean; // if user passed. If user passed, guess value will be 0, so another prop is needed
 }
-const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, correctAnswer, pointsEarned, children }) => {
+const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, correctAnswer, pointsEarned, children, hasGuessed }) => {
 
     return (
         <>
@@ -39,16 +40,16 @@ const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, correctAnswer,
                 w-full
                 sm:w-max
                 `}>
-                <div>
+                {hasGuessed && <div>
                     <SmallHeader>You Guessed</SmallHeader>
                     <MediumHeader>{guess} players</MediumHeader>
-                </div>
+                </div>}
                 <div>
                     <SmallHeader>Correct Answer</SmallHeader>
                     <MediumHeader>{correctAnswer} players</MediumHeader>
                 </div>
             </div>
-            <LargeTitle className="text-green-base text-center mb-4">+{pointsEarned} pts</LargeTitle>
+            {pointsEarned || pointsEarned === 0 ? <LargeTitle className="text-green-base text-center mb-4">+{pointsEarned} pts</LargeTitle> : null}
             <h2 className="text-center font-bold text-basic-black text-2xl">Scoreboard</h2>
             {children}
             <GameCardFooter >The host will advance the game</GameCardFooter>

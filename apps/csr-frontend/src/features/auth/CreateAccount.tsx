@@ -2,7 +2,7 @@ import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { Headline } from "@whosaidtrue/ui";
-import { setFullModal, selectFullModal } from '../modal/modalSlice';
+import { setFullModal, selectFullModal, showSuccess } from '../modal/modalSlice';
 import AuthForm from './AuthForm';
 
 const CreateAccount: React.FC = () => {
@@ -18,6 +18,7 @@ const CreateAccount: React.FC = () => {
 
     // stay in current location if creating from modal
     const successHandler = () => {
+        dispatch(showSuccess('Your account has been created. Welcome!'))
         if (!isModal) {
             history.push('/')
         } else {
@@ -28,7 +29,7 @@ const CreateAccount: React.FC = () => {
     // render
     return (
         <>
-            <AuthForm title="Create Account" onSuccess={successHandler} buttonlabel="Create Account" endpoint="/user/register" $showMinLength />
+            <AuthForm title="Create Account" onSuccess={successHandler} buttonlabel="Create Account" endpoint="/user/register" $showMinLength $smallTitle />
             <div className="text-center text-basic-black mt-8 mx-12">
                 <Headline>Already have an account?</Headline>
                 {(isModal ?

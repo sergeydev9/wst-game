@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { Title1, InviteLinks, Headline, ModalContent } from '@whosaidtrue/ui';
 import { clearGame, selectAccessCode, selectIsHost } from '../../game/gameSlice';
 import HostGameOptionsButtons from '../../host/HostGameOptionsButtons';
-import { Link } from 'react-router-dom';
 import { setFullModal } from '../modalSlice';
 import { clearCurrentQuestion } from '../../question/questionSlice';
 
@@ -45,8 +44,14 @@ const GameOptionsModal: React.FC = () => {
                     >Leave Game</button>}
 
                 {/* links */}
-                <Headline onClick={() => dispatch(setFullModal(''))} className="text-purple-light underline text-center my-8"><Link to="/contact-us">Submit a Question</Link></Headline>
-                <Headline onClick={() => dispatch(setFullModal('reportAnIssue'))} className="text-purple-light underline text-center cursor-pointer my-8">Report an issue</Headline>
+                <Headline
+                    onClick={() => dispatch(setFullModal('submitQuestion'))}
+                    className="text-purple-light underline text-center my-8 cursor-pointer">
+                    Submit a Question
+                </Headline>
+                <Headline
+                    onClick={() => dispatch(setFullModal('reportAnIssue'))}
+                    className="text-purple-light underline text-center cursor-pointer my-8">Report an issue</Headline>
             </InviteLinks>
         </ModalContent>)
 }

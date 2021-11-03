@@ -179,6 +179,7 @@ updated_at | timestamptz | no | no | now()
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
 text | text | no | no
+category | varchar(1000) | no
 text_for_guess | text | no | no
 follow_up | text | no | no
 deck_id | integer | yes | no | | decks | CASCADE
@@ -203,6 +204,16 @@ updated_at | timestamptz | no | no | now()
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
 question_id | integer | no | no | | decks | CASCADE
+user_id | integer | yes | no | | orders | SET NULL
+rating | user_rating | no | no
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
+
+### **user_app_ratings**
+
+| Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
+---| --- | --- | --- | --- | --- | ---
+id | integer | no | yes
 user_id | integer | yes | no | | orders | SET NULL
 rating | user_rating | no | no
 created_at | timestamptz | no | no | now()

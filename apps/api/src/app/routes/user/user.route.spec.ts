@@ -7,13 +7,14 @@ import validator from 'validator';
 
 // local
 import App from '../../App';
-import { users } from '../../db';
+import { creditSignup, users } from '../../db';
 import { emailService } from '../../services';
 import { signUserPayload } from '@whosaidtrue/middleware';
 import { ClientResponse } from '@sendgrid/mail';
 
 const mockedUsers = mocked(users, true)
 const mockedSendgrid = mocked(emailService, true);
+const mockedCreditSignups = mocked(creditSignup, true);
 
 jest.mock('../../db')
 jest.mock('../../services')
@@ -201,10 +202,10 @@ describe('user routes', () => {
         })
     })
 
-    describe('[PATCH] /send-reset', () => {
+    describe('[POST] /send-reset', () => {
         it('should return 422 if email is not valid', async () => {
             const { body } = await supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email' })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -219,7 +220,7 @@ describe('user routes', () => {
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
             mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 202 } as ClientResponse, {}])
             supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
                 .expect(202, done)
         })
@@ -228,7 +229,7 @@ describe('user routes', () => {
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
             mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 400 } as ClientResponse, {}])
             supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
                 .expect(500, done)
         })
@@ -236,7 +237,7 @@ describe('user routes', () => {
         it('should respond with 500 if DB request fails', (done) => {
             mockedUsers.upsertResetCode.mockRejectedValue(new DatabaseError('error', 1, 'error'))
             supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
                 .expect(500, done)
         })
@@ -245,55 +246,12 @@ describe('user routes', () => {
         it('should respond with 404 if no records returned', (done) => {
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [] } as QueryResult)
             supertest(app)
-                .patch('/user/send-reset')
+                .post('/user/send-reset')
                 .send({ email: 'email@test.com' })
                 .expect(404, done)
         })
     })
 
-    // describe('[DELETE] /delete', () => {
-
-    //     it('should return 204 if successful', (done) => {
-    //         mockedUsers.deleteById.mockResolvedValue({ rows: [{ count: 1 }] } as QueryResult)
-    //         const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
-    //         supertest(app)
-    //             .delete('/user/delete')
-    //             .set('Authorization', `Bearer ${token}`)
-    //             .expect(204, done)
-    //     })
-
-    //     it('should return 500 if count is 0', (done) => {
-    //         mockedUsers.deleteById.mockResolvedValue({ rows: [{ count: 0 }] } as QueryResult)
-    //         const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
-    //         supertest(app)
-    //             .delete('/user/delete')
-    //             .set('Authorization', `Bearer ${token}`)
-    //             .expect(500, done)
-    //     })
-
-    //     it('should return 500 if DB request throws', (done) => {
-    //         mockedUsers.deleteById.mockRejectedValue('error')
-    //         const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
-    //         supertest(app)
-    //             .delete('/user/delete')
-    //             .set('Authorization', `Bearer ${token}`)
-    //             .expect(500, done)
-    //     })
-
-    //     it('should return 401 if no auth header is set', (done) => {
-    //         supertest(app)
-    //             .delete('/user/delete')
-    //             .expect(401, done)
-    //     })
-
-    //     it('should return 401 if auth token is invalid', (done) => {
-    //         const token = jwt.sign('test', 'bad token')
-    //         supertest(app)
-    //             .delete('/user/delete')
-    //             .set('Authorization', `Bearer ${token}`)
-    //             .expect(401, done)
-    //     })
-    // })
 
     describe('[GET] /details', () => {
 
@@ -532,6 +490,31 @@ describe('user routes', () => {
             expect(user.id).toEqual(1)
             expect(user.email).toEqual('email@email.com')
             expect(user.roles).toEqual(["guest"])
+        })
+    })
+
+    describe('[POST] free credit signup', () => {
+        it('should respond with 422 if not valid email', (done) => {
+            supertest(app)
+                .post('/user/free-credit-signup')
+                .send({ email: 'ffffff' })
+                .expect(422, done)
+        })
+
+        it('should respond with 201 if success.', (done) => {
+            mockedCreditSignups.insertOne.mockResolvedValue({ rowCount: 1 } as QueryResult);
+            supertest(app)
+                .post('/user/free-credit-signup')
+                .send({ email: 'email@test.com' })
+                .expect(201, done)
+        })
+
+        it('should respond with 422 if db rejects with duplicate key error.', (done) => {
+            mockedCreditSignups.insertOne.mockRejectedValue(new DatabaseError("duplicate key value violates unique constraint \"free_credit_signups_email_key\"", 1, "error"));
+            supertest(app)
+                .post('/user/free-credit-signup')
+                .send({ email: 'email@test.com' })
+                .expect(422, done)
         })
     })
 })

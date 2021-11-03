@@ -14,6 +14,7 @@ const nextQuestion = async (socket: Socket) => {
         readerList,
         currentQuestion,
         currentSequenceIndex,
+        currentQuestionId
     } = socket.keys;
 
     // pop a reader from the list and count current players
@@ -82,6 +83,7 @@ const nextQuestion = async (socket: Socket) => {
         .pipeline()
         .set(currentQuestion, JSON.stringify(questionResult), 'EX', ONE_DAY)
         .set(Keys.totalPlayers(questionResult.gameQuestionId), currentCount)
+        .set(currentQuestionId, questionResult.gameQuestionId, 'EX', ONE_DAY)
         .exec()
 
     return {

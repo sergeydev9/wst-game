@@ -8,11 +8,17 @@ import {
     selectGameToken,
     selectAccessCode,
     showInfo,
-    showSuccess,
     selectPlayerId,
     showError,
+    isLoggedIn,
 } from '..';
-import { showPlayerJoined, showPlayerLeft, showPlayerRemoved, setFullModal } from "../modal/modalSlice";
+import {
+    showPlayerJoined,
+    showPlayerLeft,
+    showPlayerRemoved,
+    setFullModal,
+    setReconnecting
+} from "../modal/modalSlice";
 import {
     addPlayer,
     clearGame,
@@ -24,9 +30,19 @@ import {
     selectGameStatus,
     setPlayers,
     setPlayerStatus,
-    endGame
+    endGame,
+    setShouldBlock,
+    removeFromGame
 } from "../game/gameSlice";
-import { clearCurrentQuestion, setCurrentQuestion, questionEnd, setReader, setHaveNotAnswered, setQuestionStatus } from "../question/questionSlice";
+import {
+    clearCurrentQuestion,
+    setCurrentQuestion,
+    questionEnd,
+    setReader,
+    setHaveNotAnswered,
+    setQuestionStatus,
+    checkHasRatedQuestion
+} from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
@@ -41,6 +57,7 @@ import { clearHost } from "../host/hostSlice";
  */
 export const SocketProvider: React.FC = ({ children }) => {
     const [socket, setSocket] = useState<Socket | null>(null);
+    const [shouldBlock, setShouldBlock] = useState(true)
 
     const location = useLocation();
     const history = useHistory();
@@ -51,8 +68,18 @@ export const SocketProvider: React.FC = ({ children }) => {
     const playerName = useAppSelector(selectPlayerName)
     const accessCode = useAppSelector(selectAccessCode);
     const token = useAppSelector(selectGameToken);
+    const loggedIn = useAppSelector(isLoggedIn);
+
+
 
     useEffect(() => {
+        const clear = () => {
+            dispatch(setReconnecting(false))
+            setShouldBlock(false)
+            dispatch(clearGame());
+            dispatch(clearHost());
+            dispatch(clearCurrentQuestion());
+        }
 
         // if game status is one of these values, then user should have a socket connection
         const shouldHaveConnection = ['inGame', 'lobby', 'gameCreateSuccess', 'choosingName'].includes(playerStatus) && playerId;
@@ -75,39 +102,71 @@ export const SocketProvider: React.FC = ({ children }) => {
             * CONNECTION LISTENERS
             */
             connection.on("connect", () => {
+                dispatch(setReconnecting(false))
                 console.log('Game server connection successful!'); // connection success
                 connection.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName })
             })
 
             connection.on("connect_error", () => {
-                dispatch(showError('Could not connect to game server')); // initial connection failed
+                dispatch(showError('Could not connect to game server'))
+                clear();
+                history.push('/')
+                connection.close() // close  and delete the socket
+                setSocket(null);
+
             })
 
-            connection.on("disconnect", () => {
-                console.log('Disconnected from game server'); // disconnected from game server. Could happen if player leaves, or is removed.
+            // disconnected from game server.
+            // see https://socket.io/docs/v3/client-socket-instance/ for list of reasons why this could happen
+            connection.on("disconnect", reason => {
+                console.error('Disconnected from game server')
+                if (reason !== 'io client disconnect') {
+                    setShouldBlock(false)
+                    dispatch(showError('Disconnected from game server'))
+                    console.error('Disconnected from game server')
+                }
+
+                if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
+                    setShouldBlock(false);
+                    setReconnecting(true)
+                } else {
+                    clear();
+                    history.push('/') // nav home
+                    connection.close() // close  and delete the socket
+                    setSocket(null);
+                }
+
             })
 
             connection.io.on("reconnect_attempt", () => {
-                dispatch(showInfo(`Reconnecting to game server...`)); // reconnecting
+                setShouldBlock(false)
+                dispatch(setReconnecting(true))
             })
 
             connection.io.on("reconnect_failed", () => {
-                dispatch(showError('Could not reconnect to game server.')); // when all reconnect attempts have failed
+                console.log('reconnect failed')
+                clear();
+                history.push('/') // nav home
+                connection.close() // close  and delete the socket
+                setSocket(null);
+
             })
 
             connection.io.on('reconnect', () => {
-                dispatch(showSuccess('Reconnected to game server!')); // reconnect success
+                dispatch(showInfo('Reconnected to game server. Welcome back!')); // reconnect success
+                setShouldBlock(true);
             })
 
             /**
              * GAME EVENT LISTENERS
              */
-
             // game not found in DB
             connection.on(types.GAME_NOT_FOUND, () => {
                 dispatch(clearGame());
                 dispatch(clearHost());
                 dispatch(showError('Error while connecting to game'));
+                setShouldBlock(false)
+                dispatch(clearCurrentQuestion())
                 history.push('/')
             })
 
@@ -139,15 +198,16 @@ export const SocketProvider: React.FC = ({ children }) => {
                 if (playerId === id) {
                     // If current player is the one that was removed
                     dispatch(setFullModal("removedFromGame")) // show modal
-                    dispatch(clearGame()); // clear state
+                    setShouldBlock(false) // turn off page exit blocking
+                    dispatch(removeFromGame());
                     dispatch(clearCurrentQuestion())
-                    connection.close() // close  and delete the socket
-                    setSocket(null);
 
-                    history.push('/') // nav home
+                    connection.close() // close connection. Component sets socket to null on dismount
                 } else {
                     // otherwise, show player has been removed message
                     dispatch(showPlayerRemoved(player_name));
+                    dispatch(removePlayer(id))
+
                 }
             })
 
@@ -159,7 +219,10 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             // updates question state
             connection.on(types.SET_QUESTION_STATE, (message: payloads.SetQuestionState) => {
-                dispatch(setCurrentQuestion(message))
+                dispatch(setCurrentQuestion(message));
+
+                // if user is logged in, check if they have rated the new question
+                loggedIn && dispatch(checkHasRatedQuestion(message.gameQuestionId))
                 if (playerStatus === 'lobby' && message.status === 'question') {
                     dispatch(setPlayerStatus('inGame'))
                 }
@@ -204,6 +267,33 @@ export const SocketProvider: React.FC = ({ children }) => {
                 dispatch(setFullModal('announceWinner'))
             })
 
+            // player tries to join a game that is over
+            connection.on(types.GAME_FINISHED, () => {
+                dispatch(showError('The game you are attempting to join has already finished.'));
+                dispatch(clearGame());
+                dispatch(clearCurrentQuestion());
+                dispatch(clearHost())
+                history.push('/');
+                connection.close() // close  and delete the socket
+                setSocket(null);
+            })
+
+            connection.on(types.HOST_LEFT, () => {
+                dispatch(showError('The host has left the game'));
+            })
+
+            //if host left before first question was over
+            connection.on(types.HOST_LEFT_NO_RESULTS, () => {
+                setShouldBlock(false)
+                dispatch(showError('The host has left the game'));
+                dispatch(clearGame());
+                dispatch(clearCurrentQuestion());
+                dispatch(clearHost())
+                connection.close() // close  and delete the socket
+                setSocket(null);
+                history.push('/')
+            })
+
 
             // move playe to game page if they should be there but aren't
             if (['inProgress', 'lobby', 'postGame'].includes(gameStatus) && location.pathname !== '/play') {
@@ -215,9 +305,20 @@ export const SocketProvider: React.FC = ({ children }) => {
             socket.close();
             setSocket(null);
         }
-
-
-    }, [history, token, setSocket, accessCode, playerId, dispatch, gameStatus, socket, location, playerName, playerStatus])
+    }, [
+        history,
+        token,
+        setSocket,
+        accessCode,
+        playerId,
+        dispatch,
+        gameStatus,
+        socket,
+        location,
+        playerName,
+        playerStatus,
+        loggedIn
+    ])
 
 
     // Send a message to the socket server, and passes acknowledgement to optional callback
@@ -229,7 +330,7 @@ export const SocketProvider: React.FC = ({ children }) => {
         socket.emit(type, payload, ack)
     }
 
-    return <socketContext.Provider value={{ socket, setSocket, sendMessage }}>{children}</socketContext.Provider>
+    return <socketContext.Provider value={{ socket, setSocket, sendMessage, shouldBlock, setShouldBlock }}>{children}</socketContext.Provider>
 }
 
 export default SocketProvider;

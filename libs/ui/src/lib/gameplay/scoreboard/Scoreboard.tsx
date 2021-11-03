@@ -1,15 +1,15 @@
-import { useMemo, useCallback } from 'react';
+import { useCallback } from 'react';
 import tw from 'tailwind-styled-components';
-import { PlayerScore } from '@whosaidtrue/app-interfaces';
+import { ScoreboardEntry } from '@whosaidtrue/app-interfaces';
 import { RiArrowUpLine } from '@react-icons/all-files/ri/RiArrowUpLine';
 import { RiArrowDownLine } from '@react-icons/all-files/ri/RiArrowDownLine';
 
 
 
 export interface ScoreBoardProps {
-    scores: PlayerScore[];
+    scores: ScoreboardEntry[];
     showDiff?: boolean;
-    currentPlayerScore: PlayerScore
+    currentPlayerScore: ScoreboardEntry
 }
 
 const diffStyleBase = tw.div`
@@ -58,35 +58,31 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
 
 
     // list of scores
-    const list = useMemo(() => {
-
-
-        return scores.map((p, i) => {
-            return (
-                <li key={i} className={`
+    const list = scores.map((p, i) => {
+        return (
+            <li key={i} className={`
                 ${scoreClass}
                 border-b
                 border-purple-subtle-stroke
                 `}>
-                    <span>{p.rank}</span>
-                    <span className="flex flex-col sm:flex-row  items-center">{p.name} {diffHelper(p.rankDiff)}</span>
-                    <span>{p.points.toLocaleString('en-US')}</span>
-                </li>
-            )
-        })
-    }, [scores, diffHelper])
-
-    return (
+                <span>{p.rank}</span>
+                <span className="flex flex-col sm:flex-row  items-center">{p.player_name} {showDiff && diffHelper(p.rankDifference)}</span>
+                <span>{p.score.toLocaleString('en-US')}</span>
+            </li>
+        )
+    })
+    // only render if there are scores, otherwise app crashes
+    return (scores.length > 0 ?
         <div className="bg-purple-subtle-fill rounded-3xl w-full p-1 sm:p-3 mb-5">
             <ul className='bg-purple-card-bg rounded-3xl border border-purple-subtle-stroke filter drop-shadow-subtle-stroke'>
                 {list}
             </ul>
-            <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mt-4 mb-2`}>
+            {currentPlayerScore && currentPlayerScore.rank && <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mt-4 mb-2`}>
                 <span>{currentPlayerScore.rank}</span>
-                <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.name} (You) {diffHelper(currentPlayerScore.rankDiff)}</span>
-                <span>{currentPlayerScore.points.toLocaleString('en-US')}</span>
-            </div>
-        </div>
+                <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.player_name} (You) {showDiff && diffHelper(currentPlayerScore.rankDifference)}</span>
+                <span>{currentPlayerScore.score.toLocaleString('en-US')}</span>
+            </div>}
+        </div> : null
     )
 }
 

@@ -26,7 +26,6 @@ const Checkout: React.FC = () => {
     const deck = useAppSelector(selectCartDeck);
     const userId = useAppSelector(selectId);
 
-
     // on successful purchase
     const success = useCallback(() => {
         dispatch(setFullModal(''))

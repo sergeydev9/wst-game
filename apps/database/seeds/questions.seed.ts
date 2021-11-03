@@ -14,7 +14,8 @@ const insertQuestions = async (pool: Pool, num: number, deckId: number) => {
             text_for_guess,
             status,
             age_rating,
-            follow_up
+            follow_up,
+            category
         ) VALUES %L`, questions)
     }
 

@@ -4,12 +4,13 @@ import errorImage from './error.png'
 export interface MessageModalProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
     closeFn?: () => void;
     error?: boolean;
-
+    success?: boolean;
 }
 
-const FlashMessageModal: React.FC<MessageModalProps> = ({ children, closeFn, error }) => {
+const FlashMessageModal: React.FC<MessageModalProps> = ({ children, closeFn, error, success }) => {
     const className = `
         ${error ? 'bg-red-subtle-fill text-red-base border border-red-base rounded-xl' : 'rounded-full bg-white'}
+        ${success ? `bg-green-subtle-fill text-green-base border border-green-base rounded-full` : 'rounded-full bg-white'}
         shadow-md
         py-4
         px-7

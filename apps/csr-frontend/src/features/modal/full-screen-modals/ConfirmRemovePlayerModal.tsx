@@ -4,6 +4,8 @@ import { types, payloads } from '@whosaidtrue/api-interfaces';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks"
 import useSocket from '../../socket/useSocket';
 import { selectTargetName, clearTarget, selectTargetId } from "../../host/hostSlice";
+import { showPlayerRemoved } from '../modalSlice';
+import { removePlayer as remAction } from '../../game/gameSlice';
 import { setFullModal } from '../modalSlice';
 
 const ConfirmRemovePlayerModal: React.FC = () => {
@@ -19,8 +21,10 @@ const ConfirmRemovePlayerModal: React.FC = () => {
     }, [dispatch])
 
     const removePlayer = () => {
+
         sendMessage(types.REMOVE_PLAYER, { id: targetId, player_name: targetName } as payloads.PlayerEvent)
         dispatch(setFullModal(''))
+
     }
 
     return (

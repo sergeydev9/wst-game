@@ -1,6 +1,6 @@
 import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
 import { JoinGameResponse } from '@whosaidtrue/api-interfaces';
-import { Deck, UserGameStatus, PlayerRef, PlayerScore, GameStatus } from '@whosaidtrue/app-interfaces';
+import { Deck, UserGameStatus, PlayerRef, GameStatus } from '@whosaidtrue/app-interfaces';
 import omit from 'lodash.omit'
 
 // local imports
@@ -8,6 +8,8 @@ import { RootState } from "../../app/store";
 
 export interface GameState {
     gameStatus: GameStatus | '';
+    hasRatedApp: boolean;
+    shouldBlock: boolean;
     playerStatus: UserGameStatus;
     shouldAnnounce: boolean;
     hasPassed: boolean;
@@ -32,6 +34,8 @@ export const initialGameState: GameState = {
     playerStatus: 'notInGame',
     shouldAnnounce: false, // should there be a winner announcement when user gets to results
     gameToken: '',
+    hasRatedApp: false,
+    shouldBlock: true, // should confirm leave game.
     hasPassed: false,
     gameId: 0,
     deck: {
@@ -121,7 +125,12 @@ export const gameSlice = createSlice({
             state.inactivePlayers = inactivePlayers;
             state.totalQuestions = totalQuestions;
         },
-
+        setHasRatedApp: (state, action) => {
+            state.hasRatedApp = action.payload
+        },
+        removeFromGame: (state) => {
+            state.playerStatus = 'removed';
+        },
         setInactive: (state, action) => {
             state.inactivePlayers = [...action.payload]
         },
@@ -130,6 +139,9 @@ export const gameSlice = createSlice({
             state.players = players.reduce((acc: Record<number, PlayerRef>, player: PlayerRef) => {
                 return { ...acc, [player.id]: player }
             }, {});
+        },
+        setShouldBlock: (state, action) => {
+            state.shouldBlock = action.payload;
         },
         joinGame: (state, action: PayloadAction<JoinGameResponse>) => {
             const {
@@ -160,6 +172,7 @@ export const gameSlice = createSlice({
 
 // actions
 export const {
+    removeFromGame,
     setPlayerName,
     initialRequest,
     setGameStatus,
@@ -174,7 +187,8 @@ export const {
     setPlayers,
     setPlayerStatus,
     setHasPassed,
-    endGame
+    endGame,
+    setShouldBlock
 } = gameSlice.actions;
 
 // selectors
@@ -193,6 +207,8 @@ export const selectPlayerStatus = (state: RootState) => state.game.playerStatus;
 export const selectPlayers = (state: RootState) => state.game.players;
 export const selectTotalQuestions = (state: RootState) => state.game.totalQuestions;
 export const selectShouldAnnounce = (state: RootState) => state.game.shouldAnnounce;
+export const selectShouldBlock = (state: RootState) => state.game.shouldBlock;
+
 export const selectPlayerList = createSelector(selectPlayers, (players) => {
     return Object.values(players);
 })

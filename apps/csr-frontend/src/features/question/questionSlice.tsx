@@ -1,13 +1,15 @@
-import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
-import { payloads } from "@whosaidtrue/api-interfaces";
-import { GameQuestionStatus, PlayerRef, PlayerScore } from "@whosaidtrue/app-interfaces";
+import { createSlice, PayloadAction, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
+import { CheckRatingResponse, payloads } from "@whosaidtrue/api-interfaces";
+import { GameQuestionStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
-import { buildScoreboardAndMap } from "../../util/functions";
-import { selectPlayerId, selectPlayerName } from "../game/gameSlice";
+import { selectPlayerId, selectPlayerName, selectGameStatus } from "../game/gameSlice";
+import { api } from '../../api';
 
 export interface CurrentQuestionState {
     questionId: number;
     gameQuestionId: number;
+    hasRated: boolean;
+    category: string;
     status: GameQuestionStatus;
     correctAnswer: number;
     sequenceIndex: number;
@@ -22,10 +24,8 @@ export interface CurrentQuestionState {
     ratingSubmitted: boolean;
     globalTrue: number;
     groupTrue: number;
-    rankDifferences: Record<string, string>;
-    scores: string[];
-    scoreMap: Record<string, PlayerScore>; // index scores by player_name
-    scoreboard: PlayerScore[];
+    scoreMap: Record<string, ScoreboardEntry>; // index scores by player_name
+    scoreboard: ScoreboardEntry[];
     haveNotAnswered: PlayerRef[];
     guessValue: number;
     pointsEarned: Record<string, string>;
@@ -34,6 +34,8 @@ export interface CurrentQuestionState {
 export const initialQuestionState: CurrentQuestionState = {
     questionId: 0,
     gameQuestionId: 0,
+    hasRated: false,
+    category: '',
     status: '',
     pointsEarned: {},
     numPlayers: 0,
@@ -49,13 +51,24 @@ export const initialQuestionState: CurrentQuestionState = {
     ratingSubmitted: false,
     globalTrue: 0,
     groupTrue: 0,
-    scores: [],
     scoreMap: {},
     scoreboard: [],
-    rankDifferences: {},
     haveNotAnswered: [],
     guessValue: 0
 }
+
+
+export const checkHasRatedQuestion = createAsyncThunk(
+    'question/checkHasRated',
+    async (questionId: number, { rejectWithValue }) => {
+        return api.get<CheckRatingResponse>(`/ratings/question?id=${questionId}`).then(response => {
+            return response.data;
+        }).catch(err => {
+            // log error, but don't need to notify user
+            console.error(err)
+            return rejectWithValue({ hasRated: false })
+        })
+    })
 
 const currentQuestionSlice = createSlice({
     name: 'currentQuestion',
@@ -69,6 +82,7 @@ const currentQuestionSlice = createSlice({
                 questionId,
                 gameQuestionId,
                 sequenceIndex,
+                category,
                 followUp,
                 text,
                 textForGuess,
@@ -95,6 +109,7 @@ const currentQuestionSlice = createSlice({
             state.hasGuessed = false;
             state.correctAnswer = 0;
             state.guessValue = 0;
+            state.category = category;
         },
         setReader: (state, action: PayloadAction<payloads.PlayerEvent>) => {
             const { id, player_name } = action.payload;
@@ -120,6 +135,9 @@ const currentQuestionSlice = createSlice({
         setStatus: (state, action) => {
             state.status = action.payload
         },
+        setHasRated: (state, action) => {
+            state.hasRated = action.payload;
+        },
         setHaveNotAnswered: (state, action) => {
             state.haveNotAnswered = action.payload
         },
@@ -128,7 +146,6 @@ const currentQuestionSlice = createSlice({
                 groupTrue,
                 pointsEarned,
                 scores,
-                rankDifferences,
                 correctAnswer
             } = action.payload;
 
@@ -136,13 +153,18 @@ const currentQuestionSlice = createSlice({
             state.groupTrue = groupTrue;
             state.pointsEarned = pointsEarned;
             state.correctAnswer = correctAnswer;
-            state.scores = scores;
-            state.rankDifferences = rankDifferences;
+            state.scoreboard = scores;
 
-            const [scoreMap, scoreboard] = buildScoreboardAndMap(scores, rankDifferences);
-            state.scoreMap = scoreMap;
-            state.scoreboard = scoreboard;
+            // index score by player_name
+            state.scoreMap = scores.reduce((acc, curr) => {
+                return { ...acc, [curr.player_name]: curr }
+            }, {})
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(checkHasRatedQuestion.fulfilled, (state, action) => {
+            state.hasRated = action.payload.hasRated;
+        })
     }
 })
 
@@ -158,6 +180,7 @@ export const {
     setGuessValue,
     questionEnd,
     setQuestionStatus,
+    setHasRated,
     setHaveNotAnswered } = currentQuestionSlice.actions;
 
 // selectors
@@ -173,22 +196,37 @@ export const selectQuestionStatus = (state: RootState) => state.question.status;
 export const selectGamequestionId = (state: RootState) => state.question.gameQuestionId;
 export const selectGuessValue = (state: RootState) => state.question.guessValue;
 export const selectPointsEarned = (state: RootState) => state.question.pointsEarned;
-export const selectScores = (state: RootState) => state.question.scores;
 export const selectCorrectAnswer = (state: RootState) => state.question.correctAnswer;
 export const selectGroupTrue = (state: RootState) => state.question.groupTrue;
 export const selectGlobalTrue = (state: RootState) => state.question.globalTrue;
 export const selectNumPlayers = (state: RootState) => state.question.numPlayers;
-export const selectRankDifferences = (state: RootState) => state.question.rankDifferences;
 export const selectScoreMap = (state: RootState) => state.question.scoreMap;
 export const selectScoreboard = (state: RootState) => state.question.scoreboard;
 export const selectFollowUp = (state: RootState) => state.question.followUp;
-export const selectQuestionId = (state: RootState) => state.question.questionId
+export const selectQuestionId = (state: RootState) => state.question.questionId;
+export const selectHasRatedQuestion = (state: RootState) => state.question.hasRated;
+export const selectCategory = (state: RootState) => state.question.category;
 
 export const selectPlayerScore = createSelector([selectPlayerName, selectScoreMap], (name, scores,) => {
     return scores[name];
 })
 
-export const selectWinner = createSelector([selectScores], (scores) => scores[0]);
+export const selectWinner = createSelector([selectScoreboard], (scores) => {
+    const winners = scores.filter(score => score.rank === 1);
+
+    let result = ""
+
+    winners.forEach((winner, index) => {
+        if (index > 0) {
+            result += `& ${winner.player_name}`
+        } else {
+            result += winner.player_name;
+        }
+
+    })
+
+    return result;
+});
 
 export const selectIsReader = createSelector([selectPlayerId, selectReaderId], (playerId, readerId) => {
     return playerId === readerId;
@@ -208,8 +246,9 @@ export const currentScreen = createSelector(
     [
         selectQuestionStatus,
         selectHasAnswered,
-        selectHasGuessed
-    ], (status, hasAnswered, hasGuessed) => {
+        selectHasGuessed,
+        selectGameStatus
+    ], (status, hasAnswered, hasGuessed, gameStatus) => {
 
         // if in question (i.e. not results)
         if (status === 'question') {
@@ -222,11 +261,11 @@ export const currentScreen = createSelector(
             // if they have answered, but haven't guessed
             // show guess, else show waiting room
             return hasGuessed ? 'waitingRoom' : 'guess';
-        } else if (status === 'answer') {
+        } else if (status === 'answer' && gameStatus !== 'lobby') {
             return 'answerResults'
         }
 
-        return 'scoreResults'
+        return gameStatus === 'lobby' ? 'lobby' : 'scoreResults'
     })
 
 export default currentQuestionSlice.reducer;

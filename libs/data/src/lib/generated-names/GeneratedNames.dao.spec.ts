@@ -2,7 +2,6 @@ import { Pool } from 'pg';
 import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 import { cleanDb } from '../util/cleanDb';
 import insertNamesQuery from '../util/insertNamesQuery';
-import { left, right } from '../util/generateName';
 import GeneratedNames from './GeneratedNames.dao';
 
 describe('GeneratedNames', () => {

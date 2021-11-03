@@ -16,15 +16,16 @@ import {
     selectGlobalTrue,
     selectGroupTrue,
     selectCorrectAnswer,
-    selectFollowUp
+    selectFollowUp,
+    selectCategory
 } from '../question/questionSlice';
 import { selectHasPassed, selectTotalQuestions, setHasPassed } from '../game/gameSlice';
 import ReaderAnnouncement from "./ReaderAnnouncement";
-import { showError, useSocket } from "..";
+import { selectHasRatedQuestion, showError, useSocket } from "..";
 import { payloads, types } from "@whosaidtrue/api-interfaces";
 import QuestionResults from './QuestionResults';
 import { isLoggedIn } from "../auth/authSlice";
-import RateQuestion from "./RateQuestion";
+import RateQuestion from "../ratings/RateQuestion";
 
 /**
  * This component controls what the user sees over the course
@@ -50,8 +51,9 @@ const Question: React.FC = () => {
     const globalTrue = useAppSelector(selectGlobalTrue);
     const groupTrue = useAppSelector(selectGroupTrue);
     const correctAnswer = useAppSelector(selectCorrectAnswer);
-    const followUp = useAppSelector(selectFollowUp)
-
+    const followUp = useAppSelector(selectFollowUp);
+    const hasRated = useAppSelector(selectHasRatedQuestion);
+    const category = useAppSelector(selectCategory);
 
     // submit true/false answer
     const answerHandler = (value: string) => {
@@ -88,18 +90,18 @@ const Question: React.FC = () => {
             <QuestionCard
                 totalQuestions={totalQuestions}
                 questionNumber={questionNumber}
-                category="Entertainment">
+                category={category}>
                 {screen === 'answerSubmit' && <TrueFalse submitHandler={answerHandler} text={text} isReader={isReader} hasPasses={!hasPassed} />}
                 {screen === 'guess' && <NumberTrueGuess questionText={guessText} submitHandler={guessHandler} totalPlayers={totalPlayers} />}
                 {screen === 'waitingRoom' && <WaitingRoom totalPlayers={totalPlayers} numberHaveGuessed={numHaveGuessed} guessValue={guessVal} questionText={guessText} />}
                 {screen === 'answerResults' && (<QuestionAnswers
                     globalTruePercent={globalTrue}
-                    groupTruePercent={groupTrue}
+                    groupTruePercent={Math.floor(groupTrue)}
                     correctAnswer={correctAnswer}
                     questionText={guessText}
                     followUp={followUp}
                 >
-                    {loggedIn && <RateQuestion />}
+                    {loggedIn && !hasRated && <RateQuestion />}
                 </QuestionAnswers>
                 )}
                 {screen === 'scoreResults' && <QuestionResults />}

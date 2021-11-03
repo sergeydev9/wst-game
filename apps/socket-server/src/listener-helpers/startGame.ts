@@ -13,6 +13,7 @@ const startGame = async (socket: Socket) => {
         currentPlayers,
         readerList,
         currentQuestion,
+        currentQuestionId,
         currentSequenceIndex,
         gameStatus
     } = socket.keys;
@@ -62,10 +63,12 @@ const startGame = async (socket: Socket) => {
     logger.debug({ message: 'Game start result', gameStartResult });
 
     // save question in redis
-    await pubClient.set(currentQuestion, JSON.stringify(question), 'EX', ONE_DAY);
-
-    // set current sequence index in Redis
-    await pubClient.set(currentSequenceIndex, 1, 'EX', ONE_DAY);
+    await pubClient
+        .pipeline()
+        .set(currentQuestion, JSON.stringify(question), 'EX', ONE_DAY)
+        .set(currentQuestionId, question.gameQuestionId, 'EX', ONE_DAY)
+        .set(currentSequenceIndex, 1, 'EX', ONE_DAY)
+        .exec()
 
     return {
         ...gameStartResult,
