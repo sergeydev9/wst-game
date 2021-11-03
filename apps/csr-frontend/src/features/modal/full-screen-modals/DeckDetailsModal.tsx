@@ -44,10 +44,11 @@ const DeckDetailsModal: React.FC = () => {
                 <DeckDetailsButton deck={deck} isOwned={isOwned} />
             </div>
 
-            {!loggedIn && !isOwned && (<>
-                <Headline className="text-center">Already own this deck?</Headline>
-                <Headline className="underline cursor-pointer text-center" onClick={loginClick}>Log in</Headline>
-            </>
+            {!loggedIn && !isOwned && (
+                <div>
+                    <Headline className="text-center">Already own this deck?</Headline>
+                    <Headline className="underline cursor-pointer text-center" onClick={loginClick}>Log in</Headline>
+                </div>
             )}
             {loggedIn && credits > 0 && <Headline className="text-center">You have a FREE Question Deck credit available</Headline>}
         </ModalContent>
