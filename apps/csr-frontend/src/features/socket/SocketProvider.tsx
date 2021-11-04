@@ -295,7 +295,9 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             connection.on(types.HOST_LEFT, () => {
-                dispatch(showError('The host has left the game'));
+                if (gameStatus !== 'postGame') {
+                    dispatch(showError('The host has left the game'));
+                }
             })
 
             //if host left before first question was over

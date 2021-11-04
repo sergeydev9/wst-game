@@ -97,17 +97,19 @@ const saveScores = async (questionId: number, gameId: number) => {
         message: 'Fetching differences for fun facts',
         question,
         groupVworld: groupVworld[1],
-        bucketList: bucketList[1]
+        bucketList: bucketList[1],
+        groupTrue,
+        currentQuestionDifference
     })
 
     // if there is a bucket list, calculate difference and change bucket list if appropriate
-    if (!bucketList[1] || bucketList[1] > currentQuestionDifference) {
+    if (!bucketList[1] || Number(bucketList[1]) > Number(currentQuestionDifference)) {
 
         await pubClient
             .pipeline()
             .hset(
                 `games:${gameId}:bucketList`,
-                "difference", currentQuestionDifference,
+                "difference", `${currentQuestionDifference}`,
                 "textForGuess", question.textForGuess,
                 "globalTrue", question.globalTrue,
                 "groupTrue", groupTrue)
@@ -115,16 +117,16 @@ const saveScores = async (questionId: number, gameId: number) => {
             .exec()
     }
 
-    if (!groupVworld[1] || groupVworld[1] < currentQuestionDifference) {
+    if (!groupVworld[1] || Number(groupVworld[1]) < currentQuestionDifference) {
         await pubClient
             .pipeline()
             .hset(
                 `games:${gameId}:groupVworld`,
-                "difference", currentQuestionDifference,
+                "difference", `${currentQuestionDifference}`,
                 "textForGuess", question.textForGuess,
                 "globalTrue", question.globalTrue,
                 "groupTrue", groupTrue)
-            .expire(`games:${gameId}:bucketList`, ONE_DAY)
+            .expire(`games:${gameId}:groupVworld`, ONE_DAY)
             .exec()
     }
 

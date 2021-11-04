@@ -15,7 +15,7 @@ export interface FunFactsState {
     groupNumberSameAnswer: number;
 }
 
-export const initialFunFactstState: FunFactsState = {
+export const initialFunFactsState: FunFactsState = {
     fetchSimilarStatus: 'unsent',
     bucketList: {
         textForGuess: '',
@@ -35,10 +35,10 @@ export const initialFunFactstState: FunFactsState = {
 
 export const funFactsSlice = createSlice({
     name: "funFactsSlice",
-    initialState: initialFunFactstState,
+    initialState: initialFunFactsState,
     reducers: {
         clearFunFacts: () => {
-            return initialFunFactstState;
+            return initialFunFactsState;
         },
         setFunFacts: (state, action: PayloadAction<payloads.FunFacts>) => {
             const { bucketList, groupVworld } = action.payload;
@@ -66,7 +66,7 @@ export const funFactsSlice = createSlice({
 
     extraReducers: builder => {
         builder.addCase(clearGame, () => {
-            return initialFunFactstState;
+            return initialFunFactsState;
         })
     }
 });

@@ -176,8 +176,8 @@ const registerListeners = (socket: Socket, io: Server) => {
                     .get(totalQuestions)
                     .exec()
 
-                // after 4th question, start sending facts
-                if (current[1] && Number(current[1]) > 4) {
+                // after 3rd question, start sending facts
+                if (current[1] && Number(current[1]) >= 4) {
 
                     const [bucketListResponse, groupVworldResponse] = await pubClient
                         .pipeline()
@@ -236,10 +236,10 @@ const registerListeners = (socket: Socket, io: Server) => {
             const groupMostSimilar = r2[1];
 
             const result: payloads.FetchMostSimilar = {
-                name: mostSimilar[0],
-                numSameAnswer: Number(mostSimilar[1]),
-                groupMostSimilarNames: groupMostSimilar.players,
-                groupMostSimilarNumber: Number(groupMostSimilar.numSameAnswer)
+                name: mostSimilar[0] ?? '',
+                numSameAnswer: mostSimilar[1] ? Number(mostSimilar[1]) : 0,
+                groupMostSimilarNames: groupMostSimilar.players ?? '',
+                groupMostSimilarNumber: groupMostSimilar.numSameAnswer ? Number(groupMostSimilar.numSameAnswer) : 0
             }
 
             logger.debug({
