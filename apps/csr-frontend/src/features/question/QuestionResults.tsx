@@ -11,6 +11,7 @@ import {
 } from "./questionSlice";
 import { selectScoreTooltipDismissed, setShowScoreTooltip } from "../modal/modalSlice";
 import { selectHasGuessed } from "..";
+import FunFacts from '../fun-facts/FunFacts';
 
 const QuestionResults: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -22,6 +23,8 @@ const QuestionResults: React.FC = () => {
     const scoreboard = useAppSelector(selectScoreboard);
     const points = useAppSelector(selectPlayerPointsEarned);
     const index = useAppSelector(selectSequenceIndex);
+    const questionNumber = useAppSelector(selectSequenceIndex);
+
 
     useEffect(() => {
         if (!tooltipDismissed) {
@@ -36,6 +39,7 @@ const QuestionResults: React.FC = () => {
     return (
         <QuestionScores guess={guess} correctAnswer={correctAnswer} pointsEarned={points} hasGuessed={hasGuessed}>
             <Scoreboard scores={scoreboard} showDiff={index !== 1} currentPlayerScore={playerScore} />
+            {questionNumber >= 4 && <FunFacts />}
         </QuestionScores>
 
     )

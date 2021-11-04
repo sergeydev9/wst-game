@@ -191,7 +191,7 @@ export const selectText = (state: RootState) => state.question.text;
 export const selectHasAnswered = (state: RootState) => state.question.hasAnswered;
 export const selectHasGuessed = (state: RootState) => state.question.hasGuessed;
 export const selectRatingSubmitted = (state: RootState) => state.question.ratingSubmitted;
-export const selectHaveNotAnswered = (state: RootState) => state.question.haveNotAnswered
+export const selectHaveNotAnswered = (state: RootState) => state.question.haveNotAnswered;
 export const selectQuestionStatus = (state: RootState) => state.question.status;
 export const selectGamequestionId = (state: RootState) => state.question.gameQuestionId;
 export const selectGuessValue = (state: RootState) => state.question.guessValue;
@@ -218,7 +218,7 @@ export const selectWinner = createSelector([selectScoreboard], (scores) => {
 
     winners.forEach((winner, index) => {
         if (index > 0) {
-            result += `& ${winner.player_name}`
+            result += ` & ${winner.player_name}`
         } else {
             result += winner.player_name;
         }

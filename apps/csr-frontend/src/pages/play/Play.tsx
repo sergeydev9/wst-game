@@ -51,14 +51,13 @@ const Play: React.FC = () => {
             // has to be used here to prevent compiler errors
             // args[0] is a location object, and args[1] is a navigation action type
             const path = args[0].pathname as any
-            if (path !== '/play' && shouldBlock) {
+            if (path !== '/play' && shouldBlock && gameStatus !== 'finished' && gameStatus !== 'postGame') {
                 const confirmMessage = isHost ? 'Are you sure you want to leave? Since you are the host, this will end the game for everyone' :
                     'Are you sure you want to leave the game?';
 
                 if (window.confirm(confirmMessage)) {
                     dispatch(clearGame());
                     dispatch(clearCurrentQuestion());
-                    setShouldBlock(false);
                     return true;
                 }
 
@@ -85,7 +84,8 @@ const Play: React.FC = () => {
         loggedIn,
         ratingChecked,
         playerStatus,
-        setShouldBlock
+        setShouldBlock,
+        gameStatus
     ])
 
     return (

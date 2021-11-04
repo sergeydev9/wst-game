@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { FinalScores, Scoreboard, } from "@whosaidtrue/ui";
+import { useHistory, Link } from 'react-router-dom';
+import { Button, FinalScores, Scoreboard, } from "@whosaidtrue/ui";
 import {
     clearCurrentQuestion,
     clearGame,
@@ -7,6 +8,7 @@ import {
     selectHasRatedApp,
     selectPlayerScore,
     selectScoreboard,
+    setFullModal,
     useSocket
 } from "..";
 import { clearHost } from '../host/hostSlice';
@@ -17,22 +19,29 @@ import RequestFreeCredit from "./RequestFreeCredit";
 
 const FinalResults: React.FC = () => {
     const dispatch = useAppDispatch();
-    const { socket, setSocket, setShouldBlock } = useSocket();
+    const history = useHistory();
+    const { socket, setSocket } = useSocket();
     const scoreboard = useAppSelector(selectScoreboard);
     const playerScore = useAppSelector(selectPlayerScore);
     const loggedIn = useAppSelector(isLoggedIn);
     const hasRatedApp = useAppSelector(selectHasRatedApp);
 
     useEffect(() => {
-
         return () => {
-            dispatch(clearGame());
-            dispatch(clearCurrentQuestion());
-            dispatch(clearHost());
-            setShouldBlock(false);
-            socket && socket.close() && setSocket(null);
+
+            if (socket) {
+                dispatch(clearGame());
+                dispatch(clearCurrentQuestion());
+                dispatch(clearHost());
+                dispatch(setFullModal(''));
+                socket.close() && setSocket(null);
+            }
         }
-    })
+    }, [socket, dispatch, setSocket])
+
+    const handler = () => {
+        history.push('/decks');
+    }
 
     return (
         <FinalScores>
@@ -40,6 +49,10 @@ const FinalResults: React.FC = () => {
             <FunFacts />
             {!loggedIn && <RequestFreeCredit />}
             {loggedIn && !hasRatedApp && <RateApp />}
+
+            <div className="w-1/2 mx-auto">
+                <Button type="button" ><Link to="/decks">Play Another Game</Link></Button>
+            </div>
         </FinalScores>
     )
 }

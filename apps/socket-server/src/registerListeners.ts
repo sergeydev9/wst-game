@@ -67,7 +67,7 @@ const registerListeners = (socket: Socket, io: Server) => {
             })
 
             // host left on purpose
-        } else if (socket.isHost && reason === "client namespace disconnect") {
+        } else if (socket.isHost && reason === "client namespace disconnect" && status[1] !== 'finished') {
             const [questionId, idx] = await pubClient
                 .pipeline()
                 .get(currentQuestionId)

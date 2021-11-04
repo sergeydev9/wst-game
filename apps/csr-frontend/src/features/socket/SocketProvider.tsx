@@ -122,15 +122,16 @@ export const SocketProvider: React.FC = ({ children }) => {
             // disconnected from game server.
             // see https://socket.io/docs/v3/client-socket-instance/ for list of reasons why this could happen
             connection.on("disconnect", reason => {
-                console.error('Disconnected from game server')
                 setShouldBlock(false);
+
+                console.log('Disconnected from game server');
 
                 if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
                     dispatch(showLoaderMessage('Connection to server lost, reconnecting...'))
+                    console.error('Disconnected from game server')
 
                 } else {
                     clear();
-                    history.push('/') // nav home
                     connection.close() // close  and delete the socket
                     setSocket(null);
                 }
@@ -143,7 +144,6 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             connection.io.on("reconnect_failed", () => {
                 console.log('reconnect failed')
-                setShouldBlock(false)
                 clear();
                 history.push('/') // nav home
                 connection.close() // close  and delete the socket

@@ -25,7 +25,9 @@ leading-normal
 
 const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = ({ name, onRequestClose }) => {
     const [countDownOver, setCountdownOver] = useState(false);
-    // e
+
+    const isTie = name.includes('&');
+
     useEffect(() => {
         const timer = setTimeout(() => setCountdownOver(true), 2800)
         return () => {
@@ -39,7 +41,7 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = ({ name, onRequest
             <CelebrationIcons />
         </Container> :
             <Container className="text-6xl sm:text-8xl p-10 text-purple-base flex flex-col justify-center gap-2 sm:gap-4">
-                <div>And</div><div>the</div><div>Winner</div><div className="wnr-announce-txt w-1/2 self-center text-left">Is</div>
+                <div>And</div><div>the</div><div>{isTie ? 'Winners' : 'Winner'}</div><div className="wnr-announce-txt w-1/2 self-center text-left">{isTie ? 'Are' : ' Is'}</div>
             </Container>
     )
 }

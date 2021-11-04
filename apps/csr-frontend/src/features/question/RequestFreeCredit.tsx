@@ -46,7 +46,7 @@ const RequestFreeCredit: React.FC = () => {
 
     // render
     return (
-        <NoFlexBox className="w-11/12 sm:w-96 mx-auto my-10">
+        <NoFlexBox className="w-11/12 sm:w-96 mx-auto my-10 px-6">
             <form className="text-center" onSubmit={formik.handleSubmit}>
                 {/* title */}
                 <Title1 className="text-center mb-3">Want a FREE Question Deck?!</Title1>
@@ -60,6 +60,7 @@ const RequestFreeCredit: React.FC = () => {
                 </FormGroup>
 
                 <div className="mb-3 h-2"></div>
+
                 {/* submit */}
                 <Button color="blue" data-cy="login-submit" type="submit">Send Me the Link!</Button>
             </form>

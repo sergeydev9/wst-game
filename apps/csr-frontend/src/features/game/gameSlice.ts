@@ -220,4 +220,6 @@ export const selectPlayerList = createSelector(selectPlayers, (players) => {
     return Object.values(players);
 })
 
+export const selectNumPlayersInGame = (state: RootState) => Object.keys(state.game.players).length;
+
 export default gameSlice.reducer;
