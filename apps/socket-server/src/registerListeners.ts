@@ -204,6 +204,7 @@ const registerListeners = (socket: Socket, io: Server) => {
                         ...result
                     })
 
+                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY)
                     // end game
                     sendToAll(types.GAME_END, result as payloads.QuestionEnd);
                 } else {
@@ -334,6 +335,8 @@ const registerListeners = (socket: Socket, io: Server) => {
                             })
                     }
 
+                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
+
                     // send results
                     sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd);
 
@@ -346,7 +349,7 @@ const registerListeners = (socket: Socket, io: Server) => {
 
             } catch (e) {
                 logError('Error while ending game', e);
-                await pubClient.set(gameStatus, 'inProgress'); // reset so request can be sent again
+                await pubClient.set(gameStatus, 'inProgress', 'EX', ONE_DAY); // reset so request can be sent again
                 ack('error')
             } finally {
                 await pubClient.del(`${locks}:endGame`)
@@ -393,6 +396,8 @@ const registerListeners = (socket: Socket, io: Server) => {
                             bucketList: bucketListResponse[1],
                             groupVworld: groupVworldResponse[1]
                         })
+
+                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
 
                     // send results
                     sendToAll(types.GAME_END, result as payloads.QuestionEnd)
@@ -490,6 +495,9 @@ const registerListeners = (socket: Socket, io: Server) => {
                         })
                 }
 
+                if (lastQuestion) {
+                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
+                }
 
                 sendToAll(lastQuestion ? types.END_GAME : types.QUESTION_END, result as payloads.QuestionEnd);
                 ack('ok')
