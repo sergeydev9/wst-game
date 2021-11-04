@@ -168,7 +168,9 @@ async function updatePlayersThatHaveAnswered(
         return pubClient
             .pipeline()
             .hset(`gameQuestions:${questionId}:pointsByPlayer`, player.player_name, score) // for points earned
+            .expire(`gameQuestions:${questionId}:pointsByPlayer`, ONE_DAY)
             .zincrby(`games:${gameId}:rankedlist`, score, player.player_name)
+            .expire(`games:${gameId}:rankedlist`, ONE_DAY)
             .exec();
 
     })
@@ -191,7 +193,9 @@ async function updateHaventAnswered(players: PlayerRef[], gameId: number, questi
         await pubClient
             .pipeline()
             .hset(`gameQuestions:${questionId}:pointsByPlayer`, player.player_name, 0)
+            .expire(`gameQuestions:${questionId}:pointsByPlayer`, ONE_DAY)
             .zincrby(`games:${gameId}:rankedlist`, 0, player.player_name)
+            .expire(`games:${gameId}:rankedlist`, ONE_DAY)
             .exec();
 
     })
@@ -245,11 +249,19 @@ async function countSimilar(gameId: number, questionId: number) {
 
                     if (mostSimilar.numSameAnswer && Number(incrResult) > Number(mostSimilar.numSameAnswer)) {
 
-                        return pubClient.hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                        return pubClient
+                            .pipeline()
+                            .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                            .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                            .exec()
                     }
 
                 } else if (incrResult) {
-                    return pubClient.hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                    return pubClient
+                        .pipeline()
+                        .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                        .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                        .exec()
                 }
             }
         })
@@ -283,11 +295,19 @@ async function countSimilar(gameId: number, questionId: number) {
                 if (incrResult && mostSimilar && mostSimilar.numSameAnswer) {
 
                     if (mostSimilar.numSameAnswer && Number(incrResult) > Number(mostSimilar.numSameAnswer)) {
-                        return await pubClient.hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                        return pubClient
+                            .pipeline()
+                            .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                            .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                            .exec()
                     }
 
                 } else if (incrResult) {
-                    return await pubClient.hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                    return pubClient
+                        .pipeline()
+                        .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                        .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                        .exec()
                 }
             }
         })
@@ -319,11 +339,18 @@ async function countSimilar(gameId: number, questionId: number) {
                 if (incrResult && mostSimilar && mostSimilar.numSameAnswer) {
 
                     if (mostSimilar.numSameAnswer && Number(incrResult) > Number(mostSimilar.numSameAnswer)) {
-                        return await pubClient.hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                        return pubClient
+                            .pipeline()
+                            .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                            .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                            .exec()
                     }
 
                 } else if (incrResult) {
-                    return await pubClient.hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                    return pubClient
+                        .pipeline()
+                        .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                        .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
                 }
             }
         })
@@ -338,7 +365,6 @@ async function countSimilar(gameId: number, questionId: number) {
         passed
     })
 
-    await pubClient.expire(`games:${gameId}:mostSimilar`, ONE_DAY);
     await Promise.all(truePromises);
     await Promise.all(falsePromises);
     await Promise.all(passedPromises);

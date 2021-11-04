@@ -59,7 +59,7 @@ const registerListeners = (socket: Socket, io: Server) => {
         if (!numPlayers[1] && status[1] !== 'finished') {
 
             // set status to finished in DB and redis
-            await pubClient.set(gameStatus, 'finished', 'EX', ONE_WEEK);
+            await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
             await games.endGame(socket.gameId);
 
             logger.debug({

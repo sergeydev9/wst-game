@@ -5,6 +5,7 @@ import { Keys } from '../keys';
 import { pubClient } from '../redis';
 import { playerValueString } from '../util';
 import { PlayerRef } from '@whosaidtrue/app-interfaces';
+import { ONE_DAY } from '../constants';
 
 /**
  * Add a guess value to specified game_answer row.
@@ -32,6 +33,8 @@ const submitAnswerPart2 = async (socket: Socket, msg: payloads.AnswerPart2): Pro
         .sadd(haveAnswered, playerValueString(socket, msg.guess))
         .srem(haveNotAnswered, playerValueString(socket))
         .smembers(haveNotAnswered)
+        .expire(haveAnswered, ONE_DAY)
+        .expire(haveNotAnswered, ONE_DAY)
         .exec()
 
     return r3[1].map(s => JSON.parse(s))

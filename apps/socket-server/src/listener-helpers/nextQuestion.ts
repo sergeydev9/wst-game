@@ -88,7 +88,7 @@ const nextQuestion = async (socket: Socket) => {
     await pubClient
         .pipeline()
         .set(currentQuestion, JSON.stringify(questionResult), 'EX', ONE_DAY)
-        .set(Keys.totalPlayers(questionResult.gameQuestionId), currentCount)
+        .set(Keys.totalPlayers(questionResult.gameQuestionId), currentCount, 'EX', ONE_DAY)
         .set(currentQuestionId, questionResult.gameQuestionId, 'EX', ONE_DAY)
         .exec()
 

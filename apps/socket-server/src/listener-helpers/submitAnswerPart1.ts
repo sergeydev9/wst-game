@@ -22,7 +22,11 @@ const submitAnswerPart1 = async (socket: Socket, msg: payloads.AnswerPart1) => {
     } else if (msg.answer === 'true') {
 
         // increment count for current question. Sets to 1 if no value
-        await pubClient.incr(Keys.totalTrue(msg.gameQuestionId))
+        await pubClient
+            .pipeline()
+            .incr(Keys.totalTrue(msg.gameQuestionId))
+            .expire(Keys.totalTrue(msg.gameQuestionId), ONE_DAY)
+            .exec()
     }
 
     // submit answer
