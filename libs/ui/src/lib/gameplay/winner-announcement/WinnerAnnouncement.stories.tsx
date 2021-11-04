@@ -6,3 +6,4 @@ export default {
 }
 
 export const WinnerAnnouncement = () => <WinnerAnnouncementComponent name='Mystic Racoon' />
+export const PluralWinnerAnnouncement = () => <WinnerAnnouncementComponent name='Mystic Racoon & Angry Edison & Laura Palmer' />
