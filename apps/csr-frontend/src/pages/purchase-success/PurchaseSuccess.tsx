@@ -18,11 +18,16 @@ const PurchaseSuccess: React.FC = () => {
     const deck = useAppSelector(selectGameDeck);
 
     useEffect(() => {
+
+        // send users out if they don't have a deck to display
+        if (!deck.id) {
+            history.push('/')
+        }
         return () => {
             dispatch(clearCart());
             dispatch(clearSelectedDeck())
         }
-    })
+    }, [deck, dispatch, history])
 
     // send create request
     const startGame = () => {
