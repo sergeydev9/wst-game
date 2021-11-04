@@ -1,16 +1,46 @@
-import { Link } from 'react-router-dom';
-import { Title1, Box, DeckCard, Button, NoFlexBox } from "@whosaidtrue/ui";
-import popper from '../../assets/party-popper-emoji.png';
+import { useEffect } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { Title1, DeckCard, Button, NoFlexBox } from "@whosaidtrue/ui";
+import { CreateGameResponse, CreateGameRequest } from '@whosaidtrue/api-interfaces';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectGameDeck } from '../../features';
+import { selectGameDeck, createGame, setGameStatus, setGameDeck, showError, setFullModal, clearCart, clearSelectedDeck } from '../../features';
+import { api } from '../../api';
+import popper from '../../assets/party-popper-emoji.png';
+
 
 const Popper = () => {
     return <img src={popper} alt='party popper' style={{ width: '30px', height: '30px' }} width="30px" height="30px" />
 }
 
 const PurchaseSuccess: React.FC = () => {
-    const dispatch = useAppDispatch()
-    const deck = useAppSelector(selectGameDeck)
+    const dispatch = useAppDispatch();
+    const history = useHistory();
+    const deck = useAppSelector(selectGameDeck);
+
+    useEffect(() => {
+        return () => {
+            dispatch(clearCart());
+            dispatch(clearSelectedDeck())
+        }
+    })
+
+    // send create request
+    const startGame = () => {
+        // passing token in here as a prop because axios interceptor won't have access to the token
+        // before the request starts executing, leading to a 401 even when log in is successful.
+        return api.post<CreateGameResponse>('/games/create', { deckId: deck.id } as CreateGameRequest).then(response => {
+            dispatch(createGame(response.data));
+            dispatch(setGameStatus('gameCreateSuccess'));
+            dispatch(setGameDeck(deck));
+            history.push(`/game/invite`);
+            dispatch(setFullModal(''));
+        }).catch(e => {
+            console.error(e);
+            dispatch(showError('An error occured while creating the game'));
+            dispatch(setGameStatus('gameCreateError'));
+            history.push('/');
+        })
+    }
 
     return (
 
@@ -36,7 +66,7 @@ const PurchaseSuccess: React.FC = () => {
             {/* button */}
 
             <div className="block sm:w-2/3 mx-auto">
-                <Button >Continue</Button>
+                <Button onClick={() => startGame()}>Start a Game</Button>
             </div>
 
             {/*link */}
