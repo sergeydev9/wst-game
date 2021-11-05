@@ -37,7 +37,7 @@ describe('decks routes', () => {
             // create valid token
             const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
             const result = await supertest(app)
-                .get('/decks/selection')
+                .get('/decks/selection?clean=false')
                 .set('Authorization', `Bearer ${token}`)
                 .expect('Content-Type', /json/)
                 .expect(200)
@@ -52,7 +52,7 @@ describe('decks routes', () => {
             mockedDecks.getFreeDecks.mockResolvedValue({ rows: [] } as QueryResult)
 
             const result = await supertest(app)
-                .get('/decks/selection')
+                .get('/decks/selection?clean=false')
                 .expect('Content-Type', /json/)
                 .expect(200)
 
@@ -68,13 +68,29 @@ describe('decks routes', () => {
             // create valid token
             const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
             await supertest(app)
-                .get('/decks/selection')
+                .get('/decks/selection?clean=false')
                 .set('Authorization', `Bearer ${token}`)
                 .expect('Content-Type', /json/)
                 .expect(200)
 
             expect(mockedDecks.getUserDecks).toBeCalled();
-            expect(mockedDecks.userDeckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100, userId: 1 })
+            expect(mockedDecks.userDeckSelection).toBeCalledWith(1, 0, 100, false)
+        })
+
+        it('should get clean user decks if there is a valid token in header and clean in query', async () => {
+            mockedDecks.getUserDecks.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedDecks.userDeckSelection.mockResolvedValue({ rows: [] } as QueryResult)
+
+            // create valid token
+            const token = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+            await supertest(app)
+                .get('/decks/selection?clean=true')
+                .set('Authorization', `Bearer ${token}`)
+                .expect('Content-Type', /json/)
+                .expect(200)
+
+            expect(mockedDecks.getUserDecks).toBeCalled();
+            expect(mockedDecks.userDeckSelection).toBeCalledWith(1, 0, 100, true)
         })
 
         it('should get guest decks if no token', async () => {
@@ -82,12 +98,12 @@ describe('decks routes', () => {
             mockedDecks.getFreeDecks.mockResolvedValue({ rows: [] } as QueryResult)
 
             await supertest(app)
-                .get('/decks/selection')
+                .get('/decks/selection?clean=false')
                 .expect('Content-Type', /json/)
                 .expect(200)
 
             expect(mockedDecks.getUserDecks).not.toBeCalled();
-            expect(mockedDecks.guestDeckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
+            expect(mockedDecks.guestDeckSelection).toBeCalledWith(0, 100, false)
         })
 
         it('should get guest decks if bad token', async () => {
@@ -96,13 +112,13 @@ describe('decks routes', () => {
 
             const token = jwt.sign('bad', 'token')
             await supertest(app)
-                .get('/decks/selection')
+                .get('/decks/selection?clean=false')
                 .set('Authorization', `Bearer ${token}`)
                 .expect('Content-Type', /json/)
                 .expect(200)
 
             expect(mockedDecks.getUserDecks).not.toBeCalled();
-            expect(mockedDecks.guestDeckSelection).toBeCalledWith({ pageNumber: 0, pageSize: 100 })
+            expect(mockedDecks.guestDeckSelection).toBeCalledWith(0, 100, false)
         })
     })
 

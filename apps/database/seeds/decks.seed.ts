@@ -17,8 +17,12 @@ const insertDecks = async (pool: Pool, num: number) => {
             obj.purchase_price = '0.00' // make 3 decks free
         }
 
+        if (i % 6 == 0) {
+            obj.clean = true;
+        }
         if (i % 3 == 0) {
             obj.movie_rating = 'PG'
+
 
             if (i % 2 === 0) {
                 obj.sfw = true; // some pg decks are sfw

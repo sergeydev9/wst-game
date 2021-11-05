@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
-import { MovieRating, InsertDeck, DeckSelectionOptions, UserDeckSelectionOptions } from '@whosaidtrue/app-interfaces';
+import { MovieRating, InsertDeck } from '@whosaidtrue/app-interfaces';
 
 
 class Decks extends Dao {
@@ -112,34 +112,7 @@ class Decks extends Dao {
         }
         return this._pool.query(query);
     }
-    /**
-     * Returns all decks with an age rating less than input
-     *
-     * @param {number} ageRating
-     * @return {*}  {Promise<QueryResult>}
-     * @memberof Decks
-     */
-    public lessThanAgeRating(ageRating: number): Promise<QueryResult> {
-        const query = {
-            text: `SELECT (
-                id,
-                name,
-                sort_order,
-                clean,
-                age_rating,
-                movie_rating,
-                sfw,
-                description,
-                purchase_price,
-                sample_question,
-                thumbnail_url
-                )
-                FROM active_decks AS decks
-                WHERE decks.age_rating < $1;`,
-            values: [ageRating]
-        }
-        return this._pool.query(query);
-    }
+
     /**
      * Gets all decks owned by the specified user.
      * Returns empty array if the user doesn't own any decks.
@@ -148,10 +121,18 @@ class Decks extends Dao {
      * @return {*}
      * @memberof Decks
      */
-    public getUserDecks(userId: number): Promise<QueryResult> {
+    public getUserDecks(userId: number, clean: boolean): Promise<QueryResult> {
         const query = {
-            text: 'SELECT * from user_owned_decks($1) UNION ALL (SELECT * FROM free_decks)',
-            values: [userId]
+            text: `
+                (
+                    SELECT * from user_owned_decks($1) AS owned
+                    WHERE owned.clean = $2
+                )
+                UNION ALL
+                (
+                    SELECT * FROM free_decks WHERE free_decks.clean = $2
+                )`,
+            values: [userId, clean]
         }
         return this.pool.query(query);
     }
@@ -169,10 +150,13 @@ class Decks extends Dao {
      * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public getNotOwned(userId: number): Promise<QueryResult> {
+    public getNotOwned(userId: number, clean: boolean): Promise<QueryResult> {
         const query = {
-            text: 'SELECT * from user_not_owned_decks($1)',
-            values: [userId]
+            text: `
+            SELECT * from user_not_owned_decks($1) AS n_owned
+            WHERE n_owned.clean = $2
+            `,
+            values: [userId, clean]
         }
         return this.pool.query(query);
     }
@@ -194,23 +178,17 @@ class Decks extends Dao {
      * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public userDeckSelection(options: UserDeckSelectionOptions): Promise<QueryResult> {
-        const { userId, pageNumber, pageSize, ageRating } = options;
-
-        let queryString: string;
-        let valuesArray: number[];
-
-        if (!ageRating) {
-            queryString = 'SELECT * FROM user_not_owned_decks($1) ORDER BY id OFFSET $2 LIMIT $3';
-            valuesArray = [userId, pageNumber * pageSize, pageSize]
-        } else {
-            queryString = 'SELECT * FROM user_not_owned_decks($1) AS u_o WHERE u_o.age_rating < $4 ORDER BY id OFFSET $2 LIMIT $3';
-            valuesArray = [userId, pageNumber * pageSize, pageSize, ageRating]
-        }
+    public userDeckSelection(userId: number, pageNumber: number, pageSize: number, clean: boolean): Promise<QueryResult> {
 
         const query = {
-            text: queryString,
-            values: valuesArray
+            text: `
+                SELECT * FROM user_not_owned_decks($1) AS u_o
+                WHERE u_o.clean = $4
+                ORDER BY id
+                OFFSET $2
+                LIMIT $3
+            `,
+            values: [userId, pageNumber * pageSize, pageSize, clean]
         }
         return this.pool.query(query)
     }
@@ -233,22 +211,18 @@ class Decks extends Dao {
      * @return {Deck[]}  {Promise<QueryResult>}
      * @memberof Decks
      */
-    public guestDeckSelection(options: DeckSelectionOptions): Promise<QueryResult> {
-        const { pageNumber, pageSize, ageRating } = options;
+    public guestDeckSelection(pageNumber: number, pageSize: number, clean: boolean): Promise<QueryResult> {
 
-        let queryString: string;
-        let valueArray: number[];
-        if (!ageRating) {
-            queryString = `SELECT * from not_free_decks ORDER BY id OFFSET $1 LIMIT $2`
-            valueArray = [pageNumber * pageSize, pageSize]
-        } else {
-            queryString = `SELECT * from not_free_decks WHERE not_free_decks.age_rating < $3 ORDER BY id OFFSET $1 LIMIT $2`
-            valueArray = [pageNumber * pageSize, pageSize, ageRating]
-        }
 
         const query = {
-            text: queryString,
-            values: valueArray
+            text: `
+                SELECT * from not_free_decks
+                WHERE not_free_decks.clean = $3
+                ORDER BY id
+                OFFSET $1
+                LIMIT $2
+            `,
+            values: [pageNumber * pageSize, pageSize, clean]
         }
 
         return this.pool.query(query)
@@ -257,10 +231,9 @@ class Decks extends Dao {
     /**
      * Get all free decks.
      */
-    public getFreeDecks(): Promise<QueryResult> {
-        return this.pool.query('SELECT * FROM free_decks')
+    public getFreeDecks(clean: boolean): Promise<QueryResult> {
+        return this.pool.query('SELECT * FROM free_decks WHERE free_decks.clean = $1', [clean])
     }
-
 
     /**
      * Get all active questions for specified deck.
@@ -276,22 +249,6 @@ class Decks extends Dao {
         }
         return this.pool.query(query);
     }
-
-    /** TODO: replace this with real implementation.
-     * Create an order record for a deck/user.
-     *
-     * THIS IS A TEMPORARY FAKE IMPLEMENTATION.
-     */
-    public purchase(deckId: number, userId: number, purchase_price: string): Promise<QueryResult> {
-
-        const query = {
-            text: 'INSERT INTO orders (deck_id, user_id, fulfilled_on, purchase_price) VALUES ($1, $2, $3, $4) returning id',
-            values: [deckId, userId, new Date().toISOString(), purchase_price]
-        }
-        return this.pool.query(query)
-    }
-
-
 }
 
 export default Decks;

@@ -83,15 +83,6 @@ export type ThemeColor = 'purple-light'
     | 'red-subtle-fill'
     | 'red-light'
 
-export interface DeckSelectionOptions {
-    pageSize: number;
-    pageNumber: number;
-    ageRating?: number;
-}
-export interface UserDeckSelectionOptions extends DeckSelectionOptions {
-    userId: number;
-}
-
 export interface ScoreboardEntry {
     player_name: string;
     score: number;

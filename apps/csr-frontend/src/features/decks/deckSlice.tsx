@@ -57,8 +57,11 @@ export const initialState: DeckState = {
 export const getDeckSelection = createAsyncThunk(
     'decks/getSelection',
     async (_, { dispatch, rejectWithValue }) => {
-        return api.get<DeckSelectionResponse>('/decks/selection').then(res => {
-            return res.data
+
+        const url = process.env.NX_IS_FOR_SCHOOLS === 'true' ? `/decks/selection?clean=true` : `/decks/selection?clean=false`
+
+        return api.get<DeckSelectionResponse>(url).then(res => {
+            return res.data;
         }).catch(e => {
             console.error(e)
             dispatch(showError("Oops, something went wrong. Please try again later."))

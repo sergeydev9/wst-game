@@ -39,7 +39,7 @@ export function* testDecks(num: number, extra = '-') {
         yield {
             name: `Test Deck ${extra} ${count + 1}`,
             sort_order: 1,
-            clean: true,
+            clean: false,
             age_rating: 13,
             movie_rating: 'PG13' as MovieRating,
             sfw: true,
