@@ -4,7 +4,7 @@ import { logger, logIncoming, logOutgoing, logError } from '@whosaidtrue/logger'
 import { playerValueString } from './util';
 import { games } from './db';
 import { pubClient } from "./redis";
-import { ONE_DAY, ONE_WEEK } from "./constants";
+import { ONE_DAY } from "./constants";
 import startGame from "./listener-helpers/startGame";
 import submitAnswerPart1 from "./listener-helpers/submitAnswerPart1";
 import submitAnswerPart2 from "./listener-helpers/submitAnswerPart2";

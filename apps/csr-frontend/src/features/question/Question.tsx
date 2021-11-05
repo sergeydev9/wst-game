@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { TrueFalse, QuestionCard, NumberTrueGuess, WaitingRoom, QuestionAnswers } from "@whosaidtrue/ui";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -20,6 +20,7 @@ import {
     selectFollowUp,
     selectCategory
 } from '../question/questionSlice';
+import { ImSpinner6 } from '@react-icons/all-files/im/ImSpinner6';
 import { selectHasPassed, selectTotalQuestions, setHasPassed } from '../game/gameSlice';
 import ReaderAnnouncement from "./ReaderAnnouncement";
 import { selectHasRatedQuestion, showError, useSocket } from "..";
@@ -27,7 +28,6 @@ import { payloads, types } from "@whosaidtrue/api-interfaces";
 import QuestionResults from './QuestionResults';
 import { isLoggedIn } from "../auth/authSlice";
 import RateQuestion from "../ratings/RateQuestion";
-import { clearLoaderMessage, showLoaderMessage } from '../modal/modalSlice';
 
 /**
  * This component controls what the user sees over the course
@@ -61,19 +61,14 @@ const Question: React.FC = () => {
 
     // submit true/false answer
     const answerHandler = (value: string) => {
-        // if button disabled, do nothing
-        if (submittingAnswer) {
-            console.log('blocked')
-            return;
 
-        }
+        // if button disabled, do nothing
+        if (submittingAnswer) return;
 
         setSubmittingAnswer(true);
-        dispatch(showLoaderMessage('Submitting answer'))
 
         // submit
         sendMessage(types.ANSWER_PART_1, { gameQuestionId, answer: value } as payloads.AnswerPart1, ack => {
-            dispatch(clearLoaderMessage());
             setSubmittingAnswer(false);
 
             if (ack === 'ok') {
@@ -96,10 +91,8 @@ const Question: React.FC = () => {
         if (submittingGuess) return;
 
         setSubmittingGuess(true)
-        dispatch(showLoaderMessage('Submitting guess'))
 
         sendMessage(types.ANSWER_PART_2, { gameQuestionId, guess: value } as payloads.AnswerPart2, ack => {
-            dispatch(clearLoaderMessage());
             setSubmittingGuess(false);
 
             if (ack === 'ok') {
@@ -119,6 +112,7 @@ const Question: React.FC = () => {
                 totalQuestions={totalQuestions}
                 questionNumber={questionNumber}
                 category={category}>
+
                 {screen === 'answerSubmit' && <TrueFalse submitHandler={answerHandler} text={text} isReader={isReader && !submittingAnswer} hasPasses={!hasPassed} />}
                 {screen === 'guess' && <NumberTrueGuess questionText={guessText} submitHandler={guessHandler} totalPlayers={totalPlayers} />}
                 {screen === 'waitingRoom' && <WaitingRoom totalPlayers={totalPlayers} numberHaveGuessed={numHaveGuessed} guessValue={guessVal} questionText={guessText} />}
@@ -133,6 +127,7 @@ const Question: React.FC = () => {
                 </QuestionAnswers>
                 )}
                 {screen === 'scoreResults' && <QuestionResults />}
+                {(submittingGuess || submittingAnswer) && <ImSpinner6 className="text-yellow-gradient-to animate-spin left-1/2 top-p85 absolute -transform-x-full w-6 h-6" />}
             </QuestionCard>
         </>
     )

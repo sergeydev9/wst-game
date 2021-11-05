@@ -21,7 +21,8 @@ module.exports = {
                 'p35': '35%',
                 'p25': '25%',
                 'p15': '15%',
-                'p10': '10%'
+                'p10': '10%',
+                'p85': '85%'
             },
             width: {
                 'p99': '99%', // custom width for buttons. Full width breaks the style.
@@ -111,8 +112,7 @@ module.exports = {
             },
             animation: {
                 grow: 'grow 400ms ease-in forwards',
-                shrink: 'shrink 2s ease-in-out'
-
+                shrink: 'shrink 2s ease-in-out',
             },
             boxShadow: {
                 'rating-button': '0px 4px 0px #BDABE3',
