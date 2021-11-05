@@ -162,7 +162,7 @@ const currentQuestionSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(checkHasRatedQuestion.fulfilled, (state, action) => {
+        builder.addCase(checkHasRatedQuestion.fulfilled, (state, action: any) => {
             state.hasRated = action.payload.hasRated;
         })
     }

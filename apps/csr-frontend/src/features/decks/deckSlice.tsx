@@ -93,7 +93,7 @@ export const deckSlice = createSlice({
     },
     extraReducers: (builder) => {
         // success
-        builder.addCase(getDeckSelection.fulfilled, (state, action) => {
+        builder.addCase(getDeckSelection.fulfilled, (state, action: any) => {
             const { owned, notOwned } = action.payload;
             state.owned = owned;
             state.notOwned = notOwned;
