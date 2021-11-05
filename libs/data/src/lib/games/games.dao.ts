@@ -347,7 +347,7 @@ class Games extends Dao {
         const query = {
             text: `
             UPDATE games
-            SET end_date = $1, status = 'finished'
+            SET end_date = $1, status = 'finished', access_code = NULL
             WHERE id = $2`,
             values: [new Date().toISOString(), gameId]
         }
