@@ -142,7 +142,7 @@ module.exports = {
             ringColor: ['checked'],
             ringOpacity: ['checked'],
             padding: ['checked', 'active'],
-            transitionProperty: ['focus', 'responsive', 'motion-safe', 'motion-reduce']
+            transitionProperty: ['focus', 'responsive', 'motion-safe', 'motion-reduce'],
         }
 
     },
