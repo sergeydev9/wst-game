@@ -30,7 +30,7 @@ describe('buildScoreMap', () => {
             "1000"
         ];
 
-        const actual = buildScoreMap(scores);
+        const [map, actual] = buildScoreMap(scores);
         expect(actual).toEqual('{"1000":["player 1","player 2"]}')
     });
 
@@ -42,7 +42,7 @@ describe('buildScoreMap', () => {
             "1000"
         ];
 
-        const actual = buildScoreMap(scores);
+        const [map, actual] = buildScoreMap(scores);
         expect(actual).toEqual('{"1000":["player 2"],"2000":["player 1"]}');
     })
 })
@@ -56,8 +56,8 @@ describe('scoreBoardFromMap', () => {
             "1000"
         ];
 
-        const [stringMap] = buildScoreMap(scores);
-        const actual = scoreBoardFromMap(stringMap);
+        const [map] = buildScoreMap(scores);
+        const actual = scoreBoardFromMap(map);
 
         expect(actual).toEqual([{ player_name: "player 1", rank: 1, score: 1000 }, { player_name: "player 2", rank: 1, score: 1000 }])
 

@@ -20,6 +20,7 @@ export type UserRating = 'great' | 'bad';
 export type DeckStatus = 'active' | 'inactive' | 'pending';
 export type AnswerValue = 'true' | 'false' | 'pass';
 export type UserRole = 'user' | 'admin' | 'test' | 'guest';
+export type JobStatus = 'pending' | 'completed' | 'failed' | 'canceled';
 
 export type GameStatus = 'lobby'
     | 'inProgress'
@@ -235,6 +236,50 @@ export interface UserQuestionRating {
     updated_at?: Date;
 }
 
+export interface Job {
+    id: number;
+    type: string;
+    status: JobStatus;
+    result?: string;
+    task_table?: string;
+    task_id?: number;
+    scheduled_at: Date;
+    started_at?: Date;
+    completed_at?: Date;
+    canceled_at: Date;
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export interface JobTransaction extends Job {
+    startJob(): Promise<any>;
+    finishJob(status?: 'completed' | 'failed', result?: string): Promise<any>;
+    abortJob(): Promise<any>;
+}
+
+export interface Email {
+    id: number;
+    user_id: number;
+    from?: string;
+    to: string;
+    cc?: string;
+    bcc?: string;
+    subject?: string;
+    text?: string;
+    html?: string;
+    template_key?: string;
+    template_data?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Template {
+    key: string,
+    sendgrid_template_id: string,
+    created_at?: string;
+    updated_at?: string;
+}
+
 export type InsertUserQuestionRating = Insert<UserQuestionRating>;
 export type InsertQuestionRating = Insert<UserQuestionRating>;
 export type InsertOrder = Insert<Order>;
@@ -247,6 +292,7 @@ export type InsertAnwser = Insert<GameAnswer>;
 export type InsertDeck = Insert<Deck>;
 export type InsertQuestion = Insert<Question>;
 export type InsertGame = Insert<Game>;
+export type InsertEmail = Insert<Email>;
 
 export interface JoinGameResult {
     status: GameStatus
