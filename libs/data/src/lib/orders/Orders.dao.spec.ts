@@ -237,6 +237,7 @@ describe('Orders', () => {
         })
 
         it('should return undefined if user has no credits', async () => {
+            await users.setCredits(userId, 0)
             const result = await orders.purchaseWithCredits(userId, deckId)
             expect(result).not.toBeDefined()
         })

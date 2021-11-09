@@ -1,9 +1,9 @@
-import {DatabaseError, Pool} from 'pg';
-import {TEST_DB_CONNECTION} from '@whosaidtrue/util';
-import {cleanDb} from '../util/cleanDb';
-import {Email} from "@whosaidtrue/app-interfaces";
+import { DatabaseError, Pool } from 'pg';
+import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
+import { cleanDb } from '../util/cleanDb';
+import { Email } from "@whosaidtrue/app-interfaces";
 import Emails from "./emails.dao";
-import {Users} from "@whosaidtrue/data";
+import { Users } from "@whosaidtrue/data";
 import _ from "lodash";
 
 
@@ -22,7 +22,7 @@ describe('Emails', () => {
 
     beforeEach(async () => {
         await cleanDb(pool);
-        userId = (await users.register('email', 'password')).rows[0].id;
+        userId = (await users.register('email', 'password', 'test.com')).rows[0].id;
         await emails.pool.query(`INSERT INTO email_templates (key, sendgrid_template_id) VALUES ('template_key', 'sendgrid_template_id')`);
     });
 
@@ -77,7 +77,7 @@ describe('Emails', () => {
 
         it('should require user_id', async () => {
             try {
-                await emails.insertOne({user_id: null, to: 'to', text: 'text'});
+                await emails.insertOne({ user_id: null, to: 'to', text: 'text' });
                 fail();
             } catch (e) {
                 expect(e).toEqual(new DatabaseError('null value in column "user_id" violates not-null constraint', 1, 'error'))
@@ -86,7 +86,7 @@ describe('Emails', () => {
 
         it('should require to address', async () => {
             try {
-                await emails.insertOne({user_id: userId, to: null, text: 'text'});
+                await emails.insertOne({ user_id: userId, to: null, text: 'text' });
                 fail()
             } catch (e) {
                 expect(e).toEqual(new DatabaseError('null value in column "to" violates not-null constraint', 1, 'error'))
@@ -95,16 +95,16 @@ describe('Emails', () => {
 
         it('should require email body', async () => {
             try {
-                await emails.insertOne({user_id: userId, to: 'to', text: null});
+                await emails.insertOne({ user_id: userId, to: 'to', text: null });
                 fail()
             } catch (e) {
                 expect(e).toEqual(new DatabaseError('new row for relation "emails" violates check constraint "email_text_html_or_template_required"', 1, 'error'))
             }
 
             // any one of text, html or template_key should work
-            await emails.insertOne({user_id: userId, to: 'to', text: 'text'});
-            await emails.insertOne({user_id: userId, to: 'to', html: 'html'});
-            await emails.insertOne({user_id: userId, to: 'to', template_key: 'template_key'});
+            await emails.insertOne({ user_id: userId, to: 'to', text: 'text' });
+            await emails.insertOne({ user_id: userId, to: 'to', html: 'html' });
+            await emails.insertOne({ user_id: userId, to: 'to', template_key: 'template_key' });
         });
 
     });
