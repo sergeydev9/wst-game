@@ -133,7 +133,7 @@ export async function setupDecks(pool: Pool, totalDecks: number, numRating?: num
 export async function setupUserDecks(pool: Pool, totalDecks: number, ownedDecks: number, ageRating = 0, numRating = 0) {
     // save user
     const users = new Users(pool);
-    const { rows } = await users.register('test_decks@test.com', 'password', 'wwww.test.com');
+    const { rows } = await users.register('test_decks@test.com', 'password', 'www.test.com');
     const userId = rows[0].id;
 
     const deckIds = await setupDecks(pool, totalDecks, numRating, ageRating)
