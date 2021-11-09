@@ -104,7 +104,7 @@ export const deckSlice = createSlice({
             const ownedPG13: Deck[] = [];
             const ownedNC17: Deck[] = [];
 
-            owned.forEach(deck => {
+            owned.forEach((deck: Deck) => {
                 if (deck.sfw) {
                     ownedSfw.push(deck);
                 } else {
@@ -134,7 +134,7 @@ export const deckSlice = createSlice({
             const notOwnedPG13: Deck[] = [];
             const notOwnedNC17: Deck[] = [];
 
-            notOwned.forEach(deck => {
+            notOwned.forEach((deck: Deck) => {
                 if (deck.sfw) {
                     notOwnedSfw.push(deck);
                 } else {
