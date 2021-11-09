@@ -146,7 +146,7 @@ const ChooseName: React.FC = () => {
     }
 
     return (
-        <Box boxstyle='white' className="w-max mx-auto px-8 py-10">
+        <Box boxstyle='white' className="w-96 sm:w-max mx-auto px-8 py-10 text-center">
             <Title1 className="text-basic-black mx-8">Choose Your Player Name</Title1>
             <div className="flex flex-col gap-3 w-80 mt-8">
                 {namesHelper(names)}
@@ -160,7 +160,7 @@ const ChooseName: React.FC = () => {
                     <Title3 >OR</Title3>
                     <Divider dividerColor='grey' />
                 </div>
-                <div className="flex w-full gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 items-center">
                     <TextInput $border type="text" className="font-semibold text-xl inline w-1/3" placeholder="Create your own" />
                     <Button className="w-2/3 inline" buttonStyle="big-text" $secondary>Submit</Button>
                 </div>

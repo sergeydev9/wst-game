@@ -93,7 +93,7 @@ export const deckSlice = createSlice({
     },
     extraReducers: (builder) => {
         // success
-        builder.addCase(getDeckSelection.fulfilled, (state, action: any) => {
+        builder.addCase(getDeckSelection.fulfilled, (state, action) => {
             const { owned, notOwned } = action.payload;
             state.owned = owned;
             state.notOwned = notOwned;
@@ -123,7 +123,6 @@ export const deckSlice = createSlice({
                             break;
                     }
                 }
-
             })
 
 
