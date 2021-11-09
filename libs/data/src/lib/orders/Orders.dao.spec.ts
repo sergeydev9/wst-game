@@ -211,7 +211,7 @@ describe('Orders', () => {
 
         beforeEach(async () => {
             deckId = await setupOneDeck(pool)
-            const { rows } = await users.register('email@test.com', 'password123')
+            const { rows } = await users.register('email@test.com', 'password123', 'www.test.com')
             userId = rows[0].id
         })
 
@@ -227,7 +227,7 @@ describe('Orders', () => {
 
         beforeEach(async () => {
             deckId = await setupOneDeck(pool)
-            const { rows } = await users.register('email@test.com', 'password123')
+            const { rows } = await users.register('email@test.com', 'password123', 'www.test.com')
             userId = rows[0].id
         })
         it('should return a user_id if successful', async () => {
@@ -244,7 +244,7 @@ describe('Orders', () => {
         it('should create a user_deck record if successful', async () => {
             await users.setCredits(userId, 5)
             await orders.purchaseWithCredits(userId, deckId)
-            const { rows } = await decks.getUserDecks(userId);
+            const { rows } = await decks.getUserDecks(userId, false);
 
             expect(rows.filter(el => el.id === deckId).length).toEqual(1)
         })

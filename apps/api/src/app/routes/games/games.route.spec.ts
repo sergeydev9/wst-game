@@ -62,7 +62,7 @@ describe('games routes', () => {
         })
 
         it('should respond with 201 if db sends result back', async () => {
-            mockedGames.create.mockResolvedValue({ rows: [{ id: 1, access_code: '123456' }] } as QueryResult)
+            mockedGames.create.mockResolvedValue({ rows: [{ id: 1, access_code: 'ABCD' }] } as QueryResult)
             const actual = await supertest(app)
                 .post('/games/create')
                 .send({ deckId: 123 })
@@ -72,7 +72,7 @@ describe('games routes', () => {
             const { game_id, access_code } = actual.body;
 
             expect(game_id).toEqual(1)
-            expect(access_code).toEqual('123456')
+            expect(access_code).toEqual('ABCD')
 
         })
     })
@@ -85,15 +85,15 @@ describe('games routes', () => {
                 .expect(422, done)
         })
 
-        it('should respond with 422 if query is less than 6 characters', done => {
+        it('should respond with 422 if query is less than 4 characters', done => {
             supertest(app)
-                .get('/games/status?access_code=12345')
+                .get('/games/status?access_code=123')
                 .expect(422, done)
         })
 
-        it('should respond with 422 if query is more than 6 characters', done => {
+        it('should respond with 422 if query is more than 4 characters', done => {
             supertest(app)
-                .get('/games/status?access_code=1234567')
+                .get('/games/status?access_code=12345')
                 .expect(422, done)
         })
 
@@ -101,21 +101,21 @@ describe('games routes', () => {
         it('should respond with 404 if response from db is empty', done => {
             mockedGames.gameStatusByAccessCode.mockResolvedValue({ rows: [] } as QueryResult)
             supertest(app)
-                .get('/games/status?access_code=123456')
+                .get('/games/status?access_code=ABCD')
                 .expect(404, done)
         })
 
         it('should resond with 500 if db throws', done => {
             mockedGames.gameStatusByAccessCode.mockRejectedValue(new Error())
             supertest(app)
-                .get('/games/status?access_code=123456')
+                .get('/games/status?access_code=ABCD')
                 .expect(500, done)
         })
 
         it('should respond with 200 and status value if response from db has something', async () => {
             mockedGames.gameStatusByAccessCode.mockResolvedValue({ rows: [{ status: 'test123' }] } as QueryResult)
             const { body } = await supertest(app)
-                .get('/games/status?access_code=123456')
+                .get('/games/status?access_code=ABCD')
                 .expect(200)
 
             expect(body.status).toEqual('test123')
@@ -134,7 +134,7 @@ describe('games routes', () => {
         it('should return 422 if no name', done => {
             supertest(app)
                 .post('/games/join')
-                .send({ access_code: '123abb' })
+                .send({ access_code: 'ABCD' })
                 .expect(422, done)
         })
 
@@ -142,7 +142,7 @@ describe('games routes', () => {
             mockedGames.join.mockRejectedValue(new Error('Game not found'))
             supertest(app)
                 .post('/games/join')
-                .send({ access_code: '123abb', name: 'name' })
+                .send({ access_code: 'ABCD', name: 'name' })
                 .expect(404, done)
         })
 
@@ -150,7 +150,7 @@ describe('games routes', () => {
             mockedGames.join.mockRejectedValue({})
             supertest(app)
                 .post('/games/join')
-                .send({ access_code: '123abb', name: 'name' })
+                .send({ access_code: 'ABCD', name: 'name' })
                 .expect(500, done)
         })
 
@@ -159,7 +159,7 @@ describe('games routes', () => {
                 playerId: 1,
                 playerName: 'name',
                 gameId: 2,
-                access_code: '12345',
+                access_code: 'ABCD',
                 totalQuestions: 9,
                 deck: {} as Deck,
                 status: 'lobby',
@@ -170,7 +170,7 @@ describe('games routes', () => {
 
             supertest(app)
                 .post('/games/join')
-                .send({ access_code: '123abb', name: 'name' })
+                .send({ access_code: 'ABCD', name: 'name' })
                 .expect('Content-Type', /json/)
                 .expect(201, done)
         })
@@ -180,7 +180,7 @@ describe('games routes', () => {
                 playerId: 1,
                 playerName: 'name',
                 gameId: 2,
-                access_code: '12345',
+                access_code: 'ABCD',
                 totalQuestions: 9,
                 deck: {} as Deck,
                 status: 'finished',
@@ -191,7 +191,7 @@ describe('games routes', () => {
 
             supertest(app)
                 .post('/games/join')
-                .send({ access_code: '123abb', name: 'name' })
+                .send({ access_code: 'ABCD', name: 'name' })
                 .expect(403, done)
         })
     })

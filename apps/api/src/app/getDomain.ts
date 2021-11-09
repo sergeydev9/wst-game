@@ -10,6 +10,8 @@ import { logger } from '@whosaidtrue/logger';
 export function getDomain(request: Request) {
     const origin = request.get('origin');
 
+    if (!origin) return;
+
     if (origin.includes('whosaidtrue.com')) {
         return 'www.whosaidtrue.com';
     } else if (origin.includes('whosaidtrueforschools.com')) {
