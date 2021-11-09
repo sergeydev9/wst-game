@@ -1,0 +1,19 @@
+branch-defaults:
+  default:
+    environment: test2-env
+environment-defaults:
+  test2-env:
+    branch: null
+    repository: null
+global:
+  application_name: whosaidtrue-backend
+  default_ec2_keyname: key-sergey
+  default_platform: Docker
+  default_region: us-east-2
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: wst-sergey
+  sc: null
+  workspace_type: Application
