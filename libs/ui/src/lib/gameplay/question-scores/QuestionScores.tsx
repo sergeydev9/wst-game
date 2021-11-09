@@ -46,7 +46,7 @@ const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, correctAnswer,
                 </div>}
                 <div>
                     <SmallHeader>Correct Answer</SmallHeader>
-                    <MediumHeader>{correctAnswer} players</MediumHeader>
+                    <MediumHeader>{`${correctAnswer}` === `${1}` ? `${correctAnswer} player` : `${correctAnswer} players`}</MediumHeader>
                 </div>
             </div>
             {pointsEarned || pointsEarned === 0 ? <LargeTitle className="text-green-base text-center mb-4">+{pointsEarned} pts</LargeTitle> : null}

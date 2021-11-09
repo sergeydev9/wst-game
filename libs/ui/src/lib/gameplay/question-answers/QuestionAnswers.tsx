@@ -39,7 +39,7 @@ const QuestionResults: React.FC<QuestionAnswersProps> = ({
 
             {/* answer */}
             <GameContentCard>
-                <Title>{correctAnswer} {correctAnswer === 1 ? 'player' : 'players'}</Title>
+                <Title>{correctAnswer} {`${correctAnswer}` === `${1}` ? 'player' : 'players'}</Title>
                 <BodyText className="text-center">{questionText}</BodyText>
             </GameContentCard>
 
