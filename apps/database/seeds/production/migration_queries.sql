@@ -366,11 +366,12 @@ where Deck_Question_Deck_ID not in (select Deck_ID from decks)
 -- EXPORT QUERY table: questions
 select
     Question_ID as id,
+    Question_Category as category,
     Question_Text as text,
     Question_Text_For_Guess as text_for_guess,
     Question_Follow_Up as follow_up,
     Deck_Question_Deck_ID as deck_id,                           -- > decks
-    Question_Rating as age_rating,
+    IF (Question_Rating = 0, 21, Question_Rating) as age_rating,
     LOWER(Question_Status) as status,
     IF(Deck_Question_Create_Dt is null, '2011-11-11 11:11:11',  Deck_Question_Create_Dt) as created_at,
     IF(Deck_Question_Last_Update_Dt is null, '2011-11-11 11:11:11',  Deck_Question_Last_Update_Dt) as updated_at
