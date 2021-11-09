@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   api:
-    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/api:20211028-78f7ce1
+    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/api:20211108-4e632c1
     container_name: api
     restart: always
     env_file:
@@ -15,7 +15,7 @@ services:
       - 3000:3000
 
   socket-server:
-    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/socket-server:20211028-78f7ce1
+    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/socket-server:20211108-4e632c1
     container_name: socket-server
     restart: always
     env_file:
@@ -27,7 +27,7 @@ services:
       - 4001:4001
 
   worker:
-    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/worker:20211028-78f7ce1
+    image: 680712662822.dkr.ecr.us-east-2.amazonaws.com/whosaidtrue/worker:20211108-4e632c1
     container_name: worker
     restart: always
     env_file:
