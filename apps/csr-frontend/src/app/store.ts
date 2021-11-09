@@ -73,7 +73,7 @@ if (window.Cypress) {
 let storeTimer: ReturnType<typeof setTimeout>;
 store.subscribe(() => {
     clearTimeout(storeTimer)
-    const { auth, game, question, freeCredits, ratings, modals } = store.getState()
+    const { auth, game, question, freeCredits, ratings, modals, funFacts } = store.getState()
     storeTimer = setTimeout(() => {
         localStorage.setItem(
             'wstState',
@@ -83,6 +83,7 @@ store.subscribe(() => {
                 question,
                 freeCredits,
                 ratings,
+                funFacts,
                 modals: { ...modals, reconnecting: false, isPersistent: false, connecting: false }  // remove unwanted properties
             }))
     }, 50)

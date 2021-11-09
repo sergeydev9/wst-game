@@ -57,17 +57,22 @@ const registerListeners = (socket: Socket, io: Server) => {
 
 
         if (!numPlayers[1] && status[1] !== 'finished') {
-
-            // set status to finished in DB and redis
-            await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
-            await games.endGame(socket.gameId);
-
             logger.debug({
                 message: '[disconnect] last player disconnected. Ending game.',
             })
+            await games.endGame(socket.gameId);
+
+            // transport close happens if user refreshes page, or their connection dies.
+            if (reason !== 'transport close') {
+                await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
+            } else {
+                setTimeout(async () => {
+                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
+                }, 100000)
+            }
 
             // host left on purpose
-        } else if (socket.isHost && reason === "client namespace disconnect" && status[1] !== 'finished') {
+        } else if (socket.isHost && reason === "client namespace disconnect" && status[1] !== 'finished' && status[1] !== 'postGame') {
             const [questionId, idx] = await pubClient
                 .pipeline()
                 .get(currentQuestionId)
@@ -204,7 +209,7 @@ const registerListeners = (socket: Socket, io: Server) => {
                         ...result
                     })
 
-                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY)
+                    await pubClient.set(gameStatus, 'postGame', 'EX', ONE_DAY)
                     // end game
                     sendToAll(types.GAME_END, result as payloads.QuestionEnd);
                 } else {
@@ -335,7 +340,7 @@ const registerListeners = (socket: Socket, io: Server) => {
                             })
                     }
 
-                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
+                    await pubClient.set(gameStatus, 'postGame', 'EX', ONE_DAY);
 
                     // send results
                     sendToOthers(types.GAME_END_NO_ANNOUNCE, result as payloads.QuestionEnd);
@@ -397,7 +402,7 @@ const registerListeners = (socket: Socket, io: Server) => {
                             groupVworld: groupVworldResponse[1]
                         })
 
-                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
+                    await pubClient.set(gameStatus, 'postGame', 'EX', ONE_DAY);
 
                     // send results
                     sendToAll(types.GAME_END, result as payloads.QuestionEnd)
@@ -496,7 +501,7 @@ const registerListeners = (socket: Socket, io: Server) => {
                 }
 
                 if (lastQuestion) {
-                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
+                    await pubClient.set(gameStatus, 'postGame', 'EX', ONE_DAY);
                 }
 
                 sendToAll(lastQuestion ? types.END_GAME : types.QUESTION_END, result as payloads.QuestionEnd);

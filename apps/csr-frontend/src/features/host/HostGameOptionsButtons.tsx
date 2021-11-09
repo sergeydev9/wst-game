@@ -8,7 +8,8 @@ import { selectGameStatus } from '../game/gameSlice';
 const HostGameOptionsButtons: React.FC = () => {
     const dispatch = useAppDispatch();
     const history = useHistory();
-    const gameStatus = useAppSelector(selectGameStatus); const { setShouldBlock } = useSocket()
+    const gameStatus = useAppSelector(selectGameStatus);
+    const { setShouldBlock } = useSocket()
 
     const isPostGame = gameStatus === 'postGame';
 

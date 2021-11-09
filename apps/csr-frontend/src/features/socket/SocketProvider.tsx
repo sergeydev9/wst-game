@@ -104,9 +104,9 @@ export const SocketProvider: React.FC = ({ children }) => {
             */
             connection.on("connect", () => {
                 dispatch(clearLoaderMessage());
+                setShouldBlock(true);
                 console.log('Game server connection successful!'); // connection success
                 connection.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName });
-                setShouldBlock(true);
             })
 
             connection.on("connect_error", () => {
@@ -128,7 +128,7 @@ export const SocketProvider: React.FC = ({ children }) => {
 
                 if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
                     dispatch(showLoaderMessage('Connection to server lost, reconnecting...'))
-                    console.error('Disconnected from game server')
+                    console.error(`Disconnected from game server. Reason: ${reason}`)
 
                 } else {
                     clear();

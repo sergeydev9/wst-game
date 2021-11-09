@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Button, FinalScores, Scoreboard, } from "@whosaidtrue/ui";
 import {
     clearCurrentQuestion,
@@ -50,8 +50,8 @@ const FinalResults: React.FC = () => {
             {!loggedIn && <RequestFreeCredit />}
             {loggedIn && !hasRatedApp && <RateApp />}
 
-            <div className="w-1/2 mx-auto">
-                <Button type="button" ><Link to="/decks">Play Another Game</Link></Button>
+            <div className="w-1/2 mx-auto mt-10">
+                <Button type="button" onClick={handler}>Play Another Game</Button>
             </div>
         </FinalScores>
     )
