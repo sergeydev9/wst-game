@@ -9,7 +9,7 @@
     "test": "nx test",
     "lint": "nx workspace-lint && nx lint",
     "e2e": "nx e2e",
-    "test:csr-frontend": "yarn nx run csr-frontend-e2e:e2e --browser chrome",
+    "test:csr-frontend": "yarn nx run csr-frontend-e2e:e2e --headed --watch --open",
     "seed-dev": "node -r dotenv/config ./dist/apps/database/main.js dotenv_config_path=./.local.env",
     "migrate-test:create": "node-pg-migrate create --tsconfig ./apps/database/tsconfig.app.json --envPath ./.test.env --migrations-dir ./apps/database/migrations/development",
     "migrate-test:up": "node-pg-migrate up --tsconfig ./apps/database/tsconfig.app.json --envPath ./.test.env --migrations-dir ./apps/database/migrations/development",

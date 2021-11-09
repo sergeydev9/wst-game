@@ -1,6 +1,7 @@
-import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createSelector, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { JoinGameResponse } from '@whosaidtrue/api-interfaces';
 import { Deck, UserGameStatus, PlayerRef, GameStatus } from '@whosaidtrue/app-interfaces';
+import { api } from '../../api';
 import omit from 'lodash.omit'
 
 // local imports
@@ -9,7 +10,6 @@ import { RootState } from "../../app/store";
 export interface GameState {
     gameStatus: GameStatus | '';
     hasRatedApp: boolean;
-    shouldBlock: boolean;
     playerStatus: UserGameStatus;
     shouldAnnounce: boolean;
     hasPassed: boolean;
@@ -35,7 +35,6 @@ export const initialGameState: GameState = {
     shouldAnnounce: false, // should there be a winner announcement when user gets to results
     gameToken: '',
     hasRatedApp: false,
-    shouldBlock: true, // should confirm leave game.
     hasPassed: false,
     gameId: 0,
     deck: {
@@ -62,6 +61,17 @@ export const initialGameState: GameState = {
     playerId: 0,
     winner: '',
 }
+
+/**
+ * Used to end a game from the API. This is useful
+ * when a game
+ */
+export const endGameFromApi = createAsyncThunk<void, number>(
+    'game/endGameFromApi',
+    async (gameId) => {
+        await api.patch('/games/end', { gameId });
+    }
+)
 
 export const gameSlice = createSlice({
     name: "game",
@@ -117,6 +127,7 @@ export const gameSlice = createSlice({
                 disconnectedPlayers,
                 totalQuestions
             } = action.payload;
+
             state.gameId = gameId;
             state.access_code = access_code;
             state.gameStatus = status;
@@ -140,9 +151,7 @@ export const gameSlice = createSlice({
                 return { ...acc, [player.id]: player }
             }, {});
         },
-        setShouldBlock: (state, action) => {
-            state.shouldBlock = action.payload;
-        },
+
         joinGame: (state, action: PayloadAction<JoinGameResponse>) => {
             const {
                 status,
@@ -188,7 +197,6 @@ export const {
     setPlayerStatus,
     setHasPassed,
     endGame,
-    setShouldBlock
 } = gameSlice.actions;
 
 // selectors
@@ -207,10 +215,11 @@ export const selectPlayerStatus = (state: RootState) => state.game.playerStatus;
 export const selectPlayers = (state: RootState) => state.game.players;
 export const selectTotalQuestions = (state: RootState) => state.game.totalQuestions;
 export const selectShouldAnnounce = (state: RootState) => state.game.shouldAnnounce;
-export const selectShouldBlock = (state: RootState) => state.game.shouldBlock;
 
 export const selectPlayerList = createSelector(selectPlayers, (players) => {
     return Object.values(players);
 })
+
+export const selectNumPlayersInGame = (state: RootState) => Object.keys(state.game.players).length;
 
 export default gameSlice.reducer;

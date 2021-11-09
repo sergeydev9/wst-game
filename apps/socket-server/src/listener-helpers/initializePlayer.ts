@@ -8,10 +8,11 @@ const initializePlayer = async (socket: Socket) => {
     const playersKey = socket.keys.currentPlayers;
 
     // add player to redis
-    await pubClient.sadd(playersKey, playerValueString(socket))
-
-    // expire players key in 1 day
-    await pubClient.expire(playersKey, ONE_DAY);
+    await pubClient
+        .pipeline()
+        .sadd(playersKey, playerValueString(socket))
+        .expire(playersKey, ONE_DAY)
+        .exec()
 
     // send list of current players back to connecting client
     sendPlayerList(socket);

@@ -4,12 +4,13 @@ import { types, payloads } from '@whosaidtrue/api-interfaces';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks"
 import useSocket from '../../socket/useSocket';
 import { setFullModal, showError } from '../modalSlice';
-import { selectGamequestionId } from '../../question/questionSlice';
+import { selectGamequestionId, selectIsLastQuestion } from '../../question/questionSlice';
 
 const ConfirmSkipQuestion: React.FC = () => {
     const dispatch = useAppDispatch()
     const { sendMessage } = useSocket();
     const gameQuestionId = useAppSelector(selectGamequestionId);
+    const isLastQuestion = useAppSelector(selectIsLastQuestion);
 
     const skip = () => {
         const message: payloads.QuestionSkip = {
@@ -18,7 +19,8 @@ const ConfirmSkipQuestion: React.FC = () => {
         sendMessage(types.SKIP_QUESTION, message, ack => {
             if (ack === 'error') {
                 dispatch(showError('An error occured while skipping question'))
-            } else {
+
+            } else if (!isLastQuestion) { // without this check, the winner announcement instantly closes for the host
                 dispatch(setFullModal(''))
             }
         });

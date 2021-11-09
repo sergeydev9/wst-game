@@ -31,7 +31,7 @@ const endGame = async (socket: Socket) => {
     // save ressults and set game to finished
     await pubClient.pipeline()
         .set(latestResults, JSON.stringify(result), 'EX', ONE_DAY)
-        .set(gameStatus, 'finished')
+        .set(gameStatus, 'finished', 'EX', ONE_DAY)
         .exec()
 
     return result;

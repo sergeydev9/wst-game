@@ -16,6 +16,8 @@ declare module 'socket.io' {
         playerId: number;
         playerName: string;
         keys: Keys;
+        sendToAll: (type: string, payload?: unknown) => void;
+        sendToOthers: (type: string, payload?: unknown) => void;
     }
 }
 

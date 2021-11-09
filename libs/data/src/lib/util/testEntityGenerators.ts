@@ -39,14 +39,14 @@ export function* testDecks(num: number, extra = '-') {
         yield {
             name: `Test Deck ${extra} ${count + 1}`,
             sort_order: 1,
-            clean: true,
+            clean: false,
             age_rating: 13,
             movie_rating: 'PG13' as MovieRating,
             sfw: true,
             status: 'active' as DeckStatus,
             description: 'A deck for testing',
             purchase_price: '2.00',
-            example_question: 'An example question',
+            sample_question: 'An sample question',
             thumbnail_url: './assets/placeholder.svg'
         }
         count += 1;

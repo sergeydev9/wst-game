@@ -29,6 +29,8 @@ const DeckFilterButton: React.FC<FilterButtonProps> = ({ filterValue, selected, 
                 return 'bg-blue-base border-blue-base'
             case 'ALL':
                 return 'bg-purple-base border-purple-base'
+            default:
+                return 'bg-purple-base border-purple-base'
         }
     }
 
@@ -44,6 +46,8 @@ const DeckFilterButton: React.FC<FilterButtonProps> = ({ filterValue, selected, 
                 return 'text-blue-base border-blue-base'
             case 'ALL':
                 return 'text-purple-base border-purple-base'
+            default:
+                return 'bg-purple-base border-purple-base'
         }
     }
     return <Base

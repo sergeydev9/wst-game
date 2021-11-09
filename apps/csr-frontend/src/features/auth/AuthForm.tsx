@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useAppDispatch } from '../../app/hooks';
@@ -19,6 +20,7 @@ import { clearError } from './authSlice';
 import { Link } from 'react-router-dom';
 import { setFullModal, showError } from '../modal/modalSlice';
 import { clearCart } from '../cart/cartSlice';
+import EmailInUse from './EmailInUse';
 
 export interface AuthFormProps {
     endpoint: string;
@@ -40,6 +42,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
     $smallTitle
 }) => {
     const dispatch = useAppDispatch();
+    const [showGuestMessage, setShowGuestMessage] = useState(false);
 
     // Form
     const formik = useFormik({
@@ -70,12 +73,13 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 onSuccess();
             }).catch(e => {
                 const { status, data } = e.response
-                if ((status === 422 || status === 401) && data) {
-                    if (status === 401) {
-                        dispatch(showError("Incorrect email/password"))
-                    } else {
-                        dispatch(showError('Invalid credentials'))
+
+                if (data && status === 422) {
+                    if (data === "A user already exists with that email") {
+                        setShowGuestMessage(true); // only happens during registration if account is alreaedy taken
                     }
+                } else if (status === 401) {
+                    dispatch(showError("Incorrect email/password"))
                 } else {
                     // show error message
                     dispatch(showError('An unknown error has occurred, please try again later'))
@@ -91,11 +95,17 @@ const AuthForm: React.FC<AuthFormProps> = ({
         dispatch(setFullModal(''))
         dispatch(clearCart())
     }
+
+    const linkClass = "text-basic-gray underline cursor-pointer mt-4";
+
     // render
     return (
         <form className="w-full px-2 md:mt-2" onSubmit={formik.handleSubmit}>
             {/* title */}
             {$smallTitle ? <Title2 className="text-center mb-3">{title}</Title2> : <LargeTitle className="text-center mb-3">{title}</LargeTitle>}
+
+            {/* message when email in use */}
+            {showGuestMessage && <EmailInUse />}
 
             {/* email */}
             <FormGroup>
@@ -109,7 +119,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 <InputLabel htmlFor="password">Password</InputLabel>
                 <TextInput data-cy="password-input" {...formik.getFieldProps('password')} id="password" $hasError={pwErr} $border name="password" type="password" />
                 {$showMinLength && <Headline className="text-basic-gray">8 character minimum length</Headline>}
-                {$showForgotPassword && <Headline className="mt-2" ><Link className="text-basic-gray underline cursor-pointer mt-4" onClick={clearCartAndDetails} to="/reset/send-email">Forgot Password?</Link></Headline>}
+                {$showForgotPassword && <Headline className="mt-2" ><Link className={linkClass} data-cy="reset-link" onClick={clearCartAndDetails} to="/reset/send-email">Forgot Password?</Link></Headline>}
                 {pwErr && <ErrorText>{formik.errors.password}</ErrorText>}
             </FormGroup>
 

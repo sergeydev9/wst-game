@@ -50,7 +50,7 @@ class Question extends Dao {
         } = question;
 
         const query = {
-            text: 'INSERT INTO questions (text, text_for_guess, follow_up, deck_id, age_rating, status, category) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+            text: 'INSERT INTO questions (text, text_for_guess, follow_up, deck_id, age_rating, status, category) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
             values: [
                 text,
                 text_for_guess,

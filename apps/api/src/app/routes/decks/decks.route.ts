@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { idQuery } from '@whosaidtrue/validation';
+import { idQuery, getDeckSelectionQuery } from '@whosaidtrue/validation';
 import { logger } from '@whosaidtrue/logger';
 import jwt from 'jsonwebtoken';
 import { ExtractJwt } from 'passport-jwt';
@@ -9,8 +9,11 @@ import { DeckSelectionResponse, TokenPayload } from '@whosaidtrue/api-interfaces
 
 const router = Router();
 
-// TODO implement pagination and age rating filtering
-router.get('/selection', async (req: Request, res: Response) => {
+router.get('/selection', [...getDeckSelectionQuery], async (req: Request, res: Response) => {
+
+    const { clean } = req.query;
+    const cleanAsBool = clean === 'true';
+
     try {
         // Check header for token
         const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
@@ -31,8 +34,8 @@ router.get('/selection', async (req: Request, res: Response) => {
         if (id) {
             // get decks
             const [userDecks, notOwned] = await Promise.all(
-                [decks.getUserDecks(id),
-                decks.userDeckSelection({ pageNumber: 0, pageSize: 100, userId: id })
+                [decks.getUserDecks(id, cleanAsBool),
+                decks.userDeckSelection(id, 0, 100, cleanAsBool)
                 ]);
 
             // send
@@ -43,7 +46,7 @@ router.get('/selection', async (req: Request, res: Response) => {
 
         } else {
             // no valid id, send guest selection and free decks
-            const [free, notFree] = await Promise.all([decks.getFreeDecks(), decks.guestDeckSelection({ pageNumber: 0, pageSize: 100 })])
+            const [free, notFree] = await Promise.all([decks.getFreeDecks(cleanAsBool), decks.guestDeckSelection(0, 100, cleanAsBool)])
             res.status(200).json({ owned: free.rows, notOwned: notFree.rows } as DeckSelectionResponse)
         }
     } catch (e) {

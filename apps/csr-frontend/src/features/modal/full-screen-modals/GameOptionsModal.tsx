@@ -5,23 +5,28 @@ import { clearGame, selectAccessCode, selectIsHost } from '../../game/gameSlice'
 import HostGameOptionsButtons from '../../host/HostGameOptionsButtons';
 import { setFullModal } from '../modalSlice';
 import { clearCurrentQuestion } from '../../question/questionSlice';
+import { useSocket } from '../..';
 
 const GameOptionsModal: React.FC = () => {
     const dispatch = useAppDispatch()
     const history = useHistory();
+    const { setShouldBlock } = useSocket();
     const accessCode = useAppSelector(selectAccessCode)
     const isHost = useAppSelector(selectIsHost);
 
     const leaveGame = () => {
-        dispatch(clearGame())
+        setShouldBlock(false);
+        dispatch(clearGame());
         dispatch(clearCurrentQuestion());
-        dispatch(setFullModal(''))
-        history.push('/')
+        dispatch(setFullModal(''));
+        history.push('/');
     }
+
+    const domain = process.env.NX_IS_FOR_SCHOOLS === 'true' ? 'whosaidtrueforschools.com/x' : 'whosaidtrue.com/x';
     return (
         <ModalContent>
             <Title1 className="mt-1 mb-10">Game Options</Title1>
-            <InviteLinks accessCode={accessCode}>
+            <InviteLinks domain={domain} accessCode={accessCode}>
 
                 {/* buttons */}
                 {isHost ? <HostGameOptionsButtons /> :

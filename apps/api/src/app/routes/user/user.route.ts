@@ -12,7 +12,7 @@ import {
 import { passport, signResetPayload } from '@whosaidtrue/middleware';
 import { ERROR_MESSAGES, } from '@whosaidtrue/util';
 import { signUserPayload, signGuestPayload } from '@whosaidtrue/middleware';
-import { logger } from '@whosaidtrue/logger';
+import { logError } from '@whosaidtrue/logger';
 import { users, creditSignup } from '../../db';
 import { emailService } from '../../services';
 import {
@@ -26,6 +26,8 @@ import {
     TokenPayload,
     WithEmailBody
 } from '@whosaidtrue/api-interfaces';
+import { redisClient } from '../../redis';
+import { getDomain } from '../../getDomain';
 
 const router = Router();
 
@@ -52,7 +54,7 @@ router.post('/login', [...validateAuth], async (req: Request, res: Response) => 
             res.status(201).json({ token } as AuthenticationResponse);
         }
     } catch (e) {
-        logger.error(e)
+        logError('Error during login', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 
@@ -65,8 +67,9 @@ router.post('/login', [...validateAuth], async (req: Request, res: Response) => 
 router.post('/register', [...validateAuth], async (req: Request, res: Response) => {
     const { email, password } = req.body as AuthenticationRequest;
     try {
+        const domain = getDomain(req);
         // Register new user.
-        const { rows } = await users.register(email, password);
+        const { rows } = await users.register(email, password, domain);
 
         // send token if success
         const { id, roles } = rows[0]
@@ -78,7 +81,7 @@ router.post('/register', [...validateAuth], async (req: Request, res: Response) 
         if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
             res.status(422).send("A user already exists with that email")
         } else {
-            logger.error(e)
+            logError('Error during registration', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
@@ -103,7 +106,7 @@ router.get('/details', passport.authenticate('jwt', { session: false }), async (
             res.status(200).json(rows[0] as AccountDetailsResponse)
         }
     } catch (e) {
-        logger.error(e)
+        logError('Error fetching details', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
@@ -123,7 +126,7 @@ router.patch('/update', [...validateUserUpdate], passport.authenticate('jwt', { 
         if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
             res.status(422).send("A user already exists with that email")
         } else {
-            logger.error(e)
+            logError('Error updating profile', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
@@ -141,7 +144,7 @@ router.patch('/change-password', [...validatePasswordChange], passport.authentic
             res.status(204).send()
         }
     } catch (e) {
-        logger.error(e)
+        logError('Error changing password', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
@@ -149,32 +152,52 @@ router.patch('/change-password', [...validatePasswordChange], passport.authentic
 
 /**
  * Send a reset token to user email
+ *
+ * Uses Redis to limit users to 3 resets every 24 hours.
+ *
+ * If user's reset count is above 3, responds with 403 and 'Rest limit reached'.
+ * The front end depends on exactly this response to show the correct error.
  */
 router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Response) => {
     const { email } = req.body as WithEmailBody;
     const code = `${Math.floor(1000 + Math.random() * 9000)}` // generate a random 4 digit string.
 
     try {
+
+        const resetKey = `resetRequests:${email}`;
+
+        // check Redis for reset requests. Returns value after increment
+        const resetCount = await redisClient.incr(resetKey);
+
+        if (resetCount > 3) {
+            return res.status(403).send('Reset limit reached')
+        }
+
+        // expire the key
+        const ONE_DAY = 60 * 60 * 24 // in seconds
+        await redisClient.expire(resetKey, ONE_DAY);
+
         const { rows } = await users.upsertResetCode(email, code);
 
         // if no user was updated, that account doesn't exist
         if (!rows.length) {
-            res.status(404).send('Could not find a user with that email')
+            return res.status(404).send('Could not find a user with that email')
         } else {
+
             // if code was set, send reset email
             const resetResponse = await emailService.sendResetCode(rows[0].email, code);
 
             // Sendgrid responds with 202 if email was sent
             if (resetResponse[0].statusCode === 202) {
-                res.status(202).send('Reset code sent')
+                return res.status(202).send('Reset code sent')
             } else {
-                logger.error(resetResponse);
-                res.status(500).send(ERROR_MESSAGES.unexpected)
+                logError('Error while attempting to send password reset email', resetResponse);
+                return res.status(500).send(ERROR_MESSAGES.unexpected)
             }
         }
     } catch (e) {
-        logger.error(e);
-        res.status(500).send(ERROR_MESSAGES.unexpected)
+        logError('Error sending reset code', e)
+        return res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
 
@@ -200,7 +223,7 @@ router.post('/validate-reset', [...validateResetCode], async (req: Request, res:
             res.status(202).json({ resetToken } as ResetCodeVerificationResponse)
         }
     } catch (e) {
-        logger.error(e)
+        logError('Error validating reset code', e)
         res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
@@ -216,24 +239,20 @@ router.patch('/reset', [...validateReset], async (req: Request, res: Response) =
         // using a token here guarantees that the reset code submitted
         // earlier was verified by the server, and the user has permission
         // to set a new password.
-        const { email } = jwt.verify(resetToken, process.env.JWT_SECRET) as { email: string };
-        const result = await users.resetPassword(email, password);
+        const decoded = jwt.verify(resetToken, process.env.JWT_SECRET) as { email: string };
+        const updatedUser = await users.resetPassword(decoded.email, password);
 
-        // can only happen if user row is deleted, or email is changed
-        if (!result.rows.length) {
-            res.status(400).send('Could not reset password')
-        } else {
+        // send token if success
+        const { id, email, roles } = updatedUser;
+        const token = signUserPayload({ id, email, roles })
+        res.status(202).json({ token } as AuthenticationResponse);
 
-            // send token if success
-            const { id, email, roles } = result.rows[0];
-            const token = signUserPayload({ id, email, roles })
-            res.status(202).json({ token } as AuthenticationResponse);
-        }
     } catch (e) {
 
         if (e instanceof JsonWebTokenError) {
             res.status(401).send('Unauthorized')
         } else {
+            logError('Error resetting password', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
 
@@ -247,7 +266,8 @@ router.patch('/reset', [...validateReset], async (req: Request, res: Response) =
  */
 router.post('/guest', [...emailOnly], async (req: Request, res: Response) => {
     try {
-        const { rows } = await users.createGuest(req.body.email);
+        const domain = getDomain(req);
+        const { rows } = await users.createGuest(req.body.email, domain);
         const { id, email, roles } = rows[0]
         const token = signGuestPayload({ id, email, roles }) // token only valid for 1 day
 
@@ -257,7 +277,7 @@ router.post('/guest', [...emailOnly], async (req: Request, res: Response) => {
         if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
             res.status(422).send("A user already exists with that email")
         } else {
-            logger.error(e)
+            logError('Error registering guest', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }
@@ -282,7 +302,7 @@ router.post('/free-credit-signup', [...emailOnly], async (req: Request, res: Res
         if (e.message === "duplicate key value violates unique constraint \"free_credit_signups_email_key\"") {
             res.status(422).send("email has already received free credits")
         } else {
-            logger.error(e)
+            logError('Error in free credit signup', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
         }
     }

@@ -20,7 +20,7 @@ describe('AppRatings', () => {
 
     beforeEach(async () => {
         await cleanDb(pool);
-        const { rows } = await users.register('email@email.com', 'password123')
+        const { rows } = await users.register('email@email.com', 'password123', 'www.test.com')
         userId = rows[0].id;
         const { question_ids } = await setupQuestion(pool);
         questionId = question_ids[0];

@@ -15,7 +15,7 @@ const resetSlice = createSlice({
     name: 'passwordReset',
     initialState,
     reducers: {
-        clear: () => {
+        clearReset: () => {
             return initialState
         },
         setEmail: (state, action) => {
@@ -27,7 +27,7 @@ const resetSlice = createSlice({
     }
 })
 
-export const { setEmail, setToken, clear } = resetSlice.actions;
+export const { setEmail, setToken, clearReset } = resetSlice.actions;
 
 export const selectResetEmail = (state: RootState) => state.resetPassword.email
 export const selectResetToken = (state: RootState) => state.resetPassword.token

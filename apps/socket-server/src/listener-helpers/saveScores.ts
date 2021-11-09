@@ -81,8 +81,54 @@ const saveScores = async (questionId: number, gameId: number) => {
         score.rankDifference = oldRank[1] ? oldRank[1] - rank : 0;
     }
 
-    // save latest scoreboard in redis
-    await pubClient.set(`games:${gameId}:latestResults`, stringifiedMap);
+    // save latest scoreboard in redis, and get the global true % so it can be compared
+    const [, bucketList, groupVworld, questionStr] = await pubClient
+        .pipeline()
+        .set(`games:${gameId}:latestResults`, stringifiedMap, 'EX', ONE_DAY)
+        .hget(`games:${gameId}:bucketList`, 'difference')
+        .hget(`games:${gameId}:groupVworld`, 'difference')
+        .get(`games:${gameId}:currentQuestion`)
+        .exec()
+
+    const question = JSON.parse(questionStr[1]); // current question
+    const currentQuestionDifference = question.globalTrue - groupTrue;
+
+    logger.debug({
+        message: 'Fetching differences for fun facts',
+        question,
+        groupVworld: groupVworld[1],
+        bucketList: bucketList[1],
+        groupTrue,
+        currentQuestionDifference
+    })
+
+    // if there is a bucket list, calculate difference and change bucket list if appropriate
+    if (!bucketList[1] || Number(bucketList[1]) > Number(currentQuestionDifference)) {
+
+        await pubClient
+            .pipeline()
+            .hset(
+                `games:${gameId}:bucketList`,
+                "difference", `${currentQuestionDifference}`,
+                "textForGuess", question.textForGuess,
+                "globalTrue", question.globalTrue,
+                "groupTrue", groupTrue)
+            .expire(`games:${gameId}:bucketList`, ONE_DAY)
+            .exec()
+    }
+
+    if (!groupVworld[1] || Number(groupVworld[1]) < currentQuestionDifference) {
+        await pubClient
+            .pipeline()
+            .hset(
+                `games:${gameId}:groupVworld`,
+                "difference", `${currentQuestionDifference}`,
+                "textForGuess", question.textForGuess,
+                "globalTrue", question.globalTrue,
+                "groupTrue", groupTrue)
+            .expire(`games:${gameId}:groupVworld`, ONE_DAY)
+            .exec()
+    }
 
     return {
         scores: scoreboard,
@@ -122,10 +168,14 @@ async function updatePlayersThatHaveAnswered(
         return pubClient
             .pipeline()
             .hset(`gameQuestions:${questionId}:pointsByPlayer`, player.player_name, score) // for points earned
+            .expire(`gameQuestions:${questionId}:pointsByPlayer`, ONE_DAY)
             .zincrby(`games:${gameId}:rankedlist`, score, player.player_name)
+            .expire(`games:${gameId}:rankedlist`, ONE_DAY)
             .exec();
 
     })
+
+    await countSimilar(gameId, questionId);
 
     return await Promise.all(haveAnsweredPromises);
 }
@@ -143,11 +193,183 @@ async function updateHaventAnswered(players: PlayerRef[], gameId: number, questi
         await pubClient
             .pipeline()
             .hset(`gameQuestions:${questionId}:pointsByPlayer`, player.player_name, 0)
+            .expire(`gameQuestions:${questionId}:pointsByPlayer`, ONE_DAY)
             .zincrby(`games:${gameId}:rankedlist`, 0, player.player_name)
+            .expire(`games:${gameId}:rankedlist`, ONE_DAY)
             .exec();
 
     })
     return await Promise.all(haveNotAnsweredPromises);
+}
+
+/**
+ * Each player has a similarity counter for each other player in the game.
+ *
+ * e.g. player1Counter = {
+ *      player2: 3,
+ *      player3: 2,
+ * }
+ *
+ * The keys in the hash are the player names, the values are the number of questions
+ * where those other players gave the same answer.
+ *
+ * Each game also has a key that stores the maximum similarity among its players.
+ *
+ * This function updates the counter for each player, as well as the maximum
+ * for the game if apprppriate.
+ *
+ * @returns an array of promises for the updates.
+ */
+async function countSimilar(gameId: number, questionId: number) {
+    const mostSimilar = await pubClient.hgetall(`games:${gameId}:mostSimilar`)
+
+    // increment counter for those that answered true
+    const answeredTrue = await pubClient.smembers(`gameQuestions:${questionId}:true`);
+
+    const truePromises = answeredTrue.map(name => {
+
+        const inner = answeredTrue.map(async innerName => {
+            if (innerName !== name) {
+                const [r] = await pubClient
+                    .pipeline()
+                    .zincrby(`games:${gameId}:similaritySets:${name}`, 1, innerName)
+                    .expire(`games:${gameId}:similaritySets:${name}`, ONE_DAY)
+                    .exec()
+
+                const incrResult = r[1];
+
+
+                logger.debug({
+                    message: '[Save Scores] Incrementing similarity for players that answered true',
+                    mostSimilar,
+                    incrResult
+                })
+
+                if (incrResult && mostSimilar && mostSimilar.numSameAnswer) {
+
+                    if (mostSimilar.numSameAnswer && Number(incrResult) > Number(mostSimilar.numSameAnswer)) {
+
+                        return pubClient
+                            .pipeline()
+                            .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                            .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                            .exec()
+                    }
+
+                } else if (incrResult) {
+                    return pubClient
+                        .pipeline()
+                        .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                        .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                        .exec()
+                }
+            }
+        })
+        return Promise.all(inner)
+
+    })
+
+    // increment counter for those that answered false
+    const answeredFalse = await pubClient.smembers(`gameQuestions:${questionId}:false`);
+
+    const falsePromises = answeredFalse.map(name => {
+
+        const inner = answeredFalse.map(async innerName => {
+            if (innerName !== name) {
+
+                const [r] = await pubClient
+                    .pipeline()
+                    .zincrby(`games:${gameId}:similaritySets:${name}`, 1, innerName)
+                    .expire(`games:${gameId}:similaritySets:${name}`, ONE_DAY)
+                    .exec()
+
+                const incrResult = r[1];
+
+
+                logger.debug({
+                    message: '[Save Scores] Incrementing similarity for players that answered false',
+                    mostSimilar,
+                    incrResult
+                })
+
+                if (incrResult && mostSimilar && mostSimilar.numSameAnswer) {
+
+                    if (mostSimilar.numSameAnswer && Number(incrResult) > Number(mostSimilar.numSameAnswer)) {
+                        return pubClient
+                            .pipeline()
+                            .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                            .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                            .exec()
+                    }
+
+                } else if (incrResult) {
+                    return pubClient
+                        .pipeline()
+                        .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                        .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                        .exec()
+                }
+            }
+        })
+
+        return Promise.all(inner)
+    })
+
+    // increment counter for those that passed
+    const passed = await pubClient.smembers(`gameQuestions:${questionId}:pass`);
+
+    const passedPromises = passed.map(name => {
+
+        const inner = passed.map(async innerName => {
+            if (innerName !== name) {
+                const [r] = await pubClient
+                    .pipeline()
+                    .zincrby(`games:${gameId}:similaritySets:${name}`, 1, innerName)
+                    .expire(`games:${gameId}:similaritySets:${name}`, ONE_DAY)
+                    .exec()
+
+                const incrResult = r[1];
+
+                logger.debug({
+                    message: '[Save Scores] Incrementing similarity for players that passed',
+                    mostSimilar,
+                    incrResult
+                })
+
+                if (incrResult && mostSimilar && mostSimilar.numSameAnswer) {
+
+                    if (mostSimilar.numSameAnswer && Number(incrResult) > Number(mostSimilar.numSameAnswer)) {
+                        return pubClient
+                            .pipeline()
+                            .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                            .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                            .exec()
+                    }
+
+                } else if (incrResult) {
+                    return pubClient
+                        .pipeline()
+                        .hset(`games:${gameId}:mostSimilar`, 'numSameAnswer', incrResult, "players", `${name} & ${innerName}`)
+                        .expire(`games:${gameId}:mostSimilar`, ONE_DAY)
+                }
+            }
+        })
+
+        return Promise.all(inner)
+    })
+
+    logger.debug({
+        message: '[Save Scores] calculating similarity',
+        answeredTrue,
+        answeredFalse,
+        passed
+    })
+
+    await Promise.all(truePromises);
+    await Promise.all(falsePromises);
+    await Promise.all(passedPromises);
+
+
 }
 
 export default saveScores;

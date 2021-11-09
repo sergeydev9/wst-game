@@ -23,10 +23,8 @@ describe('Games', () => {
         // save a deck, some questions, and a user.
         deckId = await setupOneDeck(pool);
         await setupQuestion(pool, 9, deckId)
-        const userResult = await users.register('email@test.com', 'password123')
+        const userResult = await users.register('email@test.com', 'password123', 'www.test.com')
         userId = userResult.rows[0].id;
-
-
     })
 
     afterAll(() => {
@@ -36,7 +34,7 @@ describe('Games', () => {
     describe('create', () => {
 
         it('should insert a new game row', async () => {
-            const { rows } = await games.create(userId, deckId);
+            const { rows } = await games.create(userId, deckId, 'www.test.com');
 
             expect(rows.length).toEqual(1);
             expect(rows[0].id).toBeDefined()
@@ -44,7 +42,7 @@ describe('Games', () => {
         })
 
         it('should create 9 game_questions for the game', async () => {
-            const gameRes = await games.create(userId, deckId);
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
 
             const getQuesetions = {
                 text: 'SELECT * FROM game_questions WHERE game_questions.game_id = $1',
@@ -56,7 +54,7 @@ describe('Games', () => {
         })
 
         it('should have 9 in total_questions column', async () => {
-            const gameRes = await games.create(userId, deckId);
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
             const { rows } = await games.getById(gameRes.rows[0].id)
             expect(rows[0].total_questions).toEqual(9)
         })
@@ -65,7 +63,7 @@ describe('Games', () => {
     describe('getByAccessCode', () => {
 
         it('should return a game  object if game exists', async () => {
-            const gameRes = await games.create(userId, deckId);
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
 
             const { rows } = await games.getByAccessCode(gameRes.rows[0].access_code)
             expect(rows.length).toEqual(1)
@@ -80,7 +78,7 @@ describe('Games', () => {
     describe('setEndDate', () => {
 
         it('should set the end date of a game', async () => {
-            const gameRes = await games.create(userId, deckId);
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
             const date = new Date();
             const { rows } = await games.setEndDate(gameRes.rows[0].id, date);
 
@@ -92,7 +90,7 @@ describe('Games', () => {
     describe('gameStatusByAccessCode', () => {
 
         it("should return status'lobby ", async () => {
-            const gameRes = await games.create(userId, deckId);
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
 
             const { rows } = await games.gameStatusByAccessCode(gameRes.rows[0].access_code);
 
@@ -103,7 +101,7 @@ describe('Games', () => {
     describe('join', () => {
 
         it('should return complete game state with player id and player name, and the new host name correctly set', async () => {
-            const gameRes = await games.create(userId, deckId);
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
             const actual = await games.join(gameRes.rows[0].access_code, 'Test Name', userId)
 
             expect(actual.status).toEqual('lobby');
@@ -118,7 +116,7 @@ describe('Games', () => {
         })
 
         it('should throw if access code is wrong', async () => {
-            await games.create(userId, deckId);
+            await games.create(userId, deckId, 'www.test.com');
 
             try {
                 await games.join('wrongcode', 'Test Name', userId)
@@ -130,9 +128,9 @@ describe('Games', () => {
 
         it('should return complete game state with player id and player name, but no new host set if player not host', async () => {
 
-            const userResult = await users.register('email2@test.com', 'password1323')
+            const userResult = await users.register('email2@test.com', 'password1323', 'www.test.com')
             const secondUserId = userResult.rows[0].id;
-            const gameRes = await games.create(userId, deckId);
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
             const actual = await games.join(gameRes.rows[0].access_code, 'Test Name', secondUserId)
 
             expect(actual.status).toEqual('lobby');
@@ -154,7 +152,7 @@ describe('Games', () => {
 
         beforeEach(async () => {
             // create a game
-            const { rows } = await games.create(userId, deckId);
+            const { rows } = await games.create(userId, deckId, 'www.test.com');
             const game = rows[0];
             gameId = game.id;
 

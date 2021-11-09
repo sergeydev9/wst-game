@@ -3,6 +3,7 @@ import loadable from '@loadable/component'
 
 import { GuardedRoute, SocketProvider } from "../features";
 import Layout from "./Layout";
+import Faq from '../pages/faq/Faq';
 import Home from '../pages/home/Home';
 
 const ContactUs = loadable(() => import('../pages/contact-us/ContactUs'))
@@ -17,6 +18,9 @@ const NewPassword = loadable(() => import('../features/reset-password/NewPasswor
 const Invite = loadable(() => import('../pages/invite/Invite'));
 const PurchaseSuccess = loadable(() => import('../pages/purchase-success/PurchaseSuccess'));
 const Play = loadable(() => import('../pages/play/Play'));
+const PrivacyPolicy = loadable(() => import('../pages/privacy-policy/PrivacyPolicy'));
+const TermsAndConditions = loadable(() => import('../pages/terms-and-conditions/TermsAndConditions'));
+
 
 const App: React.FC = () => {
 
@@ -27,6 +31,9 @@ const App: React.FC = () => {
           <Switch>
             <Route exact path="/">
               <Home />
+            </Route>
+            <Route exact path="/faq">
+              <Faq />
             </Route>
             <Route exact path="/game/invite">
               <Invite />
@@ -63,6 +70,12 @@ const App: React.FC = () => {
             </Route>
             <Route exact path="/purchase-success">
               <PurchaseSuccess />
+            </Route>
+            <Route exact path="/privacy-policy">
+              <PrivacyPolicy />
+            </Route>
+            <Route exact path="/terms-and-conditions">
+              <TermsAndConditions />
             </Route>
             <Route path="*" >
               <Home />

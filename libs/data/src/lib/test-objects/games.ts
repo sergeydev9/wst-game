@@ -6,6 +6,7 @@ const games: Game[] = [
         host_name: 'test name 1',
         access_code: 'ABCDEA',
         status: 'in-progress',
+        domain: 'www.test.com',
         deck_id: 1,
         start_date: new Date(),
     },
@@ -16,6 +17,7 @@ const games: Game[] = [
         access_code: 'ABCDEB',
         status: 'in-progress',
         deck_id: 1,
+        domain: 'www.test.com',
         start_date: new Date(),
     },
     {
@@ -25,6 +27,8 @@ const games: Game[] = [
         access_code: 'ABCDEC',
         status: 'in-progress',
         deck_id: 1,
+        domain: 'www.test.com',
+
         start_date: new Date(),
     }
 ];

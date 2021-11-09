@@ -7,7 +7,7 @@ export const insertCypressUsers = (pool: Pool) => {
 
     cypressTestUsers.forEach(async user => {
         try {
-            await users.register(user.email, user.password, user.role)
+            await users.register(user.email, user.password, 'www.whosaidtrue.com')
             console.log('inserted cypress test user', user)
         } catch (e) {
             console.error(`error inserting test user`, user);

@@ -28,7 +28,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         sfw,
         status,
         description,
-        example_question,
+        sample_question,
         purchase_price,
         thumbnail_url
     FROM active_decks
@@ -48,7 +48,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         sfw,
         status,
         description,
-        example_question,
+        sample_question,
         purchase_price,
         thumbnail_url
     FROM active_decks
@@ -86,7 +86,23 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
 
 
     // returns decks owned by a user
-    pgm.createFunction('user_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, purchase_price money, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
+    pgm.createFunction('user_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], {
+        returns: `
+    table (
+        id integer,
+        name varchar(200),
+        sort_order smallint,
+        clean boolean,
+        age_rating smallint,
+        movie_rating varchar(50),
+        sfw boolean,
+        status deck_status,
+        description text,
+        sample_question text,
+        purchase_price money,
+        thumbnail_url varchar(1000))
+        `, onNull: true, language: 'plpgsql', parallel: 'SAFE'
+    }, `
     BEGIN
         RETURN QUERY SELECT
             decks.id,
@@ -98,7 +114,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             decks.sfw,
             decks.status,
             decks.description,
-            decks.example_question,
+            decks.sample_question,
             decks.purchase_price,
             decks.thumbnail_url
         FROM active_decks AS decks
@@ -110,7 +126,23 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     /**
      * Return decks NOT owned by the user.
      */
-    pgm.createFunction('user_not_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], { returns: 'table (id integer, name varchar(200), sort_order smallint, clean boolean, age_rating smallint, movie_rating varchar(50), sfw boolean, status deck_status, description text, example_question text, purchase_price money, thumbnail_url varchar(1000))', onNull: true, language: 'plpgsql', parallel: 'SAFE' }, `
+    pgm.createFunction('user_not_owned_decks', [{ type: 'integer', mode: 'IN', name: 'input_id' }], {
+        returns: `
+        table (
+            id integer,
+            name varchar(200),
+            sort_order smallint,
+            clean boolean,
+            age_rating smallint,
+            movie_rating varchar(50),
+            sfw boolean,
+            status deck_status,
+            description text,
+            sample_question text,
+            purchase_price money,
+            thumbnail_url varchar(1000))
+            `, onNull: true, language: 'plpgsql', parallel: 'SAFE'
+    }, `
     BEGIN
         RETURN QUERY SELECT *
         FROM not_free_decks AS decks
@@ -144,45 +176,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         END IF;
     END
     `)
-
-    /**
-     *
-     * Creates a new game row, as well as a new game_question row
-     * for each question with status active that belongs to the specified
-     * deck.
-     *
-     * On first run will create a counter sequence if one doesn't exist already.
-     *
-     * Resets sequence to 1 after function is done.
-     *
-     * Sequence will be dropped when the database session that created it ends.
-     * @param d_id integer deck id
-     * @param h_id integer user id of host
-     *
-     * @returns {id: number, access_code: string}
-     */
-    pgm.createFunction('create_game', [{ mode: 'IN', type: 'integer', name: 'h_id' }, { mode: 'IN', type: 'integer', name: 'd_id' }], { returns: 'table(id integer, access_code varchar(10))', language: 'plpgsql' }, `
-    BEGIN
-        RETURN QUERY
-        WITH
-        d_questions AS ( --get all active questions for the deck
-            SELECT * FROM active_questions WHERE deck_id = d_id ORDER BY random()
-        ),
-        new_game AS ( --create new game
-            INSERT INTO games (access_code, status, deck_id, host_id)
-            VALUES (encode(gen_random_bytes(3), 'hex'), 'lobby', d_id, h_id)
-            RETURNING games.id, games.access_code
-        ), ins AS (
-            INSERT INTO game_questions (game_id, question_id)
-            SELECT new_game.id, d_questions.id
-            FROM d_questions
-            CROSS JOIN new_game
-        )
-        SELECT * from new_game;
-    END;
-    `)
-
-
 }
 // export async function down(pgm: MigrationBuilder): Promise<void> {
 // }

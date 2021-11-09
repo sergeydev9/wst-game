@@ -34,3 +34,9 @@ Any component that needs to send messages to the game server can access the sock
 ### Events
 
 The following events are emitted by players during gameplay:
+
+## Tests
+
+To launch cypress tests, run `"test:csr-frontend"`.
+
+WARNING: cypress won't be able to start if webpack is currently servint the app at localhost:4200.

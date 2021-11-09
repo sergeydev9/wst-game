@@ -2,7 +2,6 @@ import tw from "tailwind-styled-components";
 import GameContentCard from "../GameContentCard";
 import GameCardFooter from "../GameCardFooter";
 import Box from '../../containers/box/Box';
-import { UserRating } from "@whosaidtrue/app-interfaces";
 import PercentagePie from "./PercentagePie";
 
 export interface QuestionAnswersProps {

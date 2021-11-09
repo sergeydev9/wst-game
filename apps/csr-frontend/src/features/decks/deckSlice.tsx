@@ -1,27 +1,42 @@
-import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createSelector, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { DeckSelectionResponse } from "@whosaidtrue/api-interfaces";
-import { Deck, MovieRating } from "@whosaidtrue/app-interfaces";
+import { Deck } from "@whosaidtrue/app-interfaces";
 import { api } from '../../api';
 import { showError } from "../modal/modalSlice";
 
+export type DeckSet = 'all' | 'sfw' | 'PG' | 'PG13' | 'R' | 'NC17';
 
 export interface DeckState {
-    sfwOnly: boolean;
-    showAll: boolean;
-    movieRatingFilters: MovieRating[];
+    currentSetName: DeckSet;
     owned: Deck[];
     notOwned: Deck[];
+    ownedByRating: Record<DeckSet, Deck[]>;
+    notOwnedByRating: Record<DeckSet, Deck[]>;
     selectedDeck: Deck;
     isSelectedOwned: boolean;
 }
 
 export const initialState: DeckState = {
-    sfwOnly: false,
-    showAll: true,
-    movieRatingFilters: [],
+    currentSetName: 'all',
     owned: [],
     notOwned: [],
+    ownedByRating: {
+        "all": [],
+        "PG": [],
+        "NC17": [],
+        "PG13": [],
+        "R": [],
+        "sfw": []
+    },
+    notOwnedByRating: {
+        "all": [],
+        "PG": [],
+        "NC17": [],
+        "PG13": [],
+        "R": [],
+        "sfw": []
+    },
     selectedDeck: {
         id: 0,
         name: '',
@@ -33,7 +48,8 @@ export const initialState: DeckState = {
         movie_rating: 'PG',
         sfw: true,
         thumbnail_url: '',
-        purchase_price: ''
+        purchase_price: '',
+        sample_question: ''
     },
     isSelectedOwned: false
 }
@@ -41,8 +57,11 @@ export const initialState: DeckState = {
 export const getDeckSelection = createAsyncThunk(
     'decks/getSelection',
     async (_, { dispatch, rejectWithValue }) => {
-        return api.get<DeckSelectionResponse>('/decks/selection').then(res => {
-            return res.data
+
+        const url = process.env.NX_IS_FOR_SCHOOLS === 'true' ? `/decks/selection?clean=true` : `/decks/selection?clean=false`
+
+        return api.get<DeckSelectionResponse>(url).then(res => {
+            return res.data;
         }).catch(e => {
             console.error(e)
             dispatch(showError("Oops, something went wrong. Please try again later."))
@@ -59,34 +78,9 @@ export const deckSlice = createSlice({
         clearDecks: () => {
             return initialState;
         },
-        setSfw: (state, action) => {
-            state.sfwOnly = action.payload
 
-            if (action.payload) {
-                state.showAll = false;
-            }
-
-            if (!action.payload && !state.movieRatingFilters.length) {
-                state.showAll = true;
-            }
-        },
-        setShowAll: (state) => {
-            state.showAll = true;
-            state.sfwOnly = false;
-            state.movieRatingFilters = [];
-
-        },
-        removeRating: (state, action) => {
-            const filters = state.movieRatingFilters.filter(rating => rating !== action.payload);
-
-            if (!filters.length && !state.sfwOnly) {
-                state.showAll = true;
-            }
-            state.movieRatingFilters = filters;
-        },
-        addRating: (state, action) => {
-            state.showAll = false;
-            state.movieRatingFilters = [...state.movieRatingFilters, action.payload]
+        setCurrentSet: (state, action: PayloadAction<DeckSet>) => {
+            state.currentSetName = action.payload;
         },
         setSelectedDeck: (state, action) => {
             state.selectedDeck = action.payload.deck
@@ -103,8 +97,80 @@ export const deckSlice = createSlice({
             const { owned, notOwned } = action.payload;
             state.owned = owned;
             state.notOwned = notOwned;
-        })
 
+            const ownedSfw: Deck[] = [];
+            const ownedR: Deck[] = [];
+            const ownedPG: Deck[] = [];
+            const ownedPG13: Deck[] = [];
+            const ownedNC17: Deck[] = [];
+
+            owned.forEach(deck => {
+                if (deck.sfw) {
+                    ownedSfw.push(deck);
+                } else {
+                    switch (deck.movie_rating) {
+                        case 'NC17':
+                            ownedNC17.push(deck);
+                            break;
+                        case 'R':
+                            ownedR.push(deck);
+                            break;
+                        case 'PG13':
+                            ownedPG13.push(deck);
+                            break;
+                        case 'PG':
+                            ownedPG.push(deck);
+                            break;
+                    }
+                }
+
+            })
+
+
+
+            const notOwnedSfw: Deck[] = [];
+            const notOwnedR: Deck[] = [];
+            const notOwnedPG: Deck[] = [];
+            const notOwnedPG13: Deck[] = [];
+            const notOwnedNC17: Deck[] = [];
+
+            notOwned.forEach(deck => {
+                if (deck.sfw) {
+                    notOwnedSfw.push(deck);
+                } else {
+                    switch (deck.movie_rating) {
+                        case 'NC17':
+                            notOwnedNC17.push(deck);
+                            break;
+                        case 'R':
+                            notOwnedR.push(deck);
+                            break;
+                        case 'PG13':
+                            notOwnedPG13.push(deck);
+                            break;
+                        case 'PG':
+                            notOwnedPG.push(deck);
+                            break;
+                    }
+                }
+
+            })
+
+            state.ownedByRating.all = owned;
+            state.ownedByRating.NC17 = ownedNC17;
+            state.ownedByRating.PG = ownedPG;
+            state.ownedByRating.PG13 = ownedPG13;
+            state.ownedByRating.R = ownedR;
+            state.ownedByRating.sfw = ownedSfw;
+
+            state.notOwnedByRating.all = notOwned;
+            state.notOwnedByRating.NC17 = notOwnedNC17;
+            state.notOwnedByRating.PG = notOwnedPG;
+            state.notOwnedByRating.PG13 = notOwnedPG13;
+            state.notOwnedByRating.R = notOwnedR;
+            state.notOwnedByRating.sfw = notOwnedSfw;
+
+        })
 
     }
 })
@@ -112,56 +178,29 @@ export const deckSlice = createSlice({
 // actions
 export const {
     clearDecks,
-    removeRating,
-    addRating,
-    setSfw,
     setSelectedDeck,
     clearSelectedDeck,
-    setShowAll
+    setCurrentSet
 } = deckSlice.actions;
 
 // selectors
-export const selectShowAll = (state: RootState) => state.decks.showAll;
-export const selectMovieRatingFilters = (state: RootState) => state.decks.movieRatingFilters;
-export const selectSfwOnly = (state: RootState) => state.decks.sfwOnly;
 export const selectOwned = (state: RootState) => state.decks.owned;
 export const selectNotOwned = (state: RootState) => state.decks.notOwned;
 export const getSelectedDeck = (state: RootState) => state.decks.selectedDeck;
 export const selectIsOwned = (state: RootState) => state.decks.isSelectedOwned;
-export const selectShouldApplyFilters = (state: RootState) => state.decks.movieRatingFilters.length > 0;
+export const selectCurrentSetName = (state: RootState) => state.decks.currentSetName;
+export const selectOwnedByRating = (state: RootState) => state.decks.ownedByRating;
+export const selectNotOwnedByRating = (state: RootState) => state.decks.notOwnedByRating;
 
-
-export const sfwOwned = createSelector(selectOwned, (decks) => {
-    return decks.filter(deck => deck.sfw === true);
+export const selectCurrentOwned = createSelector([selectCurrentSetName, selectOwnedByRating], (name, decks) => {
+    return decks[name];
 })
 
-export const sfwNotOwned = createSelector(selectNotOwned, (decks) => {
-    return decks.filter(deck => deck.sfw === false);
+export const selectCurrentNotOwned = createSelector([selectCurrentSetName, selectNotOwnedByRating], (name, decks) => {
+    return decks[name];
 })
 
-export const movieFilteredNotOwned = createSelector(selectNotOwned, selectMovieRatingFilters, (decks, filters) => {
-    return decks.filter(deck => {
-        return filters.some(rating => rating === deck.movie_rating)
-    })
-});
 
-export const movieFilteredOwned = createSelector(selectOwned, selectMovieRatingFilters, (decks, filters) => {
-    return decks.filter(deck => {
-        return filters.some(rating => rating === deck.movie_rating)
-    })
-});
-
-export const movieFilteredSFWOwned = createSelector(sfwOwned, selectMovieRatingFilters, (decks, filters) => {
-    return decks.filter(deck => {
-        return filters.some(rating => rating === deck.movie_rating)
-    })
-});
-
-export const movieFilteredSFWNotOwned = createSelector(sfwNotOwned, selectMovieRatingFilters, (decks, filters) => {
-    return decks.filter(deck => {
-        return filters.some(rating => rating === deck.movie_rating)
-    })
-});
 
 // default
 export default deckSlice.reducer;

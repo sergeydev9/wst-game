@@ -28,10 +28,10 @@ describe('Decks', () => {
     })
 
     it("should return an empty array if user doesn't own any decks", async () => {
-        const { rows } = await users.register('test_decks@test.com', 'password');
+        const { rows } = await users.register('test_decks@test.com', 'password', 'www.test.com');
         const userId = rows[0].id;
 
-        const actual = await decks.getUserDecks(userId);
+        const actual = await decks.getUserDecks(userId, false);
         expect(actual.rows.length).toEqual(0)
     })
 
@@ -62,7 +62,7 @@ describe('Decks', () => {
                 status,
                 description,
                 purchase_price,
-                example_question,
+                sample_question,
                 thumbnail_url
             } = rows[0];
 
@@ -77,7 +77,7 @@ describe('Decks', () => {
             expect(status).toBeDefined()
             expect(description).toBeDefined()
             expect(purchase_price).toBeDefined()
-            expect(example_question).toBeDefined()
+            expect(sample_question).toBeDefined()
             expect(thumbnail_url).toBeDefined()
         })
     })
@@ -150,11 +150,6 @@ describe('Decks', () => {
             await Promise.all(results);
         });
 
-        it('should return only the deck with age rating below 16', async () => {
-            const { rows } = await decks.lessThanAgeRating(13);
-            expect(rows.length).toEqual(1);
-        })
-
         it('should return only the deck with PG-13 rating', async () => {
             const { rows } = await decks.getByMovieRating("PG13");
             expect(rows.length).toEqual(1)
@@ -175,12 +170,12 @@ describe('Decks', () => {
         })
 
         it('should retrieve the 3 decks owned by the user', async () => {
-            const { rows } = await decks.getUserDecks(userId);
+            const { rows } = await decks.getUserDecks(userId, false);
             expect(rows.length).toEqual(3)
         })
 
         it('should retrieve the 2 decks NOT owned by the user', async () => {
-            const { rows } = await decks.getNotOwned(userId);
+            const { rows } = await decks.getNotOwned(userId, false);
             expect(rows.length).toEqual(2)
         })
 
@@ -191,7 +186,7 @@ describe('Decks', () => {
                 await decks.insertOne({ ...deck })
             }
 
-            const { rows } = await decks.getUserDecks(userId);
+            const { rows } = await decks.getUserDecks(userId, false);
             expect(rows.length).toEqual(4)
         })
     })
@@ -204,11 +199,10 @@ describe('Decks', () => {
 
         it('should return the expected number of decks', async () => {
             await setupDecks(pool, 50)
-            const { rows } = await decks.guestDeckSelection({ pageNumber: 0, pageSize: 30 })
+            const { rows } = await decks.guestDeckSelection(0, 30, false)
             expect(rows.length).toEqual(30)
         })
 
-        // TODO add test for age filter
     })
 
     describe('userDeckSelection', () => {
@@ -223,7 +217,7 @@ describe('Decks', () => {
             // 10 decks have age rating 21, the rest 13
             const setup = await setupUserDecks(pool, 50, 25);
             const userId = setup.userId;
-            const { rows } = await decks.userDeckSelection({ userId, pageNumber: 0, pageSize: 30 });
+            const { rows } = await decks.userDeckSelection(userId, 0, 30, false);
             expect(rows.length).toEqual(25)
 
         })
@@ -231,8 +225,8 @@ describe('Decks', () => {
         it('should return different set of decks when page number is increased', async () => {
             const setup = await setupUserDecks(pool, 90, 10);
             const userId = setup.userId;
-            const firstResult = await decks.userDeckSelection({ userId: userId, pageNumber: 0, pageSize: 30 });
-            const secondResult = await decks.userDeckSelection({ userId: userId, pageNumber: 1, pageSize: 30 });
+            const firstResult = await decks.userDeckSelection(userId, 0, 30, false);
+            const secondResult = await decks.userDeckSelection(userId, 1, 30, false);
 
             // make array of ids from first query
             const firstIds = []
@@ -251,12 +245,8 @@ describe('Decks', () => {
             const userId = setup.userId;
 
             // offset = 120, only 40 valid rows
-            const { rows } = await decks.userDeckSelection({ userId, pageNumber: 4, pageSize: 30 });
+            const { rows } = await decks.userDeckSelection(userId, 4, 30, false);
             expect(rows.length).toEqual(0)
         })
-
-
-        // TODO add test for age filter
-
     })
 })

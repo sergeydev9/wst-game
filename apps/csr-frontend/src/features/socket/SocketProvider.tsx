@@ -17,7 +17,8 @@ import {
     showPlayerLeft,
     showPlayerRemoved,
     setFullModal,
-    setReconnecting
+    showLoaderMessage,
+    clearLoaderMessage
 } from "../modal/modalSlice";
 import {
     addPlayer,
@@ -31,7 +32,6 @@ import {
     setPlayers,
     setPlayerStatus,
     endGame,
-    setShouldBlock,
     removeFromGame
 } from "../game/gameSlice";
 import {
@@ -46,6 +46,7 @@ import {
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
+import { clearFunFacts, setFunFacts, setMostSimilar, setFetchSimilarStatus } from '../fun-facts/funFactsSlice';
 
 /**
  * Provider component for socket context.
@@ -57,7 +58,7 @@ import { clearHost } from "../host/hostSlice";
  */
 export const SocketProvider: React.FC = ({ children }) => {
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [shouldBlock, setShouldBlock] = useState(true)
+    const [shouldBlock, setShouldBlock] = useState(false)
 
     const location = useLocation();
     const history = useHistory();
@@ -74,7 +75,7 @@ export const SocketProvider: React.FC = ({ children }) => {
 
     useEffect(() => {
         const clear = () => {
-            dispatch(setReconnecting(false))
+            dispatch(clearLoaderMessage());
             setShouldBlock(false)
             dispatch(clearGame());
             dispatch(clearHost());
@@ -102,12 +103,14 @@ export const SocketProvider: React.FC = ({ children }) => {
             * CONNECTION LISTENERS
             */
             connection.on("connect", () => {
-                dispatch(setReconnecting(false))
+                dispatch(clearLoaderMessage());
                 console.log('Game server connection successful!'); // connection success
-                connection.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName })
+                connection.emit(types.PLAYER_JOINED_GAME, { id: playerId, player_name: playerName });
+                setShouldBlock(true);
             })
 
             connection.on("connect_error", () => {
+                setShouldBlock(false);
                 dispatch(showError('Could not connect to game server'))
                 clear();
                 history.push('/')
@@ -119,19 +122,16 @@ export const SocketProvider: React.FC = ({ children }) => {
             // disconnected from game server.
             // see https://socket.io/docs/v3/client-socket-instance/ for list of reasons why this could happen
             connection.on("disconnect", reason => {
-                console.error('Disconnected from game server')
-                if (reason !== 'io client disconnect') {
-                    setShouldBlock(false)
-                    dispatch(showError('Disconnected from game server'))
-                    console.error('Disconnected from game server')
-                }
+                setShouldBlock(false);
+
+                console.log('Disconnected from game server');
 
                 if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
-                    setShouldBlock(false);
-                    setReconnecting(true)
+                    dispatch(showLoaderMessage('Connection to server lost, reconnecting...'))
+                    console.error('Disconnected from game server')
+
                 } else {
                     clear();
-                    history.push('/') // nav home
                     connection.close() // close  and delete the socket
                     setSocket(null);
                 }
@@ -140,7 +140,6 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             connection.io.on("reconnect_attempt", () => {
                 setShouldBlock(false)
-                dispatch(setReconnecting(true))
             })
 
             connection.io.on("reconnect_failed", () => {
@@ -149,13 +148,27 @@ export const SocketProvider: React.FC = ({ children }) => {
                 history.push('/') // nav home
                 connection.close() // close  and delete the socket
                 setSocket(null);
-
             })
 
             connection.io.on('reconnect', () => {
-                dispatch(showInfo('Reconnected to game server. Welcome back!')); // reconnect success
+                dispatch(showInfo('Reconnected. Welcome back!')); // reconnect success
                 setShouldBlock(true);
             })
+
+            /**
+             * HELPERS
+             */
+            const fetchMostSimilar = () => {
+                dispatch(setFetchSimilarStatus('loading'))
+
+                connection.emit(types.FETCH_MOST_SIMILAR, {}, (cb: string | payloads.FetchMostSimilar) => {
+                    if (cb === 'error' || typeof cb === 'string') {
+                        dispatch(setFetchSimilarStatus('error'))
+                    } else {
+                        dispatch(setMostSimilar(cb))
+                    }
+                })
+            }
 
             /**
              * GAME EVENT LISTENERS
@@ -236,6 +249,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             // question is done, store results
             connection.on(types.QUESTION_END, (message: payloads.QuestionEnd) => {
                 dispatch(questionEnd(message))
+                fetchMostSimilar();
             })
 
 
@@ -254,6 +268,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             connection.on(types.GAME_END_NO_ANNOUNCE, (message: payloads.QuestionEnd) => {
                 dispatch(setGameStatus('postGame'))
                 dispatch(questionEnd(message))
+                fetchMostSimilar();
             })
 
             // move from answer to scores at the end of a question
@@ -263,6 +278,7 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             connection.on(types.GAME_END, (message: payloads.QuestionEnd) => {
                 dispatch(questionEnd(message))
+                fetchMostSimilar();
                 dispatch(endGame())
                 dispatch(setFullModal('announceWinner'))
             })
@@ -279,7 +295,9 @@ export const SocketProvider: React.FC = ({ children }) => {
             })
 
             connection.on(types.HOST_LEFT, () => {
-                dispatch(showError('The host has left the game'));
+                if (gameStatus !== 'postGame') {
+                    dispatch(showError('The host has left the game'));
+                }
             })
 
             //if host left before first question was over
@@ -292,6 +310,10 @@ export const SocketProvider: React.FC = ({ children }) => {
                 connection.close() // close  and delete the socket
                 setSocket(null);
                 history.push('/')
+            })
+
+            connection.on(types.FUN_FACTS, (msg: payloads.FunFacts) => {
+                dispatch(setFunFacts(msg))
             })
 
 

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createSelector, createAsyncThunk } from "@r
 import { CheckRatingResponse, payloads } from "@whosaidtrue/api-interfaces";
 import { GameQuestionStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
-import { selectPlayerId, selectPlayerName, selectGameStatus } from "../game/gameSlice";
+import { selectPlayerId, selectPlayerName, selectGameStatus, selectTotalQuestions } from "../game/gameSlice";
 import { api } from '../../api';
 
 export interface CurrentQuestionState {
@@ -191,7 +191,7 @@ export const selectText = (state: RootState) => state.question.text;
 export const selectHasAnswered = (state: RootState) => state.question.hasAnswered;
 export const selectHasGuessed = (state: RootState) => state.question.hasGuessed;
 export const selectRatingSubmitted = (state: RootState) => state.question.ratingSubmitted;
-export const selectHaveNotAnswered = (state: RootState) => state.question.haveNotAnswered
+export const selectHaveNotAnswered = (state: RootState) => state.question.haveNotAnswered;
 export const selectQuestionStatus = (state: RootState) => state.question.status;
 export const selectGamequestionId = (state: RootState) => state.question.gameQuestionId;
 export const selectGuessValue = (state: RootState) => state.question.guessValue;
@@ -218,7 +218,7 @@ export const selectWinner = createSelector([selectScoreboard], (scores) => {
 
     winners.forEach((winner, index) => {
         if (index > 0) {
-            result += `& ${winner.player_name}`
+            result += ` & ${winner.player_name}`
         } else {
             result += winner.player_name;
         }
@@ -267,5 +267,9 @@ export const currentScreen = createSelector(
 
         return gameStatus === 'lobby' ? 'lobby' : 'scoreResults'
     })
+
+export const selectIsLastQuestion = createSelector([selectTotalQuestions, selectSequenceIndex], (total, current) => {
+    return total === current
+})
 
 export default currentQuestionSlice.reducer;

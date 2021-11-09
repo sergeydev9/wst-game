@@ -6,20 +6,20 @@ import { Headline } from "@whosaidtrue/ui";
 import { setFullModal } from '../modal/modalSlice';
 
 const Login: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
-    const isModal = useAppSelector(selectFullModal) === 'login'
-    const history = useHistory()
-    const dispatch = useAppDispatch()
+    const isModal = useAppSelector(selectFullModal) === 'login';
+    const history = useHistory();
+    const dispatch = useAppDispatch();
 
     const close = () => {
-        dispatch(setFullModal(''))
+        dispatch(setFullModal(''));
     }
 
     // stay in current location if loging in from modal
     const successHandler = () => {
         if (!isModal) {
-            history.push('/')
+            history.push('/');
         } else {
-            dispatch(setFullModal(''))
+            dispatch(setFullModal(''));
         }
     }
 

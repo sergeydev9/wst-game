@@ -22,7 +22,11 @@ const submitAnswerPart1 = async (socket: Socket, msg: payloads.AnswerPart1) => {
     } else if (msg.answer === 'true') {
 
         // increment count for current question. Sets to 1 if no value
-        await pubClient.incr(Keys.totalTrue(msg.gameQuestionId))
+        await pubClient
+            .pipeline()
+            .incr(Keys.totalTrue(msg.gameQuestionId))
+            .expire(Keys.totalTrue(msg.gameQuestionId), ONE_DAY)
+            .exec()
     }
 
     // submit answer
@@ -35,6 +39,34 @@ const submitAnswerPart1 = async (socket: Socket, msg: payloads.AnswerPart1) => {
 
     // set answer id in redis for re-use in part 2
     await pubClient.set(idKey, rows[0].id, 'EX', ONE_DAY)
+
+    // each question has a set for each possible value. Add player to the set for the answer they submit
+    switch (msg.answer) {
+        case 'pass':
+            await pubClient
+                .pipeline()
+                .sadd(`gameQuestions:${msg.gameQuestionId}:pass`, socket.playerName)
+                .expire(`gameQuestions:${msg.gameQuestionId}:pass`, ONE_DAY)
+                .exec()
+            break;
+
+        case 'true':
+            await pubClient
+                .pipeline()
+                .sadd(`gameQuestions:${msg.gameQuestionId}:true`, socket.playerName)
+                .expire(`gameQuestions:${msg.gameQuestionId}:true`, ONE_DAY)
+                .exec()
+            break;
+
+        case 'false':
+            await pubClient
+                .pipeline()
+                .sadd(`gameQuestions:${msg.gameQuestionId}:false`, socket.playerName)
+                .expire(`gameQuestions:${msg.gameQuestionId}:false`, ONE_DAY)
+                .exec()
+            break;
+
+    }
 }
 
 export default submitAnswerPart1;

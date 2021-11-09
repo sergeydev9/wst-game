@@ -9,9 +9,12 @@ const Styled = tw.input<SecurityCodeDigitProps>`
     ${(p) => p.$hasError ? 'bg-red-subtle-fill border-red-base shadow-error' : 'bg-white-ish border-purple-base'}
     form-input
     border-1
-    rounded-3xl
-    h-40
-    w-28
+    rounded-2xl
+    sm:rounded-3xl
+    h-24
+    w-10
+    sm:h-40
+    sm:w-28
     text-title-1
     text-center
     cursor-pointer

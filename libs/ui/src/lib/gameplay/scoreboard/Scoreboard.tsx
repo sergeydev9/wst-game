@@ -4,8 +4,6 @@ import { ScoreboardEntry } from '@whosaidtrue/app-interfaces';
 import { RiArrowUpLine } from '@react-icons/all-files/ri/RiArrowUpLine';
 import { RiArrowDownLine } from '@react-icons/all-files/ri/RiArrowDownLine';
 
-
-
 export interface ScoreBoardProps {
     scores: ScoreboardEntry[];
     showDiff?: boolean;

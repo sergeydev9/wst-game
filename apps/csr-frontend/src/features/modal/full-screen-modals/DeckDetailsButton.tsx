@@ -65,6 +65,7 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
             console.error(e)
             dispatch(showError('An error occured while creating the game'))
             dispatch(setGameStatus('gameCreateError'))
+            dispatch(setFullModal(''))
             history.push('/')
         }
     }

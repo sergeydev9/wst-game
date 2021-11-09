@@ -1,6 +1,4 @@
 import tw from "tailwind-styled-components";
-import { RiMessengerFill } from '@react-icons/all-files/ri/RiMessengerFill';
-import { FaSms } from '@react-icons/all-files/fa/FaSms';
 import { IoMdMail } from '@react-icons/all-files/io/IoMdMail';
 import Button from '../button/Button'
 import Box from '../containers/box/Box';
@@ -22,18 +20,22 @@ rounded-2xl
 const iconClass = 'text-2xl cursor-pointer'
 
 export interface InviteProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
-    accessCode: string
+    accessCode: string;
+    domain: string
 }
 
-const Invite: React.FC<InviteProps> = ({ accessCode, children }) => {
+const Invite: React.FC<InviteProps> = ({ accessCode, domain, children }) => {
 
     const copyUrl = async (e: React.MouseEvent) => {
-        await navigator.clipboard.writeText(`whosaidtrue.com/x/${accessCode}`)
+        await navigator.clipboard.writeText(`${domain}/${accessCode}`)
     }
 
     const copyCode = async (e: React.MouseEvent) => {
         await navigator.clipboard.writeText(accessCode)
     }
+
+    const subject = encodeURIComponent('You have been invited to play Who Said True?!')
+    const body = encodeURIComponent(`Visit https://www.${domain}/${accessCode} to join the fun!`)
 
     return (
         <div className="md:px-20 mt-8">
@@ -44,15 +46,13 @@ const Invite: React.FC<InviteProps> = ({ accessCode, children }) => {
                     <Button buttonStyle="inline" $secondary onClick={copyCode}>Copy</Button>
                 </InnerBox>
                 <InnerBox>
-                    <span className="sm:text-body-small text-xs">whosaidtrue.com/x/{accessCode}</span>
+                    <span className="sm:text-body-small text-xs">{domain}/{accessCode}</span>
                     <Button buttonStyle="inline" $secondary type="button" onClick={copyUrl}>Copy</Button>
                 </InnerBox>
-                <div className="flex flex-row p-4 bg-white-ish rounded-2xl justify-center self-stretch gap-3 md:gap-12">
+                <div className="flex flex-row p-4 bg-white-ish rounded-2xl justify-center self-stretch gap-1 md:gap-12">
                     <Headline>Share via:</Headline>
                     <div className="flex flex-row gap-4">
-                        <IoMdMail className={iconClass} />
-                        <FaSms className={iconClass} />
-                        <RiMessengerFill className={iconClass} />
+                        <a href={`mailto:?subject=${subject}&body=${body}`} target="_blank" rel="noreferrer"><IoMdMail className={iconClass} /></a>
                     </div>
                 </div>
             </Box>

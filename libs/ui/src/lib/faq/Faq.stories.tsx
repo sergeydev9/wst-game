@@ -1,4 +1,4 @@
-import Faq from './Faq';
+import Faq from './FaqItem';
 
 export default {
     component: Faq,

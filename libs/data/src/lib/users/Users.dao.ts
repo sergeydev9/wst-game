@@ -26,10 +26,10 @@ class Users extends Dao {
      * @return {Promise<QueryResult>}
      * @memberof Users
      */
-    public register(email: string, password: string, role: UserRole = "user"): Promise<QueryResult> {
+    public register(email: string, password: string, domain: string, role: UserRole = "user"): Promise<QueryResult> {
         const query = {
-            text: "INSERT INTO users (email, password, roles) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3) RETURNING id, email, array_to_json(roles) AS roles",
-            values: [email, password, [role]]
+            text: "INSERT INTO users (email, password, roles, domain) VALUES ( $1, crypt($2, gen_salt('bf', 8)), $3, $4) RETURNING id, email, array_to_json(roles) AS roles",
+            values: [email, password, [role], domain]
         }
         return this._pool.query(query);
     }
@@ -45,7 +45,11 @@ class Users extends Dao {
      */
     public changePassword(id: number, oldPass: string, newPass: string): Promise<QueryResult> {
         const query = {
-            text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE (users.id = $2 AND users.password = crypt($3, password)) RETURNING id`,
+            text: `
+                UPDATE users
+                SET password = crypt($1, gen_salt('bf', 8))
+                WHERE (users.id = $2 AND users.password = crypt($3, password))
+                RETURNING id`,
             values: [newPass, id, oldPass]
         }
         return this._pool.query(query)
@@ -55,20 +59,70 @@ class Users extends Dao {
      * Use this to change account passwords in cases where the old password is unknown
      * (i.e. email reset/adding passwords to guest accounts).
      *
-     * The difference this method and the 'changePassword' method is that this method doesn't
-     * check the old password, it just changes it.
+     * If the user is a guest, sends a second query to update their roles.
+     * This will replace the guest role with the user role, while also
+     * retaining any other roles that might be set e.g. 'test'
      *
      * @param id
      * @param password
      * @returns
      */
-    public resetPassword(email: string, password: string): Promise<QueryResult> {
-        const query = {
-            text: `UPDATE users SET password = crypt($1, gen_salt('bf', 8)) WHERE email = $2 RETURNING id, email, array_to_json(roles) AS roles`,
-            values: [password, email]
+    public async resetPassword(email: string, password: string): Promise<{ id: number, email: string, roles: UserRole[] }> {
+        const client = await this._pool.connect();
+
+        try {
+            await client.query('BEGIN');
+
+            const passQuery = {
+                text: `
+                    UPDATE users
+                    SET password = crypt($1, gen_salt('bf', 8))
+                    WHERE email = $2
+                    RETURNING id, email, array_to_json(roles) AS roles`,
+                values: [password, email]
+            }
+
+            const passResult = await client.query(passQuery);
+            let user = passResult.rows[0];
+
+            if (!user) {
+                throw new Error(`User not found. email: ${email}`)
+            }
+
+            if (user.roles.includes('guest')) {
+
+                const newRoles = user.roles.filter(role => role !== 'guest');
+
+                if (!newRoles.includes('user')) {
+                    newRoles.push('user');
+                }
+
+                const rolesQuery = {
+                    text: `
+                        UPDATE users
+                        SET roles = $2
+                        WHERE id = $1
+                        RETURNING id, email, array_to_json(roles) AS roles
+                    `,
+                    values: [user.id, newRoles]
+                }
+
+                const rolesResult = await client.query(rolesQuery);
+                user = rolesResult.rows[0];
+            }
+
+            await client.query('COMMIT');
+            return user;
+
+        } catch (e) {
+            await client.query('ROLLBACK');
+        } finally {
+            client.release()
         }
-        return this._pool.query(query)
+
     }
+
+
 
     /**
      * Updates the email.
@@ -90,7 +144,6 @@ class Users extends Dao {
 
     }
 
-    // TODO: add notifications to this when that feature is rolled out.
     public updateDetails(id: number, update: UserDetailsUpdate): Promise<QueryResult> {
         const { email } = update
         const query = {
@@ -206,10 +259,10 @@ class Users extends Dao {
      * @param email
      * @returns
      */
-    public createGuest(email: string): Promise<QueryResult> {
+    public createGuest(email: string, domain: string): Promise<QueryResult> {
         const query = {
-            text: 'INSERT INTO users (email, roles) VALUES ( $1, $2) RETURNING id, email, array_to_json(roles) AS roles',
-            values: [email, ['guest']]
+            text: 'INSERT INTO users (email, roles, domain) VALUES ( $1, $2, $3) RETURNING id, email, array_to_json(roles) AS roles',
+            values: [email, ['guest'], domain]
         }
 
         return this._pool.query(query)

@@ -40,7 +40,7 @@ const RateApp: React.FC = () => {
 
     // if user hasn't rated this question, show submit element, else show nothing
     return (
-        <Box boxstyle="purple-subtle" className="w-max text-center p-6 mx-auto">
+        <Box boxstyle="purple-subtle" className="w-max text-center p-6 my-8 mx-auto">
             <h4 className="font-black text-basic-black text-2xl mb-4">Rate Who Said True?!</h4>
             <div className="flex flex-row gap-4">
                 <Container className="border-green-base hover:bg-green-subtle-stroke" onClick={() => submitHandler('great')}>

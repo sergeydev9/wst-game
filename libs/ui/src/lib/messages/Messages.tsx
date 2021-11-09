@@ -24,7 +24,7 @@ const FlashMessageModal: React.FC<MessageModalProps> = ({ children, closeFn, err
         items-center
     `
     return (
-        <div className={className}>
+        <div data-cy="message-modal" className={className}>
             {error && <img src={errorImage} width="25px" height="25px" alt="error emoji" />}
             {children}
             {closeFn && <CgCloseO type="icon" aria-label="close icon" className="cursor-pointer text-2xl" onClick={closeFn} />}
