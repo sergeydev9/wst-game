@@ -31,7 +31,7 @@ const Faqs: React.FC = () => {
             </FaqItem>
             <FaqItem question="Does each player need 2 devices to play on Zoom?">
                 Here are a couple of ways to play Who Said True on Zoom from best to least good:
-                <ul className="list-disc">
+                <ul className="list-disc list-inside mt-2">
                     <li>One computer (or laptop) and a second monitor - Have Zoom running on one monitor and play 9 Truths on the second monitor.
                     </li>
                     <li>One computer (or laptop) and a smartphone - Have Zoom running on the computer and play 9 Truths on your phone
