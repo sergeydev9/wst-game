@@ -84,6 +84,8 @@ class Games extends Dao {
             await client.query('BEGIN');
 
             const code = [];
+
+            // I and O excluded per requirements
             const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 
             while (code.length < 4) {
