@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import { testDecks } from '@whosaidtrue/data';
+import insertQuestions from './questions.seed';
 import format from 'pg-format';
 
 /**
@@ -39,7 +40,26 @@ const insertDecks = async (pool: Pool, num: number) => {
         text: format('INSERT INTO decks (name, sort_order, clean, age_rating, movie_rating, sfw, status, description, purchase_price, sample_question, thumbnail_url) VALUES %L RETURNING id', decks),
     }
 
-    return pool.query(query);
+    let count = 0;
+
+    try {
+        const result = await pool.query(query)
+
+        // insert questions for every deck
+        const questionPromises = result.rows.map(deck => {
+            return insertQuestions(pool, 9, deck.id);
+        })
+
+        const questionResult = await Promise.all(questionPromises);
+        console.log(`Inserted ${questionResult} questions`);
+
+        count = result.rowCount;
+    } catch (e) {
+        console.error(e);
+    }
+
+    return count
 }
+
 
 export default insertDecks;
