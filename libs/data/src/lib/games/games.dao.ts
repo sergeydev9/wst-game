@@ -18,7 +18,7 @@ class Games extends Dao {
                 status,
                 access_code,
                 domain
-            ) VALUES ($1, $2, $3, $4) RETURNING id`,
+            ) VALUES ($1, $2, UPPER($3), $4) RETURNING id`,
             values: [deck_id, status, access_code, domain]
         }
 
@@ -27,7 +27,7 @@ class Games extends Dao {
 
     public getByAccessCode(code: string): Promise<QueryResult> {
         const query = {
-            text: 'SELECT * FROM games WHERE access_code = $1',
+            text: 'SELECT * FROM games WHERE UPPER(access_code) = UPPER($1)',
             values: [code]
         }
         return this.pool.query(query);
@@ -99,7 +99,7 @@ class Games extends Dao {
                     ),
                     new_game AS ( --create new game
                         INSERT INTO games (access_code, status, deck_id, host_id, domain)
-                        VALUES ($4, 'lobby', $2, $1, $3)
+                        VALUES (UPPER($4), 'lobby', $2, $1, $3)
                         RETURNING games.id, games.access_code
                     ), ins AS (
                         INSERT INTO game_questions (game_id, question_id)
@@ -136,10 +136,10 @@ class Games extends Dao {
     }
 
 
-    public gameStatusByAccessCode(code: string): Promise<QueryResult> {
+    public gameStatusByAccessCode(access_code: string): Promise<QueryResult> {
         const query = {
-            text: 'SELECT status FROM games WHERE access_code = $1',
-            values: [code]
+            text: 'SELECT status FROM games WHERE UPPER(access_code) = UPPER($1)',
+            values: [access_code]
         }
         return this.pool.query(query);
     }
@@ -176,7 +176,7 @@ class Games extends Dao {
                     current_question_index,
                     total_questions
                 FROM games
-                WHERE games.access_code = $1`,
+                WHERE UPPER(access_code) = UPPER($1)`,
                 values: [access_code]
             }
             const gameResult = await client.query(getGameQuery);
@@ -234,7 +234,7 @@ class Games extends Dao {
                 deck: deckResult.rows[0] as Deck,
                 currentQuestionIndex: game.current_question_index,
                 hostName,
-                access_code,
+                access_code: access_code.toUpperCase(),
                 isHost,
                 playerId: createPlayerResult.rows[0].id,
                 playerName: name as string,
@@ -260,7 +260,7 @@ class Games extends Dao {
      * to calculate scores.
      *
      * @param gameId
-     * @param numberOfPlayersSnapshot number of players connected at start of game
+     * @param playerNumberSnapshot number of players connected at start of game
      * @param readerId
      * @param readerName
      * @param startDate new start date for the game
@@ -339,7 +339,7 @@ class Games extends Dao {
     }
 
     /**
-     * Set game status to finised, and end time to now.
+     * Set game status to finished, and end time to now.
      * @param gameId
      * @returns
      */
