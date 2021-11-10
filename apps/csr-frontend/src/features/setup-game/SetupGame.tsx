@@ -10,7 +10,7 @@ const SetUpGame: React.FC = () => {
     }
     // link is here in button so that web crawlers follow it and go to /decks
     return (
-        <section className="text-center w-full self-stretch py-8 px-6 select-none">
+        <section className="text-center w-full self-stretch py-8 px-6 relative select-none">
             <Title1 className="mb-7">Start a Game</Title1>
             <div className="flex justify-center">
                 <Button type="button" onClick={handler}><Link to="/decks">Get Started!</Link></Button>

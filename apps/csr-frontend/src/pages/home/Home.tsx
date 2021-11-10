@@ -66,7 +66,7 @@ const Home: React.FC = () => {
         className="relative row-span-1 col-span-6 overflow-hidden lg:col-span-3"
       >
         <div
-          className="absolute inset-0 bg-repeat opacity-30"
+          className="absolute inset-0 bg-repeat opacity-30 pointer-events-none"
           style={{
             backgroundImage: "url('./assets/bg.svg')",
             backgroundSize: '40%',
@@ -79,7 +79,7 @@ const Home: React.FC = () => {
         className="relative row-span-1 col-span-6 overflow-hidden lg:col-span-3"
       >
         <div
-          className="absolute inset-0 bg-repeat opacity-30"
+          className="absolute inset-0 bg-repeat opacity-30 pointer-events-none"
           style={{
             backgroundImage: "url('./assets/bg.svg')",
             backgroundSize: '40%',
