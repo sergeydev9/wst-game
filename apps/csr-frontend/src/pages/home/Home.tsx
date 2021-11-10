@@ -1,15 +1,16 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { LargeTitle, Box, Title1, Faqs, Carousel } from "@whosaidtrue/ui";
+import { LargeTitle, Box, Title1, Faqs, Carousel } from '@whosaidtrue/ui';
 import { logout, selectIsGuest } from '../../features';
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import JoinGame from "../../features/join-game/JoinGame";
-import SetUpGame from "../../features/setup-game/SetupGame";
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import JoinGame from '../../features/join-game/JoinGame';
+import SetUpGame from '../../features/setup-game/SetupGame';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 
 type UserStory = {
-  lines: string[]
-}
+  lines: string[];
+};
+
 const Home: React.FC = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -18,41 +19,72 @@ const Home: React.FC = () => {
   useEffect(() => {
     // if any guest users get here, log them out
     if (isGuest) {
-      dispatch(logout())
+      dispatch(logout());
     }
-  }, [dispatch, isGuest, history])
+  }, [dispatch, isGuest, history]);
 
   const tempStories = [
     {
-      lines: ["\"True or False, I have been to a strip club in the last 5 years?\"", "\"Did you say, 'in the last five years'?\"", "\"Would that matter?! You're 17 years old\""]
+      lines: [
+        '"True or False, I have been to a strip club in the last 5 years?"',
+        '"Did you say, \'in the last five years\'?"',
+        '"Would that matter?! You\'re 17 years old"',
+      ],
     },
     {
-      lines: ["\"True or False, this is a test story?\"", "\"True...very true\""]
-    }
-  ]
-  const helper = (stories: UserStory[]) => stories.map((story, i) => {
-    return (
-      <div key={i}>
-        {story.lines.map((line, j) => <p key={j}>{line}</p>)}
-      </div>
-    )
-  })
+      lines: ['"True or False, this is a test story?"', '"True...very true"'],
+    },
+  ];
+  const helper = (stories: UserStory[]) =>
+    stories.map((story, i) => {
+      return (
+        <div key={i}>
+          {story.lines.map((line, j) => (
+            <p key={j}>{line}</p>
+          ))}
+        </div>
+      );
+    });
   return (
     <div className="grid grid-cols-6 gap-y-16 gap-x-8 items-center container mx-auto px-4 md:px-24">
-
       {/* logo group */}
       <Logo className="col-span-6 lg:col-span-2 row-span-1 w-full h-full" />
       <div className="row-span-1 col-span-6 lg:col-span-4 text-center">
-        <LargeTitle className="text-true-white mb-8">Can you guess how many of your friends...</LargeTitle>
-        <Box boxstyle='white' className="py-6 px-12" $dropShadow><Title1 className="text-purple-base">binge watched an entire season of a show in a weekend?</Title1></Box>
+        <LargeTitle className="text-true-white mb-8">
+          Can you guess how many of your friends...
+        </LargeTitle>
+        <Box boxstyle="white" className="py-6 px-12" $dropShadow>
+          <Title1 className="text-purple-base">
+            binge watched an entire season of a show in a weekend?
+          </Title1>
+        </Box>
       </div>
 
-
       {/* create/join game group */}
-      <Box boxstyle='white' className="row-span-1 col-span-6 lg:col-span-3">
+      <Box
+        boxstyle="white"
+        className="relative row-span-1 col-span-6 overflow-hidden lg:col-span-3"
+      >
+        <div
+          className="absolute inset-0 bg-repeat opacity-30"
+          style={{
+            backgroundImage: "url('./assets/bg.svg')",
+            backgroundSize: '40%',
+          }}
+        ></div>
         <JoinGame />
       </Box>
-      <Box boxstyle='white' className="row-span-1 col-span-6 lg:col-span-3">
+      <Box
+        boxstyle="white"
+        className="relative row-span-1 col-span-6 overflow-hidden lg:col-span-3"
+      >
+        <div
+          className="absolute inset-0 bg-repeat opacity-30"
+          style={{
+            backgroundImage: "url('./assets/bg.svg')",
+            backgroundSize: '40%',
+          }}
+        ></div>
         <SetUpGame />
       </Box>
 
@@ -64,7 +96,6 @@ const Home: React.FC = () => {
       </div>
       <Faqs />
     </div>
-
   );
 };
 

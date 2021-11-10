@@ -27,7 +27,7 @@ const JoinGame: React.FC = () => {
 
     const codeError = formik.touched.accessCode && formik.errors.accessCode ? true : undefined
     return (
-        <section className="text-left w-full h-full py-8 px-6 select-none">
+        <section className="text-left w-full h-full py-8 px-6 relative select-none">
             <Title1 className="mb-7 text-center">Join a Game</Title1>
             <form className="flex flex-col md:flex-row gap-4 items-center" onSubmit={formik.handleSubmit}>
                 <TextInput $hasError={codeError} className="flex-2" $border placeholder="Enter Game Code" {...formik.getFieldProps('accessCode')} />
