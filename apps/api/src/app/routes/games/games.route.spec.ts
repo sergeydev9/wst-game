@@ -87,13 +87,13 @@ describe('games routes', () => {
 
         it('should respond with 422 if query is less than 4 characters', done => {
             supertest(app)
-                .get('/games/status?access_code=123')
+                .get('/games/status?access_code=ABC')
                 .expect(422, done)
         })
 
         it('should respond with 422 if query is more than 4 characters', done => {
             supertest(app)
-                .get('/games/status?access_code=12345')
+                .get('/games/status?access_code=ABCDE')
                 .expect(422, done)
         })
 
