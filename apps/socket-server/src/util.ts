@@ -64,7 +64,9 @@ export function buildScoreMap(scores: string[]): [Record<string, string[]>, stri
 export function scoreBoardFromMap(scoreMap: Record<string, string[]>): ScoreboardEntry[] {
     const result = [];
 
-    const sortedKeys = Object.keys(scoreMap).sort().reverse();
+    const sortedKeys = Object.keys(scoreMap)
+        .sort((a, b) => Number(a) - Number(b))
+        .reverse();
 
     sortedKeys.forEach((key, index) => {
         const names = scoreMap[key];
