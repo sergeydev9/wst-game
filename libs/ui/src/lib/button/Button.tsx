@@ -79,7 +79,7 @@ const SmallButton = tw.button<ChildProps>`
     rounded-full
     m-btn
     ${(p) => (p.$secondary ?
-        `text-yellow-dark bg-yellow-base hover:yellow-light` :
+        `text-yellow-darkest bg-yellow-base hover:bg-yellow-light` :
         `text-white bg-blue-base hover:bg-blue-light`
     )}
 `;
