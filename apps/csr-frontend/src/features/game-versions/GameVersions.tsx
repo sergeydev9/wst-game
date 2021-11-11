@@ -2,7 +2,12 @@ import { Disclosure } from '@headlessui/react';
 import { Button, Card } from '@whosaidtrue/ui';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 
-const GameVersions: React.FC = () => {
+export interface GameVersionsProps
+  extends React.HtmlHTMLAttributes<HTMLDivElement> {
+  onLetsPlayClick?: any;
+}
+
+const GameVersions: React.FC<GameVersionsProps> = ({ onLetsPlayClick }) => {
   return (
     <div className="text-center">
       <h2 className="text-yellow-base text-large-title font-extrabold mb-4">
@@ -61,7 +66,7 @@ const GameVersions: React.FC = () => {
               The devilishly fun party game aimed to reveal the best stories out
               of all your friends.
             </div>
-            <Button>Let's Play</Button>
+            <Button onClick={onLetsPlayClick}>Let's Play</Button>
           </div>
         </Card>
         <Card>
@@ -71,7 +76,7 @@ const GameVersions: React.FC = () => {
               Who Said True?! for Schools is the same game but safe for 11
               through 18, and a school environment.
             </div>
-            <Button>Let's Play</Button>
+            <Button onClick={onLetsPlayClick}>Let's Play</Button>
           </div>
         </Card>
       </div>

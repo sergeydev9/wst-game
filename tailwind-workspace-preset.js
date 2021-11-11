@@ -68,6 +68,7 @@ module.exports = {
                 'blue-subtle': '#EDF3FC',
                 'off-blue': '#5D5FEF',
                 'white-ish': '#FBFBFE',
+                'pink-light': '#FF33BF',
                 'pink-base': '#CC008C',
                 'true-white': '#FFFFFF',
                 'basic-black': '#190136',
