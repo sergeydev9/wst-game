@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { PlayerRef } from '@whosaidtrue/app-interfaces';
 import WideBox from "../containers/wide-box/WideBox";
 import GameCardFooter from '../gameplay/GameCardFooter';
-import WhileYouWereWaiting from '../while-you-were-waiting/WhileYouWereWaiting';
 import PlayerName from "./PlayerName";
 import hourglass from './hourglass.png';
 
@@ -20,7 +19,12 @@ text-blue-base
 underline
 cursor-pointer
 `
-const Lobby: React.FC<LobbyProps> = ({ otherPlayers, footerMessage, playerName, handlerFactory, isHost }) => {
+
+/**
+ * Pre game lobby page. Children should be the One liners
+ * component
+ */
+const Lobby: React.FC<LobbyProps> = ({ otherPlayers, footerMessage, playerName, handlerFactory, isHost, children }) => {
 
     const [showingAll, setShowingAll] = useState(false); // toggle show all player names
     const playerNum = 1 + otherPlayers.length;
@@ -54,7 +58,7 @@ const Lobby: React.FC<LobbyProps> = ({ otherPlayers, footerMessage, playerName, 
                 {nameHelper()}
                 {showingAll && <ShowHide key={playerNum} onClick={toggle}>Hide</ShowHide>}
             </div>
-            <WhileYouWereWaiting className="mt-4" />
+            {children}
             {footerMessage && <GameCardFooter>{footerMessage}</GameCardFooter>}
         </WideBox>
     )
