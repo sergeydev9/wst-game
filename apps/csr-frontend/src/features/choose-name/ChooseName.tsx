@@ -83,10 +83,17 @@ const ChooseName: React.FC = () => {
                 const statusResponse = await api.get<StatusRequestResponse>(`/games/status?access_code=${access_code}`)
                 dispatch(setGameStatus(statusResponse.data.status))
             } catch (e) {
-                dispatch(showError('Could not find the game you were looking for'));
+                setShouldBlock(false);
                 dispatch(clearGame());
                 dispatch(clearCurrentQuestion());
-                history.push('/')
+
+                if (e.response.status === 404 || e.response.status === 422) {
+                    dispatch(showError('Could not find the game you were looking for'));
+                    history.push('/')
+                } else {
+                    dispatch(showError('An error occurred while attempting to join game'));
+                    history.push('/')
+                }
             }
         }
 
@@ -112,7 +119,7 @@ const ChooseName: React.FC = () => {
             if (e.response.status === 401) {
                 dispatch(showError('That name is no longer available. Please select another'))
             } else if (e.response.status === 403) {
-                dispatch(showError('The game you are atempting to join has already finished'));
+                dispatch(showError('The game you are attempting to join has already finished'));
                 history.push('/');
             }
             else {
