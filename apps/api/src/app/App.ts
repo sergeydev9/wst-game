@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { user, healthcheck, decks, names, purchase, games, ratings } from './routes';
+import { user, healthcheck, decks, names, purchase, games, ratings, oneLiners } from './routes';
 import { logger } from '@whosaidtrue/logger';
 
 // TODO: Make it crash if it can't connect to database
@@ -34,7 +34,7 @@ class App {
     private initializeMiddlewares() {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
-        this.app.use(cors({ origin: process.env.DOMAIN || true, credentials: true }));
+        this.app.use(cors({ origin: [process.env.DOMAIN, process.env.FOR_SCHOOLS_DOMAIN] || true, credentials: true }));
         this.app.use(hpp());
         this.app.use(helmet());
     }
@@ -49,6 +49,7 @@ class App {
         this.app.use('/names', names)
         this.app.use('/games', games)
         this.app.use('/ratings', ratings)
+        this.app.use('/one-liners', oneLiners)
     }
 
     private initializeSwagger() {
