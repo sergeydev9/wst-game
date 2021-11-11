@@ -3,10 +3,12 @@ import { useHistory } from 'react-router-dom';
 import { LargeTitle, Box, Title1, Faqs, Carousel } from '@whosaidtrue/ui';
 import { logout, selectIsGuest } from '../../features';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import GameVersions from '../../features/game-versions/GameVersions';
 import JoinGame from '../../features/join-game/JoinGame';
 import SetUpGame from '../../features/setup-game/SetupGame';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 
+// TODO: remove and replace
 type UserStory = {
   lines: string[];
 };
@@ -23,6 +25,7 @@ const Home: React.FC = () => {
     }
   }, [dispatch, isGuest, history]);
 
+  // TODO: remove and replace
   const tempStories = [
     {
       lines: [
@@ -35,6 +38,8 @@ const Home: React.FC = () => {
       lines: ['"True or False, this is a test story?"', '"True...very true"'],
     },
   ];
+
+  // TODO: remove and replace
   const helper = (stories: UserStory[]) =>
     stories.map((story, i) => {
       return (
@@ -45,56 +50,55 @@ const Home: React.FC = () => {
         </div>
       );
     });
+
   return (
-    <div className="grid grid-cols-6 gap-y-16 gap-x-8 items-center container mx-auto px-4 md:px-24">
-      {/* logo group */}
-      <Logo className="col-span-6 lg:col-span-2 row-span-1 w-full h-full" />
-      <div className="row-span-1 col-span-6 lg:col-span-4 text-center">
-        <LargeTitle className="text-true-white mb-8">
-          Can you guess how many of your friends...
-        </LargeTitle>
-        <Box boxstyle="white" className="py-6 px-12" $dropShadow>
-          <Title1 className="text-purple-base">
-            binge watched an entire season of a show in a weekend?
-          </Title1>
+    <div className="container mx-auto px-4">
+      <div className="block max-w-xs mb-10 mx-auto">
+        <Logo className="w-full h-full" />
+      </div>
+
+      <div className="max-w-2xl text-center mb-10 mx-auto">
+        <span className="text-yellow-base text-title-1 font-extrabold">
+          The outrageously fun game of quirky questions and anonymous answers
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 max-w-6xl mb-6 mx-auto lg:grid-cols-2 lg:gap-10">
+        <Box boxstyle="white" className="relative overflow-hidden">
+          <div
+            className="absolute inset-0 bg-repeat opacity-30 pointer-events-none"
+            style={{
+              backgroundImage: "url('./assets/bg.svg')",
+              backgroundSize: '40%',
+            }}
+          ></div>
+          <JoinGame />
+        </Box>
+        <Box boxstyle="white" className="relative overflow-hidden">
+          <div
+            className="absolute inset-0 bg-repeat opacity-30 pointer-events-none"
+            style={{
+              backgroundImage: "url('./assets/bg.svg')",
+              backgroundSize: '40%',
+            }}
+          ></div>
+          <SetUpGame />
         </Box>
       </div>
 
-      {/* create/join game group */}
-      <Box
-        boxstyle="white"
-        className="relative row-span-1 col-span-6 overflow-hidden lg:col-span-3"
-      >
-        <div
-          className="absolute inset-0 bg-repeat opacity-30 pointer-events-none"
-          style={{
-            backgroundImage: "url('./assets/bg.svg')",
-            backgroundSize: '40%',
-          }}
-        ></div>
-        <JoinGame />
-      </Box>
-      <Box
-        boxstyle="white"
-        className="relative row-span-1 col-span-6 overflow-hidden lg:col-span-3"
-      >
-        <div
-          className="absolute inset-0 bg-repeat opacity-30 pointer-events-none"
-          style={{
-            backgroundImage: "url('./assets/bg.svg')",
-            backgroundSize: '40%',
-          }}
-        ></div>
-        <SetUpGame />
-      </Box>
-
-      {/* overheard */}
-      <div className="row-span-1 col-span-6  lg:col-span-4 lg:col-start-2">
+      <div className="max-w-3xl mb-20 mx-auto">
         <Carousel title={'Overheard on Who said true?'}>
           {helper(tempStories)}
         </Carousel>
       </div>
-      <Faqs />
+
+      <div className="max-w-full mb-20 mx-auto">
+        <GameVersions />
+      </div>
+
+      <div className="max-w-3xl mb-6 mx-auto">
+        <Faqs />
+      </div>
     </div>
   );
 };

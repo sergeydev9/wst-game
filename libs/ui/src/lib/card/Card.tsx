@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 
 export interface CardProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
-  height: number;
-  isElevated: boolean;
+  height?: number;
+  isElevated?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
