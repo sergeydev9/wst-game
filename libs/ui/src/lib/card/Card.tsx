@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = ({
   return (
     <div
       className={classNames(
-        'inline-flex border-4 border-white bg-white w-80 filter p-4 rounded-3xl select-none',
+        'inline-flex border-4 border-white bg-white w-80 max-w-full filter p-4 rounded-3xl select-none',
         isElevated ? 'drop-shadow-lg' : '',
         className
       )}
