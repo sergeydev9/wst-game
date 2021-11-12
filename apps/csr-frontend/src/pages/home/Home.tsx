@@ -1,13 +1,6 @@
-import { useEffect, useMemo, useRef, MouseEvent } from 'react';
+import { useEffect, useRef, MouseEvent } from 'react';
 import { useHistory } from 'react-router-dom';
-import {
-  LargeTitle,
-  Box,
-  Title1,
-  Faqs,
-  Carousel,
-  Button,
-} from '@whosaidtrue/ui';
+import { Box, Faqs, Carousel, Button } from '@whosaidtrue/ui';
 import { logout, selectIsGuest } from '../../features';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import GameVersions from '../../features/game-versions/GameVersions';
@@ -78,10 +71,10 @@ const Home: React.FC = () => {
         <Logo className="w-full h-full" />
       </div>
 
-      <div className="max-w-2xl text-center mb-10 mx-auto">
-        <span className="text-yellow-base text-title-1 font-extrabold">
+      <div className="max-w-3xl text-center mb-10 mx-auto">
+        <h1 className="text-yellow-base text-large-title font-extrabold">
           The outrageously fun game of quirky questions and anonymous answers
-        </span>
+        </h1>
       </div>
 
       <div
@@ -127,7 +120,7 @@ const Home: React.FC = () => {
       <div className="max-w-6xl mb-6 mx-auto">
         <div className="bg-basic-black bg-opacity-75 rounded-3xl p-6 text-center flex flex-col items-center lg:p-10">
           <h2 className="text-yellow-base text-title-1 font-extrabold mb-4 lg:text-large-title lg:mb-8">
-            What are you Waiting For?!
+            Grab your friends and get ready to laugh!
           </h2>
           <Button onClick={handleLetsPlayClick}>Let's Play</Button>
         </div>
