@@ -26,6 +26,13 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             default: pgm.func('now()'),
         }
     })
+
+    pgm.createTrigger('one_liners', 'update_updated_at_trigger', {
+        when: 'BEFORE',
+        operation: 'UPDATE',
+        level: 'ROW',
+        function: 'update_updated_at_column'
+    })
 }
 
 // export async function down(pgm: MigrationBuilder): Promise<void> {
