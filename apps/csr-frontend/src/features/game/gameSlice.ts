@@ -206,7 +206,7 @@ export const selectHasPassed = (state: RootState) => state.game.hasPassed;
 export const selectGameId = (state: RootState) => state.game.gameId;
 export const selectGameToken = (state: RootState) => state.game.gameToken;
 export const selectGameStatus = (state: RootState) => state.game.gameStatus;
-export const selectAccessCode = (state: RootState) => state.game.access_code;
+export const selectAccessCode = (state: RootState) => state.game.access_code?.toUpperCase();
 export const selectGameDeck = (state: RootState) => state.game.deck;
 export const selectPlayerId = (state: RootState) => state.game.playerId;
 export const selectInactive = (state: RootState) => state.game.inactivePlayers;

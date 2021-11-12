@@ -62,10 +62,17 @@ describe('Games', () => {
 
     describe('getByAccessCode', () => {
 
-        it('should return a game  object if game exists', async () => {
+        it('should return a game object if game exists', async () => {
             const gameRes = await games.create(userId, deckId, 'www.test.com');
 
             const { rows } = await games.getByAccessCode(gameRes.rows[0].access_code)
+            expect(rows.length).toEqual(1)
+        })
+
+        it('should ignore access_code case', async () => {
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
+
+            const { rows } = await games.getByAccessCode(gameRes.rows[0].access_code.toLowerCase());
             expect(rows.length).toEqual(1)
         })
 
@@ -96,6 +103,14 @@ describe('Games', () => {
 
             expect(rows[0].status).toEqual('lobby')
         })
+
+        it("should ignore access_code case", async () => {
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
+
+            const { rows } = await games.gameStatusByAccessCode(gameRes.rows[0].access_code.toLowerCase());
+
+            expect(rows[0].status).toEqual('lobby')
+        })
     })
 
     describe('join', () => {
@@ -113,6 +128,13 @@ describe('Games', () => {
             expect(actual.currentQuestionIndex).toEqual(1);
             expect(actual.totalQuestions).toEqual(9);
             expect(actual.playerId).toBeDefined();
+        })
+
+        it('should ignore access_code case and return uppercase', async () => {
+            const gameRes = await games.create(userId, deckId, 'www.test.com');
+            const actual = await games.join(gameRes.rows[0].access_code.toLowerCase(), 'Test Name', userId)
+
+            expect(actual.access_code).toEqual(gameRes.rows[0].access_code.toUpperCase());
         })
 
         it('should throw if access code is wrong', async () => {
