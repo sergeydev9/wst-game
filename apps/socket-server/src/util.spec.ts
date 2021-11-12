@@ -49,17 +49,25 @@ describe('buildScoreMap', () => {
 
 describe('scoreBoardFromMap', () => {
     it('should return an array of objects with player name and rank', () => {
-        const scores = [
-            "player 1",
-            "1000",
-            "player 2",
-            "1000"
-        ];
+        const map = { '1000': [ 'player 1', 'player 2' ] }
 
-        const [map] = buildScoreMap(scores);
         const actual = scoreBoardFromMap(map);
 
         expect(actual).toEqual([{ player_name: "player 1", rank: 1, score: 1000 }, { player_name: "player 2", rank: 1, score: 1000 }])
+
+    })
+
+    it('should sort by score', () => {
+        const map = { '500': [ 'player 1' ], '1000': [ 'player 2', 'player 3' ], '200': [ 'player 4' ] }
+
+        const actual = scoreBoardFromMap(map);
+
+        expect(actual).toEqual([
+            { player_name: "player 2", rank: 1, score: 1000 },
+            { player_name: "player 3", rank: 1, score: 1000 },
+            { player_name: "player 1", rank: 2, score: 500 },
+            { player_name: "player 4", rank: 3, score: 200 }
+        ])
 
     })
 })
