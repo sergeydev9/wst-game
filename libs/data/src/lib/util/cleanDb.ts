@@ -32,6 +32,8 @@ export async function cleanDb(pool: Pool) {
         pool.query(`TRUNCATE jobs CASCADE`),
         pool.query(`TRUNCATE emails CASCADE`),
         pool.query(`TRUNCATE email_templates CASCADE`),
+        pool.query(`TRUNCATE one_liners CASCADE`),
+
     ];
 
     return Promise.all(promises);

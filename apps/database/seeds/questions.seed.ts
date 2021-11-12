@@ -19,7 +19,15 @@ const insertQuestions = async (pool: Pool, num: number, deckId: number) => {
         ) VALUES %L`, questions)
     }
 
-    return pool.query(query);
+    let count = 0;
+    try {
+        const result = await pool.query(query);
+        count = result.rowCount;
+    }
+    catch (e) {
+        console.error(e)
+    }
+    return count;
 }
 
 export default insertQuestions

@@ -305,6 +305,16 @@ code: | text | no
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 
+### **one_liners**
+
+| Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
+---| --- | --- | --- | --- | --- | ---
+id | integer | no | yes
+text | varchar(2000) | no
+clean | boolean | no | no | false
+created_at | timestamptz | no | no | now()
+updated_at | timestamptz | no | no | now()
+
 ## Custom Types
 
 ----

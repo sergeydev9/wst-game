@@ -13,8 +13,8 @@ const endGame = async (socket: Socket) => {
     // use game status as a sort of lock to deduplicate requests
     const status = await pubClient.get(gameStatus);
 
-    // if status is anything other than 'inProgress', do nothing.
-    if (status !== 'inProgress') return;
+    // if status is finished
+    if (status === 'finished') return;
 
     const [, questionIdResult] = await pubClient
         .pipeline()
@@ -28,11 +28,8 @@ const endGame = async (socket: Socket) => {
     // end game in DB
     await games.endGame(socket.gameId);
 
-    // save ressults and set game to finished
-    await pubClient.pipeline()
-        .set(latestResults, JSON.stringify(result), 'EX', ONE_DAY)
-        .set(gameStatus, 'finished', 'EX', ONE_DAY)
-        .exec()
+    // save ressults in redis
+    await pubClient.set(latestResults, JSON.stringify(result), 'EX', ONE_DAY)
 
     return result;
 }

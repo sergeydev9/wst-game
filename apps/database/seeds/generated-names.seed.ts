@@ -8,7 +8,15 @@ import { Pool } from 'pg';
  * @param {number} num
  */
 const insertNames = async (pool: Pool, num: number) => {
-    return pool.query(insertNamesQuery(num));
+    let count = 0;
+    try {
+        const result = await pool.query(insertNamesQuery(num));
+        count = result.rowCount
+    } catch (e) {
+        console.error(e);
+    }
+
+    return count;
 }
 
 export default insertNames;

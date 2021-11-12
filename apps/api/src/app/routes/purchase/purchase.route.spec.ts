@@ -1,5 +1,4 @@
 import supertest from 'supertest';
-import { QueryResult, DatabaseError, PoolClient } from 'pg';
 import { Application } from 'express';
 import { mocked } from 'ts-jest/utils';
 import { signUserPayload } from '@whosaidtrue/middleware';
