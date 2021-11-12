@@ -1,133 +1,102 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../custom.d.ts" />
+
 import React from 'react';
-import tw from 'tailwind-styled-components';
+import classNames from 'classnames';
+import { overrideTailwindClasses } from 'tailwind-override';
+import ButtonStyles from './Button.styles';
 
-export type ButtonStyle = 'default' | 'big-text' | 'small' | 'inline'
-
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    buttonStyle?: ButtonStyle;
-    $secondary?: boolean
-}
-
-interface ChildProps extends Record<string, unknown> {
+type ButtonProps<C extends React.ElementType> = PolymorphicComponentProps<
+  C,
+  {
+    children: React.ReactNode;
+    buttonStyle?: 'default' | 'big-text' | 'small' | 'inline';
     $secondary?: boolean;
-}
+  }
+>;
 
-export interface BgProps extends Record<string, unknown> {
-    btncolor: 'blue' | 'yellow';
-}
+const Button = <C extends React.ElementType = 'button'>({
+  as,
+  className,
+  children,
+  buttonStyle = 'default',
+  $secondary,
+  ...rest
+}: ButtonProps<C>) => {
+  const Component = as || 'button';
 
-// A div used to wrap around buttons that have a border effect. Defaults to blue.
-const Bg = tw.div<BgProps>`
-    bg-gradient-to-b
-    rounded-full
-    select-none
-    ${(p) => (p.btncolor === 'yellow' ? `active:from-yellow-base
-    active:to-yellow-base
-    active:shadow-active-yellow
-    to-yellow-gradient-to
-    from-yellow-gradient-from
-    shadow-yellow` :
-        `shadow-blue
-    to-blue-gradient-to
-    from-blue-gradient-from
-    active:shadow-none
-    active:to-blue-base
-    active:from-blue-base
-    active:shadow-active-blue`
-    )}
-`
+  const bigTextButtonClassNames = 'text-2xl';
 
-// default
-const DefaultButton = tw.button<ChildProps>`
-    font-label-big
-    font-bold
-    m-btn
-    py-2
-    select-none
-    px-9
-    rounded-full
-    active:bg-blue-base
-    ${(p) => (p.$secondary ?
-        `border-2 border-blue-base text-blue-base bg-white hover:bg-blue-subtle active:text-white` :
-        `text-white bg-blue-base hover:bg-blue-light w-p99 active:shadow-active-blue`
-    )}
-`;
+  const smallButtonClassNames = 'h-10';
 
-// big-text
-const BigTextButton = tw.button<ChildProps>`
-    text-2xl
-    font-bold
-    m-btn
-    py-2
-    px-9
-    select-none
-    rounded-full
-    active:bg-blue-base
-    ${(p) => (p.$secondary ?
-        `border-2 border-blue-base text-blue-base bg-white shadow-blue-base active:text-white` :
-        `text-white bg-blue-base hover:bg-blue-light w-p99`
-    )}
-`;
+  const inlineButtonClassNames =
+    'h-6 font-semibold text-sm rounded-md tracking-wider from-blue-base to-blue-base';
 
-// small
-const SmallButton = tw.button<ChildProps>`
-    text-headline
-    font-bold
-    py-1
-    px-3
-    select-none
-    rounded-full
-    m-btn
-    ${(p) => (p.$secondary ?
-        `text-yellow-darkest bg-yellow-base hover:bg-yellow-light` :
-        `text-white bg-blue-base hover:bg-blue-light`
-    )}
-`;
+  const defaultSecondaryButtonClassNames =
+    'text-blue-base from-blue-base to-blue-base active:shadow-none active:text-white';
 
-// inline
-const InlineButton = tw.button<ChildProps>`
-    text-label-small
-    py-1
-    px-2
-    select-none
-    font-semibold
-    rounded-md
-    ${(p) => (p.$secondary ?
-        `border-2 border-blue-base text-blue-base bg-white active:bg-blue-base active:text-white` :
-        `text-white bg-blue-base hover:bg-blue-light`
-    )}
-`;
+  const defaultSecondarySmallButtonClassNames =
+    'text-yellow-darkest from-yellow-gradient-from to-yellow-gradient-to active:from-yellow-base active:to-yellow-base active:shadow-active-yellow active:text-yellow-darkest';
 
+  // SPAN CLASS NAMES
+  const defaultSpanClassNames =
+    'flex items-center justify-center w-full h-full border-2 border-b-4 border-transparent rounded-full bg-clip-padding bg-blue-base px-12 whitespace-nowrap hover:bg-blue-light group-active:bg-transparent';
 
+  const bigTextSpanClassNames = '';
 
-const Button: React.FC<ButtonProps> = ({ buttonStyle, $secondary, children, ...rest }) => {
+  const smallSpanClassNames = 'px-4';
 
-    switch (buttonStyle) {
-        case 'big-text':
-            return ($secondary ?
-                <BigTextButton $secondary  {...rest}>{children}</BigTextButton> :
-                <Bg btncolor="blue">
-                    <BigTextButton  {...rest} style={{ textShadow: '0px 1px 0px #084AB8' }}>{children}</BigTextButton>
-                </Bg>
-            )
-        case 'small':
-            return ($secondary ?
-                <Bg btncolor="yellow"><SmallButton $secondary  {...rest} >{children}</SmallButton></Bg> :
-                <Bg btncolor="blue"><SmallButton style={{ textShadow: '0px 1px 0px #084AB8' }}  {...rest}>{children}</SmallButton></Bg>
-            )
-        case 'inline':
-            return ($secondary ?
-                <InlineButton $secondary  {...rest}>{children}</InlineButton> :
-                <InlineButton style={{ textShadow: '0px 1px 0px #084AB8' }}  {...rest}>{children}</InlineButton>
-            )
-        default:
-            return ($secondary ?
-                <DefaultButton $secondary  {...rest}>{children}</DefaultButton> :
-                <Bg btncolor="blue">
-                    <DefaultButton style={{ textShadow: '0px 1px 0px #084AB8' }}  {...rest}>{children}</DefaultButton>
-                </Bg >
-            )
-    }
-}
+  const inlineSpanClassNames =
+    'px-2 border-0 border-b-0 rounded-none hover:bg-transparent';
+
+  const defaultSecondarySpanClassNames =
+    'bg-white hover:bg-blue-subtle group-active:bg-blue-base';
+
+  const defaultSecondarySmallSpanClassNames =
+    'bg-yellow-base hover:bg-yellow-light group-active:bg-yellow-base';
+
+  const defaultSecondaryInlineSpanClassNames =
+    'border border-b border-blue-base rounded-md';
+
+  return (
+    <Component
+      className={overrideTailwindClasses(
+        classNames(
+          ButtonStyles.DEFAULT,
+          {
+            [bigTextButtonClassNames]: buttonStyle === 'big-text',
+            [smallButtonClassNames]: buttonStyle === 'small',
+            [inlineButtonClassNames]: buttonStyle === 'inline',
+            [defaultSecondaryButtonClassNames]: $secondary,
+            [defaultSecondarySmallButtonClassNames]:
+              buttonStyle === 'small' && $secondary,
+          },
+          className
+        )
+      )}
+      style={{
+        textShadow: $secondary ? 'none' : '0px 1px 0px #084AB8',
+      }}
+      {...rest}
+    >
+      <span
+        className={overrideTailwindClasses(
+          classNames(defaultSpanClassNames, {
+            [bigTextSpanClassNames]: buttonStyle === 'big-text',
+            [smallSpanClassNames]: buttonStyle === 'small',
+            [inlineSpanClassNames]: buttonStyle === 'inline',
+            [defaultSecondarySpanClassNames]: $secondary,
+            [defaultSecondarySmallSpanClassNames]:
+              buttonStyle === 'small' && $secondary,
+            [defaultSecondaryInlineSpanClassNames]:
+              buttonStyle === 'inline' && $secondary,
+          })
+        )}
+      >
+        {children}
+      </span>
+    </Component>
+  );
+};
 
 export default Button;

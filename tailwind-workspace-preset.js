@@ -134,8 +134,8 @@ module.exports = {
       },
       boxShadow: {
         'rating-button': '0px 4px 0px #BDABE3',
-        'active-yellow': 'inset 0px 2px #C17C10',
-        'active-blue': 'inset 0px 2px #084AB8',
+        'active-yellow': 'inset 0px 2px 0px #C17C10',
+        'active-blue': 'inset 0px 2px 0px #084AB8',
         yellow: '0px 2px 0px #C17C10',
         'blue-base': '0px 2px 0px #0F69FF',
         blue: '0px 2px 0px #084AB8',
@@ -151,7 +151,7 @@ module.exports = {
     extend: {
       boxShadow: ['active'],
       textColor: ['active'],
-      backgroundColor: ['checked', 'active'],
+      backgroundColor: ['checked', 'active', 'group-active'],
       borderColor: ['checked', 'active'],
       backgroundImage: ['checked', 'active'],
       gradientColorStops: ['active'],
@@ -172,5 +172,6 @@ module.exports = {
     require('@tailwindcss/forms')({
       strategy: 'class',
     }),
+    require('tailwindcss-interaction-variants'),
   ],
 };
