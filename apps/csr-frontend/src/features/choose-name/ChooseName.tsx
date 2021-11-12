@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { NameRequestResponse } from '@whosaidtrue/api-interfaces';
+import { setRemainingNameOptions } from './chooseNameSlice';
+
+
 import useNames from './useNames';
 import {
     selectNameRerolls,
@@ -23,7 +27,7 @@ import { NameObject } from '@whosaidtrue/app-interfaces';
 import { JoinGameResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
 import { showError } from '../modal/modalSlice';
-import { clearCurrentQuestion, clearNameChoices } from '..';
+import { clearCurrentQuestion } from '..';
 import { clearHost } from '../host/hostSlice';
 
 const ChooseName: React.FC = () => {
@@ -37,10 +41,22 @@ const ChooseName: React.FC = () => {
     const isHost = useAppSelector(selectIsHost);
     const gameId = useAppSelector(selectGameId);
 
-    useNames();
 
     useEffect(() => {
         dispatch(setGameStatus('choosingName'));
+
+        const fetchNames = async () => {
+
+            // get 6 name options
+            try {
+                const response = await api.get<NameRequestResponse>('/names')
+                dispatch(setRemainingNameOptions(response.data.names)) // populate total name pool
+                dispatch(setCurrentNameOptions()) // set initial set of options and remove them from pool
+            } catch (e) {
+                history.push('/')
+                dispatch(clearGame())
+            }
+        }
 
         // show confirmation dialog and clear game state if confirmed
         // eslint-disable-next-line
@@ -80,9 +96,25 @@ const ChooseName: React.FC = () => {
         // check if game exists
         const checkStatus = async () => {
             try {
-                const statusResponse = await api.get<StatusRequestResponse>(`/games/status?access_code=${access_code}`)
-                dispatch(setGameStatus(statusResponse.data.status))
+
+                const statusResponse = await api.get<StatusRequestResponse>(`/games/status?access_code=${access_code}`);
+                const { status } = statusResponse.data;
+
+                if (status === 'finished') {
+                    setShouldBlock(false)
+                    dispatch(showError('The game you are trying to join has already finished'));
+                    dispatch(clearGame());
+                    dispatch(clearCurrentQuestion());
+                    history.push('/')
+                } else {
+                    // if game found, get names
+                    fetchNames()
+                    dispatch(setGameStatus(statusResponse.data.status))
+                    setShouldBlock(true)
+                }
+
             } catch (e) {
+                setShouldBlock(false)
                 dispatch(showError('Could not find the game you were looking for'));
                 dispatch(clearGame());
                 dispatch(clearCurrentQuestion());
@@ -93,7 +125,6 @@ const ChooseName: React.FC = () => {
         checkStatus();
 
         return () => {
-            dispatch(clearNameChoices());
             unblock();
         }
     }, [dispatch, history, access_code, isHost, shouldBlock, gameId])

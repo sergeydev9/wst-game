@@ -11,7 +11,8 @@ import {
     hostReducer,
     freeCreditsReducer,
     ratingsReducer,
-    funFactsReducer
+    funFactsReducer,
+    oneLinersReducer
 } from "../features";
 import { enhancer } from "addon-redux";
 import jwt_decode, { JwtPayload } from "jwt-decode";
@@ -57,7 +58,8 @@ export const store = configureStore({
         host: hostReducer,
         freeCredits: freeCreditsReducer,
         ratings: ratingsReducer,
-        funFacts: funFactsReducer
+        funFacts: funFactsReducer,
+        oneLiners: oneLinersReducer
     },
     preloadedState: persistedState,
     enhancers

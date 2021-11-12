@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectIsHost, selectPlayerName, selectPlayerId, selectPlayerList, removePlayer } from "./gameSlice";
 import useSocket from '../socket/useSocket';
 import { showPlayerRemoved } from '../modal/modalSlice';
+import OneLiners from '../one-liners/OneLiners';
 
 const Lobby: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -38,7 +39,9 @@ const Lobby: React.FC = () => {
             otherPlayers={otherPlayers()}
             playerName={playerName}
             footerMessage={'The host will start the game once all players have joined.'}
-            handlerFactory={handlerFactory} />
+            handlerFactory={handlerFactory}>
+            <OneLiners />
+        </LobbyUi>
     )
 }
 

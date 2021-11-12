@@ -15,7 +15,10 @@ const Container = tw.div`
     md:px-6
     mx-auto
     mb-12
-    w-max
+    sm:mb-20
+    w-11/12
+    text-center
+    sm:w-3/4
     text-black
     flex
     flex-col

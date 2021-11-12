@@ -28,6 +28,7 @@ import { payloads, types } from "@whosaidtrue/api-interfaces";
 import QuestionResults from './QuestionResults';
 import { isLoggedIn } from "../auth/authSlice";
 import RateQuestion from "../ratings/RateQuestion";
+import OneLiners from '../one-liners/OneLiners';
 
 /**
  * This component controls what the user sees over the course
@@ -113,18 +114,37 @@ const Question: React.FC = () => {
                 questionNumber={questionNumber}
                 category={category}>
 
-                {screen === 'answerSubmit' && <TrueFalse submitHandler={answerHandler} text={text} isReader={isReader && !submittingAnswer} hasPasses={!hasPassed} />}
-                {screen === 'guess' && <NumberTrueGuess questionText={guessText} submitHandler={guessHandler} totalPlayers={totalPlayers} />}
-                {screen === 'waitingRoom' && <WaitingRoom totalPlayers={totalPlayers} numberHaveGuessed={numHaveGuessed} guessValue={guessVal} questionText={guessText} />}
-                {screen === 'answerResults' && (<QuestionAnswers
-                    globalTruePercent={globalTrue}
-                    groupTruePercent={Math.floor(groupTrue)}
-                    correctAnswer={correctAnswer}
-                    questionText={guessText}
-                    followUp={followUp}
-                >
-                    {loggedIn && !hasRated && <RateQuestion />}
-                </QuestionAnswers>
+                {screen === 'answerSubmit' && (
+                    <TrueFalse
+                        submitHandler={answerHandler}
+                        text={text}
+                        isReader={isReader && !submittingAnswer} hasPasses={!hasPassed} />
+                )}
+                {screen === 'guess' && (
+                    <NumberTrueGuess
+                        questionText={guessText}
+                        submitHandler={guessHandler}
+                        totalPlayers={totalPlayers} />
+                )}
+                {screen === 'waitingRoom' && (
+                    <WaitingRoom
+                        totalPlayers={totalPlayers}
+                        numberHaveGuessed={numHaveGuessed}
+                        guessValue={guessVal}
+                        questionText={guessText}>
+                        <OneLiners />
+                    </WaitingRoom>
+                )}
+                {screen === 'answerResults' && (
+                    <QuestionAnswers
+                        globalTruePercent={globalTrue}
+                        groupTruePercent={Math.floor(groupTrue)}
+                        correctAnswer={correctAnswer}
+                        questionText={guessText}
+                        followUp={followUp}
+                    >
+                        {loggedIn && !hasRated && <RateQuestion />}
+                    </QuestionAnswers>
                 )}
                 {screen === 'scoreResults' && <QuestionResults />}
                 {(submittingGuess || submittingAnswer) && <ImSpinner6 className="text-yellow-gradient-to animate-spin left-1/2 top-p85 absolute -transform-x-full w-6 h-6" />}

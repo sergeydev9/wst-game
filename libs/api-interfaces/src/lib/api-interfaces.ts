@@ -136,3 +136,11 @@ export interface SubmitRating {
 export interface SubmitQuestionRating {
   questionId: number;
 }
+
+export interface OneLiner {
+  text: string;
+  clean: boolean;
+}
+export interface GetOneLiners {
+  oneLiners: OneLiner[]
+}

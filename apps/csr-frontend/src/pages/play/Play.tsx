@@ -1,4 +1,3 @@
-import { types } from '@whosaidtrue/api-interfaces';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';

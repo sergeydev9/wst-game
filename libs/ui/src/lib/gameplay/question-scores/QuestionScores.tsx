@@ -42,7 +42,7 @@ const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, correctAnswer,
                 `}>
                 {hasGuessed && <div>
                     <SmallHeader>You Guessed</SmallHeader>
-                    <MediumHeader>{guess} players</MediumHeader>
+                    <MediumHeader>{guess} {`${guess}` === `${1}` ? 'player' : 'players'}</MediumHeader>
                 </div>}
                 <div>
                     <SmallHeader>Correct Answer</SmallHeader>
