@@ -25,13 +25,19 @@ fi
 
 if [[ ! -d dist/apps/api ]]; then
 	echo "This script expects the api project to be built"
-	echo "  $ yarn build api"
+	echo "  $ yarn build api --prod --skip-nx-build-cache"
 	exit -1
 fi
 
 if [[ ! -d dist/apps/socket-server ]]; then
 	echo "This script expects the socket-server project to be built"
-	echo "  $ yarn build socket-server"
+	echo "  $ yarn build socket-server --prod --skip-nx-build-cache"
+	exit -1
+fi
+
+if [[ ! -d dist/apps/worker ]]; then
+	echo "This script expects the socket-server project to be built"
+	echo "  $ yarn build worker --prod --skip-nx-build-cache"
 	exit -1
 fi
 
