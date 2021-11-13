@@ -1,4 +1,32 @@
-# Commands
+# Typical deployment
+
+1. Build backend projects
+
+```bash
+yarn install
+yarn build socket-server --prod --skip-nx-build-cache
+yarn build api --prod --skip-nx-build-cache
+yarn build worker --prod --skip-nx-build-cache
+```
+
+Note: you may need to edit your `.local.env` setting NODE_ENV=production if you get build errors.
+
+2. Build docker images
+
+```bash
+docker/build.sh --push
+```
+
+3. Update `docker/ebs/docker-compose.yml` with new build images
+
+4. Deploy
+
+```bash
+cd docker/ebs
+eb deploy
+```
+
+# Setting up a new environment
 
 Prerequisite: install `awsebcli` tools.
 
