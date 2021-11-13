@@ -17,8 +17,8 @@ export interface RerollButtonProps extends React.HtmlHTMLAttributes<HTMLButtonEl
  */
 const RerollNamesButton: React.FC<RerollButtonProps> = ({ rerolls, onClick }) => {
     return rerolls > 0 ?
-        <Button type="button" buttonStyle='small' $secondary className="w-40" onClick={onClick} ><ImSpinner11 className="inline-block mr-3 text-sm" />{rerolls} New Names</Button> :
-        <Button type="button" buttonStyle='small' $secondary className="w-40" disabled><span className="text-gray-500">No Rerolls Left!</span></Button>
+        <Button type="button" buttonStyle='small' $secondary onClick={onClick} ><ImSpinner11 className="inline-block mr-3 text-sm" />{rerolls} New Names</Button> :
+        <Button type="button" buttonStyle='small' $secondary disabled><span className="text-gray-500">No Rerolls Left!</span></Button>
 }
 
 export default RerollNamesButton;

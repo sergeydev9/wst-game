@@ -13,7 +13,7 @@ const LargeNav: React.FC = () => {
     return (
         <nav className="flex flex-row font-bold text-body-small justify-end gap-3 sm:gap-6 h-full items-center">
             <a href="www.whosaidtrueforschools.com" className={`${location.pathname === '/' ? 'text-white-ish' : 'text-purple-base'} ${loggedIn ? '' : 'hidden sm:flex'} text-xs sm:text-sm`}>Who Said true For Schools</a>
-            {loggedIn ? <Button type="button" className="whitespace-nowrap" buttonStyle='small' $secondary ><Link to='/account'>My Account </Link></Button> : <GuestButtons />}
+            {loggedIn ? <Button as={Link} to="/account" type="button" className="whitespace-nowrap" buttonStyle='small' $secondary >My Account</Button> : <GuestButtons />}
         </nav>
     )
 }

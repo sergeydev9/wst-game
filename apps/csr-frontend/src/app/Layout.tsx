@@ -1,24 +1,32 @@
-
-import { FlashMessage, FullScreenModalController, ScoreTooltip, Reconnecting } from '../features';
+import {
+  FlashMessage,
+  FullScreenModalController,
+  ScoreTooltip,
+  Reconnecting,
+} from '../features';
 import Footer from '../features/footer/Footer';
 import NavBar from '../features/navbar/Navbar';
 
 const Layout: React.FC = ({ children }) => {
-
-    return (
-        <div className="min-h-screen flex flex-col">
-            <div style={{ backgroundImage: "url('./assets/bg.svg'), linear-gradient(180deg, #6325AD 0%, #411872 100%)" }}
-                className='flex-grow pb-16 w-full'>
-                <NavBar />
-                <Reconnecting />
-                <ScoreTooltip />
-                <FlashMessage />
-                <FullScreenModalController />
-                <main>{children}</main>
-            </div>
-            <Footer />
-        </div>
-    )
-}
+  return (
+    <div className="min-h-screen flex flex-col">
+      <div
+        className="flex-grow pb-16 w-full bg-repeat"
+        style={{
+          backgroundImage:
+            "url('./assets/bg.svg'), linear-gradient(180deg, #431975 0%, #331359 100%)",
+        }}
+      >
+        <NavBar />
+        <Reconnecting />
+        <ScoreTooltip />
+        <FlashMessage />
+        <FullScreenModalController />
+        <main>{children}</main>
+      </div>
+      <Footer />
+    </div>
+  );
+};
 
 export default Layout;

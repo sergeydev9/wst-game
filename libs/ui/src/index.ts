@@ -1,5 +1,6 @@
-export { default as TextInput } from "./lib/inputs/text-input/TextInput";
+export { default as TextInput } from './lib/inputs/text-input/TextInput';
 export { default as Box } from './lib/containers/box/Box';
+export { default as Card } from './lib/card/Card';
 export { default as Footer } from './lib/footer/Footer';
 export { default as FooterLinks } from './lib/footer/footer-links/FooterLinks';
 export { default as SocialMediaLinks } from './lib/social-media-links/SocialMediaLinks';
@@ -14,7 +15,7 @@ export { default as SecurityCodeDigit } from './lib/inputs/security-code-digit/S
 export { default as SelectDropdown } from './lib/inputs/select-dropdown/SelectDropdown';
 export { default as Toggle } from './lib/inputs/toggle/Toggle';
 export { default as NavLogo } from './lib/nav-logo/NavLogo';
-export { default as RerollNamesButton } from './lib/button/reroll-names/RerollNames'
+export { default as RerollNamesButton } from './lib/button/reroll-names/RerollNames';
 export { default as ReaderAnnouncement } from './lib/messages/reader-announcement/ReaderAnnouncement';
 export { default as FaqItem } from './lib/faq/FaqItem';
 export { default as DeckCard } from './lib/decks/deck-card/DeckCard';
@@ -28,8 +29,8 @@ export { default as Modal } from './lib/modal/Modal';
 export { default as NoFlexBox } from './lib/containers/no-flex-box/NoFlexBox';
 export { default as DeckDetails } from './lib/decks/deck-details/DeckDetails';
 export { default as PaymentMethodSelect } from './lib/payment-method-select/PaymentMethodSelect';
-export { default as InviteLinks } from './lib/invite-links/Invite-links'
-export { default as MessageModal } from './lib/messages/Messages'
+export { default as InviteLinks } from './lib/invite-links/Invite-links';
+export { default as MessageModal } from './lib/messages/Messages';
 export { default as RemovePlayers } from './lib/remove-players/RemovePlayers';
 export { default as RemovePlayersRow } from './lib/remove-players/RemovePlayersRow';
 export { default as WideBox } from './lib/containers/wide-box/WideBox';

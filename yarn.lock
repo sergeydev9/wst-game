@@ -1898,6 +1898,11 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
+"@headlessui/react@^1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-1.4.2.tgz#87e264f190dbebbf8dfdd900530da973dad24576"
+  integrity sha512-N8tv7kLhg9qGKBkVdtg572BvKvWhmiudmeEpOCyNwzOsZHCXBtl8AazGikIfUS+vBoub20Fse3BjawXDVPPdug==
+
 "@humanwhocodes/config-array@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.5.0.tgz#1407967d4c6eecd7388f83acf1eaf4d0c6e58ef9"
@@ -8370,7 +8375,7 @@ class-validator@^0.13.1:
     libphonenumber-js "^1.9.7"
     validator "^13.5.2"
 
-classnames@2.x, classnames@^2.2.1, classnames@^2.2.3, classnames@^2.2.5, classnames@^2.2.6:
+classnames@2.x, classnames@^2.2.1, classnames@^2.2.3, classnames@^2.2.5, classnames@^2.2.6, classnames@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
@@ -22881,6 +22886,11 @@ table@^6.0.4, table@^6.0.9:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
 
+tailwind-override@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/tailwind-override/-/tailwind-override-0.5.0.tgz#87345b3579af9345176ce818bdb592ac1945f0df"
+  integrity sha512-zHATTpRyejQ5GFd9sezIlZgAklGSgZI3QL39urtsG0p+5Z4Hsin8KSaUIeRBdkTUmTTdv5u1aSDTwcyKpfbzNg==
+
 tailwind-styled-components@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/tailwind-styled-components/-/tailwind-styled-components-2.0.3.tgz#79ac92cf53a61be6869bc18e12ab0e544c3e9b00"
@@ -22900,6 +22910,14 @@ tailwindcss-classnames@^2.1.2:
     inquirer "^8.1.1"
     lodash "^4.17.15"
     tslib "^2.0.0"
+
+tailwindcss-interaction-variants@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/tailwindcss-interaction-variants/-/tailwindcss-interaction-variants-5.0.0.tgz#8e0825dfa4b2a81804cbae536915e48a85e96580"
+  integrity sha512-Tmx9HjwuNA3G7cLUcebGkNchKkNVIZXBroxa0LBoq/KUb/xEKEM8qugUG7QczSNPhaZzpXmo3IzPkRhf4tDaOQ==
+  dependencies:
+    lodash "^4.17.19"
+    postcss-selector-parser "^6.0.2"
 
 tailwindcss@^2.2.6:
   version "2.2.7"
