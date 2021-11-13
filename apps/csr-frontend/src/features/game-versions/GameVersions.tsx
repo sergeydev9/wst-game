@@ -4,7 +4,7 @@ import { ReactComponent as Logo } from '../../assets/logo.svg';
 
 export interface GameVersionsProps
   extends React.HtmlHTMLAttributes<HTMLDivElement> {
-  onLetsPlayClick?: any;
+  onLetsPlayClick: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 const GameVersions: React.FC<GameVersionsProps> = ({ onLetsPlayClick }) => {
