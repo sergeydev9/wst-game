@@ -42,18 +42,30 @@ class GeneratedNames extends Dao {
         return this.pool.query(query);
     }
 
-    public reportChoices(seen: number[], chosen: number): Promise<QueryResult>[] {
-        const seenQuery = {
-            text: `UPDATE generated_names SET times_displayed = times_displayed + 1 WHERE id = ANY($1)`,
-            values: [[...seen, chosen]]
+    public reportChoices(seen: number[], chosen: number | undefined): Promise<QueryResult>[] {
+
+        if (chosen) {
+            const seenQuery = {
+                text: `UPDATE generated_names SET times_displayed = times_displayed + 1 WHERE id = ANY($1)`,
+                values: [[...seen, chosen]]
+            }
+
+            const chosenQuery = {
+                text: 'UPDATE generated_names SET times_chosen = times_chosen + 1 WHERE id = $1',
+                values: [chosen]
+            }
+
+            return [this.pool.query(seenQuery), this.pool.query(chosenQuery)]
+        } else {
+            const seenQuery = {
+                text: `UPDATE generated_names SET times_displayed = times_displayed + 1 WHERE id = ANY($1)`,
+                values: [[...seen]]
+            }
+
+            // keep as an array to allow caller to not have to worry about whether or not there are 2 promises
+            return [this.pool.query(seenQuery)]
         }
 
-        const chosenQuery = {
-            text: 'UPDATE generated_names SET times_chosen = times_chosen + 1 WHERE id = $1',
-            values: [chosen]
-        }
-
-        return [this.pool.query(seenQuery), this.pool.query(chosenQuery)]
     }
 }
 

@@ -4,8 +4,6 @@ import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { NameRequestResponse } from '@whosaidtrue/api-interfaces';
 import { setRemainingNameOptions } from './chooseNameSlice';
 
-
-import useNames from './useNames';
 import {
     selectNameRerolls,
     setCurrentNameOptions,
@@ -33,6 +31,7 @@ import { clearHost } from '../host/hostSlice';
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
     const [shouldBlock, setShouldBlock] = useState(true);
+    const [text, setText] = useState('')
     const { access_code } = useParams<{ access_code: string }>()
     const history = useHistory();
     const names = useAppSelector(selectCurrentNameOptions);
@@ -176,6 +175,23 @@ const ChooseName: React.FC = () => {
         dispatch(setCurrentNameOptions());
     }
 
+    // input change
+    const changeHandler = (e: React.BaseSyntheticEvent) => {
+        setText(e.target.value)
+    }
+
+    const clickHandler = (e: React.MouseEvent) => {
+        e.preventDefault();
+
+        if (!text.length) {
+            dispatch(showError('Name cannot be empty'))
+        } else {
+            dispatch(sendReport({ seen: seen.map(n => n.id) }));
+            join(text);
+        }
+
+    }
+
     return (
         <Box boxstyle='white' className="w-96 sm:w-max mx-auto px-8 py-10 text-center">
             <Title1 className="text-basic-black mx-8">Choose Your Player Name</Title1>
@@ -192,8 +208,8 @@ const ChooseName: React.FC = () => {
                     <Divider dividerColor='grey' />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 items-center">
-                    <TextInput $border type="text" className="font-semibold text-xl inline w-1/3" placeholder="Create your own" />
-                    <Button className="w-2/3 inline" buttonStyle="big-text" $secondary>Submit</Button>
+                    <TextInput $border type="text" className="font-semibold text-xl inline w-1/3" onChange={changeHandler} placeholder="Create your own" />
+                    <Button className="w-2/3 inline" buttonStyle="big-text" onClick={clickHandler} $secondary>Submit</Button>
                 </div>
             </div>
         </Box>

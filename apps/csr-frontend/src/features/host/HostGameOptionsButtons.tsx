@@ -1,5 +1,5 @@
 import { Button } from '@whosaidtrue/ui';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { setFullModal } from '../modal/modalSlice';
 import useSocket from '../socket/useSocket'
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -7,6 +7,7 @@ import { selectGameStatus } from '../game/gameSlice';
 
 const HostGameOptionsButtons: React.FC = () => {
     const dispatch = useAppDispatch();
+    const location = useLocation();
     const history = useHistory();
     const gameStatus = useAppSelector(selectGameStatus);
     const { setShouldBlock } = useSocket()
@@ -14,8 +15,9 @@ const HostGameOptionsButtons: React.FC = () => {
     const isPostGame = gameStatus === 'postGame';
 
     const confEndGame = () => {
-
-        if (!isPostGame) {
+        if (location.pathname.includes('/x/')) {
+            history.push('/')
+        } if (!isPostGame) {
             setShouldBlock(false);
             dispatch(setFullModal('confirmEndGame'))
         } else {
