@@ -1,9 +1,10 @@
 import { useEffect, useRef, MouseEvent } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, Faqs, Carousel, Button } from '@whosaidtrue/ui';
+import { Box, Faqs, Button } from '@whosaidtrue/ui';
 import { logout, selectIsGuest } from '../../features';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import GameVersions from '../../features/game-versions/GameVersions';
+import HomeCarousel from '../../features/home-carousel/HomeCarousel';
 import JoinGame from '../../features/join-game/JoinGame';
 import SetUpGame from '../../features/setup-game/SetupGame';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
@@ -78,7 +79,7 @@ const Home: React.FC = () => {
       </div>
 
       <div
-        className="grid grid-cols-1 gap-6 max-w-6xl mb-6 mx-auto lg:grid-cols-2 lg:gap-10"
+        className="grid grid-cols-1 gap-6 max-w-6xl mb-20 mx-auto lg:grid-cols-2 lg:gap-10"
         ref={playRef}
       >
         <Box boxstyle="white" className="relative overflow-hidden">
@@ -103,10 +104,11 @@ const Home: React.FC = () => {
         </Box>
       </div>
 
-      <div className="max-w-3xl mb-20 mx-auto">
-        <Carousel title={'Overheard on Who said true?'}>
-          {helper(tempStories)}
-        </Carousel>
+      <div className="max-w-6xl mb-20 mx-auto">
+        <h2 className="text-yellow-base text-title-1 font-extrabold mb-4 text-center lg:text-large-title lg:mb-8">
+          How to play Who Said True?!
+        </h2>
+        <HomeCarousel />
       </div>
 
       <div className="max-w-full mb-20 mx-auto">
