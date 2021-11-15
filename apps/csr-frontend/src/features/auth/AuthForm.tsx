@@ -53,7 +53,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
         validationSchema: Yup.object({
             email: Yup.string().email('Invalid email address').required('Email is required'),
             password: Yup.string()
-                .min(8, 'Password must be at least 8 characters long')
+                .min(8, 'Password must be at least 8 characters')
                 .matches(/\d/, 'Password must contain at least 1 number')
                 .required('Password is required')
         }),

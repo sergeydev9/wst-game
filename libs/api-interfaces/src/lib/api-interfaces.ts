@@ -64,7 +64,7 @@ export interface NameRequestResponse {
 
 export interface NameChoiceReport {
   seen: number[];
-  chosen: number
+  chosen?: number
 }
 
 /**
