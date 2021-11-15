@@ -30,7 +30,7 @@ export const QuestionAnswers: Story<QuestionAnswersProps> = (args) => (
 QuestionAnswers.args = {
     correctAnswer: 3,
     questionText: "have binge watched an entire season of a show in a weekend.",
-    followUp: "What was the show?",
+    followUp: "What was the show?\nWhere did you come from?",
     globalTruePercent: 75,
     groupTruePercent: 50,
 }

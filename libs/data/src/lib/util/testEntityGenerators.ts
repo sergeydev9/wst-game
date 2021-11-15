@@ -97,7 +97,7 @@ export function* testQuestions(num: number, deckId: number) {
             text_for_guess: 'Text for guess',
             status: 'active' as QuestionStatus,
             age_rating: 13,
-            follow_up: 'Follow up',
+            follow_up: 'What was the show?\nWhere did you come from?',
             category: categories[randNum]
         }
         count += 1;
