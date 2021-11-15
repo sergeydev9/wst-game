@@ -186,7 +186,7 @@ describe('Users', () => {
 
         })
 
-        it('should throw duplicate key error if user already exists with that email', async () => {
+        it('should throw duplicate key error if user already exists with that email, and has password', async () => {
             await users.register('test@test.com', 'abcd', 'www.test.com'); // register user
             try {
                 // try to duplicate
@@ -194,6 +194,19 @@ describe('Users', () => {
             } catch (e) {
                 expect(e).toEqual(new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error"))
             }
+        })
+
+        it('should return the user if user already exists but has no password set', async () => {
+
+            await users.createGuest('test@test.com', 'www.test.com')
+
+            const actual = await users.createGuest('test@test.com', 'www.test.com')
+            const user = actual.rows[0];
+
+            expect(user.id).toBeDefined()
+            expect(user.email).toEqual('test@test.com')
+            expect(user.roles.length).toEqual(1)
+            expect(user.roles[0]).toEqual('guest')
         })
     })
 

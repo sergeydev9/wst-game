@@ -254,18 +254,44 @@ class Users extends Dao {
      *
      * Called from the 'play as guest host' flow.
      *
-     * Will throw a unique key error if user already exists with that email.
+     * If the email is in use, check if that account doesn't have a password set.
+     *
+     * If there is not password, then retrieves the user.
      *
      * @param email
      * @returns
      */
-    public createGuest(email: string, domain: string): Promise<QueryResult> {
+    public async createGuest(email: string, domain: string): Promise<QueryResult> {
         const query = {
             text: 'INSERT INTO users (email, roles, domain) VALUES ( $1, $2, $3) RETURNING id, email, array_to_json(roles) AS roles',
             values: [email, ['guest'], domain]
         }
+        try {
+            return await this._pool.query(query)
 
-        return this._pool.query(query)
+        } catch (e) {
+            if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
+
+                const secondQuery = {
+                    text: `
+                            SELECT id, email, array_to_json(roles) AS roles
+                            FROM users
+                            WHERE email = $1
+                            AND password IS NULL;
+                        `,
+                    values: [email]
+                }
+
+                const secondResult = await this._pool.query(secondQuery);
+
+                if (!secondResult.rowCount) throw e; // if empty, then account has a password set
+
+                return secondResult;
+
+            } else {
+                throw e; // rethrow if any other error
+            }
+        }
     }
 }
 
