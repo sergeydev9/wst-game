@@ -105,6 +105,9 @@ const Home: React.FC = () => {
       </div>
 
       <div className="max-w-6xl mb-20 mx-auto">
+        <h2 className="text-yellow-base text-title-1 font-extrabold mb-4 text-center lg:text-large-title lg:mb-8">
+          How to play Who Said True?!
+        </h2>
         <HomeCarousel />
       </div>
 

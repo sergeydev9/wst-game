@@ -122,15 +122,6 @@ const HomeCarousel: React.FC = () => {
   return (
     <div className="relative bg-basic-black bg-opacity-75 py-6 rounded-3xl select-none lg:py-10">
       <Slider {...settings}>
-        <div className="item text-left text-white p-10">
-          <div className="font-extrabold text-4xl text-yellow-base mb-10">
-            How to play Who Said True?!
-          </div>
-          <div className="font-bold text-2xl mb-10">
-            Here are the rules for Who Said True?!
-          </div>
-          <div className="text-2xl font-bold">Swipe to learn how to play!</div>
-        </div>
         {rules.map((rule, index) => (
           <div className="item text-center" key={index}>
             <Card>
