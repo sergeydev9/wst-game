@@ -1,9 +1,16 @@
 const TerserPlugin = require('terser-webpack-plugin');
+const nxConfig = require('@nrwl/react/plugins/webpack')
 const CompressionPlugin = require('compression-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
+
+
 const zlib = require('zlib');
 const fs = require('fs');
 
 module.exports = (config) => {
+  config = nxConfig(config);
+
   config.module.rules = config.module.rules.filter(
     (f) => f.test.toString() !== '/\\.css$/'
   );
@@ -41,8 +48,31 @@ module.exports = (config) => {
       ],
     };
 
+    config.mode = 'production';
+
     config.plugins = [
       ...config.plugins,
+      new BundleAnalyzerPlugin({generateStatsFile: true}),
+      new StatoscopeWebpackPlugin( {
+        saveReportTo: './statoscope-report.html',
+        saveStatsTo: './statoscope-stats.json',
+        compressor: 'gzip',
+        hash: true, // compilation hash
+        entrypoints: true, // entrypoints
+        chunks: true, // chunks
+        chunkModules: true, // modules
+        reasons: true, // modules reason
+        nestedModules: true, // concatenated modules
+        usedExports: true, // used exports
+        providedExports: true, // provided imports
+        assets: true, // assets
+        chunkOrigins: true, // chunks origins stats (to find out which modules require a chunk)
+        version: true, // webpack version
+        builtAt: true, // build at time
+        timings: true, // modules timing information
+        performance: true, // info about
+
+      }),
       new CompressionPlugin({
         filename: '[path][base].gz',
         algorithm: 'gzip',
@@ -62,6 +92,7 @@ module.exports = (config) => {
         threshold: 10240,
         minRatio: 0.8,
       }),
+
     ];
 
     config.module.rules.push({
@@ -79,6 +110,33 @@ module.exports = (config) => {
       cert: fs.readFileSync(process.env.DEV_SSL_CERT),
     };
 
+    config.mode = 'development'
+    config.plugins = [
+      ...config.plugins,
+      new BundleAnalyzerPlugin({
+        generateStatsFile: true,
+        excludeAssets: new RegExp(/^styles/)}), // exclude styles in dev
+      new StatoscopeWebpackPlugin( {
+        saveReportTo: './statoscope-report.html',
+        saveStatsTo: './statoscope-stats.json',
+        compressor: 'gzip',
+        hash: true, // compilation hash
+        entrypoints: true, // entrypoints
+        chunks: true, // chunks
+        chunkModules: true, // modules
+        reasons: true, // modules reason
+        nestedModules: true, // concatenated modules
+        usedExports: true, // used exports
+        providedExports: true, // provided imports
+        assets: true, // assets
+        chunkOrigins: true, // chunks origins stats (to find out which modules require a chunk)
+        version: true, // webpack version
+        builtAt: true, // build at time
+        timings: true, // modules timing information
+        performance: true, // info about
+        watchMode:true
+      }),
+    ]
     // Hack to enable liveReload
     // REF: https://github.com/nrwl/nx/issues/6506
     config.target = 'web';
