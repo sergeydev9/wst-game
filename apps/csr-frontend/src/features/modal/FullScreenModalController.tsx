@@ -3,7 +3,13 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Modal, ModalContent } from '@whosaidtrue/ui';
 import { selectFullModal, setFullModal } from "./modalSlice";
 import Loading from '../loading/Loading';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import WinnerAnnouncement from './full-screen-modals/WinnerAnnouncement';
+
+const stripeKey = process.env.NX_STRIPE_KEY as string;
+const stripePromise = loadStripe(stripeKey);
 
 // Lazy load modals
 const RemovalNotification = lazy(() => import('./full-screen-modals/RemovalNotification'))
@@ -81,7 +87,11 @@ const FullScreenModalController = () => {
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={false}>
                 <Suspense fallback={<Loading />}>
-                    <Checkout />
+                    <Elements stripe={stripePromise}>
+                        <PayPalScriptProvider options={{ "client-id": process.env.NX_PAYPAL_CLIENT_ID as string, currency: "USD" }}>
+                            <Checkout />
+                        </ PayPalScriptProvider>
+                    </Elements>
                 </Suspense>
             </Modal>
             }

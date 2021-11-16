@@ -15,24 +15,14 @@ import {
     JoinGameResponse
 } from '@whosaidtrue/api-interfaces';
 import { getDomain } from '../../getDomain';
+import extractOptionalId from '../../extractOptionalId';
 
 const router = Router();
 
 router.post('/join', [...joinGame], async (req: Request, res: Response) => {
 
     const { access_code, name } = req.body as JoinGameRequest;
-    // Check header for token
-    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-
-    let id: number;
-    // if there is a token, verify it and extract user id
-    if (token) {
-        try {
-            const { user } = jwt.verify(token, process.env.JWT_SECRET) as { user: TokenPayload }
-            id = user.id;
-            //  eslint-disable-next-line
-        } catch (_) { }  // fail silently if token invalid
-    }
+    const id = extractOptionalId(req);
 
     try {
         const result = await games.join(access_code, name, id);

@@ -7,31 +7,19 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-import { Store } from 'redux';
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Cypress {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    interface Chainable<Subject> {
-      loginUser(): void;
-      getBySel(selector: string): any;
-      fillInValidAuth(): void;
-      store(): Store;
-      getState(): any;
-      subscribe(): any;
+/// <reference types="cypress" />
 
-    }
-  }
-}
-Cypress.Commands.add("getBySel", (selector, ...args) => {
+
+
+export function getBySel(selector: string, ...args: unknown[]) {
   return cy.get(`[data-cy=${selector}]`, ...args);
-});
+};
 
 
 /**
  * loginUser
  */
-Cypress.Commands.add("loginUser", () => {
+export function loginUser() {
   const log = Cypress.log({
     name: "loginUser",
     displayName: "LOGIN USER",
@@ -45,9 +33,9 @@ Cypress.Commands.add("loginUser", () => {
     log.snapshot("before");
   });
 
-  cy.getBySel('email-input').type('cypress-test-user@email.com');
-  cy.getBySel('password-input').type('Password123');
-  cy.getBySel('login-submit').click()
+  getBySel('email-input').type('cypress-test-user@email.com');
+  getBySel('password-input').type('Password123');
+  getBySel('login-submit').click()
 
   cy.wait("@login").then((loginUser) => {
     log.set({
@@ -59,13 +47,13 @@ Cypress.Commands.add("loginUser", () => {
     });
   });
 
-});
+};
 
 
 /**
  * Fill in auth
  */
-Cypress.Commands.add('fillInValidAuth', () => {
+export function fillInValidAuth() {
   const log = Cypress.log({
     name: "fillInValidAuth",
     displayName: "ENTER CREDENTIALS",
@@ -74,54 +62,12 @@ Cypress.Commands.add('fillInValidAuth', () => {
   });
 
   log.snapshot('before')
-  cy.getBySel('email-input').type('cypress-test-user@email.com');
-  cy.getBySel('password-input').type('Password123');
+  getBySel('email-input').type('cypress-test-user@email.com');
+  getBySel('password-input').type('Password123');
 
   log.snapshot('after')
-})
+}
 
-/**
- * store
- */
-Cypress.Commands.add('store', () => {
-  return cy
-    .log('Redux - Store')
-    .window({ log: false })
-    .its('store')
-})
-
-
-/**
- * get state
- */
-Cypress.Commands.add('getState', (node) => {
-  return node
-    ? cy
-      .log(`Redux - state[${node}]`)
-      .window({ log: false })
-      .its('store')
-      .invoke('getState')
-      .its(node.toString())
-    : cy
-      .log('Redux - State')
-      .window({ log: false })
-      .its('store')
-      .invoke('getState')
-})
-
-Cypress.Commands.add('dispatch', (action = { type: 'NO_OP' }) => {
-  const { type, ...params } = action
-  return cy
-    .log(`Redux - Dispatch: ${type}`, params)
-    .window({ log: false })
-    .its('store')
-    .invoke('dispatch', action)
-})
-
-Cypress.Commands.add('subscribe', (callback = (...args) => console.warn('CB:', args)) => {
-  return cy
-    .log('Redux - Subscribe')
-    .window({ log: false })
-    .its('store')
-    .invoke('subscribe', callback)
-})
+export function getState() {
+  return cy.window().its('store').invoke('getState')
+}

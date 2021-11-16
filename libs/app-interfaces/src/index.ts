@@ -269,7 +269,7 @@ export interface JobTransaction extends Job {
 
 export interface Email {
     id: number;
-    user_id: number;
+    user_id?: number;
     from?: string;
     to: string;
     cc?: string;

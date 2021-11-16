@@ -5,6 +5,7 @@ export default tw.span`
     absolute
     text-red-base
     transform
+    block
     translate-x-1
     translate-y-1
     font-bold

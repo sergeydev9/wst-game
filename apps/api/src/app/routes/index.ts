@@ -5,4 +5,5 @@ export { default as names } from './names/names.route';
 export { default as purchase } from './purchase/purchase.route';
 export { default as games } from './games/games.route';
 export { default as ratings } from './ratings/ratings.route';
-export { default as oneLiners } from './one-liners/one-liners.route'
+export { default as oneLiners } from './one-liners/one-liners.route';
+export { default as emails } from './emails/emails.route';

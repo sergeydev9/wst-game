@@ -1,5 +1,16 @@
 import { Pool } from 'pg'
-import { Users, Decks, Games, GeneratedNames, Orders, AppRatings, QuestionRatings, FreeCreditSignups, OneLiners } from '@whosaidtrue/data';
+import {
+    Users,
+    Decks,
+    Games,
+    GeneratedNames,
+    Orders,
+    AppRatings,
+    QuestionRatings,
+    FreeCreditSignups,
+    OneLiners,
+    Emails
+} from '@whosaidtrue/data';
 
 const pool = new Pool({
     user: process.env.POSTGRES_USER,
@@ -18,5 +29,18 @@ const appRatings = new AppRatings(pool);
 const questionRatings = new QuestionRatings(pool);
 const creditSignup = new FreeCreditSignups(pool);
 const oneLiners = new OneLiners(pool);
+const emails = new Emails(pool);
 
-export { users, games, decks, names, pool, orders, appRatings, questionRatings, creditSignup, oneLiners };
+export {
+    users,
+    games,
+    decks,
+    names,
+    pool,
+    orders,
+    appRatings,
+    questionRatings,
+    creditSignup,
+    oneLiners,
+    emails
+};

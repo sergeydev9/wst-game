@@ -1,13 +1,14 @@
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { setFullModal } from "../..";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppDispatch } from "../../../app/hooks";
+import { sendMessage } from "../../send-message/sendMessage";
 import { Title1, FormGroup, InputLabel, ErrorText, TextInput, TextArea, Button, ModalContent } from "@whosaidtrue/ui";
+import { showError, showSuccess } from "../modalSlice";
 
 
 const ReportAnIssue: React.FC = () => {
     const dispatch = useAppDispatch();
-
 
     // Form
     const formik = useFormik({
@@ -17,14 +18,17 @@ const ReportAnIssue: React.FC = () => {
             message: '',
         },
         validationSchema: Yup.object({
-            email: Yup.string().email('Invalid email address').required('Email is required'),
+            email: Yup.string().email('Invalid email address').required(),
             name: Yup.string().required(),
             message: Yup.string().required()
         }),
-        onSubmit: async (values) => {
-            // TODO: figure out where/how these messages will be sent
-            const { email, name, message } = values
-            dispatch(setFullModal(''))
+        onSubmit: (values) => {
+            dispatch(sendMessage({ ...values, category: 'Report an Issue' })).then(() => {
+                dispatch(showSuccess('Thank you for your feedback'))
+                dispatch(setFullModal(''))
+            }).catch(() => {
+                dispatch(showError('An unexpected error occured while sending your message'))
+            })
         },
     });
     const emailErr = formik.touched.email && formik.errors.email ? true : undefined;
@@ -35,12 +39,12 @@ const ReportAnIssue: React.FC = () => {
     // render
     return (
         <ModalContent $narrow>
-            <form className="m-7 w-full px-16" onSubmit={formik.handleSubmit}>
+            <form className="m-3 sm:m-7 w-full px-6 sm:px-16" onSubmit={formik.handleSubmit}>
 
                 <Title1 className="text-center mb-3">Report an Issue</Title1>
 
                 {/* name */}
-                <FormGroup>
+                <FormGroup className="mt-4">
                     <InputLabel htmlFor="name">Name</InputLabel>
                     <TextInput {...formik.getFieldProps('name')} id="name" $hasError={nameErr} $border name="name" type="text" />
 
@@ -48,7 +52,7 @@ const ReportAnIssue: React.FC = () => {
                 </FormGroup>
 
                 {/* email */}
-                <FormGroup>
+                <FormGroup className="mt-4">
                     <InputLabel htmlFor="email">Email</InputLabel>
                     <TextInput {...formik.getFieldProps('email')} $hasError={emailErr} id="email" $border name="email" type="email" />
                     {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
@@ -56,14 +60,14 @@ const ReportAnIssue: React.FC = () => {
 
 
                 {/* message */}
-                <FormGroup>
+                <FormGroup className="mt-4">
                     <InputLabel htmlFor="message">Please tell us what went wrong</InputLabel>
                     <TextArea {...formik.getFieldProps('message')} $hasError={emailErr} id="message" name="message" />
                     {messageErr && <ErrorText>{formik.errors.message}</ErrorText>}
                 </FormGroup>
 
                 {/* submit */}
-                <Button color="blue" type="submit" >Send</Button>
+                <Button color="blue" type="submit" className="mt-4" >Send</Button>
             </form>
         </ModalContent>
     )

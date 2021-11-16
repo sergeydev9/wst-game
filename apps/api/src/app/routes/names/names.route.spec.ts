@@ -1,8 +1,6 @@
 import supertest from 'supertest';
 import { Application } from 'express';
-
 import App from '../../App';
-
 
 describe('names routes', () => {
     let app: Application;

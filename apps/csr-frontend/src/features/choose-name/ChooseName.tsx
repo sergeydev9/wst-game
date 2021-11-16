@@ -3,7 +3,6 @@ import { useHistory, useParams } from 'react-router';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { NameRequestResponse } from '@whosaidtrue/api-interfaces';
 import { setRemainingNameOptions } from './chooseNameSlice';
-
 import {
     selectNameRerolls,
     setCurrentNameOptions,
@@ -11,7 +10,14 @@ import {
     selectSeen,
     sendReport
 } from './chooseNameSlice';
-import { setGameStatus, clearGame, joinGame, selectIsHost, endGameFromApi, selectGameId } from '../game/gameSlice';
+import {
+    setGameStatus,
+    clearGame,
+    joinGame,
+    selectIsHost,
+    endGameFromApi,
+    selectGameId
+} from '../game/gameSlice';
 import {
     Button,
     RerollNamesButton,

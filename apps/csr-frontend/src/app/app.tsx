@@ -5,6 +5,7 @@ import { GuardedRoute, SocketProvider } from "../features";
 import Layout from "./Layout";
 import Faq from '../pages/faq/Faq';
 import Home from '../pages/home/Home';
+import Thanks from '../pages/thanks/Thanks';
 
 const ContactUs = loadable(() => import('../pages/contact-us/ContactUs'))
 const ChooseName = loadable(() => import('../features/choose-name/ChooseName'));
@@ -73,6 +74,9 @@ const App: React.FC = () => {
             </Route>
             <Route exact path="/privacy-policy">
               <PrivacyPolicy />
+            </Route>
+            <Route exact path="/thanks">
+              <Thanks />
             </Route>
             <Route exact path="/terms-and-conditions">
               <TermsAndConditions />

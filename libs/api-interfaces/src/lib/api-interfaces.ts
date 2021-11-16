@@ -144,3 +144,13 @@ export interface OneLiner {
 export interface GetOneLiners {
   oneLiners: OneLiner[]
 }
+
+/**
+ * EMAILS
+ */
+export interface EmailRequest {
+  email: string;
+  message: string;
+  category: string;
+  name: string;
+}
