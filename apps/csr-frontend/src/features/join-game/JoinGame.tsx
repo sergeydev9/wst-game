@@ -46,9 +46,7 @@ const JoinGame: React.FC = () => {
           placeholder="Enter Game Code"
           {...formik.getFieldProps('accessCode')}
         />
-        <Button type="submit" className="flex-1">
-          Join Game!
-        </Button>
+        <Button type="submit">Join Game!</Button>
       </form>
       {codeError ? <ErrorText>{formik.errors.accessCode}</ErrorText> : null}
     </section>
