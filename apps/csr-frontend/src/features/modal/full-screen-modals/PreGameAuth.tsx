@@ -64,6 +64,7 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 }).catch(e => {
                     if (e.response.data === "A user already exists with that email") {
                         setInUse(true);
+                        formik.getFieldHelpers('email').setValue(values.email)
                     } else {
                         dispatch(showError('Oops, an unexpected error has occured. Please try again later.'));
                         dispatch(setFullModal(''))
