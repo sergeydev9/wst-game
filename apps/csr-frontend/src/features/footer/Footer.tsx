@@ -14,7 +14,7 @@ const FooterComponent: React.FC = () => {
                 <Link to="/terms-and-conditions">Terms &amp; Conditions</Link>
                 <Link to='/contact-us'>Contact Us</Link>
             </FooterLinks>
-            <SocialMediaLinks fbook="facebook.com" insta="instagram.com" twitter="twitter.com" />
+            <SocialMediaLinks fbook="https://www.facebook.com/WhoSaidTrueGame" insta="https://www.instagram.com/whosaidtrue/" twitter="https://twitter.com/WhoSaidTrue" />
         </Footer>
     )
 
