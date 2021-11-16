@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Box, Faqs, Button } from '@whosaidtrue/ui';
 import { logout, selectIsGuest } from '../../features';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import GameVersions from '../../features/game-versions/GameVersions';
+// import GameVersions from '../../features/game-versions/GameVersions';
 import HomeCarousel from '../../features/home-carousel/HomeCarousel';
 import JoinGame from '../../features/join-game/JoinGame';
 import SetUpGame from '../../features/setup-game/SetupGame';
@@ -74,7 +74,7 @@ const Home: React.FC = () => {
 
       <div className="max-w-3xl text-center mb-10 mx-auto">
         <h1 className="text-yellow-base text-large-title font-extrabold">
-          The outrageously fun game of quirky questions and anonymous answers
+          The outrageous game of quirky questions and anonymous answers
         </h1>
       </div>
 
@@ -111,9 +111,9 @@ const Home: React.FC = () => {
         <HomeCarousel />
       </div>
 
-      <div className="max-w-full mb-20 mx-auto">
+      {/* <div className="max-w-full mb-20 mx-auto">
         <GameVersions onLetsPlayClick={handleLetsPlayClick} />
-      </div>
+      </div> */}
 
       <div className="max-w-3xl mb-10 mx-auto lg:mb-20">
         <Faqs />

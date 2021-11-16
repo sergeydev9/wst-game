@@ -1,9 +1,14 @@
+import { useLocation } from 'react-router-dom';
 import { Button } from '@whosaidtrue/ui';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { isLoggedIn } from '../auth/authSlice';
 import { setFullModal } from '../modal/modalSlice';
 
 
 const GuestButtons = () => {
+    const loggedIn = useAppSelector(isLoggedIn);
+    const location = useLocation();
+
     const dispatch = useAppDispatch();
 
     const openLoginModal = () => {
@@ -16,9 +21,8 @@ const GuestButtons = () => {
 
     return (
         <>
-            <Button onClick={openLoginModal} className="whitespace-nowrap" type="button" buttonStyle='small' $secondary>Log In</Button>
+            <button onClick={openLoginModal} className={`font-bold ${location.pathname === '/' ? 'text-purple-subtle-fill' : 'text-purple-base'} whitespace-nowrap ${loggedIn ? '' : 'hidden sm:flex'}`} type="button">Log In</button>
             <Button onClick={openCreateAccModal} className="whitespace-nowrap" type="button" data-cy="create-account" buttonStyle='small' $secondary>Create Account</Button>
-
         </>
     )
 }

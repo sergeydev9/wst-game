@@ -8,7 +8,7 @@ const FooterComponent: React.FC = () => {
     return (
         <Footer className={isHidden ? "hidden" : ""}>
             <FooterLinks>
-                <a href="http://www.whosaidtrueforschools.com">Who Said True For Schools</a>
+                {/* <a href="http://www.whosaidtrueforschools.com">Who Said True For Schools</a> */}
                 <Link to="/faq">FAQs</Link>
                 <Link to="/privacy-policy">Privacy Policy</Link>
                 <Link to="/terms-and-conditions">Terms &amp; Conditions</Link>
