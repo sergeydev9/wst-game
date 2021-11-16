@@ -29,7 +29,12 @@ const JoinGame: React.FC = () => {
 
   return (
     <section className="text-left w-full h-full p-6 relative select-none">
-      <Title1 className="mb-7 text-center">Join a Game</Title1>
+      <Title1
+        className="mb-7 text-center"
+        style={{ textShadow: '0 0 10px white' }}
+      >
+        Join a Game
+      </Title1>
       <form
         className="flex flex-col md:flex-row gap-4 items-center"
         onSubmit={formik.handleSubmit}
