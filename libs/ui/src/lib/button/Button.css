@@ -23,8 +23,8 @@
   @apply bg-blue-light;
 }
 
-.button span {
-  position: relative;
+.button > span {
+  @apply relative flex items-center -top-px;
   z-index: 1;
 }
 
@@ -44,6 +44,10 @@
 
 .button.button--inline:hover::before {
   @apply bg-transparent;
+}
+
+.button.button--inline > span {
+  @apply top-auto;
 }
 
 /* SECONDARY BUTTON STYLES */
