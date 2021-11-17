@@ -20,3 +20,8 @@
 .slick-dots li.slick-active button:before {
   color: white;
 }
+
+.slick-track {
+  display: flex;
+  align-items: center;
+}
