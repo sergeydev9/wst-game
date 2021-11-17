@@ -3,15 +3,13 @@ import { Button, Title1 } from '@whosaidtrue/ui';
 
 const SetUpGame: React.FC = () => {
   return (
-    <section className="text-center w-full self-stretch p-6 relative select-none">
-      <Title1 className="mb-7" style={{ textShadow: '0 0 10px white' }}>
+    <section className="flex flex-col justify-center items-center h-full w-full p-6 relative select-none">
+      <Title1 className="mb-5" style={{ textShadow: '0 0 10px white' }}>
         Start a Game
       </Title1>
-      <div className="flex justify-center">
-        <Button as={Link} to="/decks">
-          Get Started!
-        </Button>
-      </div>
+      <Button as={Link} to="/decks">
+        Get Started!
+      </Button>
     </section>
   );
 };
