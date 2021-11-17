@@ -46,7 +46,7 @@ const JoinGame: React.FC = () => {
             history.push(`/x/${accessCode}`);
           }
         } catch (e) {
-          setErrorText('Could not find the game you were looking for.');
+          setErrorText('That Game Code is not valid. Please try again.');
         }
       }
     },

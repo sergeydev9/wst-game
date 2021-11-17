@@ -82,8 +82,8 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
         }
     }
     return (
-        loggedIn ? <Button type="button" onClick={handler}>{buttonText}</Button> :
-            <Button type="button" onClick={handler}>{buttonText}</Button>
+        loggedIn ? <Button className="w-full" type="button" onClick={handler}>{buttonText}</Button> :
+            <Button className="w-full" type="button" onClick={handler}>{buttonText}</Button>
     )
 
 
