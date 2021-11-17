@@ -37,6 +37,21 @@ class GamePlayers extends Dao {
 
         return this.pool.query(query);
     }
+
+    public setStatus(playerId: number, status: string): Promise<QueryResult> {
+        const query = {
+            text: `
+                UPDATE game_players
+                SET status = $2
+                WHERE id = $1
+                RETURNING status
+            `,
+
+            values: [playerId, status]
+        }
+        return this.pool.query(query);
+    }
+
 }
 
 export default GamePlayers

@@ -8,6 +8,7 @@ export interface SetCurrentPlayers {
 export interface PlayerEvent {
     id: number;
     player_name: string;
+    event_origin?: string; // used to identify where this was trigged. e.g. if player was removed from the lobby, this string will indicate that
 }
 
 

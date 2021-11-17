@@ -2,7 +2,7 @@ import { Server, Socket } from "socket.io";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { logger, logIncoming, logOutgoing, logError } from '@whosaidtrue/logger';
 import { playerValueString } from './util';
-import { games } from './db';
+import { games, gamePlayers } from './db';
 import { pubClient } from "./redis";
 import { ONE_DAY } from "./constants";
 import startGame from "./listener-helpers/startGame";
@@ -73,6 +73,10 @@ const registerListeners = (socket: Socket, io: Server) => {
 
             // host left on purpose
         } else if (socket.isHost && reason === "client namespace disconnect" && status[1] !== 'finished' && status[1] !== 'postGame') {
+
+            // set host status in DB
+            await gamePlayers.setStatus(socket.playerId, 'left');
+
             const [questionId, idx] = await pubClient
                 .pipeline()
                 .get(currentQuestionId)
@@ -104,7 +108,15 @@ const registerListeners = (socket: Socket, io: Server) => {
             const isRemoved = await pubClient.sismember(socket.keys.removedPlayers, `${socket.playerId}`);
 
             if (!isRemoved) {
-                sendToOthers(types.PLAYER_LEFT_GAME, { id: socket.playerId, player_name: socket.playerName } as PlayerRef)
+
+                // if the game is over, don't need to do anything
+                if (status[1] === 'postGame' || status[1] === 'finished') return;
+
+                else {
+                    // set player status in DB
+                    await gamePlayers.setStatus(socket.playerId, 'left');
+                    sendToOthers(types.PLAYER_LEFT_GAME, { id: socket.playerId, player_name: socket.playerName } as PlayerRef);
+                }
 
             }
         }
@@ -365,7 +377,13 @@ const registerListeners = (socket: Socket, io: Server) => {
         * REMOVE PLAYER
         */
         socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent) => {
-            logIncoming(types.REMOVE_PLAYER, msg, source)
+            logIncoming(types.REMOVE_PLAYER, msg, source);
+
+            if (msg.event_origin === 'lobby') {
+                await gamePlayers.setStatus(msg.id, 'removed_lobby')
+            } else {
+                await gamePlayers.setStatus(msg.id, 'removed_game')
+            }
             removePlayer(socket, msg);
         })
 

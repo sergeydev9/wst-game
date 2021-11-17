@@ -94,4 +94,19 @@ describe('GamePlayers', () => {
 
     })
 
+    describe('setStatus', () => {
+
+        it('should change the status of the player to the specified value', async () => {
+
+            const player = TEST_GAME_PLAYERS[0]
+            const { rows } = await players.insertOne({ ...player, game_id });
+
+            const userId = rows[0].id;
+
+            const actual = await players.setStatus(userId, 'removed');
+            expect(actual.rows[0].status).toEqual('removed')
+
+        })
+    })
+
 })
