@@ -1,7 +1,7 @@
 /* DEFAULT BUTTON STYLES */
 
 .button {
-  @apply relative inline-flex items-center justify-center overflow-hidden h-14 font-bold px-6 rounded-full text-xl text-white bg-gradient-to-b from-blue-gradient-from to-blue-gradient-to select-none whitespace-nowrap;
+  @apply relative inline-flex items-center justify-center overflow-hidden h-14 font-bold max-w-full px-6 rounded-full text-xl text-white bg-gradient-to-b from-blue-gradient-from to-blue-gradient-to select-none whitespace-nowrap;
   text-shadow: 0px 1px 0px #084ab8;
 }
 
@@ -24,7 +24,7 @@
 }
 
 .button > span {
-  @apply relative flex items-center -top-px;
+  @apply relative flex items-center -top-px overflow-hidden overflow-ellipsis;
   z-index: 1;
 }
 
