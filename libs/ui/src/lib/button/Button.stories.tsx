@@ -18,10 +18,10 @@ export default {
                 type: 'select',
             },
             table: {
-                type: { required: false, summary: "Button Style", detail: `"default" | "big-text" | "small" | "iniline"` },
+                type: { required: false, summary: "Button Style", detail: `"default" | "small" | "iniline"` },
                 defaultValue: { summary: "default", details: 'default' },
             },
-            options: ["default", "big-text", "small", "inline"]
+            options: ["default", "small", "inline"]
         },
 
         $secondary: {

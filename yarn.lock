@@ -23206,11 +23206,6 @@ table@^6.0.4, table@^6.0.9:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
 
-tailwind-override@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/tailwind-override/-/tailwind-override-0.5.0.tgz#87345b3579af9345176ce818bdb592ac1945f0df"
-  integrity sha512-zHATTpRyejQ5GFd9sezIlZgAklGSgZI3QL39urtsG0p+5Z4Hsin8KSaUIeRBdkTUmTTdv5u1aSDTwcyKpfbzNg==
-
 tailwind-styled-components@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/tailwind-styled-components/-/tailwind-styled-components-2.0.3.tgz#79ac92cf53a61be6869bc18e12ab0e544c3e9b00"

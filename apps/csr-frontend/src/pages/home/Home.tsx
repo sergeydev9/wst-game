@@ -3,16 +3,11 @@ import { useHistory } from 'react-router-dom';
 import { Box, Faqs, Button } from '@whosaidtrue/ui';
 import { logout, selectIsGuest } from '../../features';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import GameVersions from '../../features/game-versions/GameVersions';
+// import GameVersions from '../../features/game-versions/GameVersions';
 import HomeCarousel from '../../features/home-carousel/HomeCarousel';
 import JoinGame from '../../features/join-game/JoinGame';
 import SetUpGame from '../../features/setup-game/SetupGame';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
-
-// TODO: remove and replace
-type UserStory = {
-  lines: string[];
-};
 
 const Home: React.FC = () => {
   const history = useHistory();
@@ -40,32 +35,6 @@ const Home: React.FC = () => {
     }
   };
 
-  // TODO: remove and replace
-  const tempStories = [
-    {
-      lines: [
-        '"True or False, I have been to a strip club in the last 5 years?"',
-        '"Did you say, \'in the last five years\'?"',
-        '"Would that matter?! You\'re 17 years old"',
-      ],
-    },
-    {
-      lines: ['"True or False, this is a test story?"', '"True...very true"'],
-    },
-  ];
-
-  // TODO: remove and replace
-  const helper = (stories: UserStory[]) =>
-    stories.map((story, i) => {
-      return (
-        <div key={i}>
-          {story.lines.map((line, j) => (
-            <p key={j}>{line}</p>
-          ))}
-        </div>
-      );
-    });
-
   return (
     <div className="container mx-auto px-4">
       <div className="block max-w-xs mb-10 mx-auto">
@@ -74,7 +43,7 @@ const Home: React.FC = () => {
 
       <div className="max-w-3xl text-center mb-10 mx-auto">
         <h1 className="text-yellow-base text-large-title font-extrabold">
-          The outrageously fun game of quirky questions and anonymous answers
+          The outrageous game of quirky questions and anonymous answers
         </h1>
       </div>
 
@@ -108,12 +77,12 @@ const Home: React.FC = () => {
         <h2 className="text-yellow-base text-title-1 font-extrabold mb-4 text-center lg:text-large-title lg:mb-8">
           How to play Who Said True?!
         </h2>
-        <HomeCarousel />
+        <HomeCarousel onLetsPlayClick={handleLetsPlayClick} />
       </div>
 
-      <div className="max-w-full mb-20 mx-auto">
+      {/* <div className="max-w-full mb-20 mx-auto">
         <GameVersions onLetsPlayClick={handleLetsPlayClick} />
-      </div>
+      </div> */}
 
       <div className="max-w-3xl mb-10 mx-auto lg:mb-20">
         <Faqs />

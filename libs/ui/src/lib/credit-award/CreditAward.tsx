@@ -12,7 +12,7 @@ const CreditAward: React.FC<CreditAwardProps> = ({ numTotal, clickHandler }) => 
             <h2 className="text-3xl font-black mb-8 px-4">You’ve Earned a Free Question Deck!</h2>
             <CelebrationIcons />
             <h4 className="my-8 text-xl font-semibold">You have {numTotal} free credits in your account</h4>
-            <div className="w-11/12 sm:w-3/4 self-center">
+            <div className="self-center max-w-full">
                 <Button onClick={clickHandler} type="button">Browse Question Decks</Button>
             </div>
         </div>

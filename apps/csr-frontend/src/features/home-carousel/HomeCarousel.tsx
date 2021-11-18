@@ -1,14 +1,20 @@
 import Slider from 'react-slick';
 import { BsCaretLeftFill, BsCaretRightFill } from 'react-icons/bs';
-import { Card } from '@whosaidtrue/ui';
+import { Button, Card } from '@whosaidtrue/ui';
+import { ReactComponent as Logo } from '../../assets/logo.svg';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './HomeCarousel.css';
 
+export interface HomeCarouselProps
+  extends React.HtmlHTMLAttributes<HTMLDivElement> {
+  onLetsPlayClick: React.MouseEventHandler<HTMLButtonElement>;
+}
+
 const PrevArrow = ({ onClick }: any) => {
   return (
     <button
-      className="absolute top-1/2 -mt-7 left-10 flex items-center justify-center bg-yellow-base h-14 w-14 rounded-full shadow-md z-10"
+      className="absolute top-1/4 left-4 flex items-center justify-center bg-yellow-base h-14 w-14 rounded-full shadow-md z-10 md:top-1/2 md:-mt-7 md:left-10"
       onClick={onClick}
     >
       <BsCaretLeftFill className="text-purple-dark h-8 w-8" />
@@ -20,7 +26,7 @@ const PrevArrow = ({ onClick }: any) => {
 const NextArrow = ({ onClick }: any) => {
   return (
     <button
-      className="absolute top-1/2 -mt-7 right-10 flex items-center justify-center bg-yellow-base h-14 w-14 rounded-full shadow-md text-center z-10"
+      className="absolute top-1/4 right-4 flex items-center justify-center bg-yellow-base h-14 w-14 rounded-full shadow-md text-center z-10 md:top-1/2 md:-mt-7 md:right-10"
       onClick={onClick}
     >
       <BsCaretRightFill className="text-purple-dark h-8 w-8" />
@@ -34,19 +40,19 @@ const rules = [
     title: 'The Basics',
     image: './assets/rule-1.png',
     content: (
-      <>
-        <p>Each question has two parts.</p>
-        <p>The first is about you and the second is about the team.</p>
-      </>
+      <p>
+        Each game consists of 9 two-part questions that each player answers
+        anonymously.
+      </p>
     ),
   },
   {
-    title: 'Part 1: Answer for YOU',
+    title: 'Part 1 is about YOU',
     image: './assets/rule-2.png',
     content: <p>Answer whether the question is True or False for YOU.</p>,
   },
   {
-    title: 'Part 2: Guess for the Group',
+    title: 'Part 2 is about your GROUP',
     image: './assets/rule-3.png',
     content: (
       <p>
@@ -66,12 +72,13 @@ const rules = [
     ),
   },
   {
-    title: 'To Get Started',
+    title: 'To Start a Game',
     image: './assets/rule-5.png',
     content: (
       <>
         <p>
-          One person in your group sets up the game and creates a Game Code.
+          One person (the Host) "Starts a Game" by choosing a Question Deck and
+          sharing the generated Game Code.
         </p>
         <p>Everyone else "Joins the Game" by entering the Game Code.</p>
       </>
@@ -83,13 +90,10 @@ const rules = [
     content: (
       <>
         <p>
-          Lastly, even though there is a score, the point of the game is to tell
-          stories and have a few laughs.
+          It's about the laughs, not the points! Don't rush through the results;
+          the follow-up questions spark the stories behind the answers!
         </p>
-        <p>
-          Don't try to rush through the questions, just relax and have a good
-          time.
-        </p>
+        <p>So pick a Host for your group and Get Started!</p>
       </>
     ),
   },
@@ -118,7 +122,7 @@ const settings = {
   ],
 };
 
-const HomeCarousel: React.FC = () => {
+const HomeCarousel: React.FC<HomeCarouselProps> = ({ onLetsPlayClick }) => {
   return (
     <div className="relative bg-basic-black bg-opacity-75 py-6 rounded-3xl select-none lg:py-10">
       <Slider {...settings}>
@@ -139,7 +143,10 @@ const HomeCarousel: React.FC = () => {
             </Card>
           </div>
         ))}
-        <div className="item text-center">&nbsp;</div>
+        <div className="item flex items-center justify-center h-full text-center">
+          <Logo className="w-48 h-auto mx-auto mb-5" />
+          <Button onClick={onLetsPlayClick}>Let's Play</Button>
+        </div>
       </Slider>
     </div>
   );

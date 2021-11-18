@@ -8,13 +8,13 @@ const FooterComponent: React.FC = () => {
     return (
         <Footer className={isHidden ? "hidden" : ""}>
             <FooterLinks>
-                <a href="http://www.whosaidtrueforschools.com">Who Said True For Schools</a>
+                {/* <a href="http://www.whosaidtrueforschools.com">Who Said True For Schools</a> */}
                 <Link to="/faq">FAQs</Link>
                 <Link to="/privacy-policy">Privacy Policy</Link>
                 <Link to="/terms-and-conditions">Terms &amp; Conditions</Link>
                 <Link to='/contact-us'>Contact Us</Link>
             </FooterLinks>
-            <SocialMediaLinks fbook="facebook.com" insta="instagram.com" twitter="twitter.com" />
+            <SocialMediaLinks fbook="https://www.facebook.com/WhoSaidTrueGame" insta="https://www.instagram.com/whosaidtrue/" twitter="https://twitter.com/WhoSaidTrue" />
         </Footer>
     )
 
