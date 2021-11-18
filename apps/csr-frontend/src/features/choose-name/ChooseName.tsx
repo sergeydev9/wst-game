@@ -8,7 +8,8 @@ import {
     setCurrentNameOptions,
     selectCurrentNameOptions,
     selectSeen,
-    sendReport
+    sendReport,
+    clearNameChoices
 } from './chooseNameSlice';
 import {
     setGameStatus,
@@ -31,8 +32,6 @@ import { NameObject } from '@whosaidtrue/app-interfaces';
 import { JoinGameResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
 import { showError } from '../modal/modalSlice';
-import { clearCurrentQuestion } from '..';
-import { clearHost } from '../host/hostSlice';
 
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -79,7 +78,6 @@ const ChooseName: React.FC = () => {
 
                 if (window.confirm(confirmMessage)) {
                     dispatch(clearGame());
-                    dispatch(clearCurrentQuestion());
 
                     if (isHost) {
                         dispatch(endGameFromApi(gameId))
@@ -109,20 +107,18 @@ const ChooseName: React.FC = () => {
                     setShouldBlock(false)
                     dispatch(showError('The game you are trying to join has already finished'));
                     dispatch(clearGame());
-                    dispatch(clearCurrentQuestion());
                     history.push('/')
                 } else {
                     // if game found, get names
-                    fetchNames()
-                    dispatch(setGameStatus(statusResponse.data.status))
-                    setShouldBlock(true)
+                    fetchNames();
+                    dispatch(setGameStatus(statusResponse.data.status));
+                    setShouldBlock(true);
                 }
 
             } catch (e) {
                 setShouldBlock(false)
                 dispatch(showError('Could not find the game you were looking for'));
                 dispatch(clearGame());
-                dispatch(clearCurrentQuestion());
                 history.push('/')
             }
         }
@@ -138,12 +134,19 @@ const ChooseName: React.FC = () => {
     const join = async (name: string) => {
         api.post<JoinGameResponse>('/games/join', { access_code, name }).then(result => {
             dispatch(joinGame(result.data))
+            dispatch(clearNameChoices())
             history.push('/play')
         }).catch(e => {
+
+            // if name not available, show message and terminate
+            if (e.response.status === 422 && e.response.data === 'Name not available') {
+                dispatch(showError('That name is not available. Please select another.'));
+                return;
+            }
+
+            dispatch(clearNameChoices());
             setShouldBlock(false);
             dispatch(clearGame());
-            dispatch(clearCurrentQuestion());
-            dispatch(clearHost());
 
             if (e.response.status === 401) {
                 dispatch(showError('That name is no longer available. Please select another'))
@@ -160,7 +163,7 @@ const ChooseName: React.FC = () => {
 
     // on click, send name report and join game
     const chooseName = (nameObj: NameObject) => {
-        return (e: React.MouseEvent) => {
+        return () => {
             dispatch(sendReport({ chosen: nameObj.id, seen: seen.map(n => n.id) }))
             join(nameObj.name)
         }
@@ -213,10 +216,15 @@ const ChooseName: React.FC = () => {
                     <Title3 >OR</Title3>
                     <Divider dividerColor='grey' />
                 </div>
-                <form className="flex flex-col sm:flex-row gap-3 items-center">
-                    <TextInput $border type="text" className="font-semibold text-xl inline w-1/3" onChange={changeHandler} placeholder="Create your own" />
+                <div className="flex flex-col sm:flex-row gap-3 items-center">
+                    <TextInput
+                        $border
+                        type="text"
+                        className="font-semibold text-xl inline w-1/3"
+                        onChange={changeHandler}
+                        placeholder="Create your own" />
                     <Button className="w-2/3 inline" buttonStyle="big-text" onClick={clickHandler} $secondary>Submit</Button>
-                </form>
+                </div>
             </div>
         </Box>
     )

@@ -57,18 +57,15 @@ const registerListeners = (socket: Socket, io: Server) => {
 
 
         if (!numPlayers[1] && status[1] !== 'finished') {
-            logger.debug({
-                message: '[disconnect] last player disconnected. Ending game.',
-            })
-            await games.endGame(socket.gameId);
+
 
             // transport close happens if user refreshes page, or their connection dies.
             if (reason !== 'transport close') {
+                logger.debug({
+                    message: '[disconnect] last player disconnected. Ending game.',
+                })
+                await games.endGame(socket.gameId);
                 await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
-            } else {
-                setTimeout(async () => {
-                    await pubClient.set(gameStatus, 'finished', 'EX', ONE_DAY);
-                }, 100000)
             }
 
             // host left on purpose

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createSelector, createAsyncThunk } from "@r
 import { CheckRatingResponse, payloads } from "@whosaidtrue/api-interfaces";
 import { GameQuestionStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
-import { selectPlayerId, selectPlayerName, selectGameStatus, selectTotalQuestions } from "../game/gameSlice";
+import { selectPlayerId, selectPlayerName, selectGameStatus, selectTotalQuestions, clearGame } from "../game/gameSlice";
 import { api } from '../../api';
 
 export interface CurrentQuestionState {
@@ -162,8 +162,12 @@ const currentQuestionSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(checkHasRatedQuestion.fulfilled, (state, action: any) => {
+        builder.addCase(checkHasRatedQuestion.fulfilled, (state, action) => {
             state.hasRated = action.payload.hasRated;
+        })
+
+        builder.addCase(clearGame, () => {
+            return initialQuestionState;
         })
     }
 })

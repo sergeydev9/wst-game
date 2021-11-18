@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { clearGame } from '../game/gameSlice';
 
 export interface HostState {
     targetName: string;
@@ -34,6 +35,11 @@ const hostSlice = createSlice({
         setHostModal: (state, action) => {
             state.hostModal = action.payload
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(clearGame, () => {
+            return initialState;
+        })
     }
 })
 

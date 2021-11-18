@@ -1,4 +1,5 @@
 import supertest from 'supertest';
+import { DatabaseError } from 'pg-protocol';
 import { Application } from 'express';
 import { mocked } from 'ts-jest/utils';
 import App from '../../App';
@@ -193,6 +194,18 @@ describe('games routes', () => {
                 .post('/games/join')
                 .send({ access_code: 'ABCD', name: 'name' })
                 .expect(403, done)
+        })
+
+        it('should respond with 422 if name not available', done => {
+            mockedGames.join.mockRejectedValue(
+                new DatabaseError("duplicate key value violates unique constraint \"game_players_game_id_player_name_unique_index\"", 1, 'error')
+            )
+
+            supertest(app)
+                .post('/games/join')
+                .send({ access_code: 'ABCD', name: 'name' })
+                .expect(422, done)
+
         })
     })
 

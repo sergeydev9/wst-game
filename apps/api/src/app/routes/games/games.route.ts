@@ -1,7 +1,5 @@
 import { Request, Response, Router } from 'express';
 import { passport, signGameToken } from '@whosaidtrue/middleware';
-import jwt from 'jsonwebtoken';
-import { ExtractJwt } from 'passport-jwt';
 import { deckId, accessCodeQuery, joinGame, gameIdBody } from '@whosaidtrue/validation'
 import { logError } from '@whosaidtrue/logger';
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
@@ -38,6 +36,8 @@ router.post('/join', [...joinGame], async (req: Request, res: Response) => {
     } catch (e) {
         if (e.message === 'Game not found') {
             res.status(404).send('Game not found')
+        } else if (e.message === "duplicate key value violates unique constraint \"game_players_game_id_player_name_unique_index\"") {
+            res.status(422).send('Name not available')
         } else {
             logError('error joining game', e)
             res.status(500).send(ERROR_MESSAGES.unexpected)
