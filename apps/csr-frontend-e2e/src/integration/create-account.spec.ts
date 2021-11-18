@@ -1,9 +1,11 @@
+import { getBySel, fillInValidAuth } from '../support';
+
 describe('create account', () => {
 
     beforeEach(() => {
         cy.visit('https://localhost:4200')
 
-        cy.getBySel('create-account').click()
+        getBySel('create-account').click()
 
     });
 
@@ -16,15 +18,13 @@ describe('create account', () => {
         })
 
         it('Should show email in use message if 422 response from api with link to password reset page', () => {
-            cy.fillInValidAuth();
-            cy.getBySel('login-submit').click();
+            fillInValidAuth();
+            getBySel('login-submit').click();
 
             cy.wait('@emailInUse').then(() => {
-                cy.getBySel('email-in-use').exists;
-                cy.getBySel('in-use-reset-link').click()
+                getBySel('email-in-use').should('exist');
+                getBySel('in-use-reset-link').click()
                 cy.url().should('contain', '/reset/send-email');
-
-
             })
 
         })

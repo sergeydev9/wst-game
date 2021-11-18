@@ -64,6 +64,7 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 }).catch(e => {
                     if (e.response.data === "A user already exists with that email") {
                         setInUse(true);
+                        formik.getFieldHelpers('email').setValue(values.email)
                     } else {
                         dispatch(showError('Oops, an unexpected error has occured. Please try again later.'));
                         dispatch(setFullModal(''))
@@ -106,13 +107,12 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
         validationSchema: Yup.object({
             email: Yup.string().email('Invalid email address').required('Email is required'),
             password: Yup.string()
-                .min(8, 'Password must be at least 8 characters long')
+                .min(8, 'Password must be at least 8 characters')
                 .matches(/\d/, 'Password must contain at least 1 number')
                 .required('Password is required')
         }),
         onSubmit: async (values) => {
             const { email, password } = values
-
 
             return api.post<AuthenticationResponse>('/user/login', { email, password }).then(response => {
                 const { token } = response.data

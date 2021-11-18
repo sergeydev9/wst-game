@@ -19,10 +19,10 @@ const EmailInUse: React.FC = () => {
     const linkClass = "text-basic-gray underline cursor-pointer mt-4";
     return (
         <Headline data-cy="email-in-use" className="mt-2" >
-            That email address is already in use. If you forgot your password, or if you previously hosted a game as a guest, <Link
+            That email address is already in use. Please use the login form below. If you forgot your password, <Link
                 className={linkClass}
                 onClick={clearCartAndDetails}
-                to="/reset/send-email" data-cy="in-use-reset-link">click here</Link> to reset your password.
+                to="/reset/send-email" data-cy="in-use-reset-link">click here</Link> to reset it.
         </Headline>
     )
 }

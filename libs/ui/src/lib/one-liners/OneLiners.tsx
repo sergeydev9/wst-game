@@ -31,7 +31,7 @@ const OneLiners: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = ({ childre
     return (
         <Container>
             <span>While you were waiting:</span>
-            <div className="font-black">
+            <div className="font-black whitespace-pre-wrap">
                 "{children}"
             </div>
         </Container>

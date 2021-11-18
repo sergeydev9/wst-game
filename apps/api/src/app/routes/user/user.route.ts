@@ -262,7 +262,8 @@ router.patch('/reset', [...validateReset], async (req: Request, res: Response) =
 })
 
 /**
- * Register guest user
+ * Register guest user returns a signed token if no user exists with that email,
+ * or the user with that email hasn't set a password yet.
  */
 router.post('/guest', [...emailOnly], async (req: Request, res: Response) => {
     try {

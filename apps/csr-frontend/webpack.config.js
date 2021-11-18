@@ -1,9 +1,13 @@
 const TerserPlugin = require('terser-webpack-plugin');
+const nxConfig = require('@nrwl/react/plugins/webpack')
 const CompressionPlugin = require('compression-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 const zlib = require('zlib');
 const fs = require('fs');
 
 module.exports = (config) => {
+
   config.module.rules = config.module.rules.filter(
     (f) => f.test.toString() !== '/\\.css$/'
   );
@@ -41,8 +45,11 @@ module.exports = (config) => {
       ],
     };
 
+    config.mode = 'production';
+
     config.plugins = [
       ...config.plugins,
+      new BundleAnalyzerPlugin({generateStatsFile: true}),
       new CompressionPlugin({
         filename: '[path][base].gz',
         algorithm: 'gzip',
@@ -62,6 +69,7 @@ module.exports = (config) => {
         threshold: 10240,
         minRatio: 0.8,
       }),
+
     ];
 
     config.module.rules.push({
@@ -79,6 +87,13 @@ module.exports = (config) => {
       cert: fs.readFileSync(process.env.DEV_SSL_CERT),
     };
 
+    config.mode = 'development'
+    config.plugins = [
+      ...config.plugins,
+      new BundleAnalyzerPlugin({
+        generateStatsFile: true,
+        excludeAssets: new RegExp(/^styles/)}), // exclude styles in dev
+    ]
     // Hack to enable liveReload
     // REF: https://github.com/nrwl/nx/issues/6506
     config.target = 'web';

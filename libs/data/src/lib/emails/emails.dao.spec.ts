@@ -26,7 +26,8 @@ describe('Emails', () => {
         await emails.pool.query(`INSERT INTO email_templates (key, sendgrid_template_id) VALUES ('template_key', 'sendgrid_template_id')`);
     });
 
-    afterAll(() => {
+    afterAll(async () => {
+        await cleanDb(pool);
         pool.end();
     });
 
@@ -73,15 +74,6 @@ describe('Emails', () => {
             const actual = (await emails.getById(expected.id)).rows[0];
 
             expectEmailsEqual(actual, expected);
-        });
-
-        it('should require user_id', async () => {
-            try {
-                await emails.insertOne({ user_id: null, to: 'to', text: 'text', subject: 'subject' });
-                fail();
-            } catch (e) {
-                expect(e).toEqual(new DatabaseError('null value in column "user_id" violates not-null constraint', 1, 'error'))
-            }
         });
 
         it('should require to address', async () => {

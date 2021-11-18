@@ -18,6 +18,8 @@ The api reads from the following env variables:
 - SG_API_KEY
 - STRIPE_WEBHOOK_SECRET
 - PAYPAL_CLIENT_SECRET
+- FOR_SCHOOLS_DOMAIN
+- EMAIL_RECIPIENT
 
 **warning** Values for DB credentials in `.local.env` must match values in `docker-compose.yml`
 

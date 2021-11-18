@@ -58,3 +58,4 @@ export * from './free-credit-requests/freeCreditsSlice';
 export * from './ratings/ratingsSlice';
 export * from './host/hostSlice';
 export * from './fun-facts/funFactsSlice';
+export * from './send-message/sendMessage';

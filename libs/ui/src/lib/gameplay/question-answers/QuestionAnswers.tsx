@@ -32,7 +32,6 @@ const QuestionResults: React.FC<QuestionAnswersProps> = ({
     globalTruePercent,
     groupTruePercent,
 }) => {
-
     return (
         <>
             <Title className="text-center">The Correct Answer is...</Title>
@@ -46,7 +45,7 @@ const QuestionResults: React.FC<QuestionAnswersProps> = ({
             {/* follow up */}
             <GameContentCard>
                 <h3 className="text-center text-lg sm:text-xl font-black">Do tell...</h3>
-                <BodyText>{followUp}</BodyText>
+                <BodyText className="whitespace-pre-wrap">{followUp}</BodyText>
             </GameContentCard>
 
             {/* pie charts */}

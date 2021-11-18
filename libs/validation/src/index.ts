@@ -14,4 +14,5 @@ export * from './lib/paypalOrder';
 export * from './lib/ratings';
 export * from './lib/gameIdBody';
 export * from './lib/getDeckSelectionQuery';
+export * from './lib/emailMessage';
 export { default as validate } from './lib/validate';

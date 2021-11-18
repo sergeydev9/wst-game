@@ -17,6 +17,11 @@
 # dependencies
 /node_modules
 
+# bundle stats
+statoscope-report.html
+statoscope-stats.json
+stats.json
+
 # IDEs and editors
 /.idea
 .project
