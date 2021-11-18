@@ -15,6 +15,7 @@ const PercentagePie: React.FC<PercentagePieProps> = ({ value, isGroup }) => {
 
     const endDegrees = 360 * (value / 100); // number of degrees the color has to cover
     const gradientColor = isGroup ? '#F2AB3C' : '#914FD2'; // choose between yellow and purple
+    const displayValue = Math.round(value);
 
     return (
         <div className="w-max h-max">
@@ -47,7 +48,7 @@ const PercentagePie: React.FC<PercentagePieProps> = ({ value, isGroup }) => {
                         `}>
 
                     <div style={translateStyle} className="absolute w-full leading-none">
-                        <h2 className="text-center text-3xl font-bold">{value}%</h2>
+                        <h2 className="text-center text-3xl font-bold">{displayValue}%</h2>
                         <h3 className="text-center text-md font-bold">Said True</h3>
                     </div>
                 </div>

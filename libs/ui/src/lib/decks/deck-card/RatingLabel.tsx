@@ -9,6 +9,7 @@ export interface RatingLabelProps extends React.HtmlHTMLAttributes<HTMLSpanEleme
 const Label = tw.span`
     text-white
     rounded-full
+    h-7
     py-1
     px-3
     text-sm
