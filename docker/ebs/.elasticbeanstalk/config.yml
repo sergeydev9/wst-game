@@ -5,7 +5,7 @@ environment-defaults:
   test2-env:
     branch: null
     repository: null
-  prod-env:
+  prod:
     branch: null
     repository: null
 global:

@@ -19,11 +19,20 @@ docker/build.sh --push
 
 3. Update `docker/ebs/docker-compose.yml` with new build images
 
-4. Deploy
+4a. Deploy Test
 
 ```bash
 cd docker/ebs
-eb deploy
+eb deploy test-env
+```
+
+4b. Deploy Prod
+
+Update `docker/ebs/.elasticbeanstalk/config.yml` with value `global.application_name: whosaidtrue`
+
+```bash
+cd docker/ebs
+eb deploy prod
 ```
 
 # Setting up a new environment
