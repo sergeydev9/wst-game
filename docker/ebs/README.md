@@ -51,6 +51,16 @@ eb terminate test-env
 ```
 
 
+# Create least-privilege user
+
+```sql
+CREATE USER app_backend WITH PASSWORD 'password';
+GRANT CONNECT ON DATABASE whosaidtrue TO app_backend;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO app_backend;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO app_backend;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_backend;
+```
+
 # Troubleshooting
 
 Error: The ECR service failed to authenticate your private repository. The deployment failed.
