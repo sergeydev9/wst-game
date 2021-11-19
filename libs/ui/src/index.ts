@@ -51,5 +51,8 @@ export { default as FinalScores } from './lib/gameplay/final-scores/FinalScores'
 export { default as Faqs } from './lib/faq/Faq';
 export { default as InfoPage } from './lib/info-page/InfoPage';
 export { default as OneLiners } from './lib/one-liners/OneLiners';
+export { default as TakingTooLong } from './lib/taking-too-long/TakingTooLong';
+export { default as SkipToResults } from './lib/skip-to-results/SkipToResults';
+export { default as SkipToResultsPlayerRow } from './lib/skip-to-results/SkipPlayerRow';
 export * from './lib/typography/Typography';
 export * from './lib/fun-facts';
