@@ -2,7 +2,13 @@ import { createSlice, PayloadAction, createSelector, createAsyncThunk } from "@r
 import { CheckRatingResponse, payloads } from "@whosaidtrue/api-interfaces";
 import { GameQuestionStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
-import { selectPlayerId, selectPlayerName, selectGameStatus, selectTotalQuestions, clearGame } from "../game/gameSlice";
+import {
+    selectPlayerId,
+    selectPlayerName,
+    selectGameStatus,
+    selectTotalQuestions,
+    clearGame
+} from "../game/gameSlice";
 import { api } from '../../api';
 
 export interface CurrentQuestionState {
@@ -138,7 +144,7 @@ const currentQuestionSlice = createSlice({
         setHasRated: (state, action) => {
             state.hasRated = action.payload;
         },
-        setHaveNotAnswered: (state, action) => {
+        setHaveNotAnswered: (state, action: PayloadAction<PlayerRef[]>) => {
             state.haveNotAnswered = action.payload
         },
         questionEnd: (state, action: PayloadAction<payloads.QuestionEnd>) => {

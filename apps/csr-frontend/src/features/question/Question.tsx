@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { TrueFalse, QuestionCard, NumberTrueGuess, WaitingRoom, QuestionAnswers } from "@whosaidtrue/ui";
+import {
+    TrueFalse,
+    QuestionCard,
+    NumberTrueGuess,
+    WaitingRoom,
+    QuestionAnswers
+} from "@whosaidtrue/ui";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
     selectIsReader,

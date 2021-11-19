@@ -3,6 +3,7 @@ import {
   FullScreenModalController,
   ScoreTooltip,
   Reconnecting,
+  TakingTooLong
 } from '../features';
 import Footer from '../features/footer/Footer';
 import NavBar from '../features/navbar/Navbar';
@@ -17,6 +18,7 @@ const Layout: React.FC = ({ children }) => {
             "url('./assets/bg.svg'), linear-gradient(180deg, #431975 0%, #331359 100%)",
         }}
       >
+        <TakingTooLong />
         <NavBar />
         <Reconnecting />
         <ScoreTooltip />
