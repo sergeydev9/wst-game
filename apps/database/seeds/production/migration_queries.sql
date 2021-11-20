@@ -96,6 +96,7 @@ update game_players
 set game_players.migration_new_game_player_id = temp_game_players.Game_Player_ID
 ;
 
+
 -- check
 select * from game_players where migration_new_game_player_id = 0;
 
@@ -229,7 +230,7 @@ select
     Game_Player_Create_Dt as created_at,
     Game_Player_Last_Update_Dt as updated_at
 from game_players
-         join games on Game_PIN = Game_Player_Game_PIN
+         left join games on Game_PIN = Game_Player_Game_PIN
          left join users on User_Email = Game_Email
 where game_players.migration_ignore = false
 group by migration_new_game_player_id
@@ -506,6 +507,7 @@ from answers
 where answers.migration_ignore = false
   and game_players.migration_ignore = false
   and game_questions.migration_ignore = false
+group by Game_Question_ID, migration_new_game_player_id             -- needed due to game_player_id, game_question_id index
 ; -- 259171
 
 
@@ -714,3 +716,51 @@ select
     User_Create_Dt as created_at,
     User_Last_Update_Dt as updated_at
 from users;
+
+
+
+
+-- -----------------------------------------------------------------------
+-- user_question_ratings
+
+/* CREATE TABLE "public"."user_question_ratings" (
+    "id" int4 NOT NULL DEFAULT nextval('user_question_ratings_id_seq'::regclass),
+    "question_id" int4 NOT NULL,
+    "user_id" int4,
+    "rating" "public"."user_rating" NOT NULL,
+    CONSTRAINT "user_question_ratings_question_id_fkey" FOREIGN KEY ("question_id") REFERENCES "public"."questions"("id") ON DELETE CASCADE,
+    CONSTRAINT "user_question_ratings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE SET NULL,
+    PRIMARY KEY ("id")
+); */
+
+
+select MAX(Question_No_Great), MAX(Question_No_Bad) from questions;
+-- max is 343;
+
+CREATE TABLE `numbers` (
+                           `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                           PRIMARY KEY (`id`)
+);
+
+-- insert at least 343 rows
+insert into numbers () values();
+
+
+-- EXPORT QUERY table: user_question_ratings
+(select
+     Question_ID as question_id,
+     1 as user_id,
+     'great' as rating
+ from questions
+          join numbers on id <= Question_No_Great)
+
+union all
+
+(select
+     Question_ID as question_id,
+     1 as user_id,
+     'bad' as rating
+ from questions
+          join numbers on id <= Question_No_Bad)
+
+order by question_id;

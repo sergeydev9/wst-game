@@ -18,10 +18,11 @@ The results of the queries were exported to CSV files and then imported into the
  - game_questions ( -> game_players, questions, games)
  - game_answers ( -> game_questions, game_players, games, questions)
 
-See `whosaidtrue-full.dump` which was created after the CSV import.
 
 
-# TODO:
- - implement the 3 changes for import to work
- - copy dev migrations as production
- - create a clean seed file
+# Import dumpfile
+
+The dump `whosaidtrue-production-seed.dump` was created with TablePlus on 11/20/2021.
+It contains a data-only export of all tables except `pgmigrations`.
+
+It was imported successfully in prod on 11/20/2021.
