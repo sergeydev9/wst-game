@@ -13,7 +13,7 @@ const Item = tw.li`
 interface SkipPlayerRowProps {
     playerName: string;
     playerId: number;
-    handlerFactory: (id: number) => () => void;
+    handlerFactory: (id: number, playerName: string) => () => void;
 }
 const SkipPlayerRow: React.FC<SkipPlayerRowProps> = ({ playerName, playerId, handlerFactory }) => {
     return (
@@ -23,7 +23,7 @@ const SkipPlayerRow: React.FC<SkipPlayerRowProps> = ({ playerName, playerId, han
                 className="min-w-min"
                 buttonStyle='inline'
                 $secondary
-                onClick={handlerFactory(playerId)}>
+                onClick={handlerFactory(playerId, playerName)}>
                 Remove from Game
             </Button>
         </Item>

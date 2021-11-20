@@ -99,7 +99,7 @@ export const gameSlice = createSlice({
             const { id } = action.payload
             state.players = { ...state.players, [id]: action.payload };
         },
-        removePlayer: (state, action) => {
+        removePlayer: (state, action: PayloadAction<number>) => {
             state.players = omit(state.players, action.payload)
         },
         createGame: (state, action) => {

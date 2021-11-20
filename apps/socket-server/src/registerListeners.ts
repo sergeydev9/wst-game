@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
+import { PlayerRef } from "@whosaidtrue/app-interfaces";
 import { logger, logIncoming, logOutgoing, logError } from '@whosaidtrue/logger';
 import { playerValueString } from './util';
 import { games, gamePlayers } from './db';
@@ -10,10 +11,9 @@ import submitAnswerPart1 from "./listener-helpers/submitAnswerPart1";
 import submitAnswerPart2 from "./listener-helpers/submitAnswerPart2";
 import saveScores from "./listener-helpers/saveScores";
 import nextQuestion from "./listener-helpers/nextQuestion";
-import removePlayer from "./listener-helpers/removePlayer";
+import playerLeft from './listener-helpers/playerLeft';
 import endGame from './listener-helpers/endGame';
-import { PlayerRef } from "@whosaidtrue/app-interfaces";
-
+import sendFunFacts from "./listener-helpers/sendFunFacts";
 
 const registerListeners = (socket: Socket, io: Server) => {
     const {
@@ -25,7 +25,8 @@ const registerListeners = (socket: Socket, io: Server) => {
         bucketList,
         groupVworld,
         playerMostSimilar,
-        locks
+        locks,
+        removedPlayers
     } = socket.keys;
 
     // source info
@@ -98,6 +99,10 @@ const registerListeners = (socket: Socket, io: Server) => {
                 logger.debug({
                     message: '[HostDisconnect] Host left before first question'
                 })
+
+                // set host status in DB
+                await gamePlayers.setStatus(socket.playerId, 'left');
+
                 sendToOthers(types.HOST_LEFT_NO_RESULTS) // host left before first question was over. No need to save
             }
 
@@ -112,6 +117,7 @@ const registerListeners = (socket: Socket, io: Server) => {
                 else {
                     // set player status in DB
                     await gamePlayers.setStatus(socket.playerId, 'left');
+                    await playerLeft(socket, { id: socket.playerId, player_name: socket.playerName });
                     sendToOthers(types.PLAYER_LEFT_GAME, { id: socket.playerId, player_name: socket.playerName } as PlayerRef);
                 }
 
@@ -192,35 +198,12 @@ const registerListeners = (socket: Socket, io: Server) => {
 
                 // after 3rd question, start sending facts
                 if (current[1] && Number(current[1]) >= 4) {
-
-                    const [bucketListResponse, groupVworldResponse] = await pubClient
-                        .pipeline()
-                        .hgetall(groupVworld)
-                        .hgetall(bucketList)
-                        .exec()
-
-                    sendToAll(types.FUN_FACTS,
-                        {
-                            bucketList: bucketListResponse[1],
-                            groupVworld: groupVworldResponse[1]
-                        })
+                    await sendFunFacts(socket);
                 }
 
                 // if last question, move to game results
                 if (current[1] === total[1]) {
-
-                    // calculate scores
-                    const result = await saveScores(msg.gameQuestionId, socket.gameId);
-
-                    logger.debug({
-                        message: 'Score calculation results',
-                        event: types.ANSWER_PART_2,
-                        ...result
-                    })
-
-                    await pubClient.set(gameStatus, 'postGame', 'EX', ONE_DAY)
-                    // end game
-                    sendToAll(types.GAME_END, result as payloads.QuestionEnd);
+                    await endGame(socket);
                 } else {
 
                     // calculate scores
@@ -331,7 +314,6 @@ const registerListeners = (socket: Socket, io: Server) => {
 
                 if (result) {
 
-
                     const sequenceIndex = await pubClient.get(currentSequenceIndex);
 
                     // after 4th question, start sending facts
@@ -381,7 +363,14 @@ const registerListeners = (socket: Socket, io: Server) => {
             } else {
                 await gamePlayers.setStatus(msg.id, 'removed_game')
             }
-            removePlayer(socket, msg);
+
+            // add player to removed players set
+            const remResponse = await pubClient.sadd(removedPlayers, msg.id);
+            await pubClient.expire(removedPlayers, ONE_DAY);
+
+            logger.debug(`Player added to removed list: ${remResponse}`)
+            await playerLeft(socket, msg);
+            sendToAll(types.REMOVE_PLAYER, msg)
         })
 
         /**
@@ -474,52 +463,30 @@ const registerListeners = (socket: Socket, io: Server) => {
                 return;
             }
 
-            let lastQuestion = false;
             try {
 
                 let result: payloads.QuestionEnd;
                 const [sequenceIndex, total] = await pubClient.mget(currentSequenceIndex, totalQuestions);
 
                 if ((sequenceIndex && total) && Number(sequenceIndex) >= Number(total)) {
-                    lastQuestion = true;
-                    result = await endGame(socket);
-                    logger.debug({
-                        message: '[EndQuestion/last] Score calculation results',
-                        ...result
-                    })
+                    await endGame(socket);
                 } else {
 
                     // calculate scores
                     result = await saveScores(msg.gameQuestionId, socket.gameId);
-
                     logger.debug({
                         message: '[EndQuestion/notLast] Score calculation results',
                         ...result
                     })
 
-
+                    sendToAll(types.QUESTION_END, result as payloads.QuestionEnd);
                 }
 
                 // after 4th question, start sending facts
                 if (sequenceIndex && Number(sequenceIndex) > 4) {
-                    const [bucketListResponse, groupVworldResponse] = await pubClient
-                        .pipeline()
-                        .hgetall(groupVworld)
-                        .hgetall(bucketList)
-                        .exec()
-
-                    sendToAll(types.FUN_FACTS,
-                        {
-                            bucketList: bucketListResponse[1],
-                            groupVworld: groupVworldResponse[1]
-                        })
+                    await sendFunFacts(socket);
                 }
 
-                if (lastQuestion) {
-                    await pubClient.set(gameStatus, 'postGame', 'EX', ONE_DAY);
-                }
-
-                sendToAll(lastQuestion ? types.END_GAME : types.QUESTION_END, result as payloads.QuestionEnd);
                 ack('ok')
             } catch (e) {
                 logError('Error skipping to results', e);
@@ -561,7 +528,6 @@ const registerListeners = (socket: Socket, io: Server) => {
 
             }
         })
-
     }
 }
 

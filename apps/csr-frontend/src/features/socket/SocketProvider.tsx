@@ -45,7 +45,7 @@ import {
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
-import { clearFunFacts, setFunFacts, setMostSimilar, setFetchSimilarStatus } from '../fun-facts/funFactsSlice';
+import { setFunFacts, setMostSimilar, setFetchSimilarStatus } from '../fun-facts/funFactsSlice';
 
 /**
  * Provider component for socket context.

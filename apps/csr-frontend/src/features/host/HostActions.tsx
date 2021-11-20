@@ -19,14 +19,23 @@ const HostActions: React.FC = () => {
 
     useEffect(() => {
 
-        dispatch(setShowTakingTooLong(true))
+        if (screen === 'waitingRoom') {
+            const THIRTY_SECONDS = 1000 * 5;
+
+            setTimeout(() => {
+                dispatch(setShowTakingTooLong(true));
+            }, THIRTY_SECONDS)
+        }
 
         return () => {
+            dispatch(setShowTakingTooLong(false))
+
             if (timer) {
+                clearTimeout(timer)
                 setTimer(null);
             }
         }
-    }, [timer, dispatch])
+    }, [timer, dispatch, screen])
 
     const isRequired = (gameStatus === 'lobby' || questionStatus === 'results' || questionStatus === 'answer' || screen === 'answerResults' || screen === 'scoreResults')
 

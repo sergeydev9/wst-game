@@ -7,7 +7,8 @@ import {
     selectPlayerName,
     selectGameStatus,
     selectTotalQuestions,
-    clearGame
+    clearGame,
+    removePlayer
 } from "../game/gameSlice";
 import { api } from '../../api';
 
@@ -174,6 +175,10 @@ const currentQuestionSlice = createSlice({
 
         builder.addCase(clearGame, () => {
             return initialQuestionState;
+        });
+
+        builder.addCase(removePlayer, (state, action: PayloadAction<number>) => {
+            state.haveNotAnswered = state.haveNotAnswered.filter(player => player.id !== action.payload);
         })
     }
 })

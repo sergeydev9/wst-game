@@ -1,14 +1,21 @@
 import { Socket } from "socket.io";
 import { pubClient } from "../redis";
+import { logger } from '@whosaidtrue/logger';
+import { types, payloads } from '@whosaidtrue/api-interfaces';
 import saveScores from "./saveScores";
 import { games } from '../db';
 import { ONE_DAY } from "../constants";
+import sendFunFacts from "./sendFunFacts";
 
 /**
  * Calculate the results and end the game
  */
 const endGame = async (socket: Socket) => {
     const { gameStatus, currentQuestion, latestResults } = socket.keys;
+
+    logger.debug({
+        message: '[END GAME]'
+    })
 
     // use game status as a sort of lock to deduplicate requests
     const status = await pubClient.get(gameStatus);
@@ -28,8 +35,18 @@ const endGame = async (socket: Socket) => {
     // end game in DB
     await games.endGame(socket.gameId);
 
-    // save ressults in redis
-    await pubClient.set(latestResults, JSON.stringify(result), 'EX', ONE_DAY)
+    // save results in redis
+    await pubClient
+        .pipeline()
+        .set(latestResults, JSON.stringify(result), 'EX', ONE_DAY)
+        .set(gameStatus, 'postGame', 'EX', ONE_DAY)
+        .exec()
+
+    // send fun facts
+    await sendFunFacts(socket);
+
+    // end game
+    socket.sendToAll(types.GAME_END, result as payloads.QuestionEnd);
 
     return result;
 }
