@@ -67,9 +67,7 @@ export interface SetGameState {
     totalQuestions: number;
 }
 
-export interface SetHaveNotAnswered {
-    haveNotAnswered: PlayerRef[];
-}
+export type SetHaveNotAnswered = PlayerRef[];
 
 export interface FunFacts {
     bucketList: GroupComparison;

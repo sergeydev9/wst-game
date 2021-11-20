@@ -17,7 +17,8 @@ import {
     joinGame,
     selectIsHost,
     endGameFromApi,
-    selectGameId
+    selectGameId,
+    selectGameStatus
 } from '../game/gameSlice';
 import {
     Button,
@@ -44,12 +45,14 @@ const ChooseName: React.FC = () => {
     const seen = useAppSelector(selectSeen)
     const isHost = useAppSelector(selectIsHost);
     const gameId = useAppSelector(selectGameId);
+    const gameStatus = useAppSelector(selectGameStatus);
 
 
     useEffect(() => {
-        dispatch(setGameStatus('choosingName'));
 
         const fetchNames = async () => {
+            // if there are already names available, bail
+            if (names && names.length) return;
 
             // get 6 name options
             try {
@@ -92,8 +95,8 @@ const ChooseName: React.FC = () => {
 
         // redirect if no access_code
         if (!access_code) {
-            dispatch(showError('Access code not found'))
-            history.push('/')
+            dispatch(showError('Access code not found'));
+            history.push('/');
         }
 
         // check if game exists
@@ -128,13 +131,21 @@ const ChooseName: React.FC = () => {
         return () => {
             unblock();
         }
-    }, [dispatch, history, access_code, isHost, shouldBlock, gameId])
+
+    }, [
+        dispatch,
+        history,
+        access_code,
+        isHost,
+        shouldBlock,
+        gameId,
+        names
+    ])
 
     // send request to join the game
     const join = async (name: string) => {
         api.post<JoinGameResponse>('/games/join', { access_code, name }).then(result => {
             dispatch(joinGame(result.data))
-            dispatch(clearNameChoices())
             history.push('/play')
         }).catch(e => {
 
@@ -144,7 +155,6 @@ const ChooseName: React.FC = () => {
                 return;
             }
 
-            dispatch(clearNameChoices());
             setShouldBlock(false);
             dispatch(clearGame());
 

@@ -14,7 +14,7 @@ const Skip: React.FC = () => {
 
     useEffect(() => {
         // if the last player answers, close the modal
-        if (!haveNotAnswered.length) {
+        if (!haveNotAnswered || !haveNotAnswered.length) {
             dispatch(setFullModal(''))
         }
 
@@ -29,7 +29,7 @@ const Skip: React.FC = () => {
         dispatch(setFullModal(''))
     }
 
-    const playerList = haveNotAnswered.map((player, index) => {
+    const playerList = haveNotAnswered ? haveNotAnswered.map((player, index) => {
         return (
             <SkipToResultsPlayerRow
                 key={index}
@@ -37,15 +37,15 @@ const Skip: React.FC = () => {
                 playerId={player.id}
                 handlerFactory={(id) => () => console.log(id)} />
         )
-    });
+    }) : null;
 
-    return (
+    return (haveNotAnswered ?
         <SkipToResults
             numHaveNotAnswered={haveNotAnswered.length}
             confirm={confirm}
             cancel={cancel}>
             {playerList}
-        </SkipToResults>
+        </SkipToResults> : null
     )
 }
 

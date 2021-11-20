@@ -248,7 +248,12 @@ export const selectPlayerPointsEarned = createSelector([selectPointsEarned, sele
 
 // number of players that have submitted an answer and a guess
 export const selectNumHaveGuessed = createSelector([selectNumPlayers, selectHaveNotAnswered], (numPlayers, notAnsweredList) => {
-    return numPlayers - notAnsweredList.length;
+    if (notAnsweredList && notAnsweredList.length) {
+        return numPlayers - notAnsweredList.length;
+    } else {
+        return numPlayers;
+    }
+
 });
 
 // used to identify what screen the user should be on

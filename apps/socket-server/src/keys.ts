@@ -41,8 +41,8 @@ export class Keys {
         this.latestResults = `${this.gameKey}:latestResults`;
         this.bucketList = `${this.gameKey}:bucketList`;
         this.groupVworld = `${this.gameKey}:groupVworld`;
-        this.playerMostSimilar = `${this.gameKey}:similaritySets:${socket.playerName}`
-        this.locks = `${this.gameKey}:locks`
+        this.playerMostSimilar = `${this.gameKey}:similaritySets:${socket.playerName}`;
+        this.locks = `${this.gameKey}:locks`;
     }
 
     static totalTrue(questionId: number) {

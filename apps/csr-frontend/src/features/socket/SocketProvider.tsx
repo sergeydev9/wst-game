@@ -223,13 +223,6 @@ export const SocketProvider: React.FC = ({ children }) => {
                 }
             })
 
-            // updates the list of players that have not answered the current question
-            connection.on(types.SET_HAVE_NOT_ANSWERED, (message: payloads.SetHaveNotAnswered) => {
-                const { haveNotAnswered } = message;
-                dispatch(setHaveNotAnswered(haveNotAnswered))
-            })
-
-
             // updates question state
             connection.on(types.SET_QUESTION_STATE, (message: payloads.SetQuestionState) => {
                 dispatch(setCurrentQuestion(message));
@@ -260,7 +253,7 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             // updates the value of answers yet to be submitted for the current question
             connection.on(types.SET_HAVE_NOT_ANSWERED, (message: payloads.SetHaveNotAnswered) => {
-                dispatch(setHaveNotAnswered(message.haveNotAnswered))
+                dispatch(setHaveNotAnswered(message))
             })
 
             // when host ends game by either disconnecting, or clicking the button.`

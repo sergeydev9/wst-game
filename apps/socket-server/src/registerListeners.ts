@@ -243,7 +243,7 @@ const registerListeners = (socket: Socket, io: Server) => {
         try {
             const [r1, r2] = await pubClient
                 .pipeline()
-                .zrevrange(playerMostSimilar, -1, -1, 'WITHSCORES')
+                .zrange(playerMostSimilar, -1, -1, 'WITHSCORES')
                 .hgetall(`games:${socket.gameId}:mostSimilar`)
                 .exec()
 
