@@ -41,8 +41,8 @@ const rules = [
     image: './assets/rule-1.png',
     content: (
       <p>
-        Each game consists of 9 two-part questions that each player answers
-        anonymously.
+        A game of True/False questions that players answer anonymously. Each
+        question has two parts.
       </p>
     ),
   },
