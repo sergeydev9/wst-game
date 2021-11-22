@@ -20,12 +20,19 @@ The results of the queries were exported to CSV files and then imported into the
 
 
 
-# Import dumpfile
+# Import dumpfile to production
 
 The dump `whosaidtrue-production-seed.dump` was created with TablePlus on 11/20/2021.
 It contains a data-only export of all tables except `pgmigrations`.
 
-After the dump import reset the index sequences
+This was imported successfully in prod on 11/20/2021.
+
+After importing the migration a few issues were discovered and fixed.
+
+**Fix 1:**
+
+The sequences where not updated automatically after the dump import and needed to be reset with the following:
+
 ```sql
 SELECT setval(pg_get_serial_sequence('decks', 'id'), coalesce(max(id),0) + 1, false) FROM decks;
 SELECT setval(pg_get_serial_sequence('emails', 'id'), coalesce(max(id),0) + 1, false) FROM emails;
@@ -48,4 +55,13 @@ SELECT setval(pg_get_serial_sequence('user_sessions', 'id'), coalesce(max(id),0)
 SELECT setval(pg_get_serial_sequence('users', 'id'), coalesce(max(id),0) + 1, false) FROM users;
 ```
 
-This was imported successfully in prod on 11/20/2021.
+**Fix 2:**
+
+The user roles were imported incorrectly as `user` and needed to be updated to `guest` with the following:
+
+```sql
+SELECT * FROM users WHERE password IS NULL AND roles = '{user}';
+UPDATE users SET roles = '{guest}' WHERE password IS NULL;
+```
+
+
