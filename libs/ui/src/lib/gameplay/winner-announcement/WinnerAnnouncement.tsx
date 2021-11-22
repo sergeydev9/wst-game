@@ -1,6 +1,7 @@
 import tw from 'tailwind-styled-components';
 import { useEffect, useState } from 'react';
 import { GrFormClose } from '@react-icons/all-files/gr/GrFormClose';
+import Button from '../../button/Button';
 import CelebrationIcons from '../../celebration-icons/CelebrationIcons';
 import './winner.css'
 
@@ -39,6 +40,7 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = ({ name, onRequest
             <GrFormClose className="absolute right-1 sm:right-6 sm:top-8 top-4 text-4xl z-10 font-black cursor-pointer" onClick={onRequestClose} />
             <span className="text-3xl mb-6">{name}!</span>
             <CelebrationIcons />
+            <div className="mt-8"><Button onClick={onRequestClose}>See Final Scores</Button></div>
         </Container> :
             <Container className="text-6xl sm:text-8xl p-10 text-purple-base flex flex-col justify-center gap-2 sm:gap-4">
                 <div>And</div><div>the</div><div>{isTie ? 'Winners' : 'Winner'}</div><div className="wnr-announce-txt w-3/4 self-center text-left">{isTie ? '  Are' : ' Is'}</div>
