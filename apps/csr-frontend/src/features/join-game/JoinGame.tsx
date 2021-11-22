@@ -84,6 +84,7 @@ const JoinGame: React.FC = () => {
       <form
         className="flex flex-col sm:flex-row gap-6 items-center"
         onSubmit={formik.handleSubmit}
+        autoComplete="off"
       >
         <div className="flex gap-2 md:gap-4">
           {[...new Array(CODE_LENGTH)].map((value, index) => {
