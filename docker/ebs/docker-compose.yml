@@ -8,7 +8,6 @@ services:
     restart: always
     env_file:
       - .env
-      - .ebs.env
     environment:
       - PORT=3000
     ports:
@@ -20,7 +19,6 @@ services:
     restart: always
     env_file:
       - .env
-      - .ebs.env
     environment:
       - PORT=4001
     ports:
@@ -32,4 +30,3 @@ services:
     restart: always
     env_file:
       - .env
-      - .ebs.env

@@ -5,9 +5,12 @@ environment-defaults:
   test2-env:
     branch: null
     repository: null
+  prod:
+    branch: null
+    repository: null
 global:
   application_name: whosaidtrue-backend
-  default_ec2_keyname: key-sergey
+  default_ec2_keyname: wst-ec2-key
   default_platform: Docker
   default_region: us-east-2
   include_git_submodules: true
