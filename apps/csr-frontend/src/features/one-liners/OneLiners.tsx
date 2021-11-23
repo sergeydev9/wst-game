@@ -4,7 +4,6 @@ import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
     selectOneLinersStatus,
     selectCurrentLine,
-    selectIsUpcomingEmpty,
     fetchLines,
     nextLine
 } from './oneLinersSlice';
@@ -14,16 +13,14 @@ const OneLiners: React.FC = () => {
     const dispatch = useAppDispatch();
     const status = useAppSelector(selectOneLinersStatus);
     const currentLine = useAppSelector(selectCurrentLine);
-    const upcomingEmpty = useAppSelector(selectIsUpcomingEmpty);
 
     useEffect(() => {
-        if (upcomingEmpty) {
-            dispatch(fetchLines())
-        } else {
-            dispatch(nextLine)
-        }
+        dispatch(fetchLines())
 
-    }, [dispatch, upcomingEmpty, currentLine])
+        return () => {
+            dispatch(nextLine())
+        }
+    }, [dispatch])
 
 
     return (

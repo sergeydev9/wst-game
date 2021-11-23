@@ -8,7 +8,7 @@ import {
     setCurrentNameOptions,
     selectCurrentNameOptions,
     selectSeen,
-    sendReport
+    sendReport,
 } from './chooseNameSlice';
 import {
     setGameStatus,
@@ -16,7 +16,7 @@ import {
     joinGame,
     selectIsHost,
     endGameFromApi,
-    selectGameId
+    selectGameId,
 } from '../game/gameSlice';
 import {
     Button,
@@ -31,8 +31,6 @@ import { NameObject } from '@whosaidtrue/app-interfaces';
 import { JoinGameResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
 import { api } from '../../api'
 import { showError } from '../modal/modalSlice';
-import { clearCurrentQuestion } from '..';
-import { clearHost } from '../host/hostSlice';
 
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -48,18 +46,17 @@ const ChooseName: React.FC = () => {
 
 
     useEffect(() => {
-        dispatch(setGameStatus('choosingName'));
 
         const fetchNames = async () => {
 
             // get 6 name options
             try {
-                const response = await api.get<NameRequestResponse>('/names')
-                dispatch(setRemainingNameOptions(response.data.names)) // populate total name pool
-                dispatch(setCurrentNameOptions()) // set initial set of options and remove them from pool
+                const response = await api.get<NameRequestResponse>('/names');
+                dispatch(setRemainingNameOptions(response.data.names)); // populate total name pool
+                dispatch(setCurrentNameOptions()); // set initial set of options and remove them from pool
             } catch (e) {
-                history.push('/')
-                dispatch(clearGame())
+                history.push('/');
+                dispatch(clearGame());
             }
         }
 
@@ -79,7 +76,6 @@ const ChooseName: React.FC = () => {
 
                 if (window.confirm(confirmMessage)) {
                     dispatch(clearGame());
-                    dispatch(clearCurrentQuestion());
 
                     if (isHost) {
                         dispatch(endGameFromApi(gameId))
@@ -94,8 +90,8 @@ const ChooseName: React.FC = () => {
 
         // redirect if no access_code
         if (!access_code) {
-            dispatch(showError('Access code not found'))
-            history.push('/')
+            dispatch(showError('Access code not found'));
+            history.push('/');
         }
 
         // check if game exists
@@ -109,20 +105,18 @@ const ChooseName: React.FC = () => {
                     setShouldBlock(false)
                     dispatch(showError('The game you are trying to join has already finished'));
                     dispatch(clearGame());
-                    dispatch(clearCurrentQuestion());
                     history.push('/')
                 } else {
                     // if game found, get names
-                    fetchNames()
-                    dispatch(setGameStatus(statusResponse.data.status))
-                    setShouldBlock(true)
+                    fetchNames();
+                    dispatch(setGameStatus(statusResponse.data.status));
+                    setShouldBlock(true);
                 }
 
             } catch (e) {
                 setShouldBlock(false)
                 dispatch(showError('Could not find the game you were looking for'));
                 dispatch(clearGame());
-                dispatch(clearCurrentQuestion());
                 history.push('/')
             }
         }
@@ -132,21 +126,34 @@ const ChooseName: React.FC = () => {
         return () => {
             unblock();
         }
-    }, [dispatch, history, access_code, isHost, shouldBlock, gameId])
+
+    }, [
+        dispatch,
+        history,
+        access_code,
+        isHost,
+        shouldBlock,
+        gameId,
+    ])
 
     // send request to join the game
     const join = async (name: string) => {
         api.post<JoinGameResponse>('/games/join', { access_code, name }).then(result => {
-            dispatch(joinGame(result.data))
-            history.push('/play')
+            dispatch(joinGame(result.data));
+            history.push('/play');
         }).catch(e => {
+
+            // if name not available, show message and terminate
+            if (e.response.status === 422 && e.response.data === 'Name not available') {
+                dispatch(showError('That name is not available. Please select another.'));
+                return;
+            }
+
             setShouldBlock(false);
             dispatch(clearGame());
-            dispatch(clearCurrentQuestion());
-            dispatch(clearHost());
 
             if (e.response.status === 401) {
-                dispatch(showError('That name is no longer available. Please select another'))
+                dispatch(showError('That name is no longer available. Please select another'));
             } else if (e.response.status === 403) {
                 dispatch(showError('The game you are atempting to join has already finished'));
                 history.push('/');
@@ -160,7 +167,7 @@ const ChooseName: React.FC = () => {
 
     // on click, send name report and join game
     const chooseName = (nameObj: NameObject) => {
-        return (e: React.MouseEvent) => {
+        return () => {
             dispatch(sendReport({ chosen: nameObj.id, seen: seen.map(n => n.id) }))
             join(nameObj.name)
         }
@@ -199,7 +206,7 @@ const ChooseName: React.FC = () => {
     }
 
     return (
-        <Box boxstyle='white' className="w-96 sm:w-max mx-auto px-8 py-10 text-center">
+        <Box boxstyle='white' className="mx-8 sm:w-max sm:mx-auto px-4 xs:px-8 py-10 text-center">
             <Title1 className="text-basic-black mx-8">Choose Your Player Name</Title1>
             <div className="flex flex-col gap-3 w-80 mt-8">
                 {namesHelper(names)}
@@ -213,10 +220,15 @@ const ChooseName: React.FC = () => {
                     <Title3 >OR</Title3>
                     <Divider dividerColor='grey' />
                 </div>
-                <form className="flex flex-col sm:flex-row gap-3 items-center">
-                    <TextInput $border type="text" className="font-semibold text-xl inline w-1/3" onChange={changeHandler} placeholder="Create your own" />
+                <div className="flex flex-col sm:flex-row gap-3 items-center">
+                    <TextInput
+                        $border
+                        type="text"
+                        className="font-semibold text-xl inline w-1/3"
+                        onChange={changeHandler}
+                        placeholder="Create your own" />
                     <Button className="w-2/3 inline" buttonStyle="big-text" onClick={clickHandler} $secondary>Submit</Button>
-                </form>
+                </div>
             </div>
         </Box>
     )

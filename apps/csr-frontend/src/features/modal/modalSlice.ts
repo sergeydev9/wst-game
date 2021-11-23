@@ -25,6 +25,7 @@ export type FullModal = "createAccount"
     | "freeCreditEmailInUseError"
     | "checkYourEmail"
     | "submitQuestion"
+    | "skipToResults"
     | ""
 
 export type MessageType = ''
@@ -44,6 +45,7 @@ export interface ModalState {
     isPersistent: boolean;
     loaderMessage: string;
     showLoaderMessage: boolean;
+    showTakingTooLong: boolean;
     scoreTooltipDismissed: boolean; // sets whether user will see it again next question
     scoreTooltipShowing: boolean; // sets whether should be showing right now
 
@@ -58,6 +60,7 @@ export const initialState: ModalState = {
     isPersistent: false,
     scoreTooltipDismissed: false,
     scoreTooltipShowing: false,
+    showTakingTooLong: false,
 }
 
 export const modalSlice = createSlice({
@@ -125,6 +128,9 @@ export const modalSlice = createSlice({
         },
         clearScoreTooltipDismissed: (state) => { // so that the tooltip will show again next game
             state.scoreTooltipDismissed = false;
+        },
+        setShowTakingTooLong: (state, action: PayloadAction<boolean>) => {
+            state.showTakingTooLong = action.payload;
         }
     },
 })
@@ -143,7 +149,8 @@ export const {
     dismissScoreTooltip,
     clearScoreTooltipDismissed,
     showLoaderMessage,
-    clearLoaderMessage
+    clearLoaderMessage,
+    setShowTakingTooLong
 } = modalSlice.actions;
 
 // selectors
@@ -153,6 +160,7 @@ export const selectMessageContent = (state: RootState) => state.modals.messageCo
 export const selectIsPersistent = (state: RootState) => state.modals.isPersistent;
 export const selectScoreTooltipDismissed = (state: RootState) => state.modals.scoreTooltipDismissed;
 export const selectScoreTooltipShowing = (state: RootState) => state.modals.scoreTooltipShowing;
-export const selectLoaderMessage = (state: RootState) => state.modals.loaderMessage
+export const selectLoaderMessage = (state: RootState) => state.modals.loaderMessage;
+export const selectShowTakingTooLong = (state: RootState) => state.modals.showTakingTooLong;
 
 export default modalSlice.reducer;

@@ -32,6 +32,7 @@ const AlreadyReceivedCredits = lazy(() => import('./full-screen-modals/AlreadyRe
 const CheckYourEmail = lazy(() => import('./full-screen-modals/CheckYourEmail'));
 const SubmitQuestion = lazy(() => import('./full-screen-modals/SubmitQuestion'));
 const ChangePassword = lazy(() => import('./full-screen-modals/ChangePassword'));
+const Skip = lazy(() => import('./full-screen-modals/Skip'));
 
 /**
  * All full screen modals render from here. This makes it possible to
@@ -224,6 +225,13 @@ const FullScreenModalController = () => {
             {currentModal === 'changePassword' && <Modal isOpen={currentModal === 'changePassword'} onRequestClose={close}>
                 <Suspense fallback={<Loading />}>
                     <ChangePassword />
+                </Suspense>
+            </Modal>}
+
+            {/* Skip to Results */}
+            {currentModal === 'skipToResults' && <Modal isOpen={currentModal === 'skipToResults'} onRequestClose={close}>
+                <Suspense fallback={<Loading />}>
+                    <Skip />
                 </Suspense>
             </Modal>}
         </>

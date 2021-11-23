@@ -80,14 +80,14 @@ export const selectGroupVworld = (state: RootState) => state.funFacts.groupVworl
 export const selectMostSimilarPlayer = (state: RootState) => {
     return {
         name: state.funFacts.mostSimilarName,
-        numSameAnwser: state.funFacts.numberSameAnswer,
+        numSameAnswer: state.funFacts.numberSameAnswer,
     }
 }
 
 export const selectMostSimilarInGroup = (state: RootState) => {
     return {
         names: state.funFacts.groupMostSimilarNames,
-        numSameAnwser: state.funFacts.groupNumberSameAnswer,
+        numSameAnswer: state.funFacts.groupNumberSameAnswer,
     }
 }
 

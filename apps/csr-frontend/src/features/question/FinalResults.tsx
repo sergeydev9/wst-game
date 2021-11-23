@@ -49,7 +49,6 @@ const FinalResults: React.FC = () => {
             <FunFacts />
             {!loggedIn && <RequestFreeCredit />}
             {loggedIn && !hasRatedApp && <RateApp />}
-
             <div className="w-1/2 mx-auto mt-10">
                 <Button type="button" onClick={handler}>Play Another Game</Button>
             </div>

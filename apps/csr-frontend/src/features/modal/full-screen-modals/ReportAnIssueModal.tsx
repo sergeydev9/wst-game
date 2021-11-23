@@ -40,13 +40,18 @@ const ReportAnIssue: React.FC = () => {
     return (
         <ModalContent $narrow>
             <form className="m-3 sm:m-7 w-full px-6 sm:px-16" onSubmit={formik.handleSubmit}>
-
                 <Title1 className="text-center mb-3">Report an Issue</Title1>
 
                 {/* name */}
                 <FormGroup className="mt-4">
                     <InputLabel htmlFor="name">Name</InputLabel>
-                    <TextInput {...formik.getFieldProps('name')} id="name" $hasError={nameErr} $border name="name" type="text" />
+                    <TextInput
+                        {...formik.getFieldProps('name')}
+                        id="name"
+                        $hasError={nameErr}
+                        $border
+                        name="name"
+                        type="text" />
 
                     {nameErr && <ErrorText>{formik.errors.name}</ErrorText>}
                 </FormGroup>

@@ -1,19 +1,44 @@
+import { useEffect, useState } from 'react';
 import { HostActions as HostActionsBox } from "@whosaidtrue/ui";
 import { selectGameStatus } from "../game/gameSlice";
 import { currentScreen, selectQuestionStatus } from "../question/questionSlice";
-import { useAppSelector } from "../../app/hooks";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import StartGame from './host-action-content/StartGame';
 import DuringQuestion from './host-action-content/DuringQuestion';
 import MoveToAnswer from './host-action-content/MoveToAnswer';
 import MoveToQuestionScores from "./host-action-content/MoveToQuestionScores";
 import StartNextQuestion from "./host-action-content/StartNextQuestion";
+import { setShowTakingTooLong } from '../modal/modalSlice';
 
 const HostActions: React.FC = () => {
+    const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+    const dispatch = useAppDispatch();
     const gameStatus = useAppSelector(selectGameStatus);
     const questionStatus = useAppSelector(selectQuestionStatus);
     const screen = useAppSelector(currentScreen);
 
-    const isRequired = (gameStatus === 'lobby' || questionStatus === 'results' || questionStatus === 'answer' || screen === 'answerResults' || screen === 'scoreResults')
+    useEffect(() => {
+
+        if (screen === 'waitingRoom' && !timer) {
+            const THIRTY_SECONDS = 1000 * 30;
+
+            const time = setTimeout(() => {
+                dispatch(setShowTakingTooLong(true));
+            }, THIRTY_SECONDS);
+            setTimer(time);
+        }
+
+        return () => {
+            dispatch(setShowTakingTooLong(false));
+
+            if (timer) {
+                clearTimeout(timer);
+                setTimer(null);
+            }
+        }
+    }, [timer, dispatch, screen]);
+
+    const isRequired = (gameStatus === 'lobby' || questionStatus === 'results' || questionStatus === 'answer' || screen === 'answerResults' || screen === 'scoreResults');
 
     return (
         <HostActionsBox required={isRequired}>

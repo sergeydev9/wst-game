@@ -12,7 +12,7 @@ const StartNextQuestion: React.FC = () => {
     const handler = () => {
         sendMessage(types.START_NEXT_QUESTION, undefined, (ack) => {
             if (ack === 'error') {
-                dispatch(showError('Oops, something went wrong...'))
+                dispatch(showError('Oops, something went wrong...'));
             }
         })
     }

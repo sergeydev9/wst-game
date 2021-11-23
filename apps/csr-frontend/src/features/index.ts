@@ -51,6 +51,7 @@ export { default as Reconnecting } from './modal/LoaderMessage';
 export { default as funFactsReducer } from './fun-facts/funFactsSlice';
 export { default as oneLinersReducer } from './one-liners/oneLinersSlice';
 export { default as Spinner } from './loading/Spinner';
+export { default as TakingTooLong } from './modal/TakingTooLong';
 export * from './choose-name/chooseNameSlice';
 export * from './question/questionSlice';
 export * from './game/gameSlice';

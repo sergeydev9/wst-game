@@ -2,7 +2,15 @@ import { createSlice, PayloadAction, createSelector, createAsyncThunk } from "@r
 import { CheckRatingResponse, payloads } from "@whosaidtrue/api-interfaces";
 import { GameQuestionStatus, PlayerRef, ScoreboardEntry } from "@whosaidtrue/app-interfaces";
 import { RootState } from "../../app/store";
-import { selectPlayerId, selectPlayerName, selectGameStatus, selectTotalQuestions } from "../game/gameSlice";
+import {
+    selectPlayerId,
+    selectPlayerName,
+    selectGameStatus,
+    selectTotalQuestions,
+    clearGame,
+    removePlayer,
+    selectNumPlayersInGame
+} from "../game/gameSlice";
 import { api } from '../../api';
 
 export interface CurrentQuestionState {
@@ -138,7 +146,7 @@ const currentQuestionSlice = createSlice({
         setHasRated: (state, action) => {
             state.hasRated = action.payload;
         },
-        setHaveNotAnswered: (state, action) => {
+        setHaveNotAnswered: (state, action: PayloadAction<PlayerRef[]>) => {
             state.haveNotAnswered = action.payload
         },
         questionEnd: (state, action: PayloadAction<payloads.QuestionEnd>) => {
@@ -162,8 +170,16 @@ const currentQuestionSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(checkHasRatedQuestion.fulfilled, (state, action: any) => {
+        builder.addCase(checkHasRatedQuestion.fulfilled, (state, action) => {
             state.hasRated = action.payload.hasRated;
+        })
+
+        builder.addCase(clearGame, () => {
+            return initialQuestionState;
+        });
+
+        builder.addCase(removePlayer, (state, action: PayloadAction<number>) => {
+            state.haveNotAnswered = state.haveNotAnswered.filter(player => player.id !== action.payload);
         })
     }
 })
@@ -237,8 +253,13 @@ export const selectPlayerPointsEarned = createSelector([selectPointsEarned, sele
 })
 
 // number of players that have submitted an answer and a guess
-export const selectNumHaveGuessed = createSelector([selectNumPlayers, selectHaveNotAnswered], (numPlayers, notAnsweredList) => {
-    return numPlayers - notAnsweredList.length;
+export const selectNumHaveGuessed = createSelector([selectNumPlayersInGame, selectHaveNotAnswered], (numPlayers, notAnsweredList) => {
+    if (notAnsweredList && notAnsweredList.length) {
+        return numPlayers - notAnsweredList.length;
+    } else {
+        return numPlayers;
+    }
+
 });
 
 // used to identify what screen the user should be on

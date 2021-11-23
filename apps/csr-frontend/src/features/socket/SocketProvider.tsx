@@ -24,7 +24,6 @@ import {
     addPlayer,
     clearGame,
     removePlayer,
-    setInactive,
     setGameStatus,
     selectPlayerName,
     selectPlayerStatus,
@@ -46,7 +45,7 @@ import {
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
 import { clearHost } from "../host/hostSlice";
-import { clearFunFacts, setFunFacts, setMostSimilar, setFetchSimilarStatus } from '../fun-facts/funFactsSlice';
+import { setFunFacts, setMostSimilar, setFetchSimilarStatus } from '../fun-facts/funFactsSlice';
 
 /**
  * Provider component for socket context.
@@ -78,8 +77,6 @@ export const SocketProvider: React.FC = ({ children }) => {
             dispatch(clearLoaderMessage());
             setShouldBlock(false)
             dispatch(clearGame());
-            dispatch(clearHost());
-            dispatch(clearCurrentQuestion());
         }
 
         // if game status is one of these values, then user should have a socket connection
@@ -175,11 +172,8 @@ export const SocketProvider: React.FC = ({ children }) => {
              */
             // game not found in DB
             connection.on(types.GAME_NOT_FOUND, () => {
-                dispatch(clearGame());
-                dispatch(clearHost());
+                clear()
                 dispatch(showError('Error while connecting to game'));
-                setShouldBlock(false)
-                dispatch(clearCurrentQuestion())
                 history.push('/')
             })
 
@@ -211,10 +205,8 @@ export const SocketProvider: React.FC = ({ children }) => {
                 if (playerId === id) {
                     // If current player is the one that was removed
                     dispatch(setFullModal("removedFromGame")) // show modal
-                    setShouldBlock(false) // turn off page exit blocking
                     dispatch(removeFromGame());
-                    dispatch(clearCurrentQuestion())
-
+                    clear()
                     connection.close() // close connection. Component sets socket to null on dismount
                 } else {
                     // otherwise, show player has been removed message
@@ -222,12 +214,6 @@ export const SocketProvider: React.FC = ({ children }) => {
                     dispatch(removePlayer(id))
 
                 }
-            })
-
-            // updates the list of inactive players
-            connection.on(types.UPDATE_INACTIVE, (message: payloads.UpdateInactivePlayers) => {
-                const { inactivePlayers } = message;
-                dispatch(setInactive(inactivePlayers))
             })
 
             // updates question state
@@ -286,9 +272,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             // player tries to join a game that is over
             connection.on(types.GAME_FINISHED, () => {
                 dispatch(showError('The game you are attempting to join has already finished.'));
-                dispatch(clearGame());
-                dispatch(clearCurrentQuestion());
-                dispatch(clearHost())
+                clear();
                 history.push('/');
                 connection.close() // close  and delete the socket
                 setSocket(null);
@@ -302,12 +286,9 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             //if host left before first question was over
             connection.on(types.HOST_LEFT_NO_RESULTS, () => {
-                setShouldBlock(false)
                 dispatch(showError('The host has left the game'));
-                dispatch(clearGame());
-                dispatch(clearCurrentQuestion());
-                dispatch(clearHost())
-                connection.close() // close  and delete the socket
+                clear();
+                connection.close(); // close  and delete the socket
                 setSocket(null);
                 history.push('/')
             })

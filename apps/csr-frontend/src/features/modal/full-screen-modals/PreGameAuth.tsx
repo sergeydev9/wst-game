@@ -111,7 +111,7 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 .matches(/\d/, 'Password must contain at least 1 number')
                 .required('Password is required')
         }),
-        onSubmit: async (values) => {
+        onSubmit: (values) => {
             const { email, password } = values
 
             return api.post<AuthenticationResponse>('/user/login', { email, password }).then(response => {
@@ -141,8 +141,8 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     const emailErr = formik.touched.email && formik.errors.email ? true : undefined;
     const pwErr = formik.touched.password && formik.errors.password ? true : undefined;
 
-
     const guestEmailErr = guestFormik.touched.email && guestFormik.errors.email ? true : undefined;
+
     // render
     return (
         <ModalContent $narrow>
@@ -152,7 +152,13 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 {/* Guest host email login */}
                 <FormGroup className="mb-6">
                     <InputLabel>Email Address</InputLabel>
-                    <TextInput {...guestFormik.getFieldProps('email')} $hasError={guestEmailErr} id="guest-email" $border name="email" type="email" />
+                    <TextInput
+                        {...guestFormik.getFieldProps('email')}
+                        $hasError={guestEmailErr}
+                        id="guest-email"
+                        $border
+                        name="email"
+                        type="email" />
                     <Headline className="text-basic-gray mt-2">(We'll send you the game results)</Headline>
                     {guestEmailErr && <ErrorText >{guestFormik.errors.email}</ErrorText>}
                     {inUse && <EmailInUse />}
@@ -163,7 +169,7 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
             {/* divider */}
             <div className="w-full flex flex-row justify-center items-center gap-3 h-8 px-20">
                 <Divider dividerColor='grey' />
-                <h3 className="font-black text-title-3" >OR</h3>
+                <h3 className="font-black text-title-3">OR</h3>
                 <Divider dividerColor='grey' />
             </div>
 
@@ -176,15 +182,36 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 {/* email */}
                 <FormGroup>
                     <InputLabel data-cy="email-input" htmlFor="email">Email</InputLabel>
-                    <TextInput {...formik.getFieldProps('email')} className="block" $hasError={emailErr} id="email" $border name="email" type="email" />
+                    <TextInput
+                        {...formik.getFieldProps('email')}
+                        className="block"
+                        $hasError={emailErr}
+                        id="email"
+                        $border
+                        name="email"
+                        type="email" />
                     {emailErr && <ErrorText>{formik.errors.email}</ErrorText>}
                 </FormGroup>
 
                 {/* password */}
                 <FormGroup className="mb-3">
                     <InputLabel htmlFor="password">Password</InputLabel>
-                    <TextInput data-cy="password-input" {...formik.getFieldProps('password')} id="password" $hasError={pwErr} $border name="password" type="password" />
-                    <Headline><Link className="text-basic-gray underline cursor-pointer mt-4" onClick={() => dispatch(setFullModal(''))} to="/reset/send-email">Forgot Password?</Link></Headline>
+                    <TextInput
+                        data-cy="password-input"
+                        {...formik.getFieldProps('password')}
+                        id="password"
+                        $hasError={pwErr}
+                        $border
+                        name="password"
+                        type="password" />
+                    <Headline>
+                        <Link
+                            className="text-basic-gray underline cursor-pointer mt-4"
+                            onClick={() => dispatch(setFullModal(''))}
+                            to="/reset/send-email">
+                            Forgot Password?
+                        </Link>
+                    </Headline>
                     {pwErr && <ErrorText>{formik.errors.password}</ErrorText>}
                 </FormGroup>
 
@@ -193,7 +220,6 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
                 <Button color="blue" data-cy="login-submit" type="submit">Log In</Button>
             </form>
         </ModalContent >
-
     )
 }
 

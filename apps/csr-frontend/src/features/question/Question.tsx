@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { TrueFalse, QuestionCard, NumberTrueGuess, WaitingRoom, QuestionAnswers } from "@whosaidtrue/ui";
+import {
+    TrueFalse,
+    QuestionCard,
+    NumberTrueGuess,
+    WaitingRoom,
+    QuestionAnswers
+} from "@whosaidtrue/ui";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
     selectIsReader,
@@ -8,7 +14,6 @@ import {
     selectGamequestionId,
     currentScreen,
     selectTextForGuess,
-    selectNumPlayers,
     setHasAnswered,
     setHasGuessed,
     selectNumHaveGuessed,
@@ -21,9 +26,9 @@ import {
     selectCategory
 } from '../question/questionSlice';
 import { ImSpinner6 } from '@react-icons/all-files/im/ImSpinner6';
-import { selectHasPassed, selectTotalQuestions, setHasPassed } from '../game/gameSlice';
+import { selectHasPassed, selectTotalQuestions, setHasPassed, selectNumPlayersInGame } from '../game/gameSlice';
 import ReaderAnnouncement from "./ReaderAnnouncement";
-import { selectHasRatedQuestion, showError, useSocket } from "..";
+import { showError, useSocket } from "..";
 import { payloads, types } from "@whosaidtrue/api-interfaces";
 import QuestionResults from './QuestionResults';
 import { isLoggedIn } from "../auth/authSlice";
@@ -50,14 +55,13 @@ const Question: React.FC = () => {
     const totalQuestions = useAppSelector(selectTotalQuestions);
     const guessText = useAppSelector(selectTextForGuess);
     const screen = useAppSelector(currentScreen);
-    const totalPlayers = useAppSelector(selectNumPlayers);
+    const totalPlayers = useAppSelector(selectNumPlayersInGame);
     const numHaveGuessed = useAppSelector(selectNumHaveGuessed);
     const guessVal = useAppSelector(selectGuessValue);
     const globalTrue = useAppSelector(selectGlobalTrue);
     const groupTrue = useAppSelector(selectGroupTrue);
     const correctAnswer = useAppSelector(selectCorrectAnswer);
     const followUp = useAppSelector(selectFollowUp);
-    const hasRated = useAppSelector(selectHasRatedQuestion);
     const category = useAppSelector(selectCategory);
 
     // submit true/false answer
@@ -143,7 +147,7 @@ const Question: React.FC = () => {
                         questionText={guessText}
                         followUp={followUp}
                     >
-                        {loggedIn && !hasRated && <RateQuestion />}
+                        {loggedIn && <RateQuestion />}
                     </QuestionAnswers>
                 )}
                 {screen === 'scoreResults' && <QuestionResults />}

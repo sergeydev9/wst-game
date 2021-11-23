@@ -197,6 +197,7 @@ updated_at | timestamptz | no | no | now()
 id | integer | no | yes
 player_name | citext | no | no
 game_id | integer | no | no | | games | CASCADE
+status | varchar(100) | null | no | initialized
 created_at | timestamptz | no | no | now()
 updated_at | timestamptz | no | no | now()
 

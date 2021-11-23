@@ -20,8 +20,6 @@ export interface GameState {
     isHost: boolean;
     hostName: string;
     players: Record<number, PlayerRef>;
-    inactivePlayers: PlayerRef[];
-    disconnectedPlayers: PlayerRef[];
     access_code: string;
     playerId: number;
     playerName: string;
@@ -54,8 +52,6 @@ export const initialGameState: GameState = {
     isHost: false,
     access_code: '',
     players: {},
-    inactivePlayers: [],
-    disconnectedPlayers: [],
     hostName: '',
     playerName: '',
     playerId: 0,
@@ -103,7 +99,7 @@ export const gameSlice = createSlice({
             const { id } = action.payload
             state.players = { ...state.players, [id]: action.payload };
         },
-        removePlayer: (state, action) => {
+        removePlayer: (state, action: PayloadAction<number>) => {
             state.players = omit(state.players, action.payload)
         },
         createGame: (state, action) => {
@@ -123,17 +119,13 @@ export const gameSlice = createSlice({
                 access_code,
                 status,
                 players,
-                inactivePlayers,
-                disconnectedPlayers,
                 totalQuestions
             } = action.payload;
 
             state.gameId = gameId;
             state.access_code = access_code;
             state.gameStatus = status;
-            state.disconnectedPlayers = disconnectedPlayers;
             state.players = players;
-            state.inactivePlayers = inactivePlayers;
             state.totalQuestions = totalQuestions;
         },
         setHasRatedApp: (state, action) => {
@@ -141,9 +133,6 @@ export const gameSlice = createSlice({
         },
         removeFromGame: (state) => {
             state.playerStatus = 'removed';
-        },
-        setInactive: (state, action) => {
-            state.inactivePlayers = [...action.payload]
         },
         setPlayers: (state, action: PayloadAction<{ players: PlayerRef[] }>) => {
             const { players } = action.payload;
@@ -191,7 +180,6 @@ export const {
     addPlayer,
     removePlayer,
     joinGame,
-    setInactive,
     gameStateUpdate,
     setPlayers,
     setPlayerStatus,
@@ -206,11 +194,9 @@ export const selectHasPassed = (state: RootState) => state.game.hasPassed;
 export const selectGameId = (state: RootState) => state.game.gameId;
 export const selectGameToken = (state: RootState) => state.game.gameToken;
 export const selectGameStatus = (state: RootState) => state.game.gameStatus;
-export const selectAccessCode = (state: RootState) => state.game.access_code?.toUpperCase();
+export const selectAccessCode = (state: RootState) => state.game.access_code;
 export const selectGameDeck = (state: RootState) => state.game.deck;
 export const selectPlayerId = (state: RootState) => state.game.playerId;
-export const selectInactive = (state: RootState) => state.game.inactivePlayers;
-export const selectDisconnected = (state: RootState) => state.game.disconnectedPlayers;
 export const selectPlayerStatus = (state: RootState) => state.game.playerStatus;
 export const selectPlayers = (state: RootState) => state.game.players;
 export const selectTotalQuestions = (state: RootState) => state.game.totalQuestions;

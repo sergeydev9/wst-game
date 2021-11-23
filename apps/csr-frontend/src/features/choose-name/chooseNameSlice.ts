@@ -3,6 +3,7 @@ import { RootState } from "../../app/store";
 import { NameObject } from "@whosaidtrue/app-interfaces";
 import { api } from "../../api";
 import { NameChoiceReport } from "@whosaidtrue/api-interfaces";
+import { clearGame } from '../game/gameSlice';
 
 export interface ChooseNameState {
     remainingNameOptions: NameObject[]; // remainining options
@@ -48,7 +49,7 @@ export const chooseNameSlice = createSlice({
             state.rerolls = newRemaining.length;
             state.seen = [...state.seen, ...newCurrent]
         },
-    }
+    },
 });
 
 // actions

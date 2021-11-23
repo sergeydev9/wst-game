@@ -6,7 +6,7 @@ import trophy from '../../assets/trophy.png';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectScoreTooltipShowing, dismissScoreTooltip } from '../modal/modalSlice';
 
-const FlashMessage: React.FC = () => {
+const ScoreTooltip: React.FC = () => {
     const dispatch = useAppDispatch();
 
     const showScoreTooltip = useAppSelector(selectScoreTooltipShowing);
@@ -43,4 +43,4 @@ const FlashMessage: React.FC = () => {
 
 }
 
-export default FlashMessage;
+export default ScoreTooltip;

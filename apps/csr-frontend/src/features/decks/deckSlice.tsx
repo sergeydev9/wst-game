@@ -107,22 +107,22 @@ export const deckSlice = createSlice({
             owned.forEach((deck: Deck) => {
                 if (deck.sfw) {
                     ownedSfw.push(deck);
-                } else {
-                    switch (deck.movie_rating) {
-                        case 'NC17':
-                            ownedNC17.push(deck);
-                            break;
-                        case 'R':
-                            ownedR.push(deck);
-                            break;
-                        case 'PG13':
-                            ownedPG13.push(deck);
-                            break;
-                        case 'PG':
-                            ownedPG.push(deck);
-                            break;
-                    }
                 }
+                switch (deck.movie_rating) {
+                    case 'NC17':
+                        ownedNC17.push(deck);
+                        break;
+                    case 'R':
+                        ownedR.push(deck);
+                        break;
+                    case 'PG13':
+                        ownedPG13.push(deck);
+                        break;
+                    case 'PG':
+                        ownedPG.push(deck);
+                        break;
+                }
+
             })
 
 
@@ -136,23 +136,22 @@ export const deckSlice = createSlice({
             notOwned.forEach((deck: Deck) => {
                 if (deck.sfw) {
                     notOwnedSfw.push(deck);
-                } else {
-                    switch (deck.movie_rating) {
-                        case 'NC17':
-                            notOwnedNC17.push(deck);
-                            break;
-                        case 'R':
-                            notOwnedR.push(deck);
-                            break;
-                        case 'PG13':
-                            notOwnedPG13.push(deck);
-                            break;
-                        case 'PG':
-                            notOwnedPG.push(deck);
-                            break;
-                    }
                 }
 
+                switch (deck.movie_rating) {
+                    case 'NC17':
+                        notOwnedNC17.push(deck);
+                        break;
+                    case 'R':
+                        notOwnedR.push(deck);
+                        break;
+                    case 'PG13':
+                        notOwnedPG13.push(deck);
+                        break;
+                    case 'PG':
+                        notOwnedPG.push(deck);
+                        break;
+                }
             })
 
             state.ownedByRating.all = owned;

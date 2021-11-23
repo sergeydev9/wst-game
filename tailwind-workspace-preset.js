@@ -1,6 +1,9 @@
 module.exports = {
   theme: {
     extend: {
+      screens: {
+        'xs': '400px',
+      },
       flex: {
         2: '2 2 0%',
       },

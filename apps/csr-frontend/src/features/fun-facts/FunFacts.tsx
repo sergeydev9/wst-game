@@ -11,7 +11,7 @@ const FunFacts: React.FC = () => {
     const mostSimilarToPlayer = useAppSelector(selectMostSimilarPlayer);
     const mostSimilarInGroup = useAppSelector(selectMostSimilarInGroup);
 
-    const shouldShow = bucketList.textForGuess || groupVworld.textForGuess || mostSimilarToPlayer.numSameAnwser || mostSimilarInGroup.numSameAnwser;
+    const shouldShow = bucketList.textForGuess || groupVworld.textForGuess || mostSimilarToPlayer.numSameAnswer || mostSimilarInGroup.numSameAnswer;
 
     const helper = () => {
         const result = [];
@@ -40,26 +40,26 @@ const FunFacts: React.FC = () => {
             count++;
         }
 
-        if (mostSimilarToPlayer.numSameAnwser) {
+        if (mostSimilarToPlayer.numSameAnswer) {
             result.push(
                 <MostSimilar
                     groupWide={false}
                     key={count}
                     totalQuestions={totalQuestions}
-                    totalCommon={mostSimilarToPlayer.numSameAnwser}
+                    totalCommon={mostSimilarToPlayer.numSameAnswer}
                     heading={mostSimilarToPlayer.name}
                 />
             )
             count++;
         }
 
-        if (mostSimilarInGroup.numSameAnwser) {
+        if (mostSimilarInGroup.numSameAnswer) {
             result.push(
                 <MostSimilar
                     groupWide={true}
                     key={count}
                     totalQuestions={totalQuestions}
-                    totalCommon={mostSimilarInGroup.numSameAnwser}
+                    totalCommon={mostSimilarInGroup.numSameAnswer}
                     heading={mostSimilarInGroup.names}
                 />
             )

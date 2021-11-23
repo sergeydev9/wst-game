@@ -141,7 +141,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
         },
         user_id: { type: 'integer', notNull: false, references: 'users', onDelete: 'SET NULL' },
         player_name: { type: 'citext', notNull: true },
-        status: { type: 'varchar(100)', notNull: true, default: 'joined' }, // joined, disconnected, or removed
+        status: { type: 'varchar(100)', notNull: true, default: 'joined' },
         created_at: {
             type: 'timestamptz',
             notNull: true,

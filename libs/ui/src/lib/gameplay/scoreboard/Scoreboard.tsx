@@ -6,7 +6,6 @@ import { RiArrowDownLine } from '@react-icons/all-files/ri/RiArrowDownLine';
 
 export interface ScoreBoardProps {
     scores: ScoreboardEntry[];
-    showDiff?: boolean;
     currentPlayerScore: ScoreboardEntry
 }
 
@@ -38,7 +37,7 @@ const scoreClass = "flex flex-row justify-between text-basic-black font-semibold
 
 
 // DEV_NOTE: filter players before getting here.
-const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, showDiff }) => {
+const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore }) => {
 
     // render a green or red outline depending
     // on whether diff is positive or negative
@@ -64,7 +63,7 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
                 border-purple-subtle-stroke
                 `}>
                 <span>{p.rank}</span>
-                <span className="flex flex-col sm:flex-row  items-center">{p.player_name} {showDiff && diffHelper(p.rankDifference)}</span>
+                <span className="flex flex-col sm:flex-row  items-center">{p.player_name} {diffHelper(p.rankDifference)}</span>
                 <span>{p.score.toLocaleString('en-US')}</span>
             </li>
         )
@@ -77,7 +76,7 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ scores, currentPlayerScore, sho
             </ul>
             {currentPlayerScore && currentPlayerScore.rank && <div className={`${scoreClass} bg-yellow-base filter drop-shadow-yellow-base rounded-3xl mt-4 mb-2`}>
                 <span>{currentPlayerScore.rank}</span>
-                <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.player_name} (You) {showDiff && diffHelper(currentPlayerScore.rankDifference)}</span>
+                <span className="flex flex-col sm:flex-row items-center">{currentPlayerScore.player_name} (You) {diffHelper(currentPlayerScore.rankDifference)}</span>
                 <span>{currentPlayerScore.score.toLocaleString('en-US')}</span>
             </div>}
         </div> : null
