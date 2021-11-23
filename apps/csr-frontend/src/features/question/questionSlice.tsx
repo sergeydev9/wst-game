@@ -8,7 +8,8 @@ import {
     selectGameStatus,
     selectTotalQuestions,
     clearGame,
-    removePlayer
+    removePlayer,
+    selectNumPlayersInGame
 } from "../game/gameSlice";
 import { api } from '../../api';
 
@@ -252,7 +253,7 @@ export const selectPlayerPointsEarned = createSelector([selectPointsEarned, sele
 })
 
 // number of players that have submitted an answer and a guess
-export const selectNumHaveGuessed = createSelector([selectNumPlayers, selectHaveNotAnswered], (numPlayers, notAnsweredList) => {
+export const selectNumHaveGuessed = createSelector([selectNumPlayersInGame, selectHaveNotAnswered], (numPlayers, notAnsweredList) => {
     if (notAnsweredList && notAnsweredList.length) {
         return numPlayers - notAnsweredList.length;
     } else {

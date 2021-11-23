@@ -14,7 +14,6 @@ import {
     selectGamequestionId,
     currentScreen,
     selectTextForGuess,
-    selectNumPlayers,
     setHasAnswered,
     setHasGuessed,
     selectNumHaveGuessed,
@@ -27,7 +26,7 @@ import {
     selectCategory
 } from '../question/questionSlice';
 import { ImSpinner6 } from '@react-icons/all-files/im/ImSpinner6';
-import { selectHasPassed, selectTotalQuestions, setHasPassed } from '../game/gameSlice';
+import { selectHasPassed, selectTotalQuestions, setHasPassed, selectNumPlayersInGame } from '../game/gameSlice';
 import ReaderAnnouncement from "./ReaderAnnouncement";
 import { showError, useSocket } from "..";
 import { payloads, types } from "@whosaidtrue/api-interfaces";
@@ -56,7 +55,7 @@ const Question: React.FC = () => {
     const totalQuestions = useAppSelector(selectTotalQuestions);
     const guessText = useAppSelector(selectTextForGuess);
     const screen = useAppSelector(currentScreen);
-    const totalPlayers = useAppSelector(selectNumPlayers);
+    const totalPlayers = useAppSelector(selectNumPlayersInGame);
     const numHaveGuessed = useAppSelector(selectNumHaveGuessed);
     const guessVal = useAppSelector(selectGuessValue);
     const globalTrue = useAppSelector(selectGlobalTrue);
