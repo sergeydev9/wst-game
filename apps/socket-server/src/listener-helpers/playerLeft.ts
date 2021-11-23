@@ -2,10 +2,10 @@ import { Socket } from "socket.io";
 import { logger } from '@whosaidtrue/logger';
 import { Keys } from '../keys';
 import { pubClient } from "../redis";
-import { payloads, types } from "@whosaidtrue/api-interfaces";
-import saveScores from "./saveScores";
-import endGame from './endGame';
-
+import { payloads } from "@whosaidtrue/api-interfaces";
+import endQuestion from './endQuestion';
+import { NextQuestionResult } from "@whosaidtrue/app-interfaces";
+import setNewReader from './setNewReader';
 
 /**
  * Performs the necessary game state updates when a player leaves the game,
@@ -16,74 +16,42 @@ async function playerLeft(socket: Socket, player: payloads.PlayerEvent) {
     const {
         currentPlayers,
         readerList,
-        currentQuestionId,
-        currentSequenceIndex,
-        totalQuestions,
-        bucketList,
-        groupVworld
+        currentQuestion,
+        totalQuestions
     } = socket.keys;
 
-    // get id of current question
-    const questionId = await pubClient.get(currentQuestionId)
+    // get  current question data
+    const questionString = await pubClient.get(currentQuestion);
+    const question: NextQuestionResult = JSON.parse(questionString);
 
-    const haveNotAnswered = Keys.haveNotAnswered(Number(questionId));
-
+    const haveNotAnswered = Keys.haveNotAnswered(question.gameQuestionId);
     const playerString = JSON.stringify(player);
 
     // remove player from current players, and count the number of players that haven't answered
-    const [, , , count, sequenceIndex, totalQuestionNum, totalPlayers] = await pubClient
+    const [, , , count, totalQuestionNum] = await pubClient
         .pipeline()
         .srem(currentPlayers, playerString)
         .srem(readerList, playerString)
         .srem(haveNotAnswered, playerString)
         .scard(haveNotAnswered)
-        .get(currentSequenceIndex)
         .get(totalQuestions)
-        .scard(currentPlayers)
         .exec()
-
 
     logger.debug({
         message: '[Player Left] have not answered count',
-        count,
-        playerString
+        count: count[1],
+        playerString,
+        totalQuestionNum
     })
 
-    // if player was last
+    // if player was the reader, set a new reader
+    if (player.id === Number(question.readerId)) {
+        await setNewReader(socket, question);
+    }
+
+    // if player was last that had not answered
     if (count[1] == 0) {
-
-        // after 4th question, start sending facts.
-        // They don't always show, but might as well send them anyways
-        if (sequenceIndex[1] && Number(sequenceIndex[1]) > 4) {
-            const [bucketListResponse, groupVworldResponse] = await pubClient
-                .pipeline()
-                .hgetall(groupVworld)
-                .hgetall(bucketList)
-                .exec()
-
-            socket.sendToAll(types.FUN_FACTS,
-                {
-                    bucketList: bucketListResponse[1],
-                    groupVworld: groupVworldResponse[1]
-                })
-        }
-
-        // if this is the last question, or that was the last player, end the game
-        if ((sequenceIndex[1] === totalQuestionNum[1]) || Number(totalPlayers[1]) < 2) {
-            await endGame(socket)
-        } else {
-            // calculate scores
-            const result = await saveScores(Number(questionId), socket.gameId);
-
-            logger.debug({
-                message: '[Save Scores]',
-                ...result
-            })
-
-            // send result
-            socket.sendToAll(types.QUESTION_END, result);
-        }
-
+        await endQuestion(socket, question.gameQuestionId, question.sequenceIndex, Number(totalQuestionNum[1]));
     }
 }
 

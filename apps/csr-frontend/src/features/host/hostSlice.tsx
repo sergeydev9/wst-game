@@ -44,7 +44,12 @@ const hostSlice = createSlice({
 })
 
 // actions
-export const { clearHost, clearTarget, setTarget, setHostModal } = hostSlice.actions;
+export const {
+    clearHost,
+    clearTarget,
+    setTarget,
+    setHostModal
+} = hostSlice.actions;
 
 // selectors
 export const selectHostModal = (state: RootState) => state.host.hostModal;

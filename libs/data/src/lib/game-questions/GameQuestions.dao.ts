@@ -1,6 +1,6 @@
 import { NextQuestionResult } from '@whosaidtrue/app-interfaces';
 import { logError } from '@whosaidtrue/logger';
-import { Pool } from 'pg';
+import { Pool, QueryResult } from 'pg';
 import Dao from '../base.dao';
 import { getQuestionData } from '../questions/Questions.dao';
 
@@ -80,7 +80,19 @@ class GameQuestions extends Dao {
         } finally {
             client.release()
         }
+    }
 
+    public setNewReader(questionId: number, readerId: number, readerName: string): Promise<QueryResult> {
+        const query = {
+            text: `
+                UPDATE game_questions
+                SET reader_id = $2, reader_name = $3
+                WHERE id = $1
+            `,
+            values: [questionId, readerId, readerName]
+        }
+
+        return this.pool.query(query);
     }
 }
 

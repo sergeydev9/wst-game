@@ -60,10 +60,9 @@ const SkipToResults: React.FC<SkipToResultsProps> = ({ confirm, cancel, numHaveN
             </SubHeader>
 
             {/* Buttons */}
-            <div className="w-full">
-                <Button type="button" className="block my-4 w-full sm:w-2/3 mx-auto" onClick={confirm}>Yes, Skip Them</Button>
-                <Button type="button" className="block my-4 w-full sm:w-2/3 mx-auto
-                " $secondary onClick={cancel}>Cancel</Button>
+            <div className="w-full sm:w-2/3 gap-4 flex flex-col justify-center">
+                <Button type="button" onClick={confirm}>Yes, Skip Them</Button>
+                <Button type="button" $secondary onClick={cancel}>Cancel</Button>
             </div>
 
             {/* Player List */}

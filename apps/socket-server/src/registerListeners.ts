@@ -14,6 +14,7 @@ import nextQuestion from "./listener-helpers/nextQuestion";
 import playerLeft from './listener-helpers/playerLeft';
 import endGame from './listener-helpers/endGame';
 import sendFunFacts from "./listener-helpers/sendFunFacts";
+import removePlayer from './listener-helpers/removePlayer';
 
 const registerListeners = (socket: Socket, io: Server) => {
     const {
@@ -26,7 +27,6 @@ const registerListeners = (socket: Socket, io: Server) => {
         groupVworld,
         playerMostSimilar,
         locks,
-        removedPlayers
     } = socket.keys;
 
     // source info
@@ -357,20 +357,7 @@ const registerListeners = (socket: Socket, io: Server) => {
         */
         socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent) => {
             logIncoming(types.REMOVE_PLAYER, msg, source);
-
-            if (msg.event_origin === 'lobby') {
-                await gamePlayers.setStatus(msg.id, 'removed_lobby')
-            } else {
-                await gamePlayers.setStatus(msg.id, 'removed_game')
-            }
-
-            // add player to removed players set
-            const remResponse = await pubClient.sadd(removedPlayers, msg.id);
-            await pubClient.expire(removedPlayers, ONE_DAY);
-
-            logger.debug(`Player added to removed list: ${remResponse}`)
-            await playerLeft(socket, msg);
-            sendToAll(types.REMOVE_PLAYER, msg)
+            await removePlayer(socket, msg)
         })
 
         /**

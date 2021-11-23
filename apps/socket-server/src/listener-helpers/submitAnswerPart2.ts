@@ -37,8 +37,7 @@ const submitAnswerPart2 = async (socket: Socket, msg: payloads.AnswerPart2): Pro
         .expire(haveNotAnswered, ONE_DAY)
         .exec()
 
-    return r3[1].map(s => JSON.parse(s))
-
+    return r3[1].map(s => JSON.parse(s));
 }
 
 export default submitAnswerPart2;

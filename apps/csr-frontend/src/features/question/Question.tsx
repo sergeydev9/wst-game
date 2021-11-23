@@ -29,7 +29,7 @@ import {
 import { ImSpinner6 } from '@react-icons/all-files/im/ImSpinner6';
 import { selectHasPassed, selectTotalQuestions, setHasPassed } from '../game/gameSlice';
 import ReaderAnnouncement from "./ReaderAnnouncement";
-import { selectHasRatedQuestion, showError, useSocket } from "..";
+import { showError, useSocket } from "..";
 import { payloads, types } from "@whosaidtrue/api-interfaces";
 import QuestionResults from './QuestionResults';
 import { isLoggedIn } from "../auth/authSlice";
@@ -63,7 +63,6 @@ const Question: React.FC = () => {
     const groupTrue = useAppSelector(selectGroupTrue);
     const correctAnswer = useAppSelector(selectCorrectAnswer);
     const followUp = useAppSelector(selectFollowUp);
-    const hasRated = useAppSelector(selectHasRatedQuestion);
     const category = useAppSelector(selectCategory);
 
     // submit true/false answer
@@ -149,7 +148,7 @@ const Question: React.FC = () => {
                         questionText={guessText}
                         followUp={followUp}
                     >
-                        {loggedIn && !hasRated && <RateQuestion />}
+                        {loggedIn && <RateQuestion />}
                     </QuestionAnswers>
                 )}
                 {screen === 'scoreResults' && <QuestionResults />}

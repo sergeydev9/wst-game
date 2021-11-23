@@ -11,7 +11,7 @@ import sendFunFacts from "./sendFunFacts";
  * Calculate the results and end the game
  */
 const endGame = async (socket: Socket) => {
-    const { gameStatus, currentQuestion, latestResults } = socket.keys;
+    const { gameStatus, currentQuestionId, latestResults } = socket.keys;
 
     logger.debug({
         message: '[END GAME]'
@@ -26,11 +26,11 @@ const endGame = async (socket: Socket) => {
     const [, questionIdResult] = await pubClient
         .pipeline()
         .set(gameStatus, 'calculatingScores')
-        .get(`${currentQuestion}:id`)
+        .get(currentQuestionId)
         .exec()
 
-    const currentQuestionId = questionIdResult[1];
-    const result = await saveScores(currentQuestionId, socket.gameId);
+    const questionId = questionIdResult[1];
+    const result = await saveScores(questionId, socket.gameId);
 
     // end game in DB
     await games.endGame(socket.gameId);

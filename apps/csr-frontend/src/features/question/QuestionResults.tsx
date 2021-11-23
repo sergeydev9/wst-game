@@ -11,7 +11,7 @@ import {
 } from "./questionSlice";
 import { selectScoreTooltipDismissed, setShowScoreTooltip } from "../modal/modalSlice";
 import { selectHasGuessed } from "..";
-import FunFacts from '../fun-facts/FunFacts';
+import MostSimilarToYou from "../fun-facts/MostSimilarToYou";
 
 const QuestionResults: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -22,7 +22,6 @@ const QuestionResults: React.FC = () => {
     const hasGuessed = useAppSelector(selectHasGuessed);
     const scoreboard = useAppSelector(selectScoreboard);
     const points = useAppSelector(selectPlayerPointsEarned);
-    const index = useAppSelector(selectSequenceIndex);
     const questionNumber = useAppSelector(selectSequenceIndex);
 
 
@@ -35,11 +34,10 @@ const QuestionResults: React.FC = () => {
         }
     }, [tooltipDismissed, dispatch])
 
-    // TODO: put an error boundary here
     return (
         <QuestionScores guess={guess} correctAnswer={correctAnswer} pointsEarned={points} hasGuessed={hasGuessed}>
-            <Scoreboard scores={scoreboard} showDiff={index !== 1} currentPlayerScore={playerScore} />
-            {questionNumber >= 4 && <FunFacts />}
+            <Scoreboard scores={scoreboard} currentPlayerScore={playerScore} />
+            {questionNumber == 4 && <MostSimilarToYou />}
         </QuestionScores>
 
     )

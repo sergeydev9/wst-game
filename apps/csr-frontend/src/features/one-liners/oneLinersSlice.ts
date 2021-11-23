@@ -17,11 +17,18 @@ const initialOneLinersState: OneLinersState = {
     upcomingLines: []
 }
 
-export const fetchLines = createAsyncThunk(
+export const fetchLines = createAsyncThunk<GetOneLiners, void, { state: RootState }>(
     'oneLiners/fetchLines',
     async () => {
         const response = await api.get<GetOneLiners>('/one-liners');
         return response.data;
+    },
+    {   // if a request is already pending, don't send another
+        condition: (_, { getState }) => {
+            const { oneLiners } = getState();
+            if (oneLiners.upcomingLines.length === 0 && oneLiners.status === "idle") return true;
+            return false;
+        }
     }
 )
 
@@ -73,7 +80,6 @@ export const { clearOneLiners, nextLine } = oneLinersSlice.actions;
 
 // selectors
 export const selectCurrentLine = (state: RootState) => state.oneLiners.currentLine;
-export const selectIsUpcomingEmpty = (state: RootState) => state.oneLiners.upcomingLines.length === 0;
 export const selectOneLinersStatus = (state: RootState) => state.oneLiners.status;
 
 // reducer

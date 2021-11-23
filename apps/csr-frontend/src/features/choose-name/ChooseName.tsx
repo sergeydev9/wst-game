@@ -9,7 +9,6 @@ import {
     selectCurrentNameOptions,
     selectSeen,
     sendReport,
-    clearNameChoices
 } from './chooseNameSlice';
 import {
     setGameStatus,
@@ -18,7 +17,6 @@ import {
     selectIsHost,
     endGameFromApi,
     selectGameId,
-    selectGameStatus
 } from '../game/gameSlice';
 import {
     Button,
@@ -45,23 +43,20 @@ const ChooseName: React.FC = () => {
     const seen = useAppSelector(selectSeen)
     const isHost = useAppSelector(selectIsHost);
     const gameId = useAppSelector(selectGameId);
-    const gameStatus = useAppSelector(selectGameStatus);
 
 
     useEffect(() => {
 
         const fetchNames = async () => {
-            // if there are already names available, bail
-            if (names && names.length) return;
 
             // get 6 name options
             try {
-                const response = await api.get<NameRequestResponse>('/names')
-                dispatch(setRemainingNameOptions(response.data.names)) // populate total name pool
-                dispatch(setCurrentNameOptions()) // set initial set of options and remove them from pool
+                const response = await api.get<NameRequestResponse>('/names');
+                dispatch(setRemainingNameOptions(response.data.names)); // populate total name pool
+                dispatch(setCurrentNameOptions()); // set initial set of options and remove them from pool
             } catch (e) {
-                history.push('/')
-                dispatch(clearGame())
+                history.push('/');
+                dispatch(clearGame());
             }
         }
 
@@ -139,14 +134,13 @@ const ChooseName: React.FC = () => {
         isHost,
         shouldBlock,
         gameId,
-        names
     ])
 
     // send request to join the game
     const join = async (name: string) => {
         api.post<JoinGameResponse>('/games/join', { access_code, name }).then(result => {
-            dispatch(joinGame(result.data))
-            history.push('/play')
+            dispatch(joinGame(result.data));
+            history.push('/play');
         }).catch(e => {
 
             // if name not available, show message and terminate
@@ -159,7 +153,7 @@ const ChooseName: React.FC = () => {
             dispatch(clearGame());
 
             if (e.response.status === 401) {
-                dispatch(showError('That name is no longer available. Please select another'))
+                dispatch(showError('That name is no longer available. Please select another'));
             } else if (e.response.status === 403) {
                 dispatch(showError('The game you are atempting to join has already finished'));
                 history.push('/');

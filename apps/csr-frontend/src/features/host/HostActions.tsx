@@ -19,25 +19,26 @@ const HostActions: React.FC = () => {
 
     useEffect(() => {
 
-        if (screen === 'waitingRoom') {
-            const THIRTY_SECONDS = 1000 * 5;
+        if (screen === 'waitingRoom' && !timer) {
+            const THIRTY_SECONDS = 1000 * 30;
 
-            setTimeout(() => {
+            const time = setTimeout(() => {
                 dispatch(setShowTakingTooLong(true));
-            }, THIRTY_SECONDS)
+            }, THIRTY_SECONDS);
+            setTimer(time);
         }
 
         return () => {
-            dispatch(setShowTakingTooLong(false))
+            dispatch(setShowTakingTooLong(false));
 
             if (timer) {
-                clearTimeout(timer)
+                clearTimeout(timer);
                 setTimer(null);
             }
         }
-    }, [timer, dispatch, screen])
+    }, [timer, dispatch, screen]);
 
-    const isRequired = (gameStatus === 'lobby' || questionStatus === 'results' || questionStatus === 'answer' || screen === 'answerResults' || screen === 'scoreResults')
+    const isRequired = (gameStatus === 'lobby' || questionStatus === 'results' || questionStatus === 'answer' || screen === 'answerResults' || screen === 'scoreResults');
 
     return (
         <HostActionsBox required={isRequired}>
