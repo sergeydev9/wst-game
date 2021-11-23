@@ -206,7 +206,7 @@ const ChooseName: React.FC = () => {
     }
 
     return (
-        <Box boxstyle='white' className="w-96 sm:w-max mx-auto px-8 py-10 text-center">
+        <Box boxstyle='white' className="mx-8 sm:w-max sm:mx-auto px-4 xs:px-8 py-10 text-center">
             <Title1 className="text-basic-black mx-8">Choose Your Player Name</Title1>
             <div className="flex flex-col gap-3 w-80 mt-8">
                 {namesHelper(names)}
