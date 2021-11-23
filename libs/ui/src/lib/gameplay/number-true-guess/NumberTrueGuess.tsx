@@ -40,7 +40,7 @@ const NumberTrueGuess: React.FC<NumberTrueGuessProps> = ({ submitHandler, questi
     return (
         <>
             <GameContentCard>
-                <QuestionContent headline='How many players (including yourself) answered True to:' text={questionText} />
+                <QuestionContent headline={<span>Now guess how many players (<span className="underline italic">including yourself</span>) answered TRUE to the question:</span>} text={questionText} />
                 <div className="px-4 md:px-14 w-full mb-8">
                     <SliderInput max={totalPlayers} changeHandler={valueHandler} />
                 </div>
