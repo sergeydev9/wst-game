@@ -39,7 +39,7 @@ export default {
 
 } as Meta;
 
-const Template: Story<ButtonProps> = (args) => (
+const Template: Story<ButtonProps<'button'>> = (args) => (
     <div className="w-max h-34">
 
         <Button {...args} >Button Label</Button>
