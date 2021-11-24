@@ -1,4 +1,4 @@
-# Typical deployment
+# Test deployment
 
 1. Build backend projects
 
@@ -19,21 +19,29 @@ docker/build.sh --push
 
 3. Update `docker/ebs/docker-compose.yml` with new build images
 
-4a. Deploy Test
+4. Deploy Test
 
 ```bash
 cd docker/ebs
 eb deploy test-env
 ```
 
-4b. Deploy Prod
 
-Update `docker/ebs/.elasticbeanstalk/config.yml` with value `global.application_name: whosaidtrue`
+
+# Prod deployment
+
+1. Rebase `prod` branch on the correct commit or tag from `dev` branch
+
+2. Update `docker/ebs/.elasticbeanstalk/config.yml` with value `global.application_name: whosaidtrue`
+
+3. Deploy Prod
 
 ```bash
 cd docker/ebs
 eb deploy prod
 ```
+
+
 
 # Setting up a new environment
 
@@ -69,6 +77,7 @@ GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO app_backend;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO app_backend;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_backend;
 ```
+
 
 # Troubleshooting
 
