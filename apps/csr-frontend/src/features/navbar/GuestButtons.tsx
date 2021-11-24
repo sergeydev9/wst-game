@@ -21,7 +21,7 @@ const GuestButtons = () => {
 
     return (
         <>
-            <button onClick={openLoginModal} className={`font-bold ${location.pathname === '/' ? 'text-purple-subtle-fill' : 'text-purple-base'} whitespace-nowrap ${loggedIn ? '' : 'hidden sm:flex'}`} type="button">Log In</button>
+            {!loggedIn && <button onClick={openLoginModal} className={`font-bold ${location.pathname === '/' ? 'text-purple-subtle-fill' : 'text-purple-base'} whitespace-nowrap`} type="button">Log In</button>}
             <Button onClick={openCreateAccModal} className="whitespace-nowrap" type="button" data-cy="create-account" buttonStyle='small' $secondary>Create Account</Button>
         </>
     )
