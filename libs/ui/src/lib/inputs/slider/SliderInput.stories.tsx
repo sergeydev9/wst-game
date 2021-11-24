@@ -30,9 +30,16 @@ export default {
 const Template: Story<SliderProps> = (args) => {
     return (
         <Container>
-            <SliderInput {...args} changeHandler={() => null} />
+            <SliderInput {...args} changeHandler={(v) => console.log(v)} />
         </Container>
     )
+}
+
+
+export const SevenPlayers = Template.bind({});
+
+SevenPlayers.args = {
+    max: 7
 }
 
 export const ThirtySevenPlayers = Template.bind({});
@@ -51,10 +58,4 @@ export const ThreePlayers = Template.bind({});
 
 ThreePlayers.args = {
     max: 3
-}
-
-export const SevenPlayers = Template.bind({});
-
-SevenPlayers.args = {
-    max: 7
 }

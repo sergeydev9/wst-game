@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { ReactElement } from 'react-router/node_modules/@types/react';
 import tw from 'tailwind-styled-components';
 import { ReactComponent as Divider } from './divider.svg';
 import './SliderInput.css';
@@ -28,13 +29,18 @@ const ToolTip = tw.div`
 `
 
 const Container = tw.div`
-    w-full
     relative
     select-none
     mx-2
 `
 // every divider has at least this in common. Main component only applies and shifts this base repeatedly.
-const DividerBase: React.FC<{ className: string }> = ({ className }) => <Divider className={`${className} z-10 absolute top-0`} width="4px" height="30px" />
+const DividerBase: React.FC<React.HTMLAttributes<SVGElement>> = (props) => (
+    <Divider
+        {...props}
+        className="z-10 absolute top-0"
+        width="4px"
+        height="30px" />
+)
 
 /**
  * Main slider input component used during gameplay. If number of players is
@@ -56,65 +62,41 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
     }, [max])
 
 
+    // returns an array of divider elements
     const dividerHelper = () => {
         let counter = 1;
         const result = [];
 
         while (counter < displayMax) {
-            result.push(<DividerBase className={`left-${counter}/${displayMax}`} />);
+            const inset = (counter / displayMax);
+            result.push(<DividerBase key={counter} style={{ left: `calc(calc(100% - ${inset}rem) * ${inset})` }} />);
             counter++;
         }
         return result;
     }
-    //     return (<>
-    //         <LabelBase className="left-0">0</LabelBase>
-    //         <LabelBase style={{ left: `16.6666%`, }}>{max / 6}</LabelBase>
-    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(16.6666%)' }} width="4px" height="30px" />
 
-    //         <LabelBase style={{ left: `33.3333%` }}>{2 * max / 6}</LabelBase>
-    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(33.3333% )' }} width="4px" height="30px" />
-
-    //         <LabelBase style={{ left: `50%` }}>{3 * max / 6}</LabelBase>
-    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(50%)' }} width="4px" height="30px" />
-
-    //         <LabelBase style={{ left: `66.6666%` }}>{4 * max / 6}</LabelBase>
-    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(66.6666%)' }} width="4px" height="30px" />
-
-    //         <LabelBase style={{ left: `83.3333%` }}>{5 * max / 6}</LabelBase>
-    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(83.3333% )' }} width="4px" height="30px" />
-
-    //         <LabelBase className="right-0">{max}</LabelBase>
-    //     </>
-    //     )
-    //
-    //     return (<>
-    //         <LabelBase className="left-0">0</LabelBase>
-    //         <LabelBase className="left-1/4">{Math.round(max / 4)}</LabelBase>
-    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(25%)' }} width="4px" height="30px" />
-    //         <LabelBase className="left-2/4">{Math.round(2 * max / 4)}</LabelBase>
-    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(50% )' }} width="4px" height="30px" />
-    //         <LabelBase className="left-3/4">{Math.round(3 * max / 4)}</LabelBase>
-    //         <Divider className="z-10 absolute top-0" style={{ left: 'calc(75%)' }} width="4px" height="30px" />
-    //         <LabelBase className="right-0">{max}</LabelBase>
-    //     </>
-    //     )
-    // }
-
+    // changes the position and display value of the tooltip whenever the value of the slider changes
     const coverChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-
-        setTooltipVisible(true)
+        const { value } = e.target;
+        setTooltipVisible(true);
 
         // send value up to parent handler
-        changeHandler(e.target.value)
-        // set local state for purple slider cover
-        setCover(e.target.value)
-        setOffset((Math.ceil(parseFloat(e.target.value)) / displayMax) * 100)
+        changeHandler(e.target.value);
+
+        // if max over 10, show percentages, else show value
+        const displayValue = max > 10 ? `${100 / (max / Number(value))}%` : value;
+        setCover(displayValue);
+
+        // shift elements by whatever percentage of max the current value is
+        const displayOffset = 100 * (Number(value) / max);
+        setOffset(displayOffset);
     }
 
     return (
-        <Container>
-            {/* dark purple cover. Offset is off because when it's low it gets out of sync with the thumb */}
-            <div className="sl-prpl-cover" style={{ width: `${offset < 35 ? offset + 3 : offset}%` }}></div>
+        <Container style={{ width: '30rem' }}>
+            {/* dark purple cover that stretches behind the thumb. Need to widen for lower values to account for the uneven movement of slider thumbs */}
+            <div className="sl-prpl-cover" style={{ width: `calc(${offset}% + ${(100 - offset) / 100}rem)` }}></div>
+
             {/*light purple background*/}
             <div className="sl-backgrnd"></div>
 
@@ -127,7 +109,8 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
 
             <input
                 type="range"
-                value={cover}
+                width="30rem"
+                defaultValue={0}
                 onChange={coverChange}
                 min="0"
                 step={max >= 10 ? `${max / 10}` : '1'}
@@ -136,7 +119,7 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
                 className="sl-input-slider" />
             {dividerHelper()}
             <LabelBase className="left-0">0</LabelBase>
-            <LabelBase className="right-0">{max}</LabelBase>
+            <LabelBase className="right-0">{max <= 10 ? max : `100%`}</LabelBase>
         </Container>
     )
 }
