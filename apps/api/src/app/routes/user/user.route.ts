@@ -169,7 +169,7 @@ router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Re
         // check Redis for reset requests. Returns value after increment
         const resetCount = await redisClient.incr(resetKey);
 
-        if (resetCount > 3) {
+        if (resetCount > 10) {
             return res.status(403).send('Reset limit reached')
         }
 
