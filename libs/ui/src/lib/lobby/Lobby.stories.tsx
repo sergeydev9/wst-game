@@ -28,7 +28,8 @@ SixPlayers.args = {
     isHost: false,
     handlerFactory: (n) => () => console.log(n),
     playerName: "Naughty Walrus",
-    footerMessage: "The host will start the game once all players have joined."
+    footerMessage: "The host will start the game once all players have joined.",
+    accessCode: 'ABCD',
 }
 
 export const OnePlayer = Template.bind({});
@@ -38,7 +39,8 @@ OnePlayer.args = {
     isHost: false,
     handlerFactory: (n) => () => console.log(n),
     playerName: "Naughty Walrus",
-    footerMessage: "The host will start the game once all players have joined."
+    footerMessage: "The host will start the game once all players have joined.",
+    accessCode: 'ABCD',
 }
 
 export const TenPlayers = Template.bind({});
@@ -58,7 +60,8 @@ TenPlayers.args = {
     isHost: false,
     handlerFactory: (n) => () => console.log(n),
     playerName: "Naughty Walrus",
-    footerMessage: "The host will start the game once all players have joined."
+    footerMessage: "The host will start the game once all players have joined.",
+    accessCode: 'ABCD',
 }
 
 export const TenPlayersHost = Template.bind({});
@@ -80,5 +83,6 @@ TenPlayersHost.args = {
     isHost: true,
     handlerFactory: (n) => () => console.log(n),
     playerName: "Naughty Walrus",
-    footerMessage: "The host will start the game once all players have joined."
+    footerMessage: "The host will start the game once all players have joined.",
+    accessCode: 'ABCD',
 }

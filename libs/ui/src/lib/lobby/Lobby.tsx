@@ -7,6 +7,7 @@ import PlayerName from "./PlayerName";
 import hourglass from './hourglass.png';
 
 export interface LobbyProps {
+    accessCode: string;
     footerMessage?: string;
     otherPlayers: PlayerRef[];
     playerName: string;
@@ -24,7 +25,7 @@ cursor-pointer
  * Pre game lobby page. Children should be the One liners
  * component
  */
-const Lobby: React.FC<LobbyProps> = ({ otherPlayers, footerMessage, playerName, handlerFactory, isHost, children }) => {
+const Lobby: React.FC<LobbyProps> = ({ otherPlayers, footerMessage, accessCode, playerName, handlerFactory, isHost, children }) => {
 
     const [showingAll, setShowingAll] = useState(false); // toggle show all player names
     const playerNum = 1 + otherPlayers.length;
@@ -47,7 +48,7 @@ const Lobby: React.FC<LobbyProps> = ({ otherPlayers, footerMessage, playerName, 
 
     return (
         <WideBox className="text-basic-black mt-10">
-            <h1 className="text-3xl text-center font-black">Game Lobby</h1>
+            <h1 className="text-3xl text-center font-black">Game Lobby ({accessCode})</h1>
             <div className="text-xl sm:text-2xl mt-4 text-center mx-auto">
                 <img className="inline-block mr-2  mb-2" alt="hourglass" src={hourglass} width='25px' height='25px' />
                 <span>{playerNum}{otherPlayers.length > 0 ? ' Players have joined' : ' Player has joined'}...</span>

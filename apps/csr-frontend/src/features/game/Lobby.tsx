@@ -2,7 +2,7 @@ import { types } from '@whosaidtrue/api-interfaces';
 import { PlayerRef } from '@whosaidtrue/app-interfaces';
 import { Lobby as LobbyUi } from "@whosaidtrue/ui";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectIsHost, selectPlayerName, selectPlayerId, selectPlayerList, removePlayer } from "./gameSlice";
+import { selectAccessCode, selectIsHost, selectPlayerName, selectPlayerId, selectPlayerList, removePlayer } from "./gameSlice";
 import useSocket from '../socket/useSocket';
 import { showPlayerRemoved } from '../modal/modalSlice';
 import OneLiners from '../one-liners/OneLiners';
@@ -11,6 +11,7 @@ import { payloads } from '@whosaidtrue/api-interfaces';
 const Lobby: React.FC = () => {
     const dispatch = useAppDispatch();
     const { sendMessage } = useSocket();
+    const accessCode = useAppSelector(selectAccessCode);
     const isHost = useAppSelector(selectIsHost);
     const playerId = useAppSelector(selectPlayerId)
     const players = useAppSelector(selectPlayerList);
@@ -38,6 +39,7 @@ const Lobby: React.FC = () => {
 
     return (
         <LobbyUi
+            accessCode={accessCode}
             isHost={isHost}
             otherPlayers={otherPlayers()}
             playerName={playerName}
