@@ -26,7 +26,6 @@ describe('emails route', () => {
 
         it('should return 201 if all required data is present', done => {
 
-            mockedEmails.insertOne.mockResolvedValue({ rows: [1] } as QueryResult);
             supertest(app)
                 .post('/emails')
                 .send({
@@ -40,7 +39,7 @@ describe('emails route', () => {
 
         it('should have been called with user_id if there was a valid token', async () => {
 
-            mockedEmails.insertOne.mockResolvedValue({ rows: [1] } as QueryResult);
+            mockedEmails.enqueue.mockResolvedValue({ rows: [1] } as QueryResult);
             await supertest(app)
                 .post('/emails')
                 .set('Authorization', `Bearer ${validToken}`)
@@ -53,7 +52,7 @@ describe('emails route', () => {
                 })
                 .expect(201)
 
-            expect(mockedEmails.insertOne).toHaveBeenCalledWith({
+            expect(mockedEmails.enqueue).toHaveBeenCalledWith({
                 user_id: 1,
                 to: process.env.EMAIL_RECIPIENT,
                 cc: 'test@test.com',
@@ -64,7 +63,7 @@ describe('emails route', () => {
 
         it('should have been called without user_id if there was no token', async () => {
 
-            mockedEmails.insertOne.mockResolvedValue({ rows: [1] } as QueryResult);
+            mockedEmails.enqueue.mockResolvedValue({ rows: [1] } as QueryResult);
             await supertest(app)
                 .post('/emails')
                 .set('origin', 'www.test.com')
@@ -76,7 +75,7 @@ describe('emails route', () => {
                 })
                 .expect(201)
 
-            expect(mockedEmails.insertOne).toHaveBeenCalledWith({
+            expect(mockedEmails.enqueue).toHaveBeenCalledWith({
                 user_id: undefined,
                 to: process.env.EMAIL_RECIPIENT,
                 cc: 'test@test.com',
@@ -214,7 +213,7 @@ describe('emails route', () => {
         })
 
         it('should escape dangerous user input in message', async () => {
-            mockedEmails.insertOne.mockResolvedValue({ rows: [1] } as QueryResult);
+            mockedEmails.enqueue.mockResolvedValue({ rows: [1] } as QueryResult);
 
             await supertest(app)
                 .post('/emails')
@@ -227,7 +226,7 @@ describe('emails route', () => {
                 })
                 .expect(201)
 
-            expect(mockedEmails.insertOne).toHaveBeenCalledWith({
+            expect(mockedEmails.enqueue).toHaveBeenCalledWith({
                 user_id: undefined,
                 to: process.env.EMAIL_RECIPIENT,
                 cc: 'test@test.com',
@@ -237,7 +236,7 @@ describe('emails route', () => {
         })
 
         it('should escape dangerous user input in name', async () => {
-            mockedEmails.insertOne.mockResolvedValue({ rows: [1] } as QueryResult);
+            mockedEmails.enqueue.mockResolvedValue({ rows: [1] } as QueryResult);
 
             await supertest(app)
                 .post('/emails')
@@ -250,7 +249,7 @@ describe('emails route', () => {
                 })
                 .expect(201)
 
-            expect(mockedEmails.insertOne).toHaveBeenCalledWith({
+            expect(mockedEmails.enqueue).toHaveBeenCalledWith({
                 user_id: undefined,
                 to: process.env.EMAIL_RECIPIENT,
                 cc: 'test@test.com',
@@ -264,7 +263,7 @@ describe('emails route', () => {
         // However, it doesn't hurt to escape that value anyways in case
         // someone has the idea to try and send malicious input by calling the API directly.
         it('should escape dangerous user input in category', async () => {
-            mockedEmails.insertOne.mockResolvedValue({ rows: [1] } as QueryResult);
+            mockedEmails.enqueue.mockResolvedValue({ rows: [1] } as QueryResult);
 
             await supertest(app)
                 .post('/emails')
@@ -277,7 +276,7 @@ describe('emails route', () => {
                 })
                 .expect(201)
 
-            expect(mockedEmails.insertOne).toHaveBeenCalledWith({
+            expect(mockedEmails.enqueue).toHaveBeenCalledWith({
                 user_id: undefined,
                 to: process.env.EMAIL_RECIPIENT,
                 cc: 'test@test.com',

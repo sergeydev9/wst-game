@@ -101,6 +101,51 @@ describe('Emails', () => {
 
     });
 
+    describe('enqueue', () => {
+
+        it('should return email and job ids', async () => {
+            const actual = (await emails.enqueue({ to: 'to', text: 'text', subject: 'subject' })).rows[0];
+
+            expect(actual.email_id).toBeDefined();
+            expect(actual.job_id).toBeDefined();
+        });
+
+        it('should create email in db', async () => {
+            const expected = {
+                user_id: userId,
+                from: 'from',
+                to: 'to',
+                cc: 'cc',
+                bcc: 'bcc',
+                subject: 'subject',
+                text: 'text',
+                html: 'html',
+                template_key: 'template_key',
+                template_data: 'template_data'
+            };
+
+            const { email_id } = (await emails.enqueue(expected)).rows[0];
+            const actual = (await emails.getById(email_id)).rows[0];
+
+            expectEmailsEqual(actual, expected as Email, ['id', 'created_at', 'updated_at']);
+            expect(actual.id).toBeDefined();
+            expect(actual.created_at).toBeDefined();
+            expect(actual.updated_at).toBeDefined();
+        });
+
+        it('should create job in db', async () => {
+            const expected = (await emails.enqueue({ to: 'to', text: 'text', subject: 'subject' })).rows[0];
+
+            const actual = (await emails.pool.query(`SELECT * FROM jobs WHERE id = ${expected.job_id}`)).rows[0];
+
+            expect(actual.id).toEqual(expected.job_id);
+            expect(actual.type).toEqual('email');
+            expect(actual.task_table).toEqual('emails');
+            expect(actual.task_id).toEqual(expected.email_id);
+        });
+
+    });
+
 });
 
 function expectEmailsEqual(actual: Email, expected: Email, exclude: string[] = []) {
