@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import tw from 'tailwind-styled-components';
 import { ReactComponent as Divider } from './divider.svg';
 import './SliderInput.css';
@@ -31,6 +31,8 @@ const Container = tw.div`
     relative
     select-none
     mx-2
+    mb-10
+    max-w-full
 `
 // every divider has at least this in common. Main component only applies and shifts this base repeatedly.
 const DividerBase: React.FC<React.HTMLAttributes<SVGElement>> = (props) => (
@@ -66,7 +68,7 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
 
 
     // returns an array of divider elements
-    const dividerHelper = () => {
+    const dividerHelper = useMemo(() => {
         let counter = 1;
         const result = [];
 
@@ -76,7 +78,7 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
             counter++;
         }
         return result;
-    }
+    }, [displayMax])
 
     // changes the position and display value of the tooltip whenever the value of the slider changes
     const coverChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -105,7 +107,7 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
         setOffset(displayOffset);
     }
 
-    const labelHelper = () => {
+    const labelHelper = useMemo(() => {
         let counter = 1;
         const result = [];
 
@@ -126,12 +128,12 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
         }
 
         return result;
-    }
+    }, [displayMax])
 
 
     return (
         <Container style={{ width: '30rem' }}>
-            {/* dark purple cover that stretches behind the thumb. Need to widen it only for lower values to account for the uneven movement of slider thumbs. That's what the right half of this equation does */}
+            {/* dark purple cover that stretches behind the thumb. Need to widen it onlyfor lower values to account for the uneven movement of slider thumbs. That's what the right half of this equation does */}
             <div className="sl-prpl-cover" style={{ width: `calc(${offset}% + ${(100 - offset) / 100}rem)` }}></div>
 
             {/*light purple background*/}
@@ -146,7 +148,6 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
 
             <input
                 type="range"
-                width="30rem"
                 defaultValue={min}
                 onChange={coverChange}
                 min={min}
@@ -154,8 +155,8 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
                 max={max}
                 {...rest}
                 className="sl-input-slider" />
-            {dividerHelper()}
-            {labelHelper()}
+            {dividerHelper}
+            {labelHelper}
         </Container>
     )
 }

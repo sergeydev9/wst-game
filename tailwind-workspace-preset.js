@@ -130,10 +130,21 @@ module.exports = {
           '95%': { transoform: 'scale(0.5)' },
           '100%': { transform: 'scale(0)' },
         },
+        ping: {
+          '75%':  {
+            transform: `scale(1.5)`,
+            opacity: 0
+          },
+          '100%': {
+            transform: `scale(1.5)`,
+            opacity: 0
+          }
+        }
       },
       animation: {
         grow: 'grow 400ms ease-in forwards',
         shrink: 'shrink 2s ease-in-out',
+        'ping-slow': 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite'
       },
       boxShadow: {
         'rating-button': '0px 4px 0px #BDABE3',

@@ -37,16 +37,30 @@ const NumberTrueGuess: React.FC<NumberTrueGuessProps> = ({ submitHandler, questi
         setValue(parseInt(val))
     }
 
+    const isDisabled = !isChanged || Number(value) < 0;
+
     return (
         <>
             <GameContentCard>
-                <QuestionContent headline={<span>Now guess how many players (<span className="underline italic">including yourself</span>) answered TRUE to the question:</span>} text={questionText} />
-                <div className="px-4 md:px-14 w-full mb-8">
-                    <SliderInput max={totalPlayers} changeHandler={valueHandler} />
-                </div>
+                <QuestionContent
+                    headline={<span>Now guess how many players (<span className="underline italic">including yourself</span>) answered TRUE to the question:</span>}
+                    text={questionText} />
+                <SliderInput max={totalPlayers} changeHandler={valueHandler} />
             </GameContentCard>
-            <div className={`w-52 mx-auto ${!isChanged && 'opacity-40 pointer-events-none'}`}>
-                <Button disabled={!isChanged} className={pulsing ? "animate-pulse" : ""} onClick={() => submitHandler(value)} type="button">Final Answer ?!</Button>
+            <div className={`w-52 mx-auto ${isDisabled && 'opacity-40 pointer-events-none'}`}>
+                <div className="flex w-max h-max relative">
+                    <span className={`${pulsing && !isDisabled && "animate-ping-slow"} bg-blue-base w-full h-full inline-flex rounded-3xl absolute opacity-75`}>
+                    </span>
+                    <Button
+                        className="inline-flex relative"
+                        disabled={isDisabled}
+                        onClick={() => submitHandler(value)}
+                        type="button">
+                        Final Answer ?!
+                    </Button>
+
+                </div>
+
             </div>
 
         </>
