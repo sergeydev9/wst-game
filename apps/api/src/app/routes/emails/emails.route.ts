@@ -22,13 +22,13 @@ router.post('/', [...emailMessage], async (req: Request, res: Response) => {
     try {
         const emailData: InsertEmail = {
             user_id: id,
-            to: process.env.EMAIL_RECIPIENT,
+            to: process.env.EMAIL_RECIPIENT || 'brian@whosaidtrue.com',
             cc: email,
             subject: validator.escape(`[${category}] - Sent by ${name} from ${domain}`),
             text: validator.escape(message) // removes JS so that whoever opens these emails doesn't get hacked
         }
 
-        await emails.insertOne(emailData);
+        await emails.enqueue(emailData);
         res.sendStatus(201);
     } catch (e) {
         logError('Error while sending email message', {
