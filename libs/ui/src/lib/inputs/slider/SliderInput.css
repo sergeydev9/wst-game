@@ -37,14 +37,14 @@
 
 .sl-prpl-cover {
   position: absolute;
-  background-color: #8157DB;
-  border-radius: 0.75rem;
+  background-color: #6B28BB;
+  border-radius: 1rem;
   width: 100%;
   height: 30px;
   min-width: 32px;
   max-width: '90%';
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 0.6;
   z-index: 11;
   /* z-index above svg used for divider*/
 

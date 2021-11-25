@@ -30,7 +30,7 @@ export default {
 const Template: Story<SliderProps> = (args) => {
     return (
         <Container>
-            <SliderInput {...args} changeHandler={(v) => console.log(v)} />
+            <SliderInput {...args} changeHandler={(v) => null} />
         </Container>
     )
 }

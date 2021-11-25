@@ -1,5 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
-import { ReactElement } from 'react-router/node_modules/@types/react';
+import { useState, useEffect } from 'react';
 import tw from 'tailwind-styled-components';
 import { ReactComponent as Divider } from './divider.svg';
 import './SliderInput.css';
@@ -53,6 +52,10 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
     const [offset, setOffset] = useState(0);
     const [displayMax, setDisplayMax] = useState(max); // local max used for display
     const [tooltipVisible, setTooltipVisible] = useState(false);
+    const min = max > 10 ? `${0 - max / 10}` : '-1';
+    const step = max >= 10 ? `${max / 10}` : '1';
+    const stepNum = Number(step);
+
 
     useEffect(() => {
         // if max is less than 10, just use max, else set max to 10
@@ -67,8 +70,8 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
         let counter = 1;
         const result = [];
 
-        while (counter < displayMax) {
-            const inset = (counter / displayMax);
+        while (counter <= displayMax) {
+            const inset = (counter / (displayMax + 1));
             result.push(<DividerBase key={counter} style={{ left: `calc(calc(100% - ${inset}rem) * ${inset})` }} />);
             counter++;
         }
@@ -81,20 +84,31 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
         setTooltipVisible(true);
 
         // send value up to parent handler
-        changeHandler(e.target.value);
+        changeHandler(value);
+
+        const numVal = Number(value);
+
+        // hide tooltip if user slides it below 0
+        if (numVal < 0) {
+            setTooltipVisible(false);
+        }
 
         // if max over 10, show percentages, else show value
-        const displayValue = max > 10 ? `${100 / (max / Number(value))}%` : value;
+        const displayValue = max > 10 ? `${100 / (max / numVal)}%` : value;
         setCover(displayValue);
 
         // shift elements by whatever percentage of max the current value is
-        const displayOffset = 100 * (Number(value) / max);
+        // while taking into account the slider starting below 0. This shifts the display percentage by close to 1 step
+        // for low values, but almost nothing for higher values. This cancels out the lensing effect
+        // that slider elements have. Both the tooltip and the slider cover are shifted by this offset.
+        const displayOffset = max < 10 ? (numVal + stepNum) * (100 * (stepNum / (max + stepNum))) : (100 * (numVal / max)) + ((max - numVal) / stepNum);
         setOffset(displayOffset);
     }
 
+
     return (
         <Container style={{ width: '30rem' }}>
-            {/* dark purple cover that stretches behind the thumb. Need to widen for lower values to account for the uneven movement of slider thumbs */}
+            {/* dark purple cover that stretches behind the thumb. Need to widen for lower values to account for the uneven movement of slider thumbs. That's what the right half of this equation does */}
             <div className="sl-prpl-cover" style={{ width: `calc(${offset}% + ${(100 - offset) / 100}rem)` }}></div>
 
             {/*light purple background*/}
@@ -110,15 +124,15 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
             <input
                 type="range"
                 width="30rem"
-                defaultValue={0}
+                defaultValue={min}
                 onChange={coverChange}
-                min="0"
-                step={max >= 10 ? `${max / 10}` : '1'}
+                min={min}
+                step={step}
                 max={max}
                 {...rest}
                 className="sl-input-slider" />
             {dividerHelper()}
-            <LabelBase className="left-0">0</LabelBase>
+            <LabelBase className="left-0">-1</LabelBase>
             <LabelBase className="right-0">{max <= 10 ? max : `100%`}</LabelBase>
         </Container>
     )
