@@ -7,16 +7,20 @@ import {
     selectPlayerScore,
     selectScoreboard,
     selectSequenceIndex,
-    selectPlayerPointsEarned
+    selectPlayerPointsEarned,
+    selectNumPlayers
 } from "./questionSlice";
 import { selectScoreTooltipDismissed, setShowScoreTooltip } from "../modal/modalSlice";
-import { selectHasGuessed } from "..";
+import { selectGroupTrue, selectHasGuessed } from "..";
 import MostSimilarToYou from "../fun-facts/MostSimilarToYou";
+import { guessAsPercentage } from "../../util/functions";
 
 const QuestionResults: React.FC = () => {
     const dispatch = useAppDispatch();
     const tooltipDismissed = useAppSelector(selectScoreTooltipDismissed);
     const playerScore = useAppSelector(selectPlayerScore);
+    const groupTrue = useAppSelector(selectGroupTrue);
+    const totalPlayers = useAppSelector(selectNumPlayers);
     const correctAnswer = useAppSelector(selectCorrectAnswer);
     const guess = useAppSelector(selectGuessValue);
     const hasGuessed = useAppSelector(selectHasGuessed);
@@ -35,7 +39,12 @@ const QuestionResults: React.FC = () => {
     }, [tooltipDismissed, dispatch])
 
     return (
-        <QuestionScores guess={guess} correctAnswer={correctAnswer} pointsEarned={points} hasGuessed={hasGuessed}>
+        <QuestionScores
+            guess={totalPlayers > 10 ? guessAsPercentage(guess, totalPlayers) : `${guess}`}
+            correctAnswer={totalPlayers > 10 ? `${Math.round(groupTrue)}%` : `${correctAnswer}`}
+            showPercent={totalPlayers > 10}
+            pointsEarned={points}
+            hasGuessed={hasGuessed}>
             <Scoreboard scores={scoreboard} currentPlayerScore={playerScore} />
             {questionNumber == 4 && <MostSimilarToYou />}
         </QuestionScores>

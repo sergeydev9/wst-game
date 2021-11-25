@@ -9,6 +9,6 @@ export default {
 export const WaitingRoom = () => (<QuestionCard questionNumber={1} totalQuestions={10} category="Entertainment"><WaitingRoomComponent
     totalPlayers={7}
     numberHaveGuessed={3}
-    guessValue={4}
+    guessValueString='4'
     questionText="have binge watched an entire season of a show in a weekend." />
 </QuestionCard>)

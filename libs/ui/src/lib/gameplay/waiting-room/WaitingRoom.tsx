@@ -2,7 +2,7 @@ import GameContentCard from "../GameContentCard";
 import GameCardFooter from '../GameCardFooter';
 
 export interface WaitingRoomProps {
-    guessValue: number;
+    guessValueString: string;
     questionText: string;
     totalPlayers: number;
     numberHaveGuessed: number
@@ -14,12 +14,12 @@ export interface WaitingRoomProps {
  *
  * The children prop should be the one liners component
  */
-const WaitingRoom: React.FC<WaitingRoomProps> = ({ guessValue, questionText, totalPlayers, numberHaveGuessed, children }) => {
+const WaitingRoom: React.FC<WaitingRoomProps> = ({ guessValueString, questionText, totalPlayers, numberHaveGuessed, children }) => {
     return (
         <>
             <GameContentCard>
                 <h2 className="text-basic-black font-black text-xl md:text-2xl text-center mb-4">You Guessed...</h2>
-                <h1 className="text-basic-black font-black text-2xl md:text-3xl text-center">{guessValue > 0 ? guessValue : 'None'} of the players</h1>
+                <h1 className="text-basic-black font-black text-2xl md:text-3xl text-center">{guessValueString} of the players</h1>
                 <h3 className="text-center md:text-2xl text-xl text-basic-black font-semibold">{questionText}</h3>
             </GameContentCard>
             {children}

@@ -23,6 +23,7 @@ import {
     selectGroupTrue,
     selectCorrectAnswer,
     selectFollowUp,
+    selectNumPlayers,
     selectCategory
 } from '../question/questionSlice';
 import { ImSpinner6 } from '@react-icons/all-files/im/ImSpinner6';
@@ -34,6 +35,7 @@ import QuestionResults from './QuestionResults';
 import { isLoggedIn } from "../auth/authSlice";
 import RateQuestion from "../ratings/RateQuestion";
 import OneLiners from '../one-liners/OneLiners';
+import { guessAsPercentage } from '../../util/functions';
 
 /**
  * This component controls what the user sees over the course
@@ -52,6 +54,7 @@ const Question: React.FC = () => {
     const hasPassed = useAppSelector(selectHasPassed);
     const gameQuestionId = useAppSelector(selectGamequestionId);
     const questionNumber = useAppSelector(selectSequenceIndex);
+    const playersAtStartOfQuestion = useAppSelector(selectNumPlayers);
     const totalQuestions = useAppSelector(selectTotalQuestions);
     const guessText = useAppSelector(selectTextForGuess);
     const screen = useAppSelector(currentScreen);
@@ -128,13 +131,13 @@ const Question: React.FC = () => {
                     <NumberTrueGuess
                         questionText={guessText}
                         submitHandler={guessHandler}
-                        totalPlayers={totalPlayers} />
+                        totalPlayers={playersAtStartOfQuestion} />
                 )}
                 {screen === 'waitingRoom' && (
                     <WaitingRoom
                         totalPlayers={totalPlayers}
                         numberHaveGuessed={numHaveGuessed}
-                        guessValue={guessVal}
+                        guessValueString={playersAtStartOfQuestion <= 10 ? `${guessVal > 0 ? guessVal : 'None'}` : guessAsPercentage(guessVal, playersAtStartOfQuestion)}
                         questionText={guessText}>
                         <OneLiners />
                     </WaitingRoom>
@@ -142,8 +145,9 @@ const Question: React.FC = () => {
                 {screen === 'answerResults' && (
                     <QuestionAnswers
                         globalTruePercent={globalTrue}
-                        groupTruePercent={Math.floor(groupTrue)}
-                        correctAnswer={correctAnswer}
+                        groupTruePercent={groupTrue}
+                        showPercentage={playersAtStartOfQuestion > 10}
+                        correctAnswer={Math.round(correctAnswer)}
                         questionText={guessText}
                         followUp={followUp}
                     >

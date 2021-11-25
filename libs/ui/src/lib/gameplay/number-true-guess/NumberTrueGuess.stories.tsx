@@ -9,7 +9,7 @@ export default {
 export const NumberTrueGuess = () => (
     <QuestionCard questionNumber={1} totalQuestions={10} category="Entertainment" >
         <NumberTrueGuessComponent
-            totalPlayers={7}
+            totalPlayers={11}
             submitHandler={(v) => console.log(v)}
             questionText="“I’ve binge watched an entire season of a show in a weekend.”" />
     </QuestionCard>)

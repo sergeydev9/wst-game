@@ -34,7 +34,7 @@ const NumberTrueGuess: React.FC<NumberTrueGuessProps> = ({ submitHandler, questi
         if (!isChanged) {
             setIsChanged(true)
         }
-        setValue(parseInt(val))
+        setValue(parseFloat(val))
     }
 
     const isDisabled = !isChanged || Number(value) < 0;

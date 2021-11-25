@@ -11,7 +11,8 @@ export interface SliderProps {
 const LabelBase = tw.label`
     text-black
     font-bold
-    text-lg
+    text-xs
+    sm:text-lg
     absolute
     top-full
 `
@@ -118,7 +119,7 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
             // if max is over 10, only show percentages divisible by 20
             if ((counter % 2 !== 0) || max <= 10) {
                 result.push(
-                    <LabelBase key={counter} style={{ left: `calc(calc(100% - ${inset}rem) * ${inset})` }} >
+                    <LabelBase key={counter} style={{ left: `calc(calc(calc(100% - ${inset}rem) * ${inset}) - ${max >= 10 ? '3px' : '0px'}` }} >
                         {labelText}
                     </LabelBase>
                 )
@@ -128,7 +129,7 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
         }
 
         return result;
-    }, [displayMax])
+    }, [displayMax, max])
 
 
     return (

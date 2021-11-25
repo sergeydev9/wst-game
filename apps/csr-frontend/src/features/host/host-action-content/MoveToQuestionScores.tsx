@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Button } from '@whosaidtrue/ui'
 import { types } from '@whosaidtrue/api-interfaces';
 
@@ -10,6 +11,23 @@ const MoveToQuestionScores: React.FC = () => {
     const dispatch = useAppDispatch();
     const { sendMessage } = useSocket();
 
+    const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+    const [showActions, setShowActions] = useState(false);
+
+    useEffect(() => {
+        if (!timer) {
+            const time = setTimeout(() => setShowActions(true), 5000);
+            setTimer(time);
+        }
+
+        return () => {
+            if (timer) {
+                clearTimeout(timer);
+                setTimer(null);
+            }
+        }
+    }, [timer])
+
     const handler = () => {
         sendMessage(types.MOVE_TO_QUESTION_RESULTS, undefined, (ack) => {
             if (ack === 'error') {
@@ -18,11 +36,12 @@ const MoveToQuestionScores: React.FC = () => {
         })
     }
 
-    return (
+    return (showActions ?
         <>
             <h3 className="text-center font-bold text-basic-black">Move the group to the Scoreboard when ready</h3>
             <Button onClick={handler}>See Scores</Button>
-        </>
+        </> :
+        null
     )
 }
 

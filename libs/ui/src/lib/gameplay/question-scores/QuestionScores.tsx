@@ -16,12 +16,13 @@ text-center
 `
 
 export interface QuestionResultsProps {
-    guess: number;
-    correctAnswer: number;
+    guess: string;
+    correctAnswer: string;
     pointsEarned?: number;
+    showPercent?: boolean;
     hasGuessed: boolean; // if user passed. If user passed, guess value will be 0, so another prop is needed
 }
-const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, correctAnswer, pointsEarned, children, hasGuessed }) => {
+const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, showPercent, correctAnswer, pointsEarned, children, hasGuessed }) => {
 
     return (
         <>
@@ -42,11 +43,11 @@ const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, correctAnswer,
                 `}>
                 {hasGuessed && <div>
                     <SmallHeader>You Guessed</SmallHeader>
-                    <MediumHeader>{guess} {`${guess}` === `${1}` ? 'player' : 'players'}</MediumHeader>
+                    <MediumHeader>{guess} {guess === '1' ? 'player' : showPercent ? 'of players' : 'players'}</MediumHeader>
                 </div>}
                 <div>
                     <SmallHeader>Correct Answer</SmallHeader>
-                    <MediumHeader>{`${correctAnswer}` === `${1}` ? `${correctAnswer} player` : `${correctAnswer} players`}</MediumHeader>
+                    <MediumHeader>{correctAnswer === '1' ? `${correctAnswer} player` : `${correctAnswer} ${showPercent ? 'of players' : 'players'}`}</MediumHeader>
                 </div>
             </div>
             {pointsEarned || pointsEarned === 0 ? <LargeTitle className="text-green-base text-center mb-4">+{pointsEarned} pts</LargeTitle> : null}

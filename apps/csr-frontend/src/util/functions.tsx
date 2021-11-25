@@ -5,3 +5,8 @@ import { TokenPayload } from '@whosaidtrue/api-interfaces';
 export function decodeUserToken(token: string): { user: TokenPayload } {
     return jwt(token)
 }
+
+// express a guess value as a percentage of the total number of players
+export function guessAsPercentage(guess: number, totalPlayers: number): string {
+    return `${Math.round(100 * (guess / totalPlayers))}%`
+}
