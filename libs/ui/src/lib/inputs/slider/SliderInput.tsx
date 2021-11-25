@@ -105,10 +105,33 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
         setOffset(displayOffset);
     }
 
+    const labelHelper = () => {
+        let counter = 1;
+        const result = [];
+
+        while (counter <= displayMax + 1) {
+            const inset = (counter / (displayMax + 1));
+            const labelText = max > 10 ? `${(counter - 1) * displayMax}%` : counter - 1;
+
+            // if max is over 10, only show percentages divisible by 20
+            if ((counter % 2 !== 0) || max <= 10) {
+                result.push(
+                    <LabelBase key={counter} style={{ left: `calc(calc(100% - ${inset}rem) * ${inset})` }} >
+                        {labelText}
+                    </LabelBase>
+                )
+            }
+
+            counter++;
+        }
+
+        return result;
+    }
+
 
     return (
         <Container style={{ width: '30rem' }}>
-            {/* dark purple cover that stretches behind the thumb. Need to widen for lower values to account for the uneven movement of slider thumbs. That's what the right half of this equation does */}
+            {/* dark purple cover that stretches behind the thumb. Need to widen it only for lower values to account for the uneven movement of slider thumbs. That's what the right half of this equation does */}
             <div className="sl-prpl-cover" style={{ width: `calc(${offset}% + ${(100 - offset) / 100}rem)` }}></div>
 
             {/*light purple background*/}
@@ -132,8 +155,7 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
                 {...rest}
                 className="sl-input-slider" />
             {dividerHelper()}
-            <LabelBase className="left-0">-1</LabelBase>
-            <LabelBase className="right-0">{max <= 10 ? max : `100%`}</LabelBase>
+            {labelHelper()}
         </Container>
     )
 }
