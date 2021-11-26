@@ -11,6 +11,7 @@ declare module '*.svg' {
 
 declare module '*.webp'; // enable url-loader
 declare module '*.png';
+declare module '*.jpg';
 
 // Polymorphic type definitions
 // REF: https://www.benmvp.com/blog/polymorphic-react-components-typescript/
@@ -19,7 +20,7 @@ declare module '*.png';
 // A more precise version of just React.ComponentPropsWithoutRef on its own
 declare type PropsOf<
   C extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>
-> = JSX.LibraryManagedAttributes<C, React.ComponentPropsWithoutRef<C>>;
+  > = JSX.LibraryManagedAttributes<C, React.ComponentPropsWithoutRef<C>>;
 
 declare type AsProp<C extends React.ElementType> = {
   /**
@@ -37,7 +38,7 @@ declare type AsProp<C extends React.ElementType> = {
 declare type ExtendableProps<
   ExtendedProps = {},
   OverrideProps = {}
-> = OverrideProps & Omit<ExtendedProps, keyof OverrideProps>;
+  > = OverrideProps & Omit<ExtendedProps, keyof OverrideProps>;
 
 /**
  * Allows for inheriting the props from the specified element type so that
@@ -47,7 +48,7 @@ declare type ExtendableProps<
 declare type InheritableElementProps<
   C extends React.ElementType,
   Props = {}
-> = ExtendableProps<PropsOf<C>, Props>;
+  > = ExtendableProps<PropsOf<C>, Props>;
 
 /**
  * A more sophisticated version of `InheritableElementProps` where
@@ -56,4 +57,4 @@ declare type InheritableElementProps<
 declare type PolymorphicComponentProps<
   C extends React.ElementType,
   Props = {}
-> = InheritableElementProps<C, Props & AsProp<C>>;
+  > = InheritableElementProps<C, Props & AsProp<C>>;
