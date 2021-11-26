@@ -47,7 +47,7 @@ const Lobby: React.FC<LobbyProps> = ({ otherPlayers, footerMessage, accessCode, 
     }
 
     return (
-        <WideBox className="text-basic-black mt-10">
+        <WideBox className="text-basic-black mt-10 relative">
             <h1 className="text-3xl text-center font-black">Game Lobby ({accessCode})</h1>
             <div className="text-xl sm:text-2xl mt-4 text-center mx-auto">
                 <img className="inline-block mr-2  mb-2" alt="hourglass" src={hourglass} width='25px' height='25px' />

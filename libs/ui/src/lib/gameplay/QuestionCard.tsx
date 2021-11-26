@@ -8,6 +8,7 @@ export interface QuestionCardProps {
 }
 
 const Container = tw.div`
+    relative
     bg-white-ish
     border-0
     rounded-3xl
