@@ -1,19 +1,24 @@
 import React from 'react';
 
 export interface QuestionContentProps {
-    text: string;
-    headline: React.ReactNode;
+  text: string;
+  headline: React.ReactNode;
 }
-const QuestionContent: React.FC<QuestionContentProps> = ({ text, headline }) => {
-    return (
-        <div className="pt-2 md:pt-0 sm:px-6 md:px-8">
-            {/*  message for readers/listeners above the question*/}
-            <h2 className="text-2xl md:text-3xl text-center mb-2 font-black text-basic-black">{headline}</h2>
-
-            {/* question content */}
-            <h3 className="text-center md:text-2xl text-xl text-basic-black mb-8 font-semibold">"{text}"</h3>
-        </div>
-    )
-}
+const QuestionContent: React.FC<QuestionContentProps> = ({
+  text,
+  headline,
+}) => {
+  return (
+    <div className="pt-2 text-center sm:px-6 md:px-8 md:pt-0">
+      {/*  message for readers/listeners above the question*/}
+      <h2 className="font-black mb-2 text-basic-black text-2xl md:text-3xl">
+        {headline}
+      </h2>
+      <div className="mb-2 text-xl md:text-2xl">True or False</div>
+      {/* question content */}
+      <h3 className="mb-8 text-basic-black text-xl md:text-2xl">{text}</h3>
+    </div>
+  );
+};
 
 export default QuestionContent;

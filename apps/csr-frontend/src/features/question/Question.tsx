@@ -129,7 +129,7 @@ const Question: React.FC = () => {
                 )}
                 {screen === 'guess' && (
                     <NumberTrueGuess
-                        questionText={guessText}
+                        questionText={text}
                         submitHandler={guessHandler}
                         totalPlayers={playersAtStartOfQuestion} />
                 )}
