@@ -3,19 +3,13 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Modal, ModalContent } from '@whosaidtrue/ui';
 import { selectFullModal, setFullModal } from "./modalSlice";
 import Loading from '../loading/Loading';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import WinnerAnnouncement from './full-screen-modals/WinnerAnnouncement';
-
-const stripeKey = process.env.NX_STRIPE_KEY as string;
-const stripePromise = loadStripe(stripeKey);
 
 // Lazy load modals
 const RemovalNotification = lazy(() => import('./full-screen-modals/RemovalNotification'))
-const Checkout = lazy(() => import('./full-screen-modals/Checkout'));
+const Checkout = lazy(() => import('./full-screen-modals/CardCheckout'));
 const ChoosePaymentMethod = lazy(() => import('./full-screen-modals/ChoosePaymentMethod'));
-const DeckDetailsModal = lazy(() => import('./full-screen-modals/DeckDetailsModal'));
+const DeckDetailsModal = lazy(() => import('../decks/DeckDetailsModal'));
 const ConfirmFreeCreditPurchase = lazy(() => import('./full-screen-modals/ConfirmFreeCreditPurchase'));
 const PreGameAuth = lazy(() => import('./full-screen-modals/PreGameAuth'));
 const GuestRedirect = lazy(() => import('./full-screen-modals/GuestAccountRedirect'));
@@ -83,16 +77,12 @@ const FullScreenModalController = () => {
             </Modal>}
 
             {/* Credit card */}
-            {currentModal === 'checkout' && <Modal
-                isOpen={currentModal === 'checkout'}
+            {currentModal === 'cardCheckout' && <Modal
+                isOpen={currentModal === 'cardCheckout'}
                 onRequestClose={close}
                 shouldCloseOnOverlayClick={false}>
                 <Suspense fallback={<Loading />}>
-                    <Elements stripe={stripePromise}>
-                        <PayPalScriptProvider options={{ "client-id": process.env.NX_PAYPAL_CLIENT_ID as string, currency: "USD" }}>
-                            <Checkout />
-                        </ PayPalScriptProvider>
-                    </Elements>
+                    <Checkout />
                 </Suspense>
             </Modal>
             }

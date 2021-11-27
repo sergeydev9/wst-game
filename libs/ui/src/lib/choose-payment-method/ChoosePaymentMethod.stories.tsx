@@ -1,9 +1,9 @@
 import { Story, Meta } from '@storybook/react';
-import MethodSelection, { PaymentMethodSelectProps } from './PaymentMethodSelect';
+import MethodSelection, { PaymentMethodSelectProps } from './ChoosePaymentMethod';
 
 export default {
     component: MethodSelection,
-    title: 'Checkout/Payment Method Selection',
+    title: 'Checkout/Choose Payment Method',
     argTypes: {
         showGpay: {
             name: 'showGpay',
@@ -23,4 +23,4 @@ const Template: Story<PaymentMethodSelectProps> = (args) => (
     </MethodSelection>
 )
 
-export const PaymentMethodSelection = Template.bind({});
+export const ChoosePaymentMethod = Template.bind({});

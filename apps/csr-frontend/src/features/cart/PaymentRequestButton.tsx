@@ -2,24 +2,21 @@ import { useEffect, useState, useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { PaymentRequestButtonElement, useStripe } from '@stripe/react-stripe-js';
 import { PaymentRequest } from '@stripe/stripe-js';
-import { useAppDispatch } from '../../../app/hooks';
-import { setGameDeck } from '../../game/gameSlice';
-import { setFullModal, showError } from '../modalSlice';
+import { useAppDispatch } from '../../app/hooks';
+import { setGameDeck } from '../game/gameSlice';
+import { setFullModal, showError } from '../modal/modalSlice';
 import { Deck } from '@whosaidtrue/app-interfaces';
-
-
 
 export interface PaymentRequestButtonProps {
     clientSecret: string;
-    price: number;
+    paymentRequest: PaymentRequest;
     deck: Deck;
 }
 
-const PaymentRequestButton: React.FC<PaymentRequestButtonProps> = ({ clientSecret, price, deck }) => {
+const PaymentRequestButton: React.FC<PaymentRequestButtonProps> = ({ clientSecret, paymentRequest, deck }) => {
     const dispatch = useAppDispatch();
     const history = useHistory();
     const stripe = useStripe();
-    const [paymentRequest, setPaymentRequest] = useState<PaymentRequest | null>(null);
 
     // on successful purchase
     const success = useCallback(() => {
@@ -30,28 +27,10 @@ const PaymentRequestButton: React.FC<PaymentRequestButtonProps> = ({ clientSecre
 
 
     useEffect(() => {
+
         if (stripe) {
-            const pr = stripe.paymentRequest({
-                currency: 'usd',
-                country: 'US',
-                displayItems: [
-                    {
-                        amount: price,
-                        label: deck.name
-                    }
-                ],
-                total: {
-                    amount: price,
-                    label: 'Total'
-                },
-                requestPayerEmail: true,
-                requestShipping: false,
-                requestPayerName: true // apple pay wants this
-            });
-
-
             // Once a payment method is selected
-            pr.on('paymentmethod', async (ev) => {
+            paymentRequest.on('paymentmethod', async (ev) => {
 
                 if (!clientSecret) {
                     ev.complete('fail');
@@ -84,22 +63,15 @@ const PaymentRequestButton: React.FC<PaymentRequestButtonProps> = ({ clientSecre
                     }
                 }
             });
-
-            // if user has google pay or apple pay enabled,
-            // show the payment request button.
-            pr.canMakePayment().then(result => {
-                if (result?.googlePay || result?.applePay) {
-                    setPaymentRequest(pr)
-                }
-            })
         }
-    }, [stripe, clientSecret, deck, dispatch, price, success])
+    }, [paymentRequest, stripe, clientSecret, dispatch, success])
 
-    return paymentRequest && <PaymentRequestButtonElement options={{
+    return <PaymentRequestButtonElement options={{
         paymentRequest,
         style: {
             paymentRequestButton: {
-                theme: 'light-outline'
+                theme: 'light-outline',
+                height: '55px'
             }
         }
     }} />

@@ -1,21 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Deck } from '@whosaidtrue/app-interfaces';
 
 // local imports
 import { RootState } from "../../app/store";
 
-// TODO: remove unnecessary statuses when this feature is finished
 export type PurchaseStatus = 'noItem'
     | "hasItem"
-    | "success"
-    | "rejected"
-    | "pending"
-    | "error"
-    | "cancelled"
 
 export interface CartState {
     status: PurchaseStatus;
     deck: Deck;
+    priceInCents: number;
+    clientSecret: string; // stripe payment intent secret
 }
 
 export const initialState: CartState = {
@@ -33,6 +29,8 @@ export const initialState: CartState = {
         thumbnail_url: '',
         purchase_price: ''
     },
+    priceInCents: 0,
+    clientSecret: ''
 }
 
 export const cartSlice = createSlice({
@@ -42,16 +40,23 @@ export const cartSlice = createSlice({
         clearCart: () => {
             return initialState
         },
-        addToCart: (state, action) => {
-            state.deck = action.payload
+        addToCart: (state, action: PayloadAction<Deck>) => {
+            const { purchase_price } = action.payload;
+            state.deck = action.payload;
+            // Price is a string with '$' because it's saved as postgres money type.
+            // parse to float here so it can be used in stripe.
+            // Also remove period. 2.00 needs to become 200, because
+            // Stripe interprets 2 as $0.02
+            state.priceInCents = parseFloat(purchase_price.replace(/[^0-9]/g, ""));
         },
-        setStatus: (state, action) => {
-            state.status = action.payload
-        },
+
         goToCheckout: (state, action) => {
-            state.deck = action.payload.deck
-            state.status = 'hasItem'
+            state.deck = action.payload.deck;
+            state.status = 'hasItem';
         },
+        setClientSecret: (state, action: PayloadAction<string>) => {
+            state.clientSecret = action.payload;
+        }
     },
 
 })
@@ -59,12 +64,13 @@ export const cartSlice = createSlice({
 export const {
     addToCart,
     clearCart,
-    setStatus
+    setClientSecret
 } = cartSlice.actions;
 
 // selectors
-export const selectCartStatus = (state: RootState) => state.cart.status;
 export const selectDeckId = (state: RootState) => state.cart.deck.id;
 export const selectCartDeck = (state: RootState) => state.cart.deck;
+export const selectClientSecret = (state: RootState) => state.cart.clientSecret;
+export const selectPriceInCents = (state: RootState) => state.cart.priceInCents;
 
 export default cartSlice.reducer;

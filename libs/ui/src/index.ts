@@ -28,7 +28,7 @@ export { default as DeckFilterButton } from './lib/decks/deck-filters/DeckFilter
 export { default as Modal } from './lib/modal/Modal';
 export { default as NoFlexBox } from './lib/containers/no-flex-box/NoFlexBox';
 export { default as DeckDetails } from './lib/decks/deck-details/DeckDetails';
-export { default as PaymentMethodSelect } from './lib/payment-method-select/PaymentMethodSelect';
+export { default as PaymentMethodSelect } from './lib/choose-payment-method/ChoosePaymentMethod';
 export { default as InviteLinks } from './lib/invite-links/Invite-links';
 export { default as MessageModal } from './lib/messages/Messages';
 export { default as RemovePlayers } from './lib/remove-players/RemovePlayers';

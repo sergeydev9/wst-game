@@ -14,6 +14,7 @@ export interface UserInsertObject {
     role: UserRole
 }
 
+export type CheckoutRadioValue = 'card' | 'deckCredit' | 'applePay' | 'googlePay' | 'payPal';
 export type RequestStatus = 'idle' | 'loading';
 export type QuestionStatus = 'active' | 'inactive' | 'poll';
 export type UserRating = 'great' | 'bad';

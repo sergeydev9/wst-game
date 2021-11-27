@@ -3,7 +3,17 @@ import { Link, useHistory } from 'react-router-dom';
 import { Title1, DeckCard, Button, NoFlexBox } from "@whosaidtrue/ui";
 import { CreateGameResponse, CreateGameRequest } from '@whosaidtrue/api-interfaces';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectGameDeck, createGame, setGameStatus, setGameDeck, showError, setFullModal, clearCart, clearSelectedDeck } from '../../features';
+import {
+    selectGameDeck,
+    createGame,
+    setGameStatus,
+    setGameDeck,
+    showError,
+    setFullModal,
+    clearCart,
+    clearSelectedDeck,
+    clearGame
+} from '../../features';
 import { api } from '../../api';
 import popper from '../../assets/party-popper-emoji.png';
 
@@ -68,14 +78,13 @@ const PurchaseSuccess: React.FC = () => {
                 thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'}
                 movieRating={deck.movie_rating} />
 
-            {/* button */}
-
+            {/* start game */}
             <div className="block sm:w-2/3 mx-auto">
                 <Button onClick={() => startGame()}>Start a Game</Button>
             </div>
 
-            {/*link */}
-            <Link to="/decks" className="text-blue-base text-lg underline font-bold block my-10">Return to All Question Decks</Link>
+            {/* clear game state and return to decks */}
+            <Link to="/decks" onClick={() => dispatch(clearGame())} className="text-blue-base text-lg underline font-bold block my-10">Return to All Question Decks</Link>
 
         </NoFlexBox>
 
