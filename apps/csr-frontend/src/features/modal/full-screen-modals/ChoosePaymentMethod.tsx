@@ -157,7 +157,7 @@ const ChoosePaymentMethod: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = 
 
             {/* Disabled */}
             <div className={method ? 'hidden' : 'block bg-white opacity-50'}>
-                <Button disabled type="button" className="w-full">Please choose a payment method</Button>
+                <Button disabled type="button" className="w-full">Please choose a method</Button>
             </div>
         </ButtonContainer>
     </ModalContent>

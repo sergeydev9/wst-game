@@ -40,7 +40,7 @@ const DeckDetailsModal: React.FC = () => {
             <Title1 className="text-center mb-6 mt-2">{deck.name}</Title1>
             <DeckDetails {...deck}></DeckDetails>
 
-            <div className="w-full sm:w-2/3">
+            <div className="w-2/3">
                 <DeckDetailsButton deck={deck} isOwned={isOwned} />
             </div>
 

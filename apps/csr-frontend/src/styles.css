@@ -22,7 +22,6 @@
 
 .ReactModal__Content {
   background: white;
-  width: 50rem;
   width: fit-content;
   max-width: calc(100vw - 2rem);
   max-height: calc(100vh - 2rem);
