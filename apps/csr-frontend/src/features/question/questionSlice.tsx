@@ -9,7 +9,8 @@ import {
     selectTotalQuestions,
     clearGame,
     removePlayer,
-    selectNumPlayersInGame
+    selectNumPlayersInGame,
+    selectPlayerIds
 } from "../game/gameSlice";
 import { api } from '../../api';
 
@@ -143,9 +144,6 @@ const currentQuestionSlice = createSlice({
         setStatus: (state, action) => {
             state.status = action.payload
         },
-        setHasRated: (state, action) => {
-            state.hasRated = action.payload;
-        },
         setHaveNotAnswered: (state, action: PayloadAction<PlayerRef[]>) => {
             state.haveNotAnswered = action.payload
         },
@@ -196,7 +194,6 @@ export const {
     setGuessValue,
     questionEnd,
     setQuestionStatus,
-    setHasRated,
     setHaveNotAnswered } = currentQuestionSlice.actions;
 
 // selectors
@@ -252,14 +249,17 @@ export const selectPlayerPointsEarned = createSelector([selectPointsEarned, sele
     return Number(pointsEarned[name])
 })
 
-// number of players that have submitted an answer and a guess
-export const selectNumHaveGuessed = createSelector([selectNumPlayersInGame, selectHaveNotAnswered], (numPlayers, notAnsweredList) => {
-    if (notAnsweredList && notAnsweredList.length) {
-        return numPlayers - notAnsweredList.length;
-    } else {
-        return numPlayers;
-    }
+// array of ids for the players that haven't answered yet
+export const selectNotAnsweredIds = createSelector(selectHaveNotAnswered, (players) => {
+    return players.map(player => player.id);
+})
 
+// number of players that have submitted an answer and a guess, and are still connected to the game
+// This is used in the waiting room to give the number at the bottom
+export const selectNumHaveGuessed = createSelector([selectPlayerIds, selectNotAnsweredIds], (playerIds, notAnsweredIds) => {
+    const filtered = playerIds.filter(player => !notAnsweredIds.includes(player));
+    const result = filtered.length;
+    return result > 0 ? result : 1; // If there is an error somewhere and the player's counts are incorrect, never show 0
 });
 
 // used to identify what screen the user should be on

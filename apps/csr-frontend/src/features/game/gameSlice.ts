@@ -206,6 +206,14 @@ export const selectPlayerList = createSelector(selectPlayers, (players) => {
     return Object.values(players);
 })
 
+// return an array containing the ids of all connected players.
+// This is used to compare with the array of players that haven't answered yet.
+// The difference between the two gives the number of players that have answered among
+// the list of players still connected to the game
+export const selectPlayerIds = createSelector(selectPlayerList, (players) => {
+    return players.map(player => player.id);
+})
+
 export const selectNumPlayersInGame = (state: RootState) => Object.keys(state.game.players).length;
 
 export default gameSlice.reducer;
