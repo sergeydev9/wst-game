@@ -34,17 +34,14 @@ import {
     removeFromGame
 } from "../game/gameSlice";
 import {
-    clearCurrentQuestion,
     setCurrentQuestion,
     questionEnd,
     setReader,
     setHaveNotAnswered,
     setQuestionStatus,
-    checkHasRatedQuestion
 } from "../question/questionSlice";
 import { types, payloads } from "@whosaidtrue/api-interfaces";
 import { GameStatus, SendMessageFunction } from "@whosaidtrue/app-interfaces";
-import { clearHost } from "../host/hostSlice";
 import { setFunFacts, setMostSimilar, setFetchSimilarStatus } from '../fun-facts/funFactsSlice';
 
 /**
@@ -220,8 +217,6 @@ export const SocketProvider: React.FC = ({ children }) => {
             connection.on(types.SET_QUESTION_STATE, (message: payloads.SetQuestionState) => {
                 dispatch(setCurrentQuestion(message));
 
-                // if user is logged in, check if they have rated the new question
-                loggedIn && dispatch(checkHasRatedQuestion(message.gameQuestionId))
                 if (playerStatus === 'lobby' && message.status === 'question') {
                     dispatch(setPlayerStatus('inGame'))
                 }

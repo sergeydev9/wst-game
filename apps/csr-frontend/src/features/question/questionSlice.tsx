@@ -67,18 +67,6 @@ export const initialQuestionState: CurrentQuestionState = {
 }
 
 
-export const checkHasRatedQuestion = createAsyncThunk(
-    'question/checkHasRated',
-    async (questionId: number, { rejectWithValue }) => {
-        return api.get<CheckRatingResponse>(`/ratings/question?id=${questionId}`).then(response => {
-            return response.data;
-        }).catch(err => {
-            // log error, but don't need to notify user
-            console.error(err)
-            return rejectWithValue({ hasRated: false })
-        })
-    })
-
 const currentQuestionSlice = createSlice({
     name: 'currentQuestion',
     initialState: initialQuestionState,
@@ -168,9 +156,6 @@ const currentQuestionSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(checkHasRatedQuestion.fulfilled, (state, action) => {
-            state.hasRated = action.payload.hasRated;
-        })
 
         builder.addCase(clearGame, () => {
             return initialQuestionState;
