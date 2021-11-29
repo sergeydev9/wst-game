@@ -1,4 +1,6 @@
-import { Route, Switch, BrowserRouter } from "react-router-dom";
+import { useEffect } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import ReactGA from 'react-ga';
 import loadable from '@loadable/component'
 
 import { GuardedRoute, SocketProvider } from "../features";
@@ -24,70 +26,84 @@ const TermsAndConditions = loadable(() => import('../pages/terms-and-conditions/
 
 
 const App: React.FC = () => {
+  const history = useHistory();
+
+  useEffect(() => {
+    let unlisten;
+
+    if (process.env.NODE_ENV === 'production') {
+      ReactGA.initialize(process.env.NX_GA_TRACKING_ID as string);
+      ReactGA.pageview(window.location.pathname + window.location.search);
+      unlisten = history.listen((location: any) => {
+        ReactGA.pageview(location.pathname + location.search);
+      });
+    }
+
+    return unlisten;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <BrowserRouter>
-      <SocketProvider>
-        <Layout>
-          <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
-            <Route exact path="/faq">
-              <Faq />
-            </Route>
-            <Route exact path="/game/invite">
-              <Invite />
-            </Route>
-            <Route exact path='/contact-us' >
-              <ContactUs />
-            </Route>
-            <Route exact path='/create-account' >
-              <CreateAccount />
-            </Route>
-            <Route path='/x/:access_code'>
-              <ChooseName />
-            </Route>
-            <Route path='/play'>
-              <Play />
-            </Route>
-            <Route exact path='/login'>
-              <Login />
-            </Route>
-            <Route exact path='/decks'>
-              <Decks />
-            </Route>
-            <GuardedRoute path='/account' exact >
-              <MyAccount />
-            </GuardedRoute>
-            <Route exact path='/reset/send-email'>
-              <SendResetForm />
-            </Route>
-            <Route exact path="/reset/enter-code">
-              <EnterCode />
-            </Route>
-            <Route exact path="/reset/new-pass">
-              <NewPassword />
-            </Route>
-            <Route exact path="/purchase-success">
-              <PurchaseSuccess />
-            </Route>
-            <Route exact path="/privacy-policy">
-              <PrivacyPolicy />
-            </Route>
-            <Route exact path="/thanks">
-              <Thanks />
-            </Route>
-            <Route exact path="/terms-and-conditions">
-              <TermsAndConditions />
-            </Route>
-            <Route path="*" >
-              <Home />
-            </Route>
-          </Switch>
-        </Layout>
-      </SocketProvider>
-    </BrowserRouter>
+    <SocketProvider>
+      <Layout>
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route exact path="/faq">
+            <Faq />
+          </Route>
+          <Route exact path="/game/invite">
+            <Invite />
+          </Route>
+          <Route exact path='/contact-us' >
+            <ContactUs />
+          </Route>
+          <Route exact path='/create-account' >
+            <CreateAccount />
+          </Route>
+          <Route path='/x/:access_code'>
+            <ChooseName />
+          </Route>
+          <Route path='/play'>
+            <Play />
+          </Route>
+          <Route exact path='/login'>
+            <Login />
+          </Route>
+          <Route exact path='/decks'>
+            <Decks />
+          </Route>
+          <GuardedRoute path='/account' exact >
+            <MyAccount />
+          </GuardedRoute>
+          <Route exact path='/reset/send-email'>
+            <SendResetForm />
+          </Route>
+          <Route exact path="/reset/enter-code">
+            <EnterCode />
+          </Route>
+          <Route exact path="/reset/new-pass">
+            <NewPassword />
+          </Route>
+          <Route exact path="/purchase-success">
+            <PurchaseSuccess />
+          </Route>
+          <Route exact path="/privacy-policy">
+            <PrivacyPolicy />
+          </Route>
+          <Route exact path="/thanks">
+            <Thanks />
+          </Route>
+          <Route exact path="/terms-and-conditions">
+            <TermsAndConditions />
+          </Route>
+          <Route path="*" >
+            <Home />
+          </Route>
+        </Switch>
+      </Layout>
+    </SocketProvider>
   );
 };
 
