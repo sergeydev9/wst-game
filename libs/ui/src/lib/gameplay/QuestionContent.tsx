@@ -1,7 +1,7 @@
 import React from 'react';
 
 export interface QuestionContentProps {
-  text: string;
+  text: React.ReactNode;
   headline: React.ReactNode;
 }
 const QuestionContent: React.FC<QuestionContentProps> = ({
@@ -14,7 +14,6 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
       <h2 className="font-black mb-2 text-basic-black text-2xl md:text-3xl">
         {headline}
       </h2>
-      <div className="mb-2 text-xl md:text-2xl">True or False</div>
       {/* question content */}
       <h3 className="mb-8 text-basic-black text-xl md:text-2xl">{text}</h3>
     </div>

@@ -11,7 +11,7 @@ export interface TrueOrFalseBoxProps {
 const TrueOrFalseBox: React.FC<TrueOrFalseBoxProps> = ({ isReader, submitHandler, hasPasses, text }) => {
     return (
         <GameContentCard>
-            {(isReader ? <QuestionContent text={text} headline='Read This Out Loud:' /> :
+            {(isReader ? <QuestionContent text={<span className="italic">"<span className="font-extrabold">True or False:</span> {text}"</span>} headline='Read This Out Loud:' /> :
                 <QuestionContent text='Another player will read this question to the whole group' headline="Listen up!" />)}
             <div className="flex flex-row justify-between gap-2 w-full">
                     <Button className="flex-1" type="button" onClick={() => submitHandler('true')}>True</Button>
