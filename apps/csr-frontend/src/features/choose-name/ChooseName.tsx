@@ -82,7 +82,6 @@ const ChooseName: React.FC = () => {
                     }
                     return true;
                 }
-
                 return false
             }
             return true
@@ -120,9 +119,7 @@ const ChooseName: React.FC = () => {
                 history.push('/')
             }
         }
-
         checkStatus();
-
         return () => {
             unblock();
         }
@@ -206,25 +203,25 @@ const ChooseName: React.FC = () => {
     }
 
     return (
-        <Box boxstyle='white' className="mx-8 sm:w-max sm:mx-auto px-4 xs:px-8 py-10 text-center">
+        <Box boxstyle='white' className="mx-4 sm:w-max sm:mx-auto px-2 xs:px-8 py-10 text-center">
             <Title1 className="text-basic-black mx-8">Choose Your Player Name</Title1>
-            <div className="flex flex-col gap-3 w-80 mt-8">
+            <div className="flex flex-col gap-3 mt-8 xs:w-80">
                 {namesHelper(names)}
                 <div className="mt-4 flex justify-center">
-                    <RerollNamesButton onClick={rerollHandler} rerolls={rerolls} />
+                    <RerollNamesButton className="max-w-full" onClick={rerollHandler} rerolls={rerolls} />
                 </div>
             </div>
-            <div className="flex flex-col items-center gap-4 mt-10">
-                <div className="w-full flex flex-shrink place-items-center gap-3 h-8 px-32">
+            <div className="flex flex-col items-center gap-4 mt-10 w-full">
+                <div className="flex flex-shrink place-items-center gap-3 h-8 px-32">
                     <Divider dividerColor='grey' />
                     <Title3 >OR</Title3>
                     <Divider dividerColor='grey' />
                 </div>
-                <form className="flex flex-col sm:flex-row gap-3 items-center">
+                <form className="flex flex-col sm:flex-row gap-3 items-center max-w-full">
                     <TextInput
                         $border
                         type="text"
-                        className="font-semibold text-xl inline w-1/3"
+                        className="font-semibold text-xl inline"
                         onChange={changeHandler}
                         placeholder="Create your own" />
                     <Button className="w-2/3 inline" buttonStyle="big-text" onClick={clickHandler} $secondary>Submit</Button>
