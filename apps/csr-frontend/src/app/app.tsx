@@ -32,11 +32,15 @@ const App: React.FC = () => {
     let unlisten;
 
     if (process.env.NODE_ENV === 'production') {
-      ReactGA.initialize(process.env.NX_GA_TRACKING_ID as string);
-      ReactGA.pageview(window.location.pathname + window.location.search);
-      unlisten = history.listen((location: any) => {
-        ReactGA.pageview(location.pathname + location.search);
-      });
+      const trackingId = process.env.NX_GA_TRACKING_ID;
+
+      if (typeof trackingId === 'string' && trackingId.length > 0) {
+        ReactGA.initialize(trackingId);
+        ReactGA.pageview(window.location.pathname + window.location.search);
+        unlisten = history.listen((location: any) => {
+          ReactGA.pageview(location.pathname + location.search);
+        });
+      }
     }
 
     return unlisten;
