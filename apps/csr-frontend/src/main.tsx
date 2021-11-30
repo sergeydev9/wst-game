@@ -26,23 +26,22 @@ Modal.defaultStyles = {};
 
 // TODO: Add a root SEO component with React Helmet
 ReactDOM.render(
-    <StrictMode>
-        <Router>
-            <Provider store={store}>
+  <StrictMode>
+    <Provider store={store}>
 
-                <PayPalScriptProvider options={{
-                    "client-id": process.env.NX_PAYPAL_CLIENT_ID as string,
-                    currency: "USD",
-                    components: 'buttons',
-                    intent: 'capture'
-                }}>
-                    <Elements stripe={stripePromise}>
-                        <App/>
-                    </Elements>
-                </ PayPalScriptProvider>
+      <PayPalScriptProvider options={{
+        "client-id": process.env.NX_PAYPAL_CLIENT_ID as string,
+        currency: "USD",
+        components: 'buttons',
+        intent: 'capture'
+      }}>
+        <Elements stripe={stripePromise}>
 
-            </Provider>
-        </Router>
-    </StrictMode>,
-    document.getElementById('root')
+          <App />
+        </Elements>
+      </ PayPalScriptProvider>
+
+    </Provider>
+  </StrictMode>,
+  document.getElementById("root")
 );
