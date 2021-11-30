@@ -6,36 +6,36 @@ import { Title1, Headline } from '../typography/Typography';
 import React from "react";
 
 const InnerBox = tw.div`
-flex
-flex-row
-self-stretch
-items-center
-gap-3
-md:gap-12
-p-4
-justify-end
-bg-white-ish
-rounded-2xl
+    flex
+    flex-row
+    self-stretch
+    items-center
+    gap-3
+    md:gap-12
+    p-4
+    justify-end
+    bg-white-ish
+    rounded-2xl
 `
-const iconClass = 'text-2xl cursor-pointer'
+const iconClass = 'text-2xl cursor-pointer';
 
 export interface InviteProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
     accessCode: string;
-    domain: string
+    domain: string;
 }
 
 const Invite: React.FC<InviteProps> = ({ accessCode, domain, children }) => {
 
     const copyUrl = async (e: React.MouseEvent) => {
-        await navigator.clipboard.writeText(`${domain}/${accessCode}`)
+        await navigator.clipboard.writeText(`${domain}/${accessCode}`);
     }
 
     const copyCode = async (e: React.MouseEvent) => {
-        await navigator.clipboard.writeText(accessCode)
+        await navigator.clipboard.writeText(accessCode);
     }
 
-    const subject = encodeURIComponent('You have been invited to play Who Said True?!')
-    const body = encodeURIComponent(`Visit https://www.${domain}/${accessCode} to join the fun!`)
+    const subject = encodeURIComponent("I'm inviting you to play Who Said True?!");
+    const body = encodeURIComponent(`Go to https://www.${domain}/${accessCode} to join our game!`);
 
     return (
         <div className="md:px-20 mt-8">
@@ -61,4 +61,4 @@ const Invite: React.FC<InviteProps> = ({ accessCode, domain, children }) => {
     )
 }
 
-export default Invite
+export default Invite;

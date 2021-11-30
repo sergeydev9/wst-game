@@ -139,6 +139,13 @@ describe('games routes', () => {
                 .expect(422, done)
         })
 
+        it('should return 422 if name is 27 characters', done => {
+            supertest(app)
+                .post('/games/join')
+                .send({ access_code: 'ABCD', name: 'Compassionate Grothendieeck' })
+                .expect(422, done)
+        })
+
         it('should respond with 404 if game not found', done => {
             mockedGames.join.mockRejectedValue(new Error('Game not found'))
             supertest(app)

@@ -29,7 +29,7 @@ const Invite: React.FC = () => {
 
             // eslint-disable-next-line
             const path = args[0].pathname as any
-            if (!path.includes('/x/')) {
+            if (!path.includes('/game/')) {
                 const confirmMessage = 'Are you sure you want to leave? If you leave now the game will be cancelled';
 
                 if (window.confirm(confirmMessage)) {
@@ -55,12 +55,12 @@ const Invite: React.FC = () => {
     const accessCode = useAppSelector(selectAccessCode)
 
     const goToChooseName = () => {
-        history.push(`/x/${accessCode}`)
+        history.push(`/game/${accessCode}`)
         dispatch(setGameStatus('choosingName'));
     }
 
     const isForSchools = process.env.NX_IS_FOR_SCHOOLS === 'true';
-    const domain = isForSchools ? 'whosaidtrueforschools.com/x' : 'whosaidtrue.com/x';
+    const domain = isForSchools ? 'whosaidtrueforschools.com/game' : 'whosaidtrue.com/game';
     const titleDomain = isForSchools ? 'WhoSaidTrueForSchools.com' : 'WhoSaidTrue.com';
 
     return (

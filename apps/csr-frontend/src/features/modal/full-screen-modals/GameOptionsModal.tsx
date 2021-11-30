@@ -22,7 +22,7 @@ const GameOptionsModal: React.FC = () => {
         history.push('/');
     }
 
-    const domain = process.env.NX_IS_FOR_SCHOOLS === 'true' ? 'whosaidtrueforschools.com/x' : 'whosaidtrue.com/x';
+    const domain = process.env.NX_IS_FOR_SCHOOLS === 'true' ? 'whosaidtrueforschools.com/game' : 'whosaidtrue.com/game';
     return (
         <ModalContent>
             <Title1 className="mt-1 mb-10">Game Options</Title1>

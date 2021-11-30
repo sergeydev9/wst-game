@@ -43,7 +43,7 @@ const JoinGame: React.FC = () => {
             );
           } else {
             dispatch(initialRequest(accessCode));
-            history.push(`/x/${accessCode}`);
+            history.push(`/game/${accessCode}`);
           }
         } catch (e) {
           setErrorText('That Game Code is not valid. Please try again.');

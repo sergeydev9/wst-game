@@ -25,7 +25,7 @@ const insertNames = (num: number, numNotClean?: number) => {
         count = 1
     }
 
-    const names = new Set() // avoids duplicates
+    const names = new Set<string>() // avoids duplicates
     while (names.size < count) {
         names.add(generateName())
     }
@@ -39,7 +39,7 @@ const insertNames = (num: number, numNotClean?: number) => {
             clean = false
             dirtyCount++
         }
-        input.push([name, clean])
+        input.push([name.slice(0, 25), clean]) // only use first 26 characters to avoid violating length constraint
     }
 
     return {

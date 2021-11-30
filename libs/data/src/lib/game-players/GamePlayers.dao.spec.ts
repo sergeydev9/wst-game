@@ -43,7 +43,6 @@ describe('GamePlayers', () => {
             game_id += 1; // shouldn't exist
             try {
                 await players.insertOne({ ...player, game_id })
-                fail()
             } catch (e) {
                 const expected = new DatabaseError('insert or update on table "game_players" violates foreign key constraint "game_players_game_id_fkey"', 1, 'error');
                 expect(e).toEqual(expected)
@@ -55,7 +54,6 @@ describe('GamePlayers', () => {
 
             try {
                 await players.insertOne({ ...player, game_id })
-                fail()
             } catch (e) {
                 const expected = new DatabaseError('duplicate key value violates unique constraint "game_players_game_id_player_name_unique_index"', 1, 'error');
                 expect(e).toEqual(expected)
@@ -69,7 +67,6 @@ describe('GamePlayers', () => {
             try {
                 const { player_name } = player;
                 await players.insertOne({ ...player, game_id, player_name: player_name.toUpperCase() })
-                fail()
             } catch (e) {
                 const expected = new DatabaseError('duplicate key value violates unique constraint "game_players_game_id_player_name_unique_index"', 1, 'error');
                 expect(e).toEqual(expected)
@@ -90,6 +87,18 @@ describe('GamePlayers', () => {
             game_id = gameResult.rows[0].id;
             const { rows } = await players.insertOne({ ...player, game_id });
             expect(rows[0].id).not.toEqual(result1.rows[0].id);
+        })
+
+        it('should throw if name is longer than 26 characters', async () => {
+            const player = TEST_GAME_PLAYERS[0];
+
+
+            try {
+                await players.insertOne({ ...player, player_name: 'Compassionate Grothendieccccccck', game_id })
+            } catch (e) {
+                const expected = new DatabaseError('new row for relation "game_players" violates check constraint "name_length_limit"', 1, 'error');
+                expect(e).toEqual(expected)
+            }
         })
 
     })

@@ -15,7 +15,7 @@ const HostGameOptionsButtons: React.FC = () => {
     const isPostGame = gameStatus === 'postGame';
 
     const confEndGame = () => {
-        if (location.pathname.includes('/x/')) {
+        if (location.pathname.includes('/game/')) {
             history.push('/')
         } if (!isPostGame) {
             setShouldBlock(false);

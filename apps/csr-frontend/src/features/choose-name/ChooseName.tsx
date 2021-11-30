@@ -25,7 +25,8 @@ import {
     TextInput,
     Divider,
     Title3,
-    Title1
+    Title1,
+    ErrorText
 } from '@whosaidtrue/ui';
 import { NameObject } from '@whosaidtrue/app-interfaces';
 import { JoinGameResponse, StatusRequestResponse } from '@whosaidtrue/api-interfaces';
@@ -35,6 +36,9 @@ import { showError } from '../modal/modalSlice';
 const ChooseName: React.FC = () => {
     const dispatch = useAppDispatch();
     const [shouldBlock, setShouldBlock] = useState(true);
+    const [isValid, setIsValid] = useState(false);
+    const [isTouched, setIsTouched] = useState(false);
+    const [hasLeftFocus, setHasLeftFocus] = useState(false);
     const [text, setText] = useState('')
     const { access_code } = useParams<{ access_code: string }>()
     const history = useHistory();
@@ -187,20 +191,41 @@ const ChooseName: React.FC = () => {
 
     // input change
     const changeHandler = (e: React.BaseSyntheticEvent) => {
-        setText(e.target.value)
+        const { value } = e.target;
+
+        setText(value)
+
+        if (!isTouched) {
+            setIsTouched(true);
+        }
+
+        // max length 25
+        if (value.length > 25 || value.length < 1) {
+            setIsValid(false)
+        } else {
+            setIsValid(true);
+        }
+
+
     }
 
     const clickHandler = (e: React.MouseEvent) => {
         e.preventDefault();
 
-        if (!text.length) {
-            dispatch(showError('Name cannot be empty'))
+        if (!isValid) {
+            if (text.length === 0) {
+                dispatch(showError('Name cannot be empty'));
+            } else {
+                dispatch(showError('Name cannot be longer than 25 characters'))
+            }
         } else {
             dispatch(sendReport({ seen: seen.map(n => n.id) }));
             join(text);
         }
 
     }
+
+    const customNameError = isTouched && !isValid && hasLeftFocus;
 
     return (
         <Box boxstyle='white' className="mx-4 sm:w-max sm:mx-auto px-2 xs:px-8 py-10 text-center">
@@ -221,8 +246,10 @@ const ChooseName: React.FC = () => {
                     <TextInput
                         $border
                         type="text"
-                        className="font-semibold text-xl inline"
+                        className="font-semibold text-xl inline w-1/3"
+                        $hasError={customNameError}
                         onChange={changeHandler}
+                        onBlur={() => setHasLeftFocus(true)}
                         placeholder="Create your own" />
                     <Button className="w-2/3 inline" buttonStyle="big-text" onClick={clickHandler} $secondary>Submit</Button>
                 </form>
