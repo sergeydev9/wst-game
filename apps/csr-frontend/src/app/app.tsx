@@ -34,7 +34,7 @@ const App: React.FC = () => {
     if (process.env.NODE_ENV === 'production') {
       const trackingId = process.env.NX_GA_TRACKING_ID;
 
-      if (typeof trackingId === 'string' && trackingId.length > 0) {
+      if (typeof trackingId === 'string' && trackingId !== 'false') {
         ReactGA.initialize(trackingId);
         ReactGA.pageview(window.location.pathname + window.location.search);
         unlisten = history.listen((location: any) => {
