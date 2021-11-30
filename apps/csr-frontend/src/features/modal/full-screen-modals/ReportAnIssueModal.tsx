@@ -1,20 +1,20 @@
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import { setFullModal } from "../..";
-import { useAppDispatch } from "../../../app/hooks";
-import { sendMessage } from "../../send-message/sendMessage";
 import { Title1, FormGroup, InputLabel, ErrorText, TextInput, TextArea, Button, ModalContent } from "@whosaidtrue/ui";
-import { showError, showSuccess } from "../modalSlice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { sendMessage } from "../../send-message/sendMessage";
+import { setFullModal, showError, showSuccess } from "../../modal/modalSlice";
+import { selectEmail } from '../../auth/authSlice';
 
 
 const ReportAnIssue: React.FC = () => {
     const dispatch = useAppDispatch();
-
+    const email = useAppSelector(selectEmail);
     // Form
     const formik = useFormik({
         initialValues: {
             name: '',
-            email: '',
+            email: email || '', // default to user's email if there is one
             message: '',
         },
         validationSchema: Yup.object({

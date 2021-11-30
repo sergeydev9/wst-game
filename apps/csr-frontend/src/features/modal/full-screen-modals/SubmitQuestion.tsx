@@ -1,19 +1,23 @@
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import { setFullModal } from "../..";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { Title1, FormGroup, InputLabel, ErrorText, TextInput, TextArea, Button, ModalContent } from "@whosaidtrue/ui";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+
+import { setFullModal, showError, showSuccess } from "../../modal/modalSlice";
+import { sendMessage } from "../../send-message/sendMessage";
+import { selectEmail } from '../../auth/authSlice';
+
 
 
 const SubmitQuestion: React.FC = () => {
     const dispatch = useAppDispatch();
-
+    const email = useAppSelector(selectEmail);
 
     // Form
     const formik = useFormik({
         initialValues: {
             name: '',
-            email: '',
+            email: email || '', // default to user's email if there is one
             message: '',
         },
         validationSchema: Yup.object({
@@ -22,15 +26,17 @@ const SubmitQuestion: React.FC = () => {
             message: Yup.string().required()
         }),
         onSubmit: async (values) => {
-            // TODO: figure out where/how these messages will be sent
-            const { email, name, message } = values
-            dispatch(setFullModal(''))
+            dispatch(sendMessage({ ...values, category: 'Submit a Question' })).then(() => {
+                dispatch(showSuccess('Thank you for your feedback'))
+                dispatch(setFullModal(''))
+            }).catch(() => {
+                dispatch(showError('An unexpected error occured while sending your message'))
+            })
         },
     });
     const emailErr = formik.touched.email && formik.errors.email ? true : undefined;
     const nameErr = formik.touched.name && formik.errors.name ? true : undefined;
     const messageErr = formik.touched.name && formik.errors.name ? true : undefined;
-
 
     // render
     return (

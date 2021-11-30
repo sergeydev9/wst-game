@@ -24,7 +24,8 @@ router.post('/', [...emailMessage], async (req: Request, res: Response) => {
             user_id: id,
             to: process.env.EMAIL_RECIPIENT || 'brian@whosaidtrue.com',
             cc: email,
-            subject: validator.escape(`[${category}] - Sent by ${name} from ${domain}`),
+            // remove https:// from domain to avoid inserting escape characters. Otherwise this will become https:&#x2F;&#x2F;
+            subject: validator.escape(`[${category}] - Sent by ${name} from ${domain.replace('https://', '')}`),
             text: validator.escape(message) // removes JS so that whoever opens these emails doesn't get hacked
         }
 
