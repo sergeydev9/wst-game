@@ -8,7 +8,6 @@ import { oneLiners } from '../../db';
 jest.mock('../../db');
 const mockedOneLiners = mocked(oneLiners, true);
 
-
 describe('one-liners route', () => {
     let app: Application;
 
@@ -18,7 +17,7 @@ describe('one-liners route', () => {
 
     describe('[GET] /', () => {
 
-        it('should return dirty decks if request origin = DOMAIN', async () => {
+        it('should returnmixed clean and dirty decks if request origin = DOMAIN', async () => {
             mockedOneLiners.getSelection.mockResolvedValue({ rows: [{ text: 'test', clean: false }] } as QueryResult);
 
             await supertest(app)
