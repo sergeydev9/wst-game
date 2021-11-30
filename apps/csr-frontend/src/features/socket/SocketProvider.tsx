@@ -208,7 +208,7 @@ export const SocketProvider: React.FC = ({ children }) => {
                 } else {
                     // otherwise, show player has been removed message
                     dispatch(showPlayerRemoved(player_name));
-                    dispatch(removePlayer(id))
+                    dispatch(removePlayer(id));
 
                 }
             })
@@ -229,7 +229,7 @@ export const SocketProvider: React.FC = ({ children }) => {
 
             // question is done, store results
             connection.on(types.QUESTION_END, (message: payloads.QuestionEnd) => {
-                dispatch(questionEnd(message))
+                dispatch(questionEnd(message));
                 fetchMostSimilar();
             })
 
