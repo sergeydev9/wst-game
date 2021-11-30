@@ -4,7 +4,7 @@ import { Lobby as LobbyUi } from "@whosaidtrue/ui";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectAccessCode, selectIsHost, selectPlayerName, selectPlayerId, selectPlayerList, removePlayer } from "./gameSlice";
 import useSocket from '../socket/useSocket';
-import { showPlayerRemoved } from '../modal/modalSlice';
+import { showError } from '../modal/modalSlice';
 import OneLiners from '../one-liners/OneLiners';
 import { payloads } from '@whosaidtrue/api-interfaces';
 
@@ -25,11 +25,15 @@ const Lobby: React.FC = () => {
         if (isHost) {
 
             return () => {
-                sendMessage(types.REMOVE_PLAYER, { ...player, event_origin: 'lobby' } as payloads.PlayerEvent, () => {
+                sendMessage(types.REMOVE_PLAYER, { ...player, event_origin: 'lobby' } as payloads.PlayerEvent, ack => {
 
-                    // on ack, remove player
-                    dispatch(removePlayer(player.id));
-                    dispatch(showPlayerRemoved(player.player_name))
+                    // if ack was anything other than 'ok' show an error message
+                    // if removal succeeded, host will receive message from server.
+                    // That is handled in the socket provider
+                    if (ack !== 'ok') {
+                        dispatch(showError('Could not remove player from the game'));
+                    }
+
                 })
             }
         } else {

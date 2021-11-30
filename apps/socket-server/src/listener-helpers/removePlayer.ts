@@ -22,24 +22,38 @@ async function removePlayer(socket: Socket, player: payloads.PlayerEvent) {
         totalQuestions,
     } = socket.keys;
 
-    if (player.event_origin === 'lobby') {
-        await gamePlayers.setStatus(player.id, 'removed_lobby')
-    } else {
-        await gamePlayers.setStatus(player.id, 'removed_game')
-    }
+    logger.debug({
+        message: '[removePlayer]',
+        player
+    });
+
+    const playerString = JSON.stringify({ id: player.id, player_name: player.player_name });
 
     // add player to removed players set
     const remResponse = await pubClient.sadd(removedPlayers, player.id);
     await pubClient.expire(removedPlayers, ONE_DAY);
 
-    logger.debug(`Player added to removed list: ${remResponse}`)
+    logger.debug({
+        message: '[removePlayer] Players added to removed players key',
+        numPlayers: remResponse
+    })
+
+    // if player is removed from the lobby,
+    // you only need to change their status in the DB and remove them from the current players key.
+    // Otherwise, other data for the current question needs to be updated.
+    if (player.event_origin === 'lobby') {
+        await gamePlayers.setStatus(player.id, 'removed_lobby');
+        await pubClient.srem(currentPlayers, playerString);
+        socket.sendToAll(types.REMOVE_PLAYER, player);
+        return;
+    } else {
+        await gamePlayers.setStatus(player.id, 'removed_game')
+    }
 
     // get current question data
     const questionString = await pubClient.get(currentQuestion);
     const question: NextQuestionResult = JSON.parse(questionString);
-
     const haveNotAnswered = Keys.haveNotAnswered(Number(question.gameQuestionId));
-    const playerString = JSON.stringify({ id: player.id, player_name: player.player_name });
 
     // remove player from current players, and count the number of players that haven't answered
     const [, , , count, totalQuestionNum] = await pubClient
@@ -54,7 +68,7 @@ async function removePlayer(socket: Socket, player: payloads.PlayerEvent) {
     socket.sendToAll(types.REMOVE_PLAYER, player);
 
     logger.debug({
-        message: '[Remove Player] have not answered count',
+        message: '[removePlayer] have not answered count',
         count,
         haveNotAnswered,
         playerString
@@ -66,7 +80,12 @@ async function removePlayer(socket: Socket, player: payloads.PlayerEvent) {
     }
     // if player was last that had not answered, end the question
     if (count[1] == 0) {
-        await endQuestion(socket, question.gameQuestionId, Number(question.sequenceIndex), Number(totalQuestionNum[1]));
+        await endQuestion(
+            socket,
+            question.gameQuestionId,
+            Number(question.sequenceIndex),
+            Number(totalQuestionNum[1]
+            ));
     }
 }
 

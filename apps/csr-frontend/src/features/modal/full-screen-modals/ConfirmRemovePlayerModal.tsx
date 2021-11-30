@@ -4,15 +4,15 @@ import { types, payloads } from '@whosaidtrue/api-interfaces';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks"
 import useSocket from '../../socket/useSocket';
 import { selectTargetName, clearTarget, selectTargetId } from "../../host/hostSlice";
-import { showPlayerRemoved } from '../modalSlice';
-import { removePlayer as remAction } from '../../game/gameSlice';
-import { setFullModal } from '../modalSlice';
+import { selectGameStatus } from '../../game/gameSlice';
+import { setFullModal, showError } from '../modalSlice';
 
 const ConfirmRemovePlayerModal: React.FC = () => {
     const dispatch = useAppDispatch()
     const { sendMessage } = useSocket();
     const targetName = useAppSelector(selectTargetName);
-    const targetId = useAppSelector(selectTargetId)
+    const targetId = useAppSelector(selectTargetId);
+    const gameStatus = useAppSelector(selectGameStatus);
 
     useEffect(() => {
         return () => {
@@ -22,8 +22,23 @@ const ConfirmRemovePlayerModal: React.FC = () => {
 
     const removePlayer = () => {
 
-        sendMessage(types.REMOVE_PLAYER, { id: targetId, player_name: targetName } as payloads.PlayerEvent)
-        dispatch(setFullModal(''))
+        // if there was an error, show an error message.
+        // If this succeeds, the host will receive a success event from the server,
+        // which triggers success notification.
+        // Either way, close the modal after confirmation.
+        sendMessage(
+            types.REMOVE_PLAYER,
+            {
+                id: targetId,
+                player_name: targetName,
+                event_origin: gameStatus === 'lobby' ? 'lobby' : 'game'
+            } as payloads.PlayerEvent, ack => {
+                if (ack !== 'ok') {
+                    dispatch(showError('Could not remove that player from the game'));
+                }
+            });
+        dispatch(setFullModal(''));
+
 
     }
 

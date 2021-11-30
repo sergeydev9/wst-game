@@ -355,9 +355,16 @@ const registerListeners = (socket: Socket, io: Server) => {
         /**
         * REMOVE PLAYER
         */
-        socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent) => {
+        socket.on(types.REMOVE_PLAYER, async (msg: payloads.PlayerEvent, ack) => {
             logIncoming(types.REMOVE_PLAYER, msg, source);
-            await removePlayer(socket, msg)
+
+            try {
+                await removePlayer(socket, msg);
+                ack('ok')
+            } catch (e) {
+                logError('Error while removing player from game', e)
+                ack('error')
+            }
         })
 
         /**
