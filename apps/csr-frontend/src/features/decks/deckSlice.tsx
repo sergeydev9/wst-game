@@ -4,6 +4,7 @@ import { DeckSelectionResponse } from "@whosaidtrue/api-interfaces";
 import { Deck } from "@whosaidtrue/app-interfaces";
 import { api } from '../../api';
 import { showError } from "../modal/modalSlice";
+import { sortNotForSchools, sortForSchools } from '../../util/functions';
 
 export type DeckSet = 'all' | 'sfw' | 'PG' | 'PG13' | 'R' | 'NC17';
 
@@ -58,6 +59,7 @@ export const getDeckSelection = createAsyncThunk(
     'decks/getSelection',
     async (_, { dispatch, rejectWithValue }) => {
 
+        // build time var determines whether returned decks are all clean or all not clean
         const url = process.env.NX_IS_FOR_SCHOOLS === 'true' ? `/decks/selection?clean=true` : `/decks/selection?clean=false`
 
         return api.get<DeckSelectionResponse>(url).then(res => {
@@ -125,8 +127,6 @@ export const deckSlice = createSlice({
 
             })
 
-
-
             const notOwnedSfw: Deck[] = [];
             const notOwnedR: Deck[] = [];
             const notOwnedPG: Deck[] = [];
@@ -169,7 +169,6 @@ export const deckSlice = createSlice({
             state.notOwnedByRating.sfw = notOwnedSfw;
 
         })
-
     }
 })
 
@@ -191,14 +190,14 @@ export const selectOwnedByRating = (state: RootState) => state.decks.ownedByRati
 export const selectNotOwnedByRating = (state: RootState) => state.decks.notOwnedByRating;
 
 export const selectCurrentOwned = createSelector([selectCurrentSetName, selectOwnedByRating], (name, decks) => {
-    return decks[name];
+    const isForSchools = process.env.NX_IS_FOR_SCHOOLS === 'true'; // sort decks depending on env variable at build time.
+    return isForSchools ? sortForSchools(decks[name].slice()) : sortNotForSchools(decks[name].slice());
 })
 
 export const selectCurrentNotOwned = createSelector([selectCurrentSetName, selectNotOwnedByRating], (name, decks) => {
-    return decks[name];
+    const isForSchools = process.env.NX_IS_FOR_SCHOOLS === 'true'; // sort decks depending on env variable at build time.
+    return isForSchools ? sortForSchools(decks[name].slice()) : sortNotForSchools(decks[name].slice());
 })
-
-
 
 // default
 export default deckSlice.reducer;

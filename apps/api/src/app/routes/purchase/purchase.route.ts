@@ -69,11 +69,13 @@ router.post('/capture-paypal', [json(), ...paypalOrder], passport.authenticate('
         // In the unlikely event that this branch is ever triggered,
         // it means that a user paid for a deck, but that no user_deck record was created.
         // They will either need a refund, or the record will have to be manually created.
-        logger.error(`An error occured while creating a user_deck after a successful purchase.
-        User ID: ${id},
-        deckId: ${deckId},
-        error: ${e},
-        capture: ${JSON.stringify(capture)}`);
+        logger.error({
+            message: 'An error occured while creating a user_deck after a successful purchase.',
+            userId: id,
+            deckId: deckId,
+            error: e,
+            capture
+        });
 
         res.status(500).send(ERROR_MESSAGES.unexpected);
     }
@@ -152,7 +154,11 @@ router.post('/webhook', raw({ type: 'application/json' }), async (req: Request, 
             }
 
         } catch (e) {
-            logger.error(`Could not create user_deck and order record. Error: ${e} Object: ${JSON.stringify(event.data.object)}`)
+            logger.error({
+                message: '[Stripe Webhook] Could not create user_deck and order record',
+                error: e,
+                eventObject: event.data.object
+            })
             return res.sendStatus(400)
         }
     }
