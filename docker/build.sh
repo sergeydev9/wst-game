@@ -41,7 +41,15 @@ if [[ ! -d dist/apps/worker ]]; then
 	exit -1
 fi
 
-source docker/docker_login.sh
+# NOTE: setup a aws profile named `wst-default` with your credentials first
+# https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html
+export AWS_PROFILE='wst-default'
+export AWS_DEFAULT_REGION='us-east-2'
+AWS_ACCOUNT="680712662822"
+REGISTRY="${AWS_ACCOUNT}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+
+echo "authenticating: ${REGISTRY}"
+aws ecr get-login-password | docker login --username AWS --password-stdin ${REGISTRY}
 
 TAG="$(date +%Y%m%d)-$(git rev-parse --short HEAD)"
 
