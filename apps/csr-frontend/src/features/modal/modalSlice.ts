@@ -39,6 +39,8 @@ export type MessageType = ''
 
 
 export interface ModalState {
+    // set to true when a user opens login from the deck details modal. This is used to re-open deck details on login success.
+    cameFromDeckDetails: boolean;
     fullModal: FullModal;
     messageType: MessageType;
     messageContent: string;
@@ -52,6 +54,7 @@ export interface ModalState {
 }
 
 export const initialState: ModalState = {
+    cameFromDeckDetails: false,
     fullModal: '',
     messageType: '',
     messageContent: '',
@@ -78,6 +81,9 @@ export const modalSlice = createSlice({
         // only 1 full screen modal can be open at a time
         setFullModal: (state, action) => {
             state.fullModal = action.payload
+        },
+        setCameFromDeckDetails: (state, action: PayloadAction<boolean>) => {
+            state.cameFromDeckDetails = action.payload;
         },
         showInfo: (state, action) => {
             state.isPersistent = false;
@@ -150,7 +156,8 @@ export const {
     clearScoreTooltipDismissed,
     showLoaderMessage,
     clearLoaderMessage,
-    setShowTakingTooLong
+    setShowTakingTooLong,
+    setCameFromDeckDetails
 } = modalSlice.actions;
 
 // selectors
@@ -162,5 +169,6 @@ export const selectScoreTooltipDismissed = (state: RootState) => state.modals.sc
 export const selectScoreTooltipShowing = (state: RootState) => state.modals.scoreTooltipShowing;
 export const selectLoaderMessage = (state: RootState) => state.modals.loaderMessage;
 export const selectShowTakingTooLong = (state: RootState) => state.modals.showTakingTooLong;
+export const selectCameFromDeckDetails = (state: RootState) => state.modals.cameFromDeckDetails;
 
 export default modalSlice.reducer;

@@ -1,14 +1,24 @@
+import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { AuthForm, selectFullModal } from '../../features'
 import { Headline } from "@whosaidtrue/ui";
-import { setFullModal } from '../modal/modalSlice';
+import { setFullModal, setCameFromDeckDetails, selectCameFromDeckDetails } from '../modal/modalSlice';
 
 const Login: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
     const isModal = useAppSelector(selectFullModal) === 'login';
     const history = useHistory();
     const dispatch = useAppDispatch();
+    const cameFromDetails = useAppSelector(selectCameFromDeckDetails);
+
+    useEffect(() => {
+        return () => {
+            if (cameFromDetails) {
+                dispatch(setCameFromDeckDetails(false)); // change status here no matter what
+            }
+        }
+    })
 
     const close = () => {
         dispatch(setFullModal(''));
@@ -19,7 +29,11 @@ const Login: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
         if (!isModal) {
             history.push('/');
         } else {
-            dispatch(setFullModal(''));
+            if (cameFromDetails) {
+                dispatch(setFullModal('deckDetails'))
+            } else {
+                dispatch(setFullModal(''));
+            }
         }
     }
 
