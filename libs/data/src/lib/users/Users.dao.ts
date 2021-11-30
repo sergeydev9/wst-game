@@ -316,9 +316,9 @@ class Users extends Dao {
     }
 
     /**
-     * Gets user by email address.
+     * Converts user row from a guest to a user.
      *
-     * Called from the 'Create Account' flow to check if the user already has a guest account before creating an account.
+     * Called from the 'Create Account' flow.
      *
      * @param {number} id
      * @param {string} password
