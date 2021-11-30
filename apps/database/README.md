@@ -489,3 +489,24 @@ The `./seeds` directory contains a script that inserts seed data into the databa
 Before the seeds can be run, the application must be built by webpack. To do this, run `nx build database`. This need to be done **every time** there are changes to the seed scripts.
 
 Once the application has been built and the database is up and running, you can insert the seed data using the "seed-dev" npm script defined in the root `package.json`. To do this, run `yarn seed-dev`.
+
+
+# Creating user accounts for developers
+
+For traceability each developer should have their own user accounts with access to the databases they need.
+
+User accounts are prefixed with `usr_` and service accounts are prefixed with `app_`.
+
+The user account should be created with the main `postgres` account. The password for the main `postgres` account can be reset through AWS if needed.
+
+Admin user example:
+
+```sql
+CREATE USER usr_admin WITH PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE "whosaidtrue-dev" TO usr_admin;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO usr_admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO usr_admin;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO usr_admin;
+```
+
+For restricting the user accounts further refer to https://www.postgresql.org/docs/9.0/sql-grant.html
