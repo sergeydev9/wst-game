@@ -97,8 +97,7 @@
             "tsConfig": "apps/csr-frontend/tsconfig.app.json",
             "assets": [
               "apps/csr-frontend/src/favicon.ico",
-              "apps/csr-frontend/src/assets",
-              "apps/csr-frontend/src/.well-known"
+              "apps/csr-frontend/src/assets"
             ],
             "webpackConfig": "apps/csr-frontend/webpack.config.js",
             "styles": ["apps/csr-frontend/src/styles.css"],
