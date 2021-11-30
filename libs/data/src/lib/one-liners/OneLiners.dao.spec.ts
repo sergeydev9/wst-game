@@ -15,7 +15,7 @@ describe('OneLiners', () => {
 
     })
 
-    beforeEach(async () => {
+    afterEach(async () => {
         await cleanDb(pool);
     })
 
@@ -58,9 +58,11 @@ describe('OneLiners', () => {
             await pool.query(query);
         })
 
-        it('should return 10 dirty decks', async () => {
+        it('should return 10 one liners, mixed clean and not clean', async () => {
             const actual = await oneLiners.getSelection(false);
             expect(actual.rowCount).toEqual(10);
+            expect(actual.rows.some(item => item.clean === true)).toEqual(true);
+            expect(actual.rows.some(item => item.clean === false)).toEqual(true);
         })
 
         it('should return 6 clean decks', async () => {
