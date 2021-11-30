@@ -293,6 +293,49 @@ class Users extends Dao {
             }
         }
     }
+
+    /**
+     * Gets user by email address.
+     *
+     * Called from the 'Create Account' flow to check if the user already has a guest account before creating an account.
+     *
+     * @param {string} email
+     * @param {string} domain
+     * @return  {Promise<QueryResult>} {id, email, roles[]}
+     * @memberof Users
+     */
+    public async getByEmail(email: string, domain: string): Promise<QueryResult> {
+        const query = {
+            text: `
+                SELECT id, email, array_to_json(roles) AS roles
+                FROM users WHERE email = $1 AND domain = $2`,
+            values: [email, domain]
+        };
+
+        return await this._pool.query(query);
+    }
+
+    /**
+     * Gets user by email address.
+     *
+     * Called from the 'Create Account' flow to check if the user already has a guest account before creating an account.
+     *
+     * @param {number} id
+     * @param {string} password
+     * @return  {Promise<QueryResult>} {id, email, roles[]}
+     * @memberof Users
+     */
+    public async convertGuestToUser(id: number, password: string): Promise<QueryResult> {
+      const query = {
+        text: `
+            UPDATE users
+            SET password = crypt($2, gen_salt('bf', 8)), roles = $3
+            WHERE (users.id = $1 AND users.password IS NULL AND 'guest' = ANY(roles))
+            RETURNING id, email, array_to_json(roles) AS roles`,
+        values: [id, password, ['user']]
+    }
+    return this._pool.query(query)
+    }
 }
 
 export default Users;

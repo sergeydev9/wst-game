@@ -67,15 +67,25 @@ router.post('/login', [...validateAuth], async (req: Request, res: Response) => 
 router.post('/register', [...validateAuth], async (req: Request, res: Response) => {
     const { email, password } = req.body as AuthenticationRequest;
     try {
+        let newUser;
         const domain = getDomain(req);
-        // Register new user.
-        const { rows } = await users.register(email, password, domain);
 
-        // send token if success
-        const { id, roles } = rows[0]
-        const token = signUserPayload({ email: rows[0].email, id, roles })
-        res.status(201).json({ token } as AuthenticationResponse)
+        // Check for existence of guest account first.
+        const { rows: guestRows } = await users.getByEmail(email, domain);
 
+        if (guestRows[0] && guestRows[0].roles.includes('guest')) {
+          // User already has guest account. Convert guest account to user account with password.
+          const { rows } = await users.convertGuestToUser(guestRows[0].id, password);
+          newUser = { id: rows[0].id, email: rows[0].email, roles: rows[0].roles };
+        } else {
+          // User does not have guest account. Create new user account.
+          const { rows } = await users.register(email, password, domain);
+          newUser = { id: rows[0].id, email: rows[0].email, roles: rows[0].roles };
+        }
+
+        //send token if success
+        const token = signUserPayload(newUser);
+        res.status(201).json({ token } as AuthenticationResponse);
     } catch (e) {
         // if email already in use
         if (e.message === "duplicate key value violates unique constraint \"users_email_key\"") {
