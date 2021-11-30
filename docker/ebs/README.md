@@ -4,6 +4,7 @@
 
 ```bash
 yarn install
+rm -rf dist
 yarn build socket-server --prod --skip-nx-build-cache
 yarn build api --prod --skip-nx-build-cache
 yarn build worker --prod --skip-nx-build-cache
@@ -11,19 +12,27 @@ yarn build worker --prod --skip-nx-build-cache
 
 Note: you may need to edit your `.local.env` setting NODE_ENV=production if you get build errors.
 
-2. Build docker images
+2. Build docker images and and update `docker/ebs/docker-compose.yml` with new image tags
 
 ```bash
 docker/build.sh --push
 ```
 
-3. Update `docker/ebs/docker-compose.yml` with new build images
+3. Commit build images changes and create a new tag same as the build images docker tag.
+
+```
+git commit docker/ebs/docker-compose.yml -m "deploy v20211129-0bc768e"
+git push origin dev
+
+git tag v20211125-12340f9
+git push origin v20211125-12340f9
+```
 
 4. Deploy Test
 
 ```bash
 cd docker/ebs
-eb deploy test-env
+eb deploy test2-env
 ```
 
 
