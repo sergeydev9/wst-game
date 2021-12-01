@@ -15,7 +15,7 @@ const router = Router();
  * Inserts a message into emails table for processing by the email worker.
  */
 router.post('/', [...emailMessage], async (req: Request, res: Response) => {
-    const { email, name, message, category } = req.body as EmailRequest;
+    const { email, name, message, category, cc } = req.body as EmailRequest;
     const id = extractOptionalId(req);
     const domain = getDomain(req);
 
@@ -23,7 +23,7 @@ router.post('/', [...emailMessage], async (req: Request, res: Response) => {
         const emailData: InsertEmail = {
             user_id: id,
             to: process.env.EMAIL_RECIPIENT || 'brian@whosaidtrue.com',
-            cc: email,
+            cc: cc,
             // remove https:// from domain to avoid inserting escape characters. Otherwise this will become https:&#x2F;&#x2F;
             subject: validator.escape(`[${category}] - Sent by ${name} from ${domain.replace('https://', '')}`),
             text: validator.escape(message) // removes JS so that whoever opens these emails doesn't get hacked
