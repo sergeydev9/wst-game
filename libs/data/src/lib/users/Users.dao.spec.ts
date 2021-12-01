@@ -34,11 +34,6 @@ describe('Users', () => {
             const { rows } = await users.updateEmail(userId, 'new@test.com');
             expect(rows[0].email).toEqual('new@test.com')
         })
-
-        it('returned email should be converted to lower case', async () => {
-            const { rows } = await users.updateEmail(userId, 'new@test.com'.toUpperCase());
-            expect(rows[0].email).toEqual('new@test.com')
-        })
     })
 
     describe('register', () => {
@@ -255,7 +250,7 @@ describe('Users', () => {
 
         it('should create a new reset code and return the email address', async () => {
             const { rows } = await users.upsertResetCode(userEmail, '1234');
-            expect(rows[0].email).toEqual(userEmail)
+            expect(rows[0].user_email).toEqual(userEmail)
         })
 
         it('should update and not insert if user already has a code', async () => {
@@ -264,7 +259,7 @@ describe('Users', () => {
             const { rows } = await users.upsertResetCode(userEmail, '1235'); // upsert again
             const secondTotal = await pool.query('SELECT * FROM reset_codes'); // get all codes after second upsert
 
-            expect(rows[0].email).toEqual(userEmail) // got email back
+            expect(rows[0].user_email).toEqual(userEmail) // got email back
             expect(secondTotal.rows.length).toEqual(1) // it didn't insert a second one
             expect(secondTotal.rows[0].code).not.toEqual(firstTotal.rows[0].code) // it correctly updated the first one
 
