@@ -16,7 +16,7 @@ export class OneLiners extends Dao {
      *
      * @returns {Promise<QueryResult>} [{text: string, clean: boolean}]
      */
-    getSelection(clean?: boolean): Promise<QueryResult> {
+    getSelection(clean?: boolean): Promise<QueryResult<{ text: string, clean: boolean }>> {
         let query: { text: string, values?: boolean[] };
 
         if (clean) {

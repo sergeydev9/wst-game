@@ -1,16 +1,17 @@
+import { QueryResult } from 'pg';
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
 import { Request, Response, Router } from 'express';
 import { logError } from '@whosaidtrue/logger';
 import { getDomain } from '../../getDomain';
 import { oneLiners } from '../../db';
-import { QueryResult } from 'pg';
+import addNewLines from '../../addNewLines';
 
 const router = Router();
 
 /**
  * Gets 10 randomly selected one liners
  *
- * Requests that come from regular domain return only non-clean one liners
+ * Requests that come from regular domain return clean and non-clean one liners
  *
  * Requests that come from the 4 schools domain retun only clean one liners
  */
@@ -27,7 +28,13 @@ router.get('/', async (req: Request, res: Response) => {
             result = await oneLiners.getSelection(true);
         }
 
-        return res.status(200).json({ oneLiners: result.rows })
+        // replace escaped newlines with unescaped new lines
+        const processed = result.rows.map(oneLiner => {
+            oneLiner.text = addNewLines(oneLiner.text);
+            return oneLiner;
+        })
+
+        return res.status(200).json({ oneLiners: processed })
     } catch (e) {
         logError('Error while fetching one liner selection', e);
         res.status(500).send(ERROR_MESSAGES.unexpected);
