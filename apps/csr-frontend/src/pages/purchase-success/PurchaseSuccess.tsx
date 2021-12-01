@@ -58,8 +58,8 @@ const PurchaseSuccess: React.FC = () => {
     }
 
     return (
-
-        <NoFlexBox className="w-28rem mx-4 sm:mx-auto px-10 text-center">
+      <div className="px-5">
+        <NoFlexBox className="mx-auto px-10 text-center w-28rem max-w-full">
             {/* header */}
             <div className="flex flex-row gap-4 place-content-center w-full text-center mb-4">
                 <Popper />
@@ -72,7 +72,7 @@ const PurchaseSuccess: React.FC = () => {
             {/* card */}
             <DeckCard
                 sfw={deck.sfw}
-                className="drop-shadow-sm border relative p-2 pb-8 border-purple-subtle-stroke rounded-3xl mb-10 mx-auto"
+                className="drop-shadow-sm border relative p-2 pb-8 border-purple-subtle-stroke rounded-3xl mb-10 mx-auto max-w-full"
                 noPointer={true}
                 name={deck.name}
                 thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'}
@@ -87,7 +87,7 @@ const PurchaseSuccess: React.FC = () => {
             <Link to="/decks" onClick={() => dispatch(clearGame())} className="text-blue-base text-lg underline font-bold block my-10">Return to All Question Decks</Link>
 
         </NoFlexBox>
-
+      </div>
     )
 }
 
