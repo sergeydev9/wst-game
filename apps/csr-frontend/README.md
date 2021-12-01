@@ -13,7 +13,7 @@ This application requires the following variables to be specified at build time:
 - NX_PAYPAL_CLIENT_ID
 - NX_IS_FOR_SCHOOLS
 - NX_GA_TRACKING_ID
-- GAME_CODE_PATH
+- NX_DOMAIN
 
 ## Building for production
 
