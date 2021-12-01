@@ -47,22 +47,17 @@ const NumberTrueGuess: React.FC<NumberTrueGuessProps> = ({ submitHandler, questi
                     text={questionText} />
                 <SliderInput max={totalPlayers} changeHandler={valueHandler} />
             </GameContentCard>
-            <div className={`w-52 mx-auto ${isDisabled && 'opacity-40 pointer-events-none'}`}>
-                <div className="flex w-max h-max relative">
-                    <span className={`${pulsing && !isDisabled && "animate-ping-slow"} bg-blue-base w-full h-full inline-flex rounded-3xl absolute opacity-75`}>
-                    </span>
-                    <Button
-                        className="inline-flex relative"
-                        disabled={isDisabled}
-                        onClick={() => submitHandler(value)}
-                        type="button">
-                        Final Answer ?!
-                    </Button>
-
-                </div>
-
+            <div className={`w-52 mx-auto relative ${isDisabled && 'opacity-40 pointer-events-none'}`}>
+                  <span className={`${pulsing && !isDisabled && 'bg-blue-base animate-ping-slow'} absolute w-full h-full inline-flex rounded-full opacity-75 pointer-events-none`}>
+                  </span>
+                  <Button
+                      className="w-full"
+                      disabled={isDisabled}
+                      onClick={() => submitHandler(value)}
+                      type="button">
+                      Lock It In!
+                  </Button>
             </div>
-
         </>
     )
 
