@@ -13,6 +13,6 @@ export default tw.input<TextInputProps>`
         px-3
         py-3
         placeholder-basic-gray
-        text-base
+        text-sm
         rounded-xl
     `;

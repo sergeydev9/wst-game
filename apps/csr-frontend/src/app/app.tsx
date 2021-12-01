@@ -48,68 +48,66 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <BrowserRouter>
-      <SocketProvider>
-        <Layout>
-          <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
-            <Route exact path="/faq">
-              <Faq />
-            </Route>
-            <Route exact path="/game/invite">
-              <Invite />
-            </Route>
-            <Route exact path='/contact-us' >
-              <ContactUs />
-            </Route>
-            <Route exact path='/create-account' >
-              <CreateAccount />
-            </Route>
-            <Route path='/game/:access_code'>
-              <ChooseName />
-            </Route>
-            <Route path='/play'>
-              <Play />
-            </Route>
-            <Route exact path='/login'>
-              <Login />
-            </Route>
-            <Route exact path='/decks'>
-              <Decks />
-            </Route>
-            <GuardedRoute path='/account' exact >
-              <MyAccount />
-            </GuardedRoute>
-            <Route exact path='/reset/send-email'>
-              <SendResetForm />
-            </Route>
-            <Route exact path="/reset/enter-code">
-              <EnterCode />
-            </Route>
-            <Route exact path="/reset/new-pass">
-              <NewPassword />
-            </Route>
-            <Route exact path="/purchase-success">
-              <PurchaseSuccess />
-            </Route>
-            <Route exact path="/privacy-policy">
-              <PrivacyPolicy />
-            </Route>
-            <Route exact path="/thanks">
-              <Thanks />
-            </Route>
-            <Route exact path="/terms-and-conditions">
-              <TermsAndConditions />
-            </Route>
-            <Route path="*" >
-              <Home />
-            </Route>
-          </Switch>
-        </Layout>
-      </SocketProvider>
-    </BrowserRouter>
+    <SocketProvider>
+      <Layout>
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route exact path="/faq">
+            <Faq />
+          </Route>
+          <Route exact path="/game/invite">
+            <Invite />
+          </Route>
+          <Route exact path='/contact-us' >
+            <ContactUs />
+          </Route>
+          <Route exact path='/create-account' >
+            <CreateAccount />
+          </Route>
+          <Route path='/game/:access_code'>
+            <ChooseName />
+          </Route>
+          <Route path='/play'>
+            <Play />
+          </Route>
+          <Route exact path='/login'>
+            <Login />
+          </Route>
+          <Route exact path='/decks'>
+            <Decks />
+          </Route>
+          <GuardedRoute path='/account' exact >
+            <MyAccount />
+          </GuardedRoute>
+          <Route exact path='/reset/send-email'>
+            <SendResetForm />
+          </Route>
+          <Route exact path="/reset/enter-code">
+            <EnterCode />
+          </Route>
+          <Route exact path="/reset/new-pass">
+            <NewPassword />
+          </Route>
+          <Route exact path="/purchase-success">
+            <PurchaseSuccess />
+          </Route>
+          <Route exact path="/privacy-policy">
+            <PrivacyPolicy />
+          </Route>
+          <Route exact path="/thanks">
+            <Thanks />
+          </Route>
+          <Route exact path="/terms-and-conditions">
+            <TermsAndConditions />
+          </Route>
+          <Route path="*" >
+            <Home />
+          </Route>
+        </Switch>
+      </Layout>
+    </SocketProvider>
   );
 };
 

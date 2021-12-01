@@ -13,7 +13,7 @@ export interface ModalProps extends Modal.Props {
 const WstModal: React.FC<ModalProps> = ({ children, onRequestClose, hideClose, ...rest }) => {
     return (
         <Modal onRequestClose={onRequestClose} {...rest} >
-            {!hideClose && <GrFormClose className="absolute top-4 right-4 text-4xl z-10 font-black cursor-pointer sm:top-6 sm:right-6" onClick={onRequestClose} />}
+            {!hideClose && <GrFormClose className="absolute right-1 sm:right-6 sm:top-8 top-4 text-4xl z-10 font-black cursor-pointer" onClick={onRequestClose} />}
             {children}
         </Modal>
     )
