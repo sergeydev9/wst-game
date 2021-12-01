@@ -5,7 +5,7 @@ export const shorthands: ColumnDefinitions | undefined = undefined;
 export async function up(pgm: MigrationBuilder): Promise<void> {
     pgm.addColumn('games', {
         access_code_ref: {
-            type: 'varchar(4)',
+            type: 'varchar(10)',
             notNull: false
         }
     });
