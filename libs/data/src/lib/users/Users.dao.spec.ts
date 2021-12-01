@@ -310,4 +310,31 @@ describe('Users', () => {
         })
 
     })
+
+    describe('convertGuestToUser', () => {
+      const userEmail = 'test_register@test.com';
+      const userPassword = 'password12345';
+      const userDomain = 'www.test.com';
+
+      beforeEach(async () => {
+        await users.createGuest(userEmail, userDomain);
+      });
+
+      it('should convert guest account to user account', async () => {
+          const { rows } = await users.convertGuestToUser(userEmail, userPassword);
+          expect(rows.length).toEqual(1);
+          expect(rows[0].id).toBeDefined();
+          expect(rows[0].email).toEqual(userEmail);
+          expect(rows[0].roles.length).toEqual(1);
+          expect(rows[0].roles[0]).toEqual('user');
+      });
+
+      it('should encrypt the password', async () => {
+          await users.convertGuestToUser(userEmail, userPassword);
+          const { rows } = await users.pool.query({ text: 'SELECT * FROM users WHERE email = $1', values: [userEmail] });
+          const { password } = rows[0];
+
+          expect(password.startsWith('$2a$08$')).toEqual(true);
+      })
+    });
 })

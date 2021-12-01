@@ -261,8 +261,8 @@ describe('user routes', () => {
                 .expect(404, done)
         })
 
-        it('should respond with 403 if reset count > 3', async () => {
-            mockedRedis.incr.mockResolvedValue(4)
+        it('should respond with 403 if reset count > 10', async () => {
+            mockedRedis.incr.mockResolvedValue(11)
 
             const response = await supertest(app)
                 .post('/user/send-reset')
