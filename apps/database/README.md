@@ -163,6 +163,7 @@ updated_at | timestamptz | no | no | now()
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
 access_code | varchar(10) | yes | yes
+access_code_ref | varchar(4) | yes | no
 status | varchar(100) | no | no
 total_questions | smallint | no | no | 0
 current_question_index | smallint | no | no | 1
@@ -195,7 +196,7 @@ updated_at | timestamptz | no | no | now()
 | Column Name | Type | Can Be Null | Unique | Default | Reference | On Delete Reference
 ---| --- | --- | --- | --- | --- | ---
 id | integer | no | yes
-player_name | citext | no | no
+player_name | citext (max 26 characters) | no | no
 game_id | integer | no | no | | games | CASCADE
 status | varchar(100) | null | no | initialized
 created_at | timestamptz | no | no | now()

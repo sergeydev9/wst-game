@@ -9,5 +9,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     `)
 }
 
-// export async function down(pgm: MigrationBuilder): Promise<void> {
-// }
+export async function down(pgm: MigrationBuilder): Promise<void> {
+    pgm.dropConstraint('game_players', 'name_length_limit');
+}

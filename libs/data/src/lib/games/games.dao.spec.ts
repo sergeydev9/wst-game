@@ -207,4 +207,32 @@ describe('Games', () => {
         })
     })
 
+    describe('end', () => {
+        let gameId: number;
+        let accessCode: string;
+
+        beforeEach(async () => {
+            // create a game
+            const { rows } = await games.create(userId, deckId, 'www.test.com');
+            const game = rows[0];
+            gameId = game.id;
+            accessCode = game.access_code;
+
+
+
+        })
+
+        it('access_code, access_code_ref, and status should all have correct values', async () => {
+
+            await games.endGame(gameId);
+
+            const { rows } = await games.getById(gameId);
+            const actual = rows[0];
+
+            expect(actual.access_code_ref).toEqual(accessCode);
+            expect(actual.access_code).toBeNull();
+            expect(actual.status).toEqual('finished')
+        })
+    })
+
 })
