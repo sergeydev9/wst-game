@@ -77,7 +77,7 @@ class Users extends Dao {
                 text: `
                     UPDATE users
                     SET password = crypt($1, gen_salt('bf', 8))
-                    WHERE email = LOWER($2)
+                    WHERE LOWER(email) = LOWER($2)
                     RETURNING id, email, array_to_json(roles) AS roles`,
                 values: [password, email]
             }
@@ -243,7 +243,7 @@ class Users extends Dao {
      */
     public login(email: string, password: string): Promise<QueryResult> {
         const query = {
-            text: 'SELECT id, email, array_to_json(roles) AS roles FROM users WHERE email = LOWER($1) AND password = crypt($2, password)',
+            text: 'SELECT id, email, array_to_json(roles) AS roles FROM users WHERE LOWER(email) = LOWER($1) AND password = crypt($2, password)',
             values: [email, password]
         }
         return this._pool.query(query)
@@ -276,7 +276,7 @@ class Users extends Dao {
                     text: `
                             SELECT id, email, array_to_json(roles) AS roles
                             FROM users
-                            WHERE email = LOWER($1)
+                            WHERE LOWER(email) = LOWER($1)
                             AND password IS NULL;
                         `,
                     values: [email]
