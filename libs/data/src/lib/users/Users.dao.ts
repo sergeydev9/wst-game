@@ -295,7 +295,7 @@ class Users extends Dao {
     }
 
     /**
-     * Converts user row from a guest to a user.
+     * Attempts to converts user row from a guest to a user.
      *
      * Called from the 'Create Account' flow.
      *
@@ -304,7 +304,7 @@ class Users extends Dao {
      * @return  {Promise<QueryResult>} {id, email, roles[]}
      * @memberof Users
      */
-    public async convertGuestToUser(email: string, password: string): Promise<QueryResult> {
+    public async attemptConvertGuestToUser(email: string, password: string): Promise<QueryResult> {
       const query = {
         text: `
           UPDATE users

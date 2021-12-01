@@ -122,8 +122,9 @@ describe('user routes', () => {
 
     describe('[POST] /register', () => {
 
-        it('should return 201 and a token payload if db response has content', async () => {
+        it('should return 201 and a token payload if db response has content - new user path', async () => {
             // set mock value
+            mockedUsers.attemptConvertGuestToUser.mockResolvedValue({ rows: [] } as QueryResult);
             mockedUsers.register.mockResolvedValue({ rows: [{ id: 1, email: 'email@email.com', roles: ["user"], notifications: false }] } as QueryResult)
 
             const { body } = await supertest(app)
@@ -143,8 +144,32 @@ describe('user routes', () => {
             expect(user.roles).toEqual(["user"])
         })
 
+        it('should return 201 and a token payload if db response has content - guest path', async () => {
+            // set mock value
+            mockedUsers.attemptConvertGuestToUser.mockResolvedValue({ rows: [{ id: 1, email: 'guest@example.com', roles: ["user"]}] } as QueryResult);
+
+            const { body } = await supertest(app)
+                .post('/user/register')
+                .send({ email: 'email@test.com', password: 'password123' })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(201)
+
+            expect(mockedUsers.register).not.toHaveBeenCalled()
+
+            // response should be a valid JWT token
+            expect(validator.isJWT(body.token)).toEqual(true)
+
+            // JWT token payload has expected attributes
+            const { user } = jwt.decode(body.token, { json: true })
+            expect(user.id).toEqual(1)
+            expect(user.email).toEqual('guest@example.com')
+            expect(user.roles).toEqual(["user"])
+        })
+
         it('should return 422 if an account already exists for that email', (done) => {
             // set mock value
+            mockedUsers.attemptConvertGuestToUser.mockResolvedValue({ rows: [] } as QueryResult);
             mockedUsers.register.mockRejectedValue(new DatabaseError("duplicate key value violates unique constraint \"users_email_key\"", 1, "error"))
 
             supertest(app)
@@ -157,6 +182,7 @@ describe('user routes', () => {
 
         it('should return 500 if login request rejects due to unknown error (e.g. cannot connect to db)', (done) => {
             // set mock value
+            mockedUsers.attemptConvertGuestToUser.mockResolvedValue({ rows: [] } as QueryResult);
             mockedUsers.register.mockRejectedValue('error')
 
             supertest(app)

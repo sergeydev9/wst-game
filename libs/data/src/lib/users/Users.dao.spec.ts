@@ -311,30 +311,49 @@ describe('Users', () => {
 
     })
 
-    describe('convertGuestToUser', () => {
-      const userEmail = 'test_register@test.com';
+    describe('attemptConvertGuestToUser', () => {
+      const guestEmail = 'guest@test.com';
+      const guestPassword = 'password12345';
+      const guestDomain = 'www.test.com';
+
+      const userEmail = 'user@test.com';
       const userPassword = 'password12345';
       const userDomain = 'www.test.com';
 
       beforeEach(async () => {
-        await users.createGuest(userEmail, userDomain);
+        await users.createGuest(guestEmail, guestDomain);
+        await users.register(userEmail, userPassword, userDomain);
       });
 
       it('should convert guest account to user account', async () => {
-          const { rows } = await users.convertGuestToUser(userEmail, userPassword);
+          const { rows } = await users.attemptConvertGuestToUser(guestEmail, guestPassword);
           expect(rows.length).toEqual(1);
           expect(rows[0].id).toBeDefined();
-          expect(rows[0].email).toEqual(userEmail);
+          expect(rows[0].email).toEqual(guestEmail);
           expect(rows[0].roles.length).toEqual(1);
           expect(rows[0].roles[0]).toEqual('user');
       });
 
       it('should encrypt the password', async () => {
-          await users.convertGuestToUser(userEmail, userPassword);
-          const { rows } = await users.pool.query({ text: 'SELECT * FROM users WHERE email = $1', values: [userEmail] });
+          await users.attemptConvertGuestToUser(guestEmail, guestPassword);
+          const { rows } = await users.pool.query({ text: 'SELECT * FROM users WHERE email = $1', values: [guestEmail] });
           const { password } = rows[0];
 
           expect(password.startsWith('$2a$08$')).toEqual(true);
-      })
+      });
+
+      it('should not update a non-guest account', async () => {
+          const { rows } = await users.attemptConvertGuestToUser(userEmail, userPassword);
+          expect(rows.length).toEqual(0);
+      });
+
+      it('should ignore email casing', async () => {
+          const { rows } = await users.attemptConvertGuestToUser(guestEmail.toUpperCase(), userPassword);
+          expect(rows.length).toEqual(1);
+          expect(rows[0].id).toBeDefined();
+          expect(rows[0].email).toEqual(guestEmail);
+          expect(rows[0].roles.length).toEqual(1);
+          expect(rows[0].roles[0]).toEqual('user');
+      });
     });
 })

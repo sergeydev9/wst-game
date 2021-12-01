@@ -69,15 +69,15 @@ router.post('/register', [...validateAuth], async (req: Request, res: Response) 
     try {
         let newUser;
         const domain = getDomain(req);
-        const convertResult = await users.convertGuestToUser(email, password);
+        const { rows } = await users.attemptConvertGuestToUser(email, password);
 
-        if (convertResult && convertResult.rowCount > 0) {
+        if (rows.length) {
           // User already has guest account.
-          newUser = { id: convertResult.rows[0].id, email: convertResult.rows[0].email, roles: convertResult.rows[0].roles };
+          newUser = rows[0];
         } else {
           // User does not have guest account. Create new user account.
           const { rows } = await users.register(email, password, domain);
-          newUser = { id: rows[0].id, email: rows[0].email, roles: rows[0].roles };
+          newUser = rows[0];
         }
 
         //send token if success
