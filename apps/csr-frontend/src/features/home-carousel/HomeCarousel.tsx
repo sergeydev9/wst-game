@@ -40,16 +40,24 @@ const rules = [
     title: 'The Basics',
     image: './assets/rule-1.png',
     content: (
-      <p>
-        A game of True/False questions that players answer anonymously. Each
-        question has two parts.
-      </p>
+      <>
+        <p>
+          It's a simple game where players answer a series of interesting
+          True/False questions.
+        </p>
+        <p>Each question has two parts.</p>
+      </>
     ),
   },
   {
     title: 'Part 1 is about YOU',
     image: './assets/rule-2.png',
-    content: <p>Answer whether the question is True or False for YOU.</p>,
+    content: (
+      <>
+        <p>Answer whether the question is True or False for YOU.</p>
+        <p>Don't worry. All answers are completely anonymous.</p>
+      </>
+    ),
   },
   {
     title: 'Part 2 is about your GROUP',
