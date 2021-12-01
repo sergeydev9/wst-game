@@ -342,19 +342,64 @@ class Games extends Dao {
 
     /**
      * Set game status to finished, and end time to now.
+     *
+     * Also sets access_code_ref to the old value of the access_code
      * @param gameId
      * @returns
      */
-    public endGame(gameId: number): Promise<QueryResult> {
-        const query = {
-            text: `
-            UPDATE games
-            SET end_date = $1, status = 'finished', access_code = NULL
-            WHERE id = $2`,
-            values: [new Date().toISOString(), gameId]
-        }
+    public async endGame(gameId: number): Promise<QueryResult> {
+        // start transaction
+        const client = await this.pool.connect();
 
-        return this.pool.query(query);
+        try {
+            await client.query('BEGIN');
+
+            // get old access_code and check if it's null
+            // not all callers have access to the old access code, so
+            // this is required.
+            const oldCodeQuery = {
+                text: `
+                    SELECT access_code
+                    FROM games
+                    WHERE id = $1
+                `,
+                values: [gameId]
+            }
+
+            const { rows } = await client.query(oldCodeQuery);
+            const { access_code } = rows[0];
+
+            let updateQuery;
+
+            // should never actually get called, but just in case
+            if (!access_code) {
+                updateQuery = {
+                    text: `
+                        UPDATE games
+                        SET end_date = $1, status = 'finished'
+                        WHERE id = $2`,
+                    values: [new Date().toISOString(), gameId]
+                }
+
+            } else {
+                updateQuery = {
+                    text: `
+                        UPDATE games
+                        SET end_date = $1, status = 'finished', access_code_ref = $3, access_code = NULL
+                        WHERE id = $2`,
+                    values: [new Date().toISOString(), gameId, access_code]
+                }
+            }
+
+            const result = await client.query(updateQuery);
+            await client.query('COMMIT');
+            return result;
+
+        } catch (e) {
+            await client.query('ROLLBACK');
+        } finally {
+            client.release()
+        }
     }
 
     /**

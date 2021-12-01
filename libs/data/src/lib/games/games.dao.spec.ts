@@ -217,9 +217,6 @@ describe('Games', () => {
             const game = rows[0];
             gameId = game.id;
             accessCode = game.access_code;
-
-
-
         })
 
         it('access_code, access_code_ref, and status should all have correct values', async () => {
@@ -232,6 +229,17 @@ describe('Games', () => {
             expect(actual.access_code_ref).toEqual(accessCode);
             expect(actual.access_code).toBeNull();
             expect(actual.status).toEqual('finished')
+        })
+
+        it('access_code_ref should not be null if function called twice', async () => {
+
+            await games.endGame(gameId);
+            await games.endGame(gameId);
+
+            const { rows } = await games.getById(gameId);
+            const actual = rows[0];
+
+            expect(actual.access_code_ref).toEqual(accessCode);
         })
     })
 
