@@ -1,5 +1,5 @@
 import { Pool, QueryResult } from 'pg';
-import { logger, logError } from '@whosaidtrue/logger';
+import { logger } from '@whosaidtrue/logger';
 import { getAndUpdateQuery, } from '../game-questions/GameQuestions.dao';
 import { getQuestionData } from '../questions/Questions.dao';
 import { Deck, GameStatus, InsertGame, JoinGameResult, StartGameResult } from '@whosaidtrue/app-interfaces';
@@ -100,8 +100,8 @@ class Games extends Dao {
                         SELECT * FROM active_questions WHERE deck_id = $2 ORDER BY random()
                     ),
                     new_game AS ( --create new game
-                        INSERT INTO games (access_code, status, deck_id, host_id, domain)
-                        VALUES (UPPER($4), 'lobby', $2, $1, $3)
+                        INSERT INTO games (access_code, access_code_ref, status, deck_id, host_id, domain)
+                        VALUES (UPPER($4), UPPER($4), 'lobby', $2, $1, $3)
                         RETURNING games.id, games.access_code
                     ), ins AS (
                         INSERT INTO game_questions (game_id, question_id)
@@ -348,58 +348,16 @@ class Games extends Dao {
      * @returns
      */
     public async endGame(gameId: number): Promise<QueryResult> {
-        // start transaction
-        const client = await this.pool.connect();
 
-        try {
-            await client.query('BEGIN');
-
-            // get old access_code and check if it's null
-            // not all callers have access to the old access code, so
-            // this is required.
-            const oldCodeQuery = {
-                text: `
-                    SELECT access_code
-                    FROM games
-                    WHERE id = $1
-                `,
-                values: [gameId]
-            }
-
-            const { rows } = await client.query(oldCodeQuery);
-            const { access_code } = rows[0];
-
-            let updateQuery;
-
-            // should never actually get called, but just in case
-            if (!access_code) {
-                updateQuery = {
-                    text: `
-                        UPDATE games
-                        SET end_date = $1, status = 'finished'
-                        WHERE id = $2`,
-                    values: [new Date().toISOString(), gameId]
-                }
-
-            } else {
-                updateQuery = {
-                    text: `
-                        UPDATE games
-                        SET end_date = $1, status = 'finished', access_code_ref = $3, access_code = NULL
-                        WHERE id = $2`,
-                    values: [new Date().toISOString(), gameId, access_code]
-                }
-            }
-
-            const result = await client.query(updateQuery);
-            await client.query('COMMIT');
-            return result;
-
-        } catch (e) {
-            await client.query('ROLLBACK');
-        } finally {
-            client.release()
+        const query = {
+            text: `
+                UPDATE games
+                SET end_date = $1, status = 'finished', access_code = NULL
+                WHERE id = $2`,
+            values: [new Date().toISOString(), gameId]
         }
+
+        return this.pool.query(query);
     }
 
     /**
@@ -411,10 +369,10 @@ class Games extends Dao {
     public endGameIfHost(gameId: number, userId: number): Promise<QueryResult> {
         const query = {
             text: `
-            UPDATE games
-            SET end_date = $1, status = 'finished'
-            WHERE id = $2
-            AND host_id = $3`,
+                UPDATE games
+                SET end_date = $1, status = 'finished'
+                WHERE id = $2
+                AND host_id = $3`,
             values: [new Date().toISOString(), gameId, userId]
         }
 
