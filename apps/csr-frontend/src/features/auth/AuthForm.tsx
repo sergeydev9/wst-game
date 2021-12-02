@@ -125,7 +125,9 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
             <div className="mb-3 h-2"></div>
             {/* submit */}
-            <Button color="blue" data-cy="login-submit" type="submit">{buttonlabel}</Button>
+            <div className="flex justify-center">
+                <Button color="blue" data-cy="login-submit" type="submit">{buttonlabel}</Button>
+            </div>
         </form>
     )
 }

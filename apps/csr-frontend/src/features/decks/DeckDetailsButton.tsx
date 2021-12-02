@@ -5,7 +5,7 @@ import { api } from '../../api'
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { isLoggedIn, selectIsGuest } from '../auth/authSlice';
 import { createGame, setGameStatus, setGameDeck } from '../game/gameSlice';
-import { setFullModal, showError } from '../modal/modalSlice';
+import { setFullModal, showError, setCameFromDeckDetails } from '../modal/modalSlice';
 import { addToCart } from '../cart/cartSlice';
 import { useHistory } from 'react-router';
 
@@ -25,6 +25,7 @@ const DeckDetailsButton: React.FC<DeckDetailsButtonProps> = ({ isOwned, deck }) 
     // that user can go straight to checkout after logging in
     const addToCartThenGoToAuth = () => {
         dispatch(addToCart(deck));
+        dispatch(setCameFromDeckDetails(true));
         dispatch(setFullModal('login'));
     }
 

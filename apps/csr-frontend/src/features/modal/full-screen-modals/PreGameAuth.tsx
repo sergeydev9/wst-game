@@ -217,7 +217,9 @@ const PreGameAuth: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
 
                 <div className="mb-3 h-2"></div>
                 {/* submit */}
-                <Button color="blue" data-cy="login-submit" type="submit">Log In</Button>
+                <div className="flex justify-center">
+                    <Button color="blue" data-cy="login-submit" type="submit">Log In</Button>
+                </div>
             </form>
         </ModalContent >
     )
