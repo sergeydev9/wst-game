@@ -14,7 +14,6 @@ const HostActions: React.FC = () => {
     const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
     const dispatch = useAppDispatch();
     const gameStatus = useAppSelector(selectGameStatus);
-    const questionStatus = useAppSelector(selectQuestionStatus);
     const screen = useAppSelector(currentScreen);
 
     useEffect(() => {
@@ -38,10 +37,9 @@ const HostActions: React.FC = () => {
         }
     }, [timer, dispatch, screen]);
 
-    const isRequired = (gameStatus === 'lobby' || questionStatus === 'results' || questionStatus === 'answer' || screen === 'answerResults' || screen === 'scoreResults');
 
     return (
-        <HostActionsBox required={isRequired}>
+        <HostActionsBox>
             {gameStatus === 'lobby' && <StartGame />}
             {screen === 'answerSubmit' && <DuringQuestion />}
             {screen === 'waitingRoom' && gameStatus === 'inProgress' && <MoveToAnswer />}
