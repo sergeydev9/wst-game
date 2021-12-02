@@ -1,17 +1,23 @@
 interface InfoPageProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
-    title: string;
+  title: string;
 }
 
 /**
  * Used for terms and conditions + privacy policy.
  */
-const InfoPage: React.FC<InfoPageProps> = ({ title, children, ...rest }) => {
-    return (
-        <div className="w-10/12 text-lg font-bold text-black rounded-t-2xl filter drop-shadow-card mx-auto">
-            <div className="block text-center rounded-t-2xl bg-purple-subtle-fill w-full border-b boder-purple-subtle-stroke text-xl p-6">{title}</div>
-            <div className="flex flex-col gap-4 w-full bg-white-ish px-4 text-sm py-6">{children}</div>
-        </div>
-    )
-}
+const InfoPage: React.FC<InfoPageProps> = ({ children, title }) => {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-white-ish break-words filter drop-shadow-card mx-auto overflow-hidden px-4 rounded-2xl whitespace-pre-wrap sm:px-6 lg:px-8">
+        <article className="prose-sm md:prose max-w-none md:max-w-none">
+          <h1 className="bg-purple-subtle-fill border-b boder-purple-subtle-stroke py-4 text-center -mx-4 sm:-mx-6 sm:py-6 lg:-mx-8">
+            {title}
+          </h1>
+          {children}
+        </article>
+      </div>
+    </div>
+  );
+};
 
 export default InfoPage;

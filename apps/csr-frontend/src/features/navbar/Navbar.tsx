@@ -16,7 +16,7 @@ const NavBar: React.FC = () => {
   return (
     <nav
       className={classNames(
-        'w-full flex flex-row mb-20 items-center rounded-b-3xl overscroll-contain h-20 px-5',
+        'flex flex-row h-20 items-center mb-4 overscroll-contain px-5 rounded-b-3xl w-full sm:mb-6 lg:mb-8',
         location.pathname === '/' && !inGame
           ? 'bg-transparent justify-end'
           : 'bg-purple-subtle-fill justify-between'

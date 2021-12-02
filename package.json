@@ -61,6 +61,7 @@
     "@stripe/react-stripe-js": "^1.4.1",
     "@stripe/stripe-js": "^1.17.1",
     "@tailwindcss/forms": "^0.3.3",
+    "@tailwindcss/typography": "^0.4.1",
     "@types/react-router-dom": "^5.1.8",
     "@types/react-slick": "^0.23.7",
     "async-mutex": "^0.3.2",

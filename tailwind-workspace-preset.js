@@ -2,7 +2,7 @@ module.exports = {
   theme: {
     extend: {
       screens: {
-        'xs': '400px',
+        xs: '400px',
       },
       flex: {
         2: '2 2 0%',
@@ -129,9 +129,9 @@ module.exports = {
           '100%': { transform: 'scale(0)' },
         },
         ping: {
-          '75%':  {
+          '75%': {
             transform: `scale(1.5)`,
-            opacity: 0
+            opacity: 0,
           },
           '100%': {
             transform: `scale(1.5)`,
@@ -196,5 +196,6 @@ module.exports = {
       strategy: 'class',
     }),
     require('tailwindcss-interaction-variants'),
+    require('@tailwindcss/typography'),
   ],
 };
