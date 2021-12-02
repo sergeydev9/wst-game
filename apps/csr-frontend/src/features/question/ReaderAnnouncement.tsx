@@ -19,7 +19,6 @@ const ReaderAnnouncement: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = (
                 mount.removeChild(el)
             };
         }
-
     }, [el, mount])
 
     return createPortal(<Announcement />, el)

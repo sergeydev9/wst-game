@@ -419,6 +419,8 @@ const registerListeners = (socket: Socket, io: Server) => {
                     ack('ok')
                 }
 
+                // This just tells the UI on every client to display the message modal
+                sendToAll(types.SKIP_QUESTION);
             } catch (e) {
                 logError('Error while skipping question', e)
                 ack('error')

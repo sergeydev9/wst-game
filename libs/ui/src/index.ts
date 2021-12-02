@@ -54,5 +54,6 @@ export { default as OneLiners } from './lib/one-liners/OneLiners';
 export { default as TakingTooLong } from './lib/taking-too-long/TakingTooLong';
 export { default as SkipToResults } from './lib/skip-to-results/SkipToResults';
 export { default as SkipToResultsPlayerRow } from './lib/skip-to-results/SkipPlayerRow';
+export { default as HostSkippedQuestion } from './lib/host-skipped-question/HostSkippedQuestion';
 export * from './lib/typography/Typography';
 export * from './lib/fun-facts';

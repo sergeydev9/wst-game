@@ -36,6 +36,7 @@ export type MessageType = ''
     | "playerLeft"
     | "playerRemoved"
     | "scoreToolTip"
+    | "hostSkippedQuestion"
 
 
 export interface ModalState {
@@ -100,7 +101,10 @@ export const modalSlice = createSlice({
             state.messageType = 'error';
             state.messageContent = action.payload;
         },
-
+        showHostSkippedQuestion: (state) => {
+            state.messageType = 'hostSkippedQuestion';
+            state.isPersistent = false;
+        },
         showLoaderMessage: (state, action: PayloadAction<string>) => {
             state.showLoaderMessage = true;
             state.loaderMessage = action.payload;
@@ -157,7 +161,8 @@ export const {
     showLoaderMessage,
     clearLoaderMessage,
     setShowTakingTooLong,
-    setCameFromDeckDetails
+    setCameFromDeckDetails,
+    showHostSkippedQuestion
 } = modalSlice.actions;
 
 // selectors

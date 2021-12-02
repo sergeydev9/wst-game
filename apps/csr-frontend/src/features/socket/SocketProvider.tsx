@@ -18,7 +18,8 @@ import {
     showPlayerRemoved,
     setFullModal,
     showLoaderMessage,
-    clearLoaderMessage
+    clearLoaderMessage,
+    showHostSkippedQuestion
 } from "../modal/modalSlice";
 import {
     addPlayer,
@@ -292,6 +293,9 @@ export const SocketProvider: React.FC = ({ children }) => {
                 dispatch(setFunFacts(msg))
             })
 
+            connection.on(types.SKIP_QUESTION, () => {
+                dispatch(showHostSkippedQuestion());
+            })
 
             // move playe to game page if they should be there but aren't
             if (['inProgress', 'lobby', 'postGame'].includes(gameStatus) && location.pathname !== '/play') {

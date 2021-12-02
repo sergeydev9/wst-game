@@ -9,8 +9,8 @@ import { setFullModal } from '..';
 const FlashMessage: React.FC = () => {
     const dispatch = useAppDispatch();
     const showTakingTooLong = useAppSelector(selectShowTakingTooLong);
-    const mount = document.getElementById("tooltip")
-    const el = document.createElement("div")
+    const mount = document.getElementById("tooltip");
+    const el = document.createElement("div");
 
     useEffect(() => {
 
