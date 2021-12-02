@@ -2,7 +2,14 @@ import { types } from '@whosaidtrue/api-interfaces';
 import { PlayerRef } from '@whosaidtrue/app-interfaces';
 import { Lobby as LobbyUi } from "@whosaidtrue/ui";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectAccessCode, selectIsHost, selectPlayerName, selectPlayerId, selectPlayerList, removePlayer } from "./gameSlice";
+import {
+    selectAccessCode,
+    selectIsHost,
+    selectPlayerName,
+    selectPlayerId,
+    selectPlayerList,
+    selectGameStatus
+} from "./gameSlice";
 import useSocket from '../socket/useSocket';
 import { showError } from '../modal/modalSlice';
 import OneLiners from '../one-liners/OneLiners';
@@ -15,7 +22,8 @@ const Lobby: React.FC = () => {
     const isHost = useAppSelector(selectIsHost);
     const playerId = useAppSelector(selectPlayerId)
     const players = useAppSelector(selectPlayerList);
-    const playerName = useAppSelector(selectPlayerName)
+    const playerName = useAppSelector(selectPlayerName);
+    const gameStatus = useAppSelector(selectGameStatus)
 
     // get all players other than current user. Current user's name is displayed differently
     const otherPlayers = () => players.filter(p => p.id !== playerId);
@@ -47,7 +55,7 @@ const Lobby: React.FC = () => {
             isHost={isHost}
             otherPlayers={otherPlayers()}
             playerName={playerName}
-            footerMessage={'The host will start the game once all players have joined.'}
+            footerMessage={gameStatus === 'lobby' ? 'The host will start the game once all players have joined.' : 'You will automatically join the game when the next question begins'}
             handlerFactory={handlerFactory}>
             <OneLiners />
         </LobbyUi>
