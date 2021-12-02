@@ -153,5 +153,4 @@ export interface EmailRequest {
   message: string;
   category: string;
   name: string;
-  cc?: string;
 }
