@@ -56,7 +56,7 @@ const GameOptionsModal: React.FC = () => {
                 </Headline>
                 <Headline
                     onClick={() => dispatch(setFullModal('reportAnIssue'))}
-                    className="text-purple-light underline text-center cursor-pointer my-8">Report an issue</Headline>
+                    className="text-purple-light underline text-center cursor-pointer my-8">Report an Issue</Headline>
             </InviteLinks>
         </ModalContent>)
 }

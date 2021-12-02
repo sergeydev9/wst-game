@@ -162,7 +162,7 @@ const FullScreenModalController = () => {
                 </Suspense>
             </Modal>}
 
-            {/* Report an issue */}
+            {/* Report an Issue */}
             {currentModal === 'reportAnIssue' && <Modal isOpen={currentModal === 'reportAnIssue'} onRequestClose={close}>
                 <Suspense fallback={<Loading />}>
                     <ReportAnIssueModal />
