@@ -2,10 +2,10 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 import { useAppSelector } from '../../app/hooks';
-import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { selectAccessCode, selectPlayerName } from '../game/gameSlice';
 import InGameNav from './InGameNav';
 import LargeNav from './LargeNav';
+import logo from '../../assets/logo.svg';
 
 const NavBar: React.FC = () => {
   const gameCode = useAppSelector(selectAccessCode);
@@ -26,7 +26,7 @@ const NavBar: React.FC = () => {
         className={location.pathname === '/' && !inGame ? 'sr-only' : ''}
         to="/"
       >
-        <Logo className="w-14 h-14" />
+        <img className="block w-14 h-14" src={logo} alt="Who Said True?!" />
       </Link>
       {inGame ? <InGameNav /> : <LargeNav />}
     </nav>

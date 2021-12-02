@@ -1,8 +1,10 @@
-import { ReactComponent as Callout } from './callout.svg';
+import callout from '../../assets/callout.svg';
 
-const ReaderAnnouncement: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = () => {
+const ReaderAnnouncement: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> =
+  () => {
     return (
-        <div className={`
+      <div
+        className={`
         absolute
          mx-auto
          top-24
@@ -16,15 +18,22 @@ const ReaderAnnouncement: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = (
          border-2 gap-3
          border-purple-base
          w-max
+         max-w-full
          bg-white
          px-5
-         py-1
+         py-2
          flex
-         flex-row
          items-center
-         font-bold`
-        }><Callout />Heads Up! It's your turn to read</div>
-    )
-}
+         font-bold
+         whitespace-nowrap
+         overflow-hidden`}
+      >
+        <img className="block w-6 h-6 -mt-0.5" src={callout} alt="Callout" />
+        <span className="overflow-hidden overflow-ellipsis">
+          Heads Up! It's your turn to read
+        </span>
+      </div>
+    );
+  };
 
 export default ReaderAnnouncement;
