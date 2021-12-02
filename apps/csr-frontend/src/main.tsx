@@ -36,6 +36,7 @@ ReactDOM.render(
             currency: "USD",
             components: 'buttons',
             intent: 'capture',
+            'disable-funding': 'credit'
           }}>
             <Elements stripe={stripePromise}>
               <App />

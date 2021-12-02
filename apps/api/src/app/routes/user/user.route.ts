@@ -29,6 +29,8 @@ import {
 import { redisClient } from '../../redis';
 import { getDomain } from '../../getDomain';
 
+const ONE_DAY = 60 * 60 * 24 // in seconds
+
 const router = Router();
 
 /**
@@ -179,12 +181,15 @@ router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Re
         if (resetCount > 10) {
             return res.status(403).send('Reset limit reached')
         }
-
-        // expire the key
-        const ONE_DAY = 60 * 60 * 24 // in seconds
-        await redisClient.expire(resetKey, ONE_DAY);
-
         const { rows } = await users.upsertResetCode(email, code);
+
+        const currentCodeKey = `${email}:currentCodeCount`
+
+        // expire the reset key and delete any existing counters for the current code
+        await redisClient.pipeline()
+            .expire(resetKey, ONE_DAY)
+            .del(currentCodeKey)
+            .exec()
 
         // if no user was updated, that account doesn't exist
         if (!rows.length) {
@@ -203,7 +208,7 @@ router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Re
             }
         }
     } catch (e) {
-        logError('Error sending reset code', e)
+        logError('Error generating reset code', e)
         return res.status(500).send(ERROR_MESSAGES.unexpected)
     }
 })
@@ -216,7 +221,23 @@ router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Re
 router.post('/validate-reset', [...validateResetCode], async (req: Request, res: Response) => {
     const { email, code } = req.body as ResetCodeVerificationRequest;
 
+
     try {
+
+        const currentCodeKey = `${email}:currentCodeCount`; // count reset attempts for current code. Delete this key whenever a new code is generated
+        const counterRes = await redisClient
+            .pipeline()
+            .incr(currentCodeKey)
+            .expire(currentCodeKey, ONE_DAY)
+            .exec();
+
+        const count = counterRes[0][1];
+
+        // maximum 10 attempts per code
+        if (count && count > 10) {
+            return res.status(403).send('reset limit reached');
+        }
+
         const { rows } = await users.verifyResetCode(email, code);
 
         // if nothing was returned, code or email was incorrect.

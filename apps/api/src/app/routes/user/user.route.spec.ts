@@ -4,10 +4,10 @@ import { Application } from 'express';
 import { mocked } from 'ts-jest/utils';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
+import Redis from 'ioredis-mock/jest';
 
 // local
 import App from '../../App';
-import { redisClient } from '../../redis';
 import { creditSignup, users } from '../../db';
 import { emailService } from '../../services';
 import { signUserPayload } from '@whosaidtrue/middleware';
@@ -16,12 +16,22 @@ import { ClientResponse } from '@sendgrid/mail';
 const mockedUsers = mocked(users, true)
 const mockedSendgrid = mocked(emailService, true);
 const mockedCreditSignups = mocked(creditSignup, true);
-const mockedRedis = mocked(redisClient, true);
 
 jest.mock('../../db');
 jest.mock('../../services');
-jest.mock('../../redis');
-jest.mock('ioredis');
+
+jest.mock('ioredis', () => {
+    const redisMock = new Redis({
+        data: {
+            "resetRequests:overCapped@test.com": '10'
+        }
+    })
+    return function () {
+        return redisMock
+    }
+});
+
+
 
 describe('user routes', () => {
     let app: Application;
@@ -146,7 +156,7 @@ describe('user routes', () => {
 
         it('should return 201 and a token payload if db response has content - guest path', async () => {
             // set mock value
-            mockedUsers.attemptConvertGuestToUser.mockResolvedValue({ rows: [{ id: 1, email: 'guest@example.com', roles: ["user"]}] } as QueryResult);
+            mockedUsers.attemptConvertGuestToUser.mockResolvedValue({ rows: [{ id: 1, email: 'guest@example.com', roles: ["user"] }] } as QueryResult);
 
             const { body } = await supertest(app)
                 .post('/user/register')
@@ -233,6 +243,8 @@ describe('user routes', () => {
     })
 
     describe('[POST] /send-reset', () => {
+
+
         it('should return 422 if email is not valid', async () => {
             const { body } = await supertest(app)
                 .post('/user/send-reset')
@@ -247,7 +259,7 @@ describe('user routes', () => {
         })
 
         it('should respond with 202 if sendgrid responds with 202', (done) => {
-            mockedRedis.incr.mockResolvedValue(1)
+
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
             mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 202 } as ClientResponse, {}])
 
@@ -258,7 +270,6 @@ describe('user routes', () => {
         })
 
         it('should respond with 500 if sendgrid responds with something other than 202', (done) => {
-            mockedRedis.incr.mockResolvedValue(1)
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [1] } as QueryResult)
             mockedSendgrid.sendResetCode.mockResolvedValue([{ statusCode: 400 } as ClientResponse, {}])
             supertest(app)
@@ -268,7 +279,6 @@ describe('user routes', () => {
         })
 
         it('should respond with 500 if DB request fails', (done) => {
-            mockedRedis.incr.mockResolvedValue(1)
             mockedUsers.upsertResetCode.mockRejectedValue(new DatabaseError('error', 1, 'error'))
             supertest(app)
                 .post('/user/send-reset')
@@ -278,7 +288,6 @@ describe('user routes', () => {
 
 
         it('should respond with 404 if no records returned', (done) => {
-            mockedRedis.incr.mockResolvedValue(1)
             mockedUsers.upsertResetCode.mockResolvedValue({ rows: [] } as QueryResult);
 
             supertest(app)
@@ -288,11 +297,10 @@ describe('user routes', () => {
         })
 
         it('should respond with 403 if reset count > 10', async () => {
-            mockedRedis.incr.mockResolvedValue(11)
 
             const response = await supertest(app)
                 .post('/user/send-reset')
-                .send({ email: 'email@test.com' })
+                .send({ email: 'overCapped@test.com' })
                 .expect(403)
 
             expect(response.text).toEqual('Reset limit reached')
@@ -373,6 +381,7 @@ describe('user routes', () => {
         })
 
         it('should return 401 if no valid token', (done) => {
+
             mockedUsers.changePassword.mockResolvedValue({ rows: [] } as QueryResult)
             supertest(app)
                 .patch('/user/change-password')
@@ -415,7 +424,8 @@ describe('user routes', () => {
         })
 
         it('should respond with 401 if no records found. This means code was wrong.', done => {
-            mockedUsers.verifyResetCode.mockResolvedValue({ rows: [] } as QueryResult)
+            mockedUsers.verifyResetCode.mockResolvedValue({ rows: [] } as QueryResult);
+
             supertest(app)
                 .post('/user/validate-reset')
                 .send({ code: '1234', email: 'email@test.com' })
