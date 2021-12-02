@@ -55,5 +55,7 @@ export { default as TakingTooLong } from './lib/taking-too-long/TakingTooLong';
 export { default as SkipToResults } from './lib/skip-to-results/SkipToResults';
 export { default as SkipToResultsPlayerRow } from './lib/skip-to-results/SkipPlayerRow';
 export { default as HostSkippedQuestion } from './lib/host-skipped-question/HostSkippedQuestion';
+export { default as GuessAndValue } from './lib/guess-and-value/GuessAndValue';
+export { default as PointsEarned } from './lib/gameplay//points-earned/PointsEarned';
 export * from './lib/typography/Typography';
 export * from './lib/fun-facts';

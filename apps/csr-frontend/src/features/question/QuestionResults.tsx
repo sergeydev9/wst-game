@@ -8,10 +8,11 @@ import {
     selectScoreboard,
     selectSequenceIndex,
     selectPlayerPointsEarned,
-    selectNumPlayers
+    selectNumPlayers,
+    selectGroupTrue,
+    selectHasGuessed
 } from "./questionSlice";
 import { selectScoreTooltipDismissed, setShowScoreTooltip } from "../modal/modalSlice";
-import { selectGroupTrue, selectHasGuessed } from "..";
 import MostSimilarToYou from "../fun-facts/MostSimilarToYou";
 import { guessAsPercentage } from "../../util/functions";
 

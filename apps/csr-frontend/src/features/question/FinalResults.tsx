@@ -1,21 +1,31 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, FinalScores, Scoreboard, } from "@whosaidtrue/ui";
+import { Button, FinalScores, Scoreboard, GuessAndValue, PointsEarned } from "@whosaidtrue/ui";
 import {
     clearCurrentQuestion,
     clearGame,
     isLoggedIn,
     selectHasRatedApp,
-    selectPlayerScore,
-    selectScoreboard,
     setFullModal,
     useSocket
 } from "..";
+import {
+    selectCorrectAnswer,
+    selectGuessValue,
+    selectPlayerScore,
+    selectScoreboard,
+    selectNumPlayers,
+    selectHasGuessed,
+    selectGroupTrue,
+    selectPlayerPointsEarned
+} from "./questionSlice";
 import { clearHost } from '../host/hostSlice';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import RateApp from "../ratings/RateApp";
 import FunFacts from '../fun-facts/FunFacts';
 import RequestFreeCredit from "./RequestFreeCredit";
+import { guessAsPercentage } from "../../util/functions";
+
 
 const FinalResults: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -25,6 +35,14 @@ const FinalResults: React.FC = () => {
     const playerScore = useAppSelector(selectPlayerScore);
     const loggedIn = useAppSelector(isLoggedIn);
     const hasRatedApp = useAppSelector(selectHasRatedApp);
+    const totalPlayers = useAppSelector(selectNumPlayers);
+    const correctAnswer = useAppSelector(selectCorrectAnswer);
+    const guess = useAppSelector(selectGuessValue);
+    const hasGuessed = useAppSelector(selectHasGuessed);
+    const groupTrue = useAppSelector(selectGroupTrue);
+    const points = useAppSelector(selectPlayerPointsEarned);
+
+
 
     useEffect(() => {
         return () => {
@@ -45,6 +63,15 @@ const FinalResults: React.FC = () => {
 
     return (
         <FinalScores>
+            <GuessAndValue
+                className="mb-8"
+                guess={totalPlayers > 10 ? guessAsPercentage(guess, totalPlayers) : `${guess}`}
+                correctAnswer={totalPlayers > 10 ? `${Math.round(groupTrue)}%` : `${correctAnswer}`}
+                showPercent={totalPlayers > 10}
+                hasGuessed={hasGuessed} />
+
+            {/* Points Earned */}
+            {points || points === 0 ? <PointsEarned points={points} /> : null}
             <Scoreboard scores={scoreboard} currentPlayerScore={playerScore} />
             <FunFacts />
             {!loggedIn && <RequestFreeCredit />}
