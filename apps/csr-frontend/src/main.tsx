@@ -10,6 +10,7 @@ import { loadStripe } from '@stripe/stripe-js';
 // local imports
 import App from './app/app';
 import { store } from './app/store';
+import ScrollToTop from './util/scrollToTop';
 
 import './styles.css';
 import '@fontsource/nunito/400.css';
@@ -28,8 +29,8 @@ Modal.defaultStyles = {};
 ReactDOM.render(
     <StrictMode>
         <Router>
+          <ScrollToTop>
             <Provider store={store}>
-
                 <PayPalScriptProvider options={{
                     "client-id": process.env.NX_PAYPAL_CLIENT_ID as string,
                     currency: "USD",
@@ -40,8 +41,8 @@ ReactDOM.render(
                         <App/>
                     </Elements>
                 </ PayPalScriptProvider>
-
             </Provider>
+          </ScrollToTop>
         </Router>
     </StrictMode>,
     document.getElementById('root')

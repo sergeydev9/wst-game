@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     TrueFalse,
     QuestionCard,
@@ -112,6 +112,12 @@ const Question: React.FC = () => {
             }
         })
     }
+
+    useEffect(() => {
+      window.scroll({
+        top: 0,
+      });
+    }, [screen]);
 
     return (
         <>
