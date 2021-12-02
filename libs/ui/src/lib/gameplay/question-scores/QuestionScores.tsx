@@ -1,18 +1,40 @@
 import tw from "tailwind-styled-components";
 import GameCardFooter from "../GameCardFooter";
 import { LargeTitle } from "../../typography/Typography";
-
+import PointsEarned from "../points-earned/PointsEarned";
 
 const SmallHeader = tw.h3`
-text-lg
-font-bold
-text-center
+    text-lg
+    font-bold
+    text-center
 `
 
 const MediumHeader = tw.h2`
-text-xl
-font-bold
-text-center
+    text-xl
+    font-bold
+    text-center
+`
+const Container = tw.div`
+    bg-green-subtle-fill
+    border
+    rounded-3xl
+    mx-auto
+    p-4
+    border-green-subtle-stroke
+    flex
+    flex-row
+    gap-4
+    text-green-base
+    justify-around
+    w-full
+    sm:w-max
+`
+
+const ScoreboardHeader = tw.h2`
+    text-center
+    font-bold
+    text-basic-black
+    text-2xl
 `
 
 export interface QuestionResultsProps {
@@ -26,21 +48,8 @@ const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, showPercent, c
 
     return (
         <>
-            <div className={`
-                bg-green-subtle-fill
-                border
-                rounded-3xl
-                mx-auto
-                p-4
-                border-green-subtle-stroke
-                flex
-                flex-row
-                gap-4
-                text-green-base
-                justify-around
-                w-full
-                sm:w-max
-                `}>
+            {/* Guess and Value */}
+            <Container>
                 {hasGuessed && <div>
                     <SmallHeader>You Guessed</SmallHeader>
                     <MediumHeader>{guess} {guess === '1' ? 'player' : showPercent ? 'of players' : 'players'}</MediumHeader>
@@ -49,9 +58,13 @@ const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, showPercent, c
                     <SmallHeader>Correct Answer</SmallHeader>
                     <MediumHeader>{correctAnswer === '1' ? `${correctAnswer} player` : `${correctAnswer} ${showPercent ? 'of players' : 'players'}`}</MediumHeader>
                 </div>
-            </div>
-            {pointsEarned || pointsEarned === 0 ? <LargeTitle className="text-green-base text-center mb-4">+{pointsEarned} pts</LargeTitle> : null}
-            <h2 className="text-center font-bold text-basic-black text-2xl">Scoreboard</h2>
+            </Container>
+
+            {/* Points Earned */}
+            {pointsEarned || pointsEarned === 0 ? <PointsEarned points={pointsEarned} /> : null}
+
+            {/* Scoreboard */}
+            <ScoreboardHeader>Scoreboard</ScoreboardHeader>
             {children}
             <GameCardFooter >The host will advance the game</GameCardFooter>
         </>
