@@ -60,7 +60,7 @@ const Invite: React.FC = () => {
     }
 
     const isForSchools = process.env.NX_IS_FOR_SCHOOLS === 'true';
-    const domain = isForSchools ? 'whosaidtrueforschools.com/game' : 'whosaidtrue.com/game';
+    const domain = `${process.env.NX_DOMAIN}/game`;
     const titleDomain = isForSchools ? 'WhoSaidTrueForSchools.com' : 'WhoSaidTrue.com';
 
     return (
