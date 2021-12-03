@@ -64,14 +64,15 @@ const Invite: React.FC = () => {
     const titleDomain = isForSchools ? 'WhoSaidTrueForSchools.com' : 'WhoSaidTrue.com';
 
     return (
-        <NoFlexBox className="md:w-max mx-2 md:mx-auto text-basic-black text-center pb-16">
-
-            <Title1 className="mb-8">Invite Players</Title1>
-            <Title3 className="mb-8">Tell Players to Enter Game Code at {titleDomain}</Title3>
-            <InviteLinks domain={domain} accessCode={accessCode}>
-                <Button type="button" onClick={goToChooseName} >Next: Choose Your Player Name</Button>
-            </InviteLinks>
-        </NoFlexBox>
+        <div className="px-4 sm:px-6 lg:px-8">
+          <NoFlexBox className="mx-auto pb-14 text-basic-black space-y-8 text-center sm:pb-14 md:pb-14 md:w-max">
+              <Title1>Invite Players</Title1>
+              <Title3>Tell Players to Enter Game Code at {titleDomain}</Title3>
+              <InviteLinks domain={domain} accessCode={accessCode}>
+                  <Button type="button" onClick={goToChooseName} >Next: Choose Your Player Name</Button>
+              </InviteLinks>
+          </NoFlexBox>
+        </div>
     )
 }
 

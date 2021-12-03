@@ -38,8 +38,8 @@ const Invite: React.FC<InviteProps> = ({ accessCode, domain, children }) => {
     const body = encodeURIComponent(`Go to https://www.${domain}/${accessCode} to join our game!`);
 
     return (
-        <div className="md:px-20 mt-8">
-            <Box boxstyle="purple-subtle" className="gap-8 p-2 sm:p-4 w-min sm:w-max mb-8 mx-auto">
+        <div>
+            <Box boxstyle="purple-subtle" className="gap-8 mb-6 mx-auto p-2 w-min sm:p-4 sm:w-max">
                 <Headline>Share Game Code</Headline>
                 <InnerBox>
                     <GameCodeText>{accessCode}</GameCodeText>

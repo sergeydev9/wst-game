@@ -24,40 +24,47 @@ const GameOptionsModal: React.FC = () => {
 
     const domain = `${process.env.NX_DOMAIN}/game`;
     return (
-        <ModalContent>
-            <Title1 className="mt-1 mb-10">Game Options</Title1>
+        <ModalContent $narrow>
+          <div>
+            <Title1 className="mt-1 mb-6 text-center">Game Options</Title1>
             <InviteLinks domain={domain} accessCode={accessCode}>
 
                 {/* buttons */}
                 {isHost ? <HostGameOptionsButtons /> :
-                    <button
-                        type="button"
-                        onClick={leaveGame}
-                        className={`
-                            border-2
-                            border-destructive
-                            text-destructive
-                            text-label-big
-                            bg-white-ish
-                            font-bold
-                            rounded-full
-                            py-4 w-full
-                            text-center
-                            hover:bg-destructive
-                            hover:text-white-ish
-                        `}
-                    >Leave Game</button>}
+                    <div className="flex flex-col gap-4 px-6 mb-6">
+                        <button
+                            type="button"
+                            onClick={leaveGame}
+                            className={`
+                                border-2
+                                border-destructive
+                                text-destructive
+                                text-label-big
+                                bg-white-ish
+                                font-bold
+                                rounded-full
+                                py-4 w-full
+                                text-center
+                                hover:bg-destructive
+                                hover:text-white-ish
+                            `}
+                        >Leave Game</button>
+                    </div>
+                  }
 
                 {/* links */}
-                <Headline
-                    onClick={() => dispatch(setFullModal('submitQuestion'))}
-                    className="text-purple-light underline text-center my-8 cursor-pointer">
-                    Submit a Question
-                </Headline>
-                <Headline
-                    onClick={() => dispatch(setFullModal('reportAnIssue'))}
-                    className="text-purple-light underline text-center cursor-pointer my-8">Report an Issue</Headline>
+                <div className="flex flex-col space-y-6">
+                  <button
+                      className="font-bold text-basic-black text-headline underline"
+                      onClick={() => dispatch(setFullModal('submitQuestion'))}>
+                      Submit a Question
+                  </button>
+                  <button
+                      className="font-bold text-basic-black text-headline underline"
+                      onClick={() => dispatch(setFullModal('reportAnIssue'))}>Report an Issue</button>
+                </div>
             </InviteLinks>
+          </div>
         </ModalContent>)
 }
 

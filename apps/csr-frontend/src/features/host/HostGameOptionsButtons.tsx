@@ -26,7 +26,7 @@ const HostGameOptionsButtons: React.FC = () => {
 
     }
     return (
-        <div className="flex flex-col gap-4 px-6">
+        <div className="flex flex-col gap-4 px-6 mb-6">
             {!isPostGame && <Button type="button" onClick={() => dispatch(setFullModal('removePlayers'))} buttonStyle="big-text" $secondary>Remove Player(s)</Button>}
             <Button type="button" onClick={confEndGame} buttonStyle="big-text" $secondary>{!isPostGame ? 'End Game' : 'Leave Game'}</Button>
         </div>
