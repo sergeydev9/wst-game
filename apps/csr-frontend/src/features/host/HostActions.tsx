@@ -12,6 +12,8 @@ import { setShowTakingTooLong } from '../modal/modalSlice';
 
 const HostActions: React.FC = () => {
     const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+    const [seeScoresTimer, setSeeScoresTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+    const [showSeeScores, setShowSeeScores] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const gameStatus = useAppSelector(selectGameStatus);
     const screen = useAppSelector(currentScreen);
@@ -27,6 +29,13 @@ const HostActions: React.FC = () => {
             setTimer(time);
         }
 
+        if (screen === 'answerResults' && !seeScoresTimer) {
+            const time = setTimeout(() => {
+                setShowSeeScores(true);
+            }, 5000);
+            setSeeScoresTimer(time);
+        }
+
         return () => {
             dispatch(setShowTakingTooLong(false));
 
@@ -34,12 +43,17 @@ const HostActions: React.FC = () => {
                 clearTimeout(timer);
                 setTimer(null);
             }
+
+            if (seeScoresTimer) {
+                clearTimeout(seeScoresTimer);
+                setSeeScoresTimer(null);
+            }
         }
-    }, [timer, dispatch, screen]);
+    }, [timer, dispatch, screen, seeScoresTimer]);
 
 
     return (
-        <HostActionsBox>
+        (screen === 'answerResults' && !showSeeScores) ? null : <HostActionsBox>
             {gameStatus === 'lobby' && <StartGame />}
             {screen === 'answerSubmit' && <DuringQuestion />}
             {screen === 'waitingRoom' && gameStatus === 'inProgress' && <MoveToAnswer />}
