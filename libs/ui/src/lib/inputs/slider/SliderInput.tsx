@@ -97,7 +97,7 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
         }
 
         // if max over 10, show percentages, else show value
-        const displayValue = max > 10 ? `${100 / (max / numVal)}%` : value;
+        const displayValue = max > 10 ? `${Math.round(100 / (max / numVal))}%` : value;
         setCover(displayValue);
 
         // shift elements by whatever percentage of max the current value is
