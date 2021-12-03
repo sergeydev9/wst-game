@@ -16,16 +16,32 @@ export interface QuestionResultsProps {
     pointsEarned?: number;
     showPercent?: boolean;
     hasGuessed: boolean; // if user passed. If user passed, guess value will be 0, so another prop is needed
+    funFactsComponent?: React.ReactElement | null;
 }
-const QuestionResults: React.FC<QuestionResultsProps> = ({ guess, showPercent, correctAnswer, pointsEarned, children, hasGuessed }) => {
+const QuestionResults: React.FC<QuestionResultsProps> = ({
+    guess,
+    showPercent,
+    correctAnswer,
+    pointsEarned,
+    children,
+    hasGuessed,
+    funFactsComponent
+}) => {
 
     return (
         <>
             {/* Guess and Value */}
-            <GuessAndValue guess={guess} showPercent={showPercent} correctAnswer={correctAnswer} hasGuessed={hasGuessed} />
+            <GuessAndValue
+                guess={guess}
+                showPercent={showPercent}
+                correctAnswer={correctAnswer}
+                hasGuessed={hasGuessed} />
 
             {/* Points Earned */}
             {pointsEarned || pointsEarned === 0 ? <PointsEarned points={pointsEarned} /> : null}
+
+            {/* fun facts */}
+            {funFactsComponent && funFactsComponent}
 
             {/* Scoreboard */}
             <ScoreboardHeader>Scoreboard</ScoreboardHeader>

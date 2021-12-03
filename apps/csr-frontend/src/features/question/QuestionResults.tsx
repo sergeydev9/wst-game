@@ -45,9 +45,9 @@ const QuestionResults: React.FC = () => {
             correctAnswer={totalPlayers > 10 ? `${Math.round(groupTrue)}%` : `${correctAnswer}`}
             showPercent={totalPlayers > 10}
             pointsEarned={points}
-            hasGuessed={hasGuessed}>
+            hasGuessed={hasGuessed}
+            funFactsComponent={questionNumber == 4 ? <MostSimilarToYou /> : null}>
             <Scoreboard scores={scoreboard} currentPlayerScore={playerScore} />
-            {questionNumber == 4 && <MostSimilarToYou />}
         </QuestionScores>
 
     )

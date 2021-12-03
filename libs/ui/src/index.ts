@@ -57,5 +57,6 @@ export { default as SkipToResultsPlayerRow } from './lib/skip-to-results/SkipPla
 export { default as HostSkippedQuestion } from './lib/host-skipped-question/HostSkippedQuestion';
 export { default as GuessAndValue } from './lib/guess-and-value/GuessAndValue';
 export { default as PointsEarned } from './lib/gameplay//points-earned/PointsEarned';
+export { default as NoOneSimilar } from './lib/fun-facts/NoOneSimilar';
 export * from './lib/typography/Typography';
 export * from './lib/fun-facts';

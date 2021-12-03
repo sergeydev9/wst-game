@@ -114,9 +114,9 @@ const Question: React.FC = () => {
     }
 
     useEffect(() => {
-      window.scroll({
-        top: 0,
-      });
+        window.scroll({
+            top: 0,
+        });
     }, [screen]);
 
     return (
@@ -143,7 +143,8 @@ const Question: React.FC = () => {
                     <WaitingRoom
                         totalPlayers={totalPlayers}
                         numberHaveGuessed={numHaveGuessed}
-                        guessValueString={playersAtStartOfQuestion <= 10 ? `${guessVal > 0 ? guessVal : 'None'}` : guessAsPercentage(guessVal, playersAtStartOfQuestion)}
+                        guessValueString={(playersAtStartOfQuestion <= 10 ? `${guessVal > 0 ? guessVal : 'None'}` :
+                            guessAsPercentage(guessVal, playersAtStartOfQuestion))}
                         questionText={guessText}>
                         <OneLiners />
                     </WaitingRoom>
@@ -161,7 +162,8 @@ const Question: React.FC = () => {
                     </QuestionAnswers>
                 )}
                 {screen === 'scoreResults' && <QuestionResults />}
-                {(submittingGuess || submittingAnswer) && <ImSpinner6 className="text-yellow-gradient-to animate-spin left-1/2 top-p85 absolute -transform-x-full w-6 h-6" />}
+                {(submittingGuess || submittingAnswer) &&
+                    <ImSpinner6 className="text-yellow-gradient-to animate-spin left-1/2 top-p85 absolute -transform-x-full w-6 h-6" />}
             </QuestionCard>
         </>
     )

@@ -28,7 +28,7 @@ const FlashMessageModal: React.FC<MessageModalProps> = ({ children, closeFn, err
         <div data-cy="message-modal" className={className}>
             {error && <img src={errorImage} width="25px" height="25px" alt="error emoji" />}
             {children}
-            {closeFn && <CgCloseO type="icon" aria-label="close icon" className="cursor-pointer text-4xl xs:text-3xl sm:text-2xl" onClick={closeFn} />}
+            {closeFn && <CgCloseO type="icon" width="24 px" height="24px" aria-label="close icon" className="cursor-pointer text-4xl sm:text-3xl" onClick={closeFn} />}
         </div>
     )
 }
