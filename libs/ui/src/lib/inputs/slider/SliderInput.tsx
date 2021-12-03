@@ -59,14 +59,12 @@ const Slider: React.FC<SliderProps> = ({ max, changeHandler, ...rest }) => {
     const step = max >= 10 ? `${max / 10}` : '1';
     const stepNum = Number(step);
 
-
     useEffect(() => {
         // if max is less than 10, just use max, else set max to 10
         if (max > 10) {
             setDisplayMax(10);
         }
     }, [max])
-
 
     // returns an array of divider elements
     const dividerHelper = useMemo(() => {
