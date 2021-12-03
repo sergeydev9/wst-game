@@ -24,7 +24,6 @@ const AutoSubmit: React.FC = () => {
     return null;
 };
 
-
 /**
  * Reset code input page
  */
