@@ -114,19 +114,33 @@ class Decks extends Dao {
     }
 
     /**
-     * Gets all decks owned by the specified user.
-     * Returns empty array if the user doesn't own any decks.
+     * Gets all decks owned by the specified user, along with all the free decks.
      *
-     * @param {string} userId
-     * @return {*}
-     * @memberof Decks
+     * @param {number} userId
+     * @param {boolean} clean if true, only returns clean decks, if false, only not clean decks
      */
     public getUserDecks(userId: number, clean: boolean): Promise<QueryResult> {
         const query = {
             text: `
                 (
-                    SELECT * from user_owned_decks($1) AS owned
-                    WHERE owned.clean = $2
+                    SELECT
+                        decks.id,
+                        decks.name,
+                        decks.sort_order,
+                        decks.clean,
+                        decks.age_rating,
+                        decks.movie_rating,
+                        decks.sfw,
+                        decks.status,
+                        decks.description,
+                        decks.sample_question,
+                        decks.purchase_price,
+                        decks.thumbnail_url
+                    FROM decks
+                    LEFT JOIN user_decks
+                    ON user_decks.deck_id = decks.id
+                    WHERE user_decks.user_id = $1
+                    AND decks.clean = $2
                 )
                 UNION ALL
                 (
