@@ -1,8 +1,8 @@
+import { Button } from '@whosaidtrue/ui';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectPlayerName, selectAccessCode } from '../game/gameSlice';
-import { Button } from '@whosaidtrue/ui';
 import { setFullModal } from '../modal/modalSlice';
-
+import { BiCog } from 'react-icons/bi'
 
 const InGameNav: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -18,7 +18,10 @@ const InGameNav: React.FC = () => {
     return (
         <>
             <h2 className="text-basic-black font-extrabold relative mx-auto text-center text-lg sm:text-2xl leading-tight">{name ? name : `Game Code: ${accessCode}`}</h2>
-            <Button type="button" buttonStyle='small' $secondary onClick={openGameOptions}>Game Options</Button>
+            <Button type="button" buttonStyle='small' $secondary onClick={openGameOptions}>
+              <BiCog className="w-6 h-6 sm:hidden" />
+              <span className="sr-only sm:not-sr-only">Game Options</span>
+            </Button>
 
         </>
     )
