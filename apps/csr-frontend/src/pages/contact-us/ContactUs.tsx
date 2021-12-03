@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useFormik } from "formik";
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -21,6 +22,8 @@ import { selectEmail, sendMessage, showError } from "../../features";
  * to a thank you page.
  */
 const ContactUs: React.FC = () => {
+    const pageTitle = 'Contact Us';
+
     const dispatch = useAppDispatch();
     const history = useHistory();
     const userEmail = useAppSelector(selectEmail);
@@ -61,11 +64,15 @@ const ContactUs: React.FC = () => {
     const messageErr = formik.touched.message && formik.errors.message !== undefined;
 
     return (
+      <>
+        <Helmet>
+          <title>Who Said True?! - {pageTitle}</title>
+        </Helmet>
         <Box boxstyle='white' className="w-max mx-auto px-8 py-10 filter drop-shadow-card">
             <Form onSubmit={formik.handleSubmit}>
                 {/* title */}
                 <FormGroup>
-                    <LargeTitle className="text-center mb-8">Contact Us</LargeTitle>
+                    <LargeTitle className="text-center mb-8">{pageTitle}</LargeTitle>
                 </FormGroup>
 
                 {/* name */}
@@ -105,7 +112,7 @@ const ContactUs: React.FC = () => {
                 <Button data-cy="contact-submit" type="submit" >Send</Button>
             </Form>
         </Box>
-
+      </>
     )
 }
 

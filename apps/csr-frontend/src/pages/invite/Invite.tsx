@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { NoFlexBox, Button, InviteLinks, Title1, Title3 } from '@whosaidtrue/ui';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectAccessCode, setGameStatus, selectIsHost, selectPlayerStatus, clearGame, clearHost, selectGameId, endGameFromApi, endGame } from '../../features';
@@ -6,6 +7,8 @@ import { useHistory } from "react-router";
 
 
 const Invite: React.FC = () => {
+    const pageTitle = 'Invite Players';
+
     const dispatch = useAppDispatch()
     const history = useHistory()
     const isHost = useAppSelector(selectIsHost)
@@ -64,15 +67,20 @@ const Invite: React.FC = () => {
     const titleDomain = isForSchools ? 'WhoSaidTrueForSchools.com' : 'WhoSaidTrue.com';
 
     return (
+      <>
+        <Helmet>
+          <title>Who Said True?! - {pageTitle}</title>
+        </Helmet>
         <div className="px-4 sm:px-6 lg:px-8">
           <NoFlexBox className="mx-auto pb-14 text-basic-black space-y-8 text-center sm:pb-14 md:pb-14 md:w-max">
-              <Title1>Invite Players</Title1>
+              <Title1>{pageTitle}</Title1>
               <Title3>Tell Players to Enter Game Code at {titleDomain}</Title3>
               <InviteLinks domain={domain} accessCode={accessCode}>
                   <Button type="button" onClick={goToChooseName} >Next: Choose Your Player Name</Button>
               </InviteLinks>
           </NoFlexBox>
         </div>
+      </>
     )
 }
 

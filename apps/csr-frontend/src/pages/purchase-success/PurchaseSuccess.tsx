@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link, useHistory } from 'react-router-dom';
 import { Title1, DeckCard, Button, NoFlexBox } from "@whosaidtrue/ui";
 import { CreateGameResponse, CreateGameRequest } from '@whosaidtrue/api-interfaces';
@@ -23,6 +24,8 @@ const Popper = () => {
 }
 
 const PurchaseSuccess: React.FC = () => {
+    const pageTitle = 'Deck Purchased!';
+
     const dispatch = useAppDispatch();
     const history = useHistory();
     const deck = useAppSelector(selectGameDeck);
@@ -58,36 +61,41 @@ const PurchaseSuccess: React.FC = () => {
     }
 
     return (
-      <div className="px-5">
-        <NoFlexBox className="mx-auto px-10 text-center w-28rem max-w-full">
-            {/* header */}
-            <div className="flex flex-row gap-4 place-content-center w-full text-center mb-4">
-                <Popper />
-                <Title1>
-                    Deck Purchased!
-                </Title1>
-                <Popper />
-            </div>
+      <>
+        <Helmet>
+          <title>Who Said True?! - {pageTitle}</title>
+        </Helmet>
+        <div className="px-5">
+          <NoFlexBox className="mx-auto px-10 text-center w-28rem max-w-full">
+              {/* header */}
+              <div className="flex flex-row gap-4 place-content-center w-full text-center mb-4">
+                  <Popper />
+                  <Title1>
+                      {pageTitle}
+                  </Title1>
+                  <Popper />
+              </div>
 
-            {/* card */}
-            <DeckCard
-                sfw={deck.sfw}
-                className="drop-shadow-sm border relative p-2 pb-8 border-purple-subtle-stroke rounded-3xl mb-10 mx-auto max-w-full"
-                noPointer={true}
-                name={deck.name}
-                thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'}
-                movieRating={deck.movie_rating} />
+              {/* card */}
+              <DeckCard
+                  sfw={deck.sfw}
+                  className="drop-shadow-sm border relative p-2 pb-8 border-purple-subtle-stroke rounded-3xl mb-10 mx-auto max-w-full"
+                  noPointer={true}
+                  name={deck.name}
+                  thumbnailUrl={deck.thumbnail_url || './assets/placeholder.svg'}
+                  movieRating={deck.movie_rating} />
 
-            {/* start game */}
-            <div className="block sm:w-2/3 mx-auto">
-                <Button onClick={() => startGame()}>Start a Game</Button>
-            </div>
+              {/* start game */}
+              <div className="block sm:w-2/3 mx-auto">
+                  <Button onClick={() => startGame()}>Start a Game</Button>
+              </div>
 
-            {/* clear game state and return to decks */}
-            <Link to="/decks" onClick={() => dispatch(clearGame())} className="text-blue-base text-lg underline font-bold block my-10">Return to All Question Decks</Link>
+              {/* clear game state and return to decks */}
+              <Link to="/decks" onClick={() => dispatch(clearGame())} className="text-blue-base text-lg underline font-bold block my-10">Return to All Question Decks</Link>
 
-        </NoFlexBox>
-      </div>
+          </NoFlexBox>
+        </div>
+      </>
     )
 }
 

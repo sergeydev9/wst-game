@@ -1,9 +1,10 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import Modal from 'react-modal';
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -29,21 +30,25 @@ Modal.defaultStyles = {};
 ReactDOM.render(
   <StrictMode>
     <Router>
-      <ScrollToTop>
-        <Provider store={store}>
-          <PayPalScriptProvider options={{
-            "client-id": process.env.NX_PAYPAL_CLIENT_ID as string,
-            currency: "USD",
-            components: 'buttons',
-            intent: 'capture',
-            'disable-funding': 'credit'
-          }}>
-            <Elements stripe={stripePromise}>
-              <App />
-            </Elements>
-          </ PayPalScriptProvider>
-        </Provider>
-      </ScrollToTop>
+      <HelmetProvider>
+        <ScrollToTop>
+          <Provider store={store}>
+            <PayPalScriptProvider
+              options={{
+                'client-id': process.env.NX_PAYPAL_CLIENT_ID as string,
+                currency: 'USD',
+                components: 'buttons',
+                intent: 'capture',
+                'disable-funding': 'credit',
+              }}
+            >
+              <Elements stripe={stripePromise}>
+                <App />
+              </Elements>
+            </PayPalScriptProvider>
+          </Provider>
+        </ScrollToTop>
+      </HelmetProvider>
     </Router>
   </StrictMode>,
   document.getElementById('root')

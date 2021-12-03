@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { Helmet } from 'react-helmet-async';
 import { useFormik, useField } from 'formik';
 import { useHistory } from 'react-router';
 import * as Yup from 'yup';
@@ -25,6 +26,8 @@ import {
 import { setFullModal } from '../../features';
 
 const MyAccount: React.FC = () => {
+    const pageTitle = 'My Account';
+
     const history = useHistory()
     const dispatch = useAppDispatch();
     const deckCredits = useAppSelector(selectDeckCredits)
@@ -64,9 +67,13 @@ const MyAccount: React.FC = () => {
     const emailErr = formik.touched.email && formik.errors.email ? true : undefined;
 
     return (
+      <>
+        <Helmet>
+          <title>Who Said True?! - {pageTitle}</title>
+        </Helmet>
         <Box boxstyle='white' className="w-11/12 md:w-max mx-auto px-3 sm:px-8 py-10 filter drop-shadow-card">
             {/*title*/}
-            <Title1 className="text-center mb-8">My Account</Title1>
+            <Title1 className="text-center mb-8">{pageTitle}</Title1>
             <Form onSubmit={formik.handleSubmit}>
 
                 {/* email */}
@@ -91,7 +98,7 @@ const MyAccount: React.FC = () => {
             </Form>
 
         </Box >
-
+      </>
     )
 }
 

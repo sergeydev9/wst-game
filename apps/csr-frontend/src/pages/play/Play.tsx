@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
@@ -90,6 +91,9 @@ const Play: React.FC = () => {
 
     return (
         <>
+            <Helmet>
+              <title>Who Said True?!</title>
+            </Helmet>
             {playerStatus === "lobby" && gameStatus !== 'postGame' && <Lobby />}
             {playerStatus === 'inGame' && gameStatus === 'inProgress' && <Question />}
             {gameStatus === 'postGame' && <FinalResults />}
