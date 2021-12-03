@@ -31,7 +31,6 @@ const AutoSubmit: React.FC = () => {
 const EnterCode: React.FC = () => {
     const email = useAppSelector(selectResetEmail); // user email
     const history = useHistory();
-    const [error, setError] = useState('')
     const dispatch = useAppDispatch();
     const initialValues = {
         char1: '',
@@ -107,7 +106,6 @@ const EnterCode: React.FC = () => {
                     <Form>
                         <div className="text-center">
                             <Title1 className="text-basic-black">We sent an email to {email}</Title1>
-                            {error && <ErrorText>{error}</ErrorText>}
                         </div>
                         <InputContainer>
                             <InputHeader>Enter the 4-digit code you received to continue</InputHeader>
