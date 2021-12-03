@@ -26,7 +26,6 @@ const stripePromise = loadStripe(stripeKey);
 Modal.setAppElement('#root');
 Modal.defaultStyles = {};
 
-// TODO: Add a root SEO component with React Helmet
 ReactDOM.render(
   <StrictMode>
     <Router>
