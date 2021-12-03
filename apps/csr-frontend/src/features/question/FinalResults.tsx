@@ -27,6 +27,9 @@ import RequestFreeCredit from "./RequestFreeCredit";
 import { guessAsPercentage } from "../../util/functions";
 
 
+/**
+ * Final results for a game
+ */
 const FinalResults: React.FC = () => {
     const dispatch = useAppDispatch();
     const history = useHistory();
@@ -41,8 +44,6 @@ const FinalResults: React.FC = () => {
     const hasGuessed = useAppSelector(selectHasGuessed);
     const groupTrue = useAppSelector(selectGroupTrue);
     const points = useAppSelector(selectPlayerPointsEarned);
-
-
 
     useEffect(() => {
         return () => {

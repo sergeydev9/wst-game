@@ -96,9 +96,7 @@ module.exports = {
         'red-base': '#8F3D3D',
         'red-subtle-stroke': '#F0DBDB',
         'red-subtle-fill': '#FCF8F8',
-
         destructive: 'rgba(167, 11, 0, 1)',
-
         'light-gray': '#F9F9F9', // Color not in Figma - TOOD: replace
         'off-blue': '#5D5FEF', // Color not in Figma - TOOD: replace
         'white-ish': '#FBFBFE', // Color not in Figma - TOOD: replace all instances with 'off-white'
@@ -138,13 +136,24 @@ module.exports = {
           '100%': {
             transform: `scale(1.5)`,
             opacity: 0
+          },
+        },
+        pingsmall: {
+          '75%':  {
+            transform: `scale(1.2)`,
+            opacity: 0
+          },
+          '100%': {
+            transform: `scale(1.2)`,
+            opacity: 0
           }
         }
       },
       animation: {
         grow: 'grow 400ms ease-in forwards',
         shrink: 'shrink 2s ease-in-out',
-        'ping-slow': 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite'
+        'ping-slow': 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+        'ping-slow-small': 'pingsmall 1.5s cubic-bezier(0, 0, 0.2, 1) infinite'
       },
       boxShadow: {
         'rating-button': '0px 4px 0px #BDABE3',

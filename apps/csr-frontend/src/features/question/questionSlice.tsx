@@ -9,10 +9,8 @@ import {
     selectTotalQuestions,
     clearGame,
     removePlayer,
-    selectNumPlayersInGame,
     selectPlayerIds
 } from "../game/gameSlice";
-import { api } from '../../api';
 
 export interface CurrentQuestionState {
     questionId: number;
