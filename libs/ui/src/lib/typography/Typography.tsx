@@ -60,3 +60,11 @@ export const LabelSmall = tw.label`
     text-label-small
     font-medium
 `
+
+export const GameCodeText = tw.span`
+    font-extrabold
+    text-4xl
+    text-basic-black
+    tracking-widest
+    uppercase
+`
