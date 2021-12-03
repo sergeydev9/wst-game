@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {  useRef, useEffect } from 'react';
 import * as Yup from 'yup';
-import { Title1, ErrorText } from '@whosaidtrue/ui';
+import { Title1} from '@whosaidtrue/ui';
 import { useHistory } from 'react-router';
 import { ResetCodeVerificationResponse } from '@whosaidtrue/api-interfaces';
 import { Formik, useFormikContext, Form, Field, FieldProps } from 'formik';
