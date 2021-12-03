@@ -77,7 +77,7 @@ const FinalResults: React.FC = () => {
             <FunFacts />
             {!loggedIn && <RequestFreeCredit />}
             {loggedIn && !hasRatedApp && <RateApp />}
-            <div className="w-1/2 mx-auto mt-10">
+            <div className="mx-auto mt-10 text-center w-full">
                 <Button type="button" onClick={handler}>Play Another Game</Button>
             </div>
         </FinalScores>
