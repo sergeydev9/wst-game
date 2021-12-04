@@ -17,7 +17,7 @@ const GroupComparison: React.FC<GroupComparisonProps> = ({ isBucketList, questio
             <FactText>"{questionText}"</FactText>
 
             {/* pie charts */}
-            <div className="w-full flex flex-col sm:flex-row sm:gap-6 gap-4 mt-3 justify-center items-center">
+            <div className="w-full flex sm:gap-6 gap-4 mt-3 justify-center items-center">
                 <PercentagePie isGroup={true} value={groupPercentage} />
                 <PercentagePie isGroup={false} value={globalPercentage} />
             </div>

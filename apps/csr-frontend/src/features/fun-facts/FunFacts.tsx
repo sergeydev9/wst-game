@@ -4,19 +4,12 @@ import { selectTotalQuestions } from '../game/gameSlice';
 import { selectBucketList, selectGroupVworld, selectMostSimilarPlayer, selectMostSimilarInGroup } from './funFactsSlice';
 
 
-const FunFacts: React.FC = () => {
+const FunFacts: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = (props) => {
     const totalQuestions = useAppSelector(selectTotalQuestions);
     const bucketList = useAppSelector(selectBucketList);
     const groupVworld = useAppSelector(selectGroupVworld);
     const mostSimilarToPlayer = useAppSelector(selectMostSimilarPlayer);
     const mostSimilarInGroup = useAppSelector(selectMostSimilarInGroup);
-
-    const shouldShow = (
-        bucketList.textForGuess ||
-        groupVworld.textForGuess ||
-        mostSimilarToPlayer.numSameAnswer ||
-        mostSimilarInGroup.numSameAnswer
-    );
 
     const helper = () => {
         const result = [];
@@ -89,9 +82,9 @@ const FunFacts: React.FC = () => {
 
 
     return (
-        shouldShow ? <FactsCarousel>
+        <FactsCarousel {...props}>
             {helper()}
-        </FactsCarousel> : null
+        </FactsCarousel>
     )
 }
 

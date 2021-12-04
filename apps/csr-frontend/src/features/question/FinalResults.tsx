@@ -74,6 +74,7 @@ const FinalResults: React.FC = () => {
             {/* Points Earned */}
             {points || points === 0 ? <PointsEarned points={points} /> : null}
             <FunFacts />
+            <div className="mb-8"></div>
             <Scoreboard scores={scoreboard} currentPlayerScore={playerScore} />
             {!loggedIn && <RequestFreeCredit />}
             {loggedIn && !hasRatedApp && <RateApp />}
