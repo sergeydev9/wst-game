@@ -51,7 +51,7 @@ export interface ResetCodeVerificationResponse {
 
 // last step in password reset process
 export interface ResetRequest {
-  password: string;
+  newPassword: string;
   resetToken: string;
 }
 

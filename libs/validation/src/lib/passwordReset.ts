@@ -14,6 +14,6 @@ export const validateResetCode = [
 
 export const validateReset = [
     body('resetToken').isJWT(),
-    body('password').isStrongPassword({ minLength: 8, minNumbers: 1, minUppercase: 0, minSymbols: 0 }),
+    body('newPassword').isStrongPassword({ minLength: 8, minNumbers: 1, minUppercase: 0, minSymbols: 0 }),
     validate
 ]

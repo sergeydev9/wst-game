@@ -39,21 +39,21 @@ const NewPassword: React.FC = () => {
     // Form
     const formik = useFormik({
         initialValues: {
-            newPass: '',
-            confPass: ''
+            newPassword: '',
+            confirmPassword: ''
         },
         validationSchema: Yup.object({
-            newPass: Yup.string()
+            newPassword: Yup.string()
                 .min(8, 'Password must be at least 8 characters long')
                 .matches(/\d/, 'Password must contain at least 1 number')
                 .required('Password is required'),
-            confPass: Yup.string().oneOf([Yup.ref('newPass'), null], 'Passwords do not match').required('Must confirm new password')
+            confirmPassword: Yup.string().oneOf([Yup.ref('newPassword'), null], 'Passwords do not match').required('Must confirm new password')
 
         }),
         onSubmit: async (values) => {
-            const { newPass } = values
+            const { newPassword, confirmPassword } = values
             try {
-                const response = await api.post<AuthenticationResponse>('/user/reset-password', { newPass })
+                const response = await api.patch<AuthenticationResponse>('/user/reset-password', { newPassword, confirmPassword, resetToken })
                 const { token } = response.data
                 const decoded = decodeUserToken(token)
                 const { user } = decoded;
@@ -69,8 +69,8 @@ const NewPassword: React.FC = () => {
             }
         },
     });
-    const newPassErr = formik.touched.newPass && formik.errors.newPass ? true : undefined;
-    const confErr = formik.touched.confPass && formik.errors.confPass ? true : undefined;
+    const newPasswordErr = formik.touched.newPassword && formik.errors.newPassword ? true : undefined;
+    const confErr = formik.touched.confirmPassword && formik.errors.confirmPassword ? true : undefined;
     // render
     return (
         <NoFlexBox className="w-max mx-auto">
@@ -81,20 +81,20 @@ const NewPassword: React.FC = () => {
                     {err && <ErrorText className="text-center">{err}</ErrorText>}
                 </FormGroup>
 
-                {/* newPass */}
+                {/* newPassword */}
                 <FormGroup>
-                    <InputLabel htmlFor="newPass">New Password</InputLabel>
-                    <TextInput {...formik.getFieldProps('newPass')} id="newPass" $hasError={newPassErr} $border name="newPass" type="password" />
+                    <InputLabel htmlFor="newPassword">New Password</InputLabel>
+                    <TextInput {...formik.getFieldProps('newPassword')} id="newPassword" $hasError={newPasswordErr} $border name="newPassword" type="password" />
                     <Headline className="text-basic-gray mt-2">8 character minimum length</Headline>
-                    {newPassErr && <ErrorText>{formik.errors.newPass}</ErrorText>}
+                    {newPasswordErr && <ErrorText>{formik.errors.newPassword}</ErrorText>}
                 </FormGroup>
 
 
-                {/* confPass */}
+                {/* confirmPassword */}
                 <FormGroup>
-                    <InputLabel htmlFor="confPass">Confirm New Password</InputLabel>
-                    <TextInput {...formik.getFieldProps('confPass')} id="confPass" $hasError={confErr} $border name="confPass" type="password" />
-                    {confErr && <ErrorText>{formik.errors.confPass}</ErrorText>}
+                    <InputLabel htmlFor="confirmPassword">Confirm New Password</InputLabel>
+                    <TextInput {...formik.getFieldProps('confirmPassword')} id="confirmPassword" $hasError={confErr} $border name="confirmPassword" type="password" />
+                    {confErr && <ErrorText>{formik.errors.confirmPassword}</ErrorText>}
                 </FormGroup>
 
                 {/* submit */}

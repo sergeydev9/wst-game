@@ -261,14 +261,14 @@ router.post('/validate-reset', [...validateResetCode], async (req: Request, res:
  * password from request body. Validate token. If token valid,
  * reset pass and send auth token.
  */
-router.patch('/reset', [...validateReset], async (req: Request, res: Response) => {
-    const { password, resetToken } = req.body as ResetRequest;
+router.patch('/reset-password', [...validateReset], async (req: Request, res: Response) => {
+    const { newPassword, resetToken } = req.body as ResetRequest;
     try {
         // using a token here guarantees that the reset code submitted
         // earlier was verified by the server, and the user has permission
         // to set a new password.
         const decoded = jwt.verify(resetToken, process.env.JWT_SECRET) as { email: string };
-        const updatedUser = await users.resetPassword(decoded.email, password);
+        const updatedUser = await users.resetPassword(decoded.email, newPassword);
 
         // send token if success
         const { id, email, roles } = updatedUser;

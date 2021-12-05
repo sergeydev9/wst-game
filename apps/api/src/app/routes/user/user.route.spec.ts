@@ -452,13 +452,13 @@ describe('user routes', () => {
 
     })
 
-    describe('[PATCH] /reset', () => {
+    describe('[PATCH] /reset-password', () => {
         const email = 'email@email.com'
-        const password = 'password123'
+        const newPassword = 'password123'
         const resetToken = signUserPayload({ id: 1, email, roles: ["user"] })
         it('should respond with 422 if password missing', (done) => {
             supertest(app)
-                .patch('/user/reset')
+                .patch('/user/reset-password')
                 .send({ resetToken })
                 .expect(422, done)
 
@@ -466,15 +466,15 @@ describe('user routes', () => {
 
         it('should respond with 422 if reset token missing', (done) => {
             supertest(app)
-                .patch('/user/reset')
-                .send({ password })
+                .patch('/user/reset-password')
+                .send({ newPassword })
                 .expect(422, done)
 
         })
         it("should respond with 422 if reset token isn't JWT", (done) => {
             supertest(app)
-                .patch('/user/reset')
-                .send({ resetToken: 'abc', password })
+                .patch('/user/reset-password')
+                .send({ resetToken: 'abc', newPassword })
                 .expect(422, done)
 
         })
@@ -483,8 +483,8 @@ describe('user routes', () => {
 
             const token = jwt.sign('xyz', 'abc');
             supertest(app)
-                .patch('/user/reset')
-                .send({ resetToken: token, password })
+                .patch('/user/reset-password')
+                .send({ resetToken: token, newPassword })
                 .expect(401, done)
 
         })
@@ -492,8 +492,8 @@ describe('user routes', () => {
         it("should return 202 and a token on success", async () => {
             mockedUsers.resetPassword.mockResolvedValue({ id: 1, email, roles: ['user'] });
             const result = await supertest(app)
-                .patch('/user/reset')
-                .send({ resetToken, password })
+                .patch('/user/reset-password')
+                .send({ resetToken, newPassword })
                 .expect(202)
 
             expect(validator.isJWT(result.body.token)).toEqual(true);
