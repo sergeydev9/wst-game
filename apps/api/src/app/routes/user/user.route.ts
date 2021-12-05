@@ -197,7 +197,7 @@ router.post('/send-reset', [...validateResetEmail], async (req: Request, res: Re
         } else {
 
             // if code was set, send reset email
-            const resetResponse = await emailService.sendResetCode(rows[0].email, code);
+            const resetResponse = await emailService.sendResetCode(rows[0].user_email, code);
 
             // Sendgrid responds with 202 if email was sent
             if (resetResponse[0].statusCode === 202) {
