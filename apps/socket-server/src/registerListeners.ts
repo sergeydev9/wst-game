@@ -22,6 +22,7 @@ import sendFunFacts from './listener-helpers/sendFunFacts';
 import removePlayer from './listener-helpers/removePlayer';
 import Keys from './keys';
 import sendPlayerList from './listener-helpers/sendPlayerList';
+import sendOneLiners from './listener-helpers/sendOneLiners';
 
 const handleDisconnect = async (socket: Socket, reason: string) => {
   const {
@@ -178,7 +179,6 @@ const registerListeners = (socket: Socket, io: Server) => {
 
     logOutgoing(type, payload, 'others', source);
   };
-
   socket.sendToOthers = sendToOthers;
 
   // send to connected clients including sender
@@ -198,6 +198,10 @@ const registerListeners = (socket: Socket, io: Server) => {
    */
   socket.on(types.PLAYER_JOINED_GAME, (msg: payloads.PlayerEvent) => {
     sendToOthers(types.PLAYER_JOINED_GAME, msg);
+  });
+
+  socket.on(types.ONE_LINERS, async (msg: any) => {
+    sendOneLiners(socket);
   });
 
   /**
