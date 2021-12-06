@@ -1,17 +1,15 @@
-import { FactsCarousel, MostSimilar, GroupComparison } from '@whosaidtrue/ui';
+import { FactsCarousel, MostSimilar, GroupComparison, NoOneSimilar } from '@whosaidtrue/ui';
 import { useAppSelector } from "../../app/hooks";
 import { selectTotalQuestions } from '../game/gameSlice';
 import { selectBucketList, selectGroupVworld, selectMostSimilarPlayer, selectMostSimilarInGroup } from './funFactsSlice';
 
 
-const FunFacts: React.FC = () => {
+const FunFacts: React.FC<React.HtmlHTMLAttributes<HTMLDivElement>> = (props) => {
     const totalQuestions = useAppSelector(selectTotalQuestions);
     const bucketList = useAppSelector(selectBucketList);
     const groupVworld = useAppSelector(selectGroupVworld);
     const mostSimilarToPlayer = useAppSelector(selectMostSimilarPlayer);
     const mostSimilarInGroup = useAppSelector(selectMostSimilarInGroup);
-
-    const shouldShow = bucketList.textForGuess || groupVworld.textForGuess || mostSimilarToPlayer.numSameAnswer || mostSimilarInGroup.numSameAnswer;
 
     const helper = () => {
         const result = [];
@@ -22,7 +20,11 @@ const FunFacts: React.FC = () => {
                     isBucketList={true}
                     key={count}
                     questionText={bucketList.textForGuess}
-                    globalPercentage={bucketList.globalTrue}
+                    globalPercentage={(
+                        bucketList.globalTrue === 0 ?
+                            bucketList.groupTrue :
+                            bucketList.globalTrue
+                    )}
                     groupPercentage={bucketList.groupTrue} />
             )
             count++;
@@ -34,7 +36,11 @@ const FunFacts: React.FC = () => {
                     isBucketList={false}
                     key={count}
                     questionText={groupVworld.textForGuess}
-                    globalPercentage={groupVworld.globalTrue}
+                    globalPercentage={(
+                        groupVworld.globalTrue === 0 ?
+                            groupVworld.groupTrue :
+                            groupVworld.globalTrue
+                    )}
                     groupPercentage={groupVworld.groupTrue} />
             )
             count++;
@@ -50,6 +56,11 @@ const FunFacts: React.FC = () => {
                     heading={mostSimilarToPlayer.name}
                 />
             )
+            count++;
+        } else {
+            result.push(
+                <NoOneSimilar />
+            );
             count++;
         }
 
@@ -71,9 +82,9 @@ const FunFacts: React.FC = () => {
 
 
     return (
-        shouldShow ? <FactsCarousel>
+        <FactsCarousel {...props}>
             {helper()}
-        </FactsCarousel> : null
+        </FactsCarousel>
     )
 }
 

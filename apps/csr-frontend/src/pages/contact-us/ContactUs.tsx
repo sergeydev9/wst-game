@@ -46,7 +46,7 @@ const ContactUs: React.FC = () => {
                 .required(),
             message: Yup.string()
                 .required()
-                .max(20000, "That message is too long")
+                .max(500, "That message is too long")
 
         }),
         onSubmit: (values) => {
@@ -96,7 +96,7 @@ const ContactUs: React.FC = () => {
                         <option value="Suggest a Question">Suggest a Question</option>
                         <option value="Bug">Bug</option>
                         <option value="Feedback">Give Feedback</option>
-                        <option value="Player Story">Submit a Player Story</option>
+                        <option value="Player Story">Send a Story from the Game</option>
                         <option value="Report a Problem">Report a Problem</option>
                     </SelectDropdown>
                 </FormGroup>

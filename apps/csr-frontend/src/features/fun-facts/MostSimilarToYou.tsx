@@ -1,6 +1,7 @@
 import {
     FactsCarousel,
-    MostSimilar
+    MostSimilar,
+    NoOneSimilar
 } from '@whosaidtrue/ui';
 import { useAppSelector } from "../../app/hooks";
 import { selectSequenceIndex } from '../question/questionSlice';
@@ -9,7 +10,9 @@ import {
 } from './funFactsSlice';
 
 /**
- * Show player's "most similar to you stat. Only on the results for the 4th question"
+ * Show player's "most similar to you" stat. Only on the results for the 4th question.
+ *
+ * If there is no most similar player, display the 'NoOneSimilar' component instead.
  */
 const MostSimilarToYou: React.FC = () => {
     const sequenceIndex = useAppSelector(selectSequenceIndex);
@@ -17,14 +20,15 @@ const MostSimilarToYou: React.FC = () => {
     const shouldShow = mostSimilarToPlayer.numSameAnswer;
 
     return (
-        shouldShow ? <FactsCarousel>
-            <MostSimilar
+        <FactsCarousel>
+            {shouldShow ? <MostSimilar
                 groupWide={false}
                 totalQuestions={sequenceIndex}
                 totalCommon={mostSimilarToPlayer.numSameAnswer}
                 heading={mostSimilarToPlayer.name}
-            />
-        </FactsCarousel> : null
+            /> : <NoOneSimilar />}
+
+        </FactsCarousel>
     )
 }
 

@@ -48,8 +48,8 @@ const PercentagePie: React.FC<PercentagePieProps> = ({ value, isGroup }) => {
                         `}>
 
                     <div style={translateStyle} className="absolute w-full leading-none">
-                        <h2 className="text-center text-3xl font-bold">{displayValue}%</h2>
-                        <h3 className="text-center text-md font-bold">Said True</h3>
+                        <h2 className="text-center text-xl sm:text-3xl font-bold">{displayValue}%</h2>
+                        <h3 className="text-center text-sm sm:text-md font-bold">Said True</h3>
                     </div>
                 </div>
             </div>

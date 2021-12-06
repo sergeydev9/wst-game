@@ -27,7 +27,7 @@ const FactsCarousel: React.FC = ({ children }) => {
     // use inline css for more fine grained control than tailwind provides.
     const arrowStyles = {
         zIndex: 10,
-        width: 30,
+        width: 20,
     };
 
     // Tailwind class applied to arrow icons

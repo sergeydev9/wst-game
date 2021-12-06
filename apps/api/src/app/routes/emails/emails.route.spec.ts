@@ -10,17 +10,14 @@ import { emails } from '../../db';
 jest.mock('../../db');
 const mockedEmails = mocked(emails, true);
 
-
 describe('emails route', () => {
     let app: Application;
     let validToken: string;
 
     beforeAll(() => {
         app = new App().app;
-        validToken = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
-
+        validToken = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] });
     })
-
 
     describe('POST /', () => {
 
@@ -193,12 +190,13 @@ describe('emails route', () => {
         it('should fail if message is too long', done => {
 
             let message = '';
-
             let count = 0;
-            while (count <= 20000) {
+
+            while (count <= 500) {
                 message += 's';
                 count++
             }
+
             supertest(app)
                 .post('/emails')
                 .set('origin', 'www.test.com')

@@ -86,7 +86,13 @@ store.subscribe(() => {
                 freeCredits,
                 ratings,
                 funFacts,
-                modals: { ...modals, reconnecting: false, isPersistent: false, connecting: false }  // remove unwanted properties
+                modals: {
+                    ...modals,
+                    reconnecting: false,
+                    isPersistent: false,
+                    connecting: false,
+                    showTakingTooLong: false
+                }  // remove unwanted properties
             }))
     }, 50)
 })

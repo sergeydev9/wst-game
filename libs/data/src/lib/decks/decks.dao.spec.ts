@@ -174,6 +174,26 @@ describe('Decks', () => {
             expect(rows.length).toEqual(3)
         })
 
+        it('should still retrieve user deck if status is not active', async () => {
+            const { rows } = await decks.getUserDecks(userId, false);
+
+            // change the status of a deck to 'pending'
+            const query = {
+                text: `
+                    UPDATE decks
+                    SET status = 'pending'
+                    WHERE id = $1
+                `,
+                values: [rows[0].id]
+            }
+            const update = await pool.query(query);
+            expect(update.rowCount).toEqual(1); // ensure update was successful
+
+            // test that deck is still retrieved
+            const actual = await decks.getUserDecks(userId, false);
+            expect(actual.rows.length).toEqual(3);
+        })
+
         it('should retrieve the 2 decks NOT owned by the user', async () => {
             const { rows } = await decks.getNotOwned(userId, false);
             expect(rows.length).toEqual(2)
