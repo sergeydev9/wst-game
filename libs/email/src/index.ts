@@ -1,1 +1,1 @@
-export { default as Email } from './lib/email';
+export { default as Email } from './lib/Email';
