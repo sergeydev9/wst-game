@@ -1,17 +1,16 @@
 module.exports = {
   core: {
-    builder: "webpack5",
+    builder: 'webpack5',
   },
   stories: [],
   addons: [
-    '@storybook/addon-essentials',
     {
-      name: '@storybook/addon-postcss',
+      name: '@storybook/addon-essentials',
+      // DM: disabling docs panel because of potential versioning issue with `react-element-to-jsx-string`
+      // REF: https://github.com/storybookjs/storybook/issues/12747
       options: {
-        postcssLoaderOptions: {
-          implementation: require('postcss')
-        }
-      }
-    }
+        docs: false,
+      },
+    },
   ],
 };

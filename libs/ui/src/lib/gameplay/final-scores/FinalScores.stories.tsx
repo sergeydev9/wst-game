@@ -42,6 +42,6 @@ const scores: ScoreboardEntry[] = [
 
 export const FinalScores = () => (
     <FinalScoresComponent>
-        <ScoreBoard currentPlayerScore={{ rank: 8, player_name: 'The Hammer', score: 7000, rankDifference: 0 }} scores={scores} showDiff={true} />
+        <ScoreBoard currentPlayerScore={{ rank: 8, player_name: 'The Hammer', score: 7000, rankDifference: 0 }} scores={scores} />
     </FinalScoresComponent>
 )

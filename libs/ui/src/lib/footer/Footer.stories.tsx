@@ -1,25 +1,28 @@
-import FooterLinks from "./footer-links/FooterLinks";
-import Foot from "./Footer";
-import Socials from "../social-media-links/SocialMediaLinks";
-import { Headline } from "../typography/Typography";
+import FooterLinks from './footer-links/FooterLinks';
+import Footer from './Footer';
+import Socials from '../social-media-links/SocialMediaLinks';
+import { Headline } from '../typography/Typography';
 
 export default {
-    component: Foot,
-    title: "Page Sections/Footer"
-}
+  component: Footer,
+  title: 'Page Sections/Footer',
+};
 
+export const FooterStory = () => {
+  return (
+    <Footer>
+      <FooterLinks className="cursor-pointer">
+        <Headline>Who Said True For Schools</Headline>
+        <Headline>Privacy Policy</Headline>
+        <Headline>Terms &amp; Conditions</Headline>
+      </FooterLinks>
+      <Socials
+        fbook="facebook.com"
+        insta="instagram.com"
+        twitter="twitter.com"
+      />
+    </Footer>
+  );
+};
 
-const Template = () => {
-    return (
-        <Foot>
-            <FooterLinks className="cursor-pointer">
-                <Headline>Who Said True For Schools</Headline>
-                <Headline>Privacy Policy</Headline>
-                <Headline>Terms &amp; Conditions</Headline>
-            </FooterLinks>
-            <Socials fbook="facebook.com" insta="instagram.com" twitter="twitter.com" />
-        </Foot>
-    )
-}
-
-export const Footer = Template.bind({})
+FooterStory.storyName = 'Footer';

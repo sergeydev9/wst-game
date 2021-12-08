@@ -1,5 +1,4 @@
 import { UserStory } from '@whosaidtrue/app-interfaces';
-import { Title3 } from '../typography/Typography';
 import StoryCarousel from './Carousel';
 
 export default {

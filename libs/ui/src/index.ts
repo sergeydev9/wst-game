@@ -14,7 +14,6 @@ export { default as RadioInput } from './lib/inputs/radio-input/RadioInput';
 export { default as SecurityCodeDigit } from './lib/inputs/security-code-digit/SecurityCodeDigit';
 export { default as SelectDropdown } from './lib/inputs/select-dropdown/SelectDropdown';
 export { default as Toggle } from './lib/inputs/toggle/Toggle';
-export { default as NavLogo } from './lib/nav-logo/NavLogo';
 export { default as RerollNamesButton } from './lib/button/reroll-names/RerollNames';
 export { default as ReaderAnnouncement } from './lib/messages/reader-announcement/ReaderAnnouncement';
 export { default as FaqItem } from './lib/faq/FaqItem';

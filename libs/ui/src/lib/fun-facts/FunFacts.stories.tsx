@@ -13,7 +13,7 @@ export default {
 export const Carousel = () => {
     return (
         <QuestionCard questionNumber={1} category="Entertainment" totalQuestions={9}>
-            <QuestionResults guess={3} correctAnswer={3} hasGuessed={true} pointsEarned={1500}>
+            <QuestionResults guess={'3'} correctAnswer={'3'} hasGuessed={true} pointsEarned={1500}>
                 <FactsCarousel>
                     <MostSimilar groupWide={true} totalCommon={8} totalQuestions={9} heading="Gentle Doctor &amp; Happy Wagon" />
                     <GroupComparison groupPercentage={10} globalPercentage={80} isBucketList={true} questionText="Have tasted the nectar" />
@@ -29,7 +29,7 @@ export const Carousel = () => {
 export const MostSimilarToYou = () => {
     return (
         <QuestionCard questionNumber={1} category="Entertainment" totalQuestions={9}>
-            <QuestionResults guess={3} correctAnswer={3} hasGuessed={true} pointsEarned={1500}>
+            <QuestionResults guess={'3'} correctAnswer={'3'} hasGuessed={true} pointsEarned={1500}>
                 <FactsCarousel>
                     <MostSimilar groupWide={false} totalCommon={8} totalQuestions={9} heading="Psycho Giraffe" />
                 </FactsCarousel>
@@ -41,7 +41,7 @@ export const MostSimilarToYou = () => {
 export const MostSimilarOverall = () => {
     return (
         <QuestionCard questionNumber={1} category="Entertainment" totalQuestions={9}>
-            <QuestionResults guess={3} correctAnswer={3} hasGuessed={true} pointsEarned={1500}>
+            <QuestionResults guess={'3'} correctAnswer={'3'} hasGuessed={true} pointsEarned={1500}>
                 <FactsCarousel>
                     <MostSimilar groupWide={true} totalCommon={8} totalQuestions={9} heading="Gentle Doctor &amp; Happy Wagon" />
                 </FactsCarousel>
@@ -53,7 +53,7 @@ export const MostSimilarOverall = () => {
 export const BucketList = () => {
     return (
         <QuestionCard questionNumber={1} category="Entertainment" totalQuestions={9}>
-            <QuestionResults guess={3} correctAnswer={3} hasGuessed={true} pointsEarned={1500}>
+            <QuestionResults guess={'3'} correctAnswer={'3'} hasGuessed={true} pointsEarned={1500}>
                 <FactsCarousel>
                     <GroupComparison groupPercentage={10} globalPercentage={80} isBucketList={true} questionText="Have tasted the nectar" />
                 </FactsCarousel>
@@ -65,7 +65,7 @@ export const BucketList = () => {
 export const YourGroupVsTheWorld = () => {
     return (
         <QuestionCard questionNumber={1} category="Entertainment" totalQuestions={9}>
-            <QuestionResults guess={3} correctAnswer={3} hasGuessed={true} pointsEarned={1500}>
+            <QuestionResults guess={'3'} correctAnswer={'3'} hasGuessed={true} pointsEarned={1500}>
                 <FactsCarousel>
                     <GroupComparison groupPercentage={50} globalPercentage={30} isBucketList={false} questionText="Have tasted the nectar" />
                 </FactsCarousel>

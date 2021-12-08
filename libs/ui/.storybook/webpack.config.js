@@ -23,10 +23,13 @@ module.exports = async ({ config, mode }) => {
       {
         loader: 'postcss-loader',
         options: {
+          postcssOptions: {
+            plugins: [['tailwindcss'], ['autoprefixer']],
+          },
           sourceMap: true,
-        }
-      }
+        },
+      },
     ],
-  })
+  });
   return config;
 };
