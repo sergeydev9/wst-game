@@ -30,7 +30,7 @@ const DeckList: React.FC = () => {
                     <Divider dividerColor='white' />
                 </div>
             )}
-            <Title2 className="text-true-white">{owned.length > 0 ? 'Play Other ' : ''}Decks</Title2>
+            <Title2 className="text-true-white">Get More Decks</Title2>
             <DeckCardSet decks={notOwned} owned={false} />
         </>
     )
