@@ -65,7 +65,7 @@ const QuestionResults: React.FC<QuestionAnswersProps> = ({
                     {/* follow up */}
                     <GameContentCard>
                         <h3 className="text-center text-lg sm:text-xl font-black">Do tell...</h3>
-                        <BodyText className="whitespace-pre-wrap">{followUp}</BodyText>
+                        <BodyText className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: followUp.replace('\\n', '<br />') }}></BodyText>
                     </GameContentCard>
 
                     {/* pie charts */}
