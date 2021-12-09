@@ -38,7 +38,7 @@ const initializePlayer = async (socket: Socket) => {
     const domain = getDomainSocket(socket.request.headers.origin);
 
     const oneLinersList = await oneLiners.getSelection(
-      domain !== process.env.DOMAIN
+      domain === process.env.FOR_SCHOOLS_DOMAIN
     );
 
     await pubClient.set(

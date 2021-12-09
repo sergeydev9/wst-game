@@ -19,14 +19,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     try {
         const domain = getDomain(req);
-        let result: QueryResult;
-
-        // DOMAIN is normal domain
-        if (domain === process.env.DOMAIN) {
-            result = await oneLiners.getSelection(false);
-        } else {
-            result = await oneLiners.getSelection(true);
-        }
+        const result = await oneLiners.getSelection(domain === process.env.FOR_SCHOOLS_DOMAIN);
 
         // replace escaped newlines with unescaped new lines
         const processed = result.rows.map(oneLiner => {
