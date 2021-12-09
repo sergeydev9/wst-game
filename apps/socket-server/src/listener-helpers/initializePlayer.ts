@@ -26,9 +26,15 @@ function getDomainSocket(origin: string) {
 const initializePlayer = async (socket: Socket) => {
   const playersKey = socket.keys.currentPlayers;
 
-  const data = await pubClient.get(Keys.oneLiners(socket.gameId));
+  const lock = await pubClient.set(
+    Keys.oneLiners(socket.gameId),
+    1,
+    'EX',
+    10,
+    'NX'
+  );
 
-  if (!data) {
+  if (lock) {
     const domain = getDomainSocket(socket.request.headers.origin);
 
     const oneLinersList = await oneLiners.getSelection(
