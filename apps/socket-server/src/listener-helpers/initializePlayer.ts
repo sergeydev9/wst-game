@@ -7,13 +7,33 @@ import sendPlayerList from './sendPlayerList';
 import Keys from '../keys';
 import sendOneLiners from './sendOneLiners';
 
+function getDomainSocket(origin: string) {
+  if (!origin) return;
+
+  if (origin.includes('whosaidtrue.com')) {
+    return 'www.whosaidtrue.com';
+  } else if (origin.includes('whosaidtrueforschools.com')) {
+    return 'www.whosaidtrueforschools.com';
+  } else {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('unknown origin');
+    } else {
+      return origin;
+    }
+  }
+}
+
 const initializePlayer = async (socket: Socket) => {
   const playersKey = socket.keys.currentPlayers;
 
   const data = await pubClient.get(Keys.oneLiners(socket.gameId));
 
   if (!data) {
-    const oneLinersList = await oneLiners.getSelection(false);
+    const domain = getDomainSocket(socket.request.headers.origin);
+
+    const oneLinersList = await oneLiners.getSelection(
+      domain !== process.env.DOMAIN
+    );
 
     await pubClient.set(
         Keys.oneLiners(socket.gameId),
