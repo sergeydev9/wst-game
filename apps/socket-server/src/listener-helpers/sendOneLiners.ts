@@ -11,7 +11,7 @@ const sendOneLiners = async (socket: Socket) => {
 
   const oneLiners = await pubClient.get(Keys.oneLiners(gameId));
 
-  socket.emit(types.ONE_LINERS, oneLiners);
+  socket.emit(types.ONE_LINERS, JSON.parse(oneLiners));
 };
 
 export default sendOneLiners;

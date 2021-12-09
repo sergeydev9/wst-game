@@ -110,8 +110,8 @@ export const SocketProvider: React.FC = ({ children }) => {
         });
       });
 
-      connection.on(types.ONE_LINERS, (e) => {
-        dispatch(setUpcomingLines(JSON.parse(e)));
+      connection.on(types.ONE_LINERS, (lines: string[]) => {
+        dispatch(setUpcomingLines(lines));
       });
 
       connection.on('connect_error', () => {
