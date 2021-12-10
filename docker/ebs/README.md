@@ -21,8 +21,8 @@ docker/build.sh --push
 3. Commit build images changes and create a new tag same as the build images docker tag.
 
 ```
-TAG=v20211201-57e0324
-git commit docker/ebs/docker-compose.yml -m "deploy $TAG"
+TAG=v20211209-76c3264
+git commit -m "deploy $TAG"
 git push origin dev
 
 git tag $TAG
