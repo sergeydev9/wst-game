@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { Application } from 'express';
 import { mocked } from 'ts-jest/utils';
-import { signUserPayload } from '@whosaidtrue/middleware';
+import { signGameToken, signUserPayload } from '@whosaidtrue/middleware';
 import { questionRatings, appRatings } from '../../db';
 import App from '../../App';
 import { QueryResult } from 'pg';
@@ -14,6 +14,7 @@ const mockedAppRatings = mocked(appRatings, true);
 describe('ratings routes', () => {
     let app: Application;
     const validToken = signUserPayload({ id: 1, email: 'email@email.com', roles: ["user"] })
+    const gameToken = signGameToken(14, 'Test Player', false, 17);
 
     beforeAll(() => {
         app = new App().app;
@@ -30,7 +31,7 @@ describe('ratings routes', () => {
             supertest(app)
                 .post('/ratings/question')
                 .set('Authorization', `Bearer ${validToken}`)
-                .send({ questionId: 123, rating: 'great' })
+                .send({ gameToken, questionId: 123, rating: 'great' })
                 .expect(201, done)
         })
 
@@ -39,7 +40,7 @@ describe('ratings routes', () => {
             supertest(app)
                 .post('/ratings/question')
                 .set('Authorization', `Bearer ${validToken}`)
-                .send({ questionId: 123, rating: 'bad' })
+                .send({ gameToken, questionId: 123, rating: 'bad' })
                 .expect(201, done)
         })
 
@@ -47,15 +48,16 @@ describe('ratings routes', () => {
             supertest(app)
                 .post('/ratings/question')
                 .set('Authorization', `Bearer ${validToken}`)
-                .send({ questionId: 123, rating: 'bads' })
+                .send({ gameToken, questionId: 123, rating: 'bads' })
                 .expect(422, done)
         })
 
-        it('should return 401 if no valid token', (done) => {
+        // DM: allow anonymous players to submit ratings
+        it('should return 201 if no valid token', (done) => {
             supertest(app)
                 .post('/ratings/question')
-                .send({ questionId: 123, rating: 'bad' })
-                .expect(401, done)
+                .send({ gameToken, questionId: 123, rating: 'bad' })
+                .expect(201, done)
         })
 
 
@@ -65,7 +67,7 @@ describe('ratings routes', () => {
             supertest(app)
                 .post('/ratings/question')
                 .set('Authorization', `Bearer ${validToken}`)
-                .send({ questionId: 123, rating: 'bad' })
+                .send({ gameToken, questionId: 123, rating: 'bad' })
                 .expect(500, done)
         })
     })

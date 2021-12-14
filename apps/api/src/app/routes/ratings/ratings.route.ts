@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { ERROR_MESSAGES } from '@whosaidtrue/util';
 import { idQuery, appRating, questionRating } from '@whosaidtrue/validation';
 import { Request, Response, Router } from 'express';
@@ -27,17 +28,26 @@ router.get('/question', [...idQuery], passport.authenticate('jwt', { session: fa
     }
 })
 
-router.post('/question', [...questionRating], passport.authenticate('jwt', { session: false }), async (req: Request, res: Response) => {
-    const { id } = req.user as TokenPayload;
-    const { questionId, rating } = req.body;
+router.post(
+  '/question',
+  [...questionRating],
+  passport.authenticate(['jwt', 'anonymous'], { session: false }),
+  async (req: Request, res: Response) => {
+    const { id } = req.user ? (req.user as TokenPayload) : { id: null };
+    const { gameToken, questionId, rating } = req.body;
+
     try {
-        await questionRatings.submitRating(id, questionId, rating);
-        res.status(201).send();
+      const { playerId } = jwt.verify(gameToken, process.env.JWT_SECRET) as {
+        playerId: number;
+      };
+      await questionRatings.submitRating(id, playerId, questionId, rating);
+      res.status(201).send();
     } catch (e) {
-        logError('Error while submitting user question rating', e);
-        res.status(500).send(ERROR_MESSAGES.unexpected)
+      logError('Error while submitting user question rating', e);
+      res.status(500).send(ERROR_MESSAGES.unexpected);
     }
-})
+  }
+);
 
 /**
  * Check if a user has rated the app

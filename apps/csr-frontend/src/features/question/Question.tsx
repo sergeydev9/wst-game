@@ -32,7 +32,6 @@ import ReaderAnnouncement from "./ReaderAnnouncement";
 import { showError, useSocket } from "..";
 import { payloads, types } from "@whosaidtrue/api-interfaces";
 import QuestionResults from './QuestionResults';
-import { isLoggedIn } from "../auth/authSlice";
 import RateQuestion from "../ratings/RateQuestion";
 import OneLiners from '../one-liners/OneLiners';
 import { guessAsPercentage } from '../../util/functions';
@@ -48,7 +47,6 @@ const Question: React.FC = () => {
     const [submittingGuess, setSubmittingGuess] = useState(false);
     const [submittingAnswer, setSubmittingAnswer] = useState(false);
     const { sendMessage } = useSocket();
-    const loggedIn = useAppSelector(isLoggedIn);
     const isReader = useAppSelector(selectIsReader);
     const text = useAppSelector(selectText);
     const hasPassed = useAppSelector(selectHasPassed);
@@ -158,7 +156,7 @@ const Question: React.FC = () => {
                         questionText={guessText}
                         followUp={followUp}
                     >
-                        {loggedIn && <RateQuestion />}
+                        <RateQuestion />
                     </QuestionAnswers>
                 )}
                 {screen === 'scoreResults' && <QuestionResults />}

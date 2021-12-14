@@ -3,13 +3,14 @@ import { TEST_DB_CONNECTION } from '@whosaidtrue/util';
 import { cleanDb } from '../util/cleanDb';
 import QuestionRatings from './QuestionRatings.dao';
 import Users from '../users/Users.dao';
-import { setupQuestion } from '../util/testDependencySetup';
+import { setupGamePlayer, setupQuestion } from '../util/testDependencySetup';
 
 describe('AppRatings', () => {
     let pool: Pool;
     let ratings: QuestionRatings;
     let users: Users;
     let userId: number;
+    let playerId: number;
     let questionId: number;
 
     beforeAll(async () => {
@@ -23,6 +24,8 @@ describe('AppRatings', () => {
         const { rows } = await users.register('email@email.com', 'password123', 'www.test.com')
         userId = rows[0].id;
         const { question_ids } = await setupQuestion(pool);
+        const gamePlayer = await setupGamePlayer(pool);
+        playerId = gamePlayer[0];
         questionId = question_ids[0];
     })
 
@@ -33,7 +36,7 @@ describe('AppRatings', () => {
     describe('submitRating', () => {
 
         it('should submit a question rating, returning rowcount 1', async () => {
-            const actual = await ratings.submitRating(userId, questionId, 'bad');
+            const actual = await ratings.submitRating(userId, playerId, questionId, 'bad');
             expect(actual.rowCount).toEqual(1);
         })
     })
@@ -41,7 +44,7 @@ describe('AppRatings', () => {
     describe('getByUserId', () => {
 
         it('should return the rating if one has been submitted', async () => {
-            await ratings.submitRating(userId, questionId, 'bad');
+            await ratings.submitRating(userId, playerId, questionId, 'bad');
 
             const result = await ratings.getByUserId(userId, questionId);
             const actual = result.rows[0].rating;

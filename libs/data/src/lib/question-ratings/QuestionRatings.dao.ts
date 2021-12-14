@@ -30,12 +30,12 @@ class QuestionRatings extends Dao {
         return this.pool.query(query);
     }
 
-    submitRating(userId: number, questionId: number, rating: UserRating): Promise<QueryResult> {
+    submitRating(userId: number, playerId: number, questionId: number, rating: UserRating): Promise<QueryResult> {
         const query = {
             text: `
-                INSERT INTO user_question_ratings (user_id, question_id, rating)
-                VALUES ($1, $2, $3)`,
-            values: [userId, questionId, rating]
+                INSERT INTO user_question_ratings (user_id, player_id, question_id, rating)
+                VALUES ($1, $2, $3, $4)`,
+            values: [userId, playerId, questionId, rating]
         }
 
         return this.pool.query(query)
