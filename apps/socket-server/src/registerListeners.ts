@@ -501,6 +501,7 @@ const registerListeners = (socket: Socket, io: Server) => {
      * MOVE TO SCORES FROM ANSWERS
      */
     socket.on(types.MOVE_TO_QUESTION_RESULTS, () => {
+      pubClient.set(socket.keys.currentQuestionStatus, 'results');
       sendToAll(types.MOVE_TO_QUESTION_RESULTS);
     });
 
@@ -516,6 +517,7 @@ const registerListeners = (socket: Socket, io: Server) => {
      * END QUESTION AND MOVE TO ANSWERS
      */
     socket.on(types.MOVE_TO_ANSWER, async (msg: payloads.QuestionSkip, ack) => {
+      pubClient.set(socket.keys.currentQuestionStatus, 'answer');
       logIncoming(types.MOVE_TO_ANSWER, msg, source);
 
       // acquire lock

@@ -4,6 +4,7 @@ export const PLAYER_LEFT_GAME = 'PlayerLeftGame';
 export const REMOVE_PLAYER = 'RemovePlayer';
 export const UPDATE_INACTIVE = 'UpdateInactivePlayers';
 export const SET_QUESTION_STATE = 'SetQuestionState';
+export const SET_QUESTION_STATE_RESYNC = 'SetQuestionStateResync';
 export const SET_QUESTION_RESULTS = 'SetQuestionResult';
 export const ANSWER_PART_1 = 'AnswerPart1';
 export const ANSWER_PART_2 = 'AnswerPart2';

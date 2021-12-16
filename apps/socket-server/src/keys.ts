@@ -12,6 +12,7 @@ export class Keys {
   readonly removedPlayers: string;
   readonly readerList: string;
   readonly currentQuestion: string; // question data
+  readonly currentQuestionStatus: string; // question data
   readonly answerIds: string;
   readonly hasPassed: string;
   readonly totalQuestions: string;
@@ -33,6 +34,7 @@ export class Keys {
     this.readerList = `${this.gameKey}:readers`; // set of players. Used to build a reader queue
     this.currentQuestionId = `${this.gameKey}:currentQuestionId`;
     this.currentQuestion = `${this.gameKey}:currentQuestion`; // question data in json string format
+    this.currentQuestionStatus = `${this.gameKey}:currentQuestionStatus`; // question data in json string format
     this.answerIds = `${this.playerKey}:answerIds`;
     this.hasPassed = `${this.playerKey}:hasPassed`; // used to track whether or not a player has passed
     this.totalQuestions = `${this.gameKey}:totalQuestions`; // total number of questions for a game

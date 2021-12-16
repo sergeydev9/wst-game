@@ -6,6 +6,7 @@ import { ONE_DAY } from '../constants';
 import sendPlayerList from './sendPlayerList';
 import Keys from '../keys';
 import sendOneLiners from './sendOneLiners';
+import { payloads, types } from '@whosaidtrue/api-interfaces';
 
 function getDomainSocket(origin: string) {
   if (!origin) return;
@@ -42,14 +43,32 @@ const initializePlayer = async (socket: Socket) => {
     );
 
     await pubClient.set(
-        Keys.oneLiners(socket.gameId),
-        JSON.stringify(oneLinersList.rows.map((row) => row.text)),
-        'EX',
-        ONE_DAY
+      Keys.oneLiners(socket.gameId),
+      JSON.stringify(oneLinersList.rows.map((row) => row.text)),
+      'EX',
+      ONE_DAY
     );
   }
 
   sendOneLiners(socket);
+
+  const currentQuestion = await pubClient.get(socket.keys.currentQuestion);
+
+  if (currentQuestion) {
+    const data = JSON.parse(currentQuestion);
+
+    const notAnsweredKey = Keys.haveNotAnswered(data.gameQuestionId);
+    const notAnsweredStrings = await pubClient.smembers(notAnsweredKey);
+    const haveNotAnswered = notAnsweredStrings.map((s) => JSON.parse(s));
+
+    const status = await pubClient.get(socket.keys.currentQuestionStatus);
+
+    socket.emit(types.SET_QUESTION_STATE_RESYNC, {
+      ...data,
+      haveNotAnswered,
+      status: status ? status : '',
+    } as payloads.SetQuestionState);
+  }
 
   // change player status in DB
   await gamePlayers.setStatus(socket.playerId, 'connected');

@@ -36,6 +36,7 @@ import {
 } from '../game/gameSlice';
 import {
   setCurrentQuestion,
+  setCurrentQuestionResync,
   questionEnd,
   setReader,
   setHaveNotAnswered,
@@ -241,6 +242,18 @@ export const SocketProvider: React.FC = ({ children }) => {
         types.SET_QUESTION_STATE,
         (message: payloads.SetQuestionState) => {
           dispatch(setCurrentQuestion(message));
+
+          if (playerStatus === 'lobby' && message.status === 'question') {
+            dispatch(setPlayerStatus('inGame'));
+          }
+        }
+      );
+
+      connection.on(
+        types.SET_QUESTION_STATE_RESYNC,
+        (message: payloads.SetQuestionState) => {
+          console.log(message);
+          dispatch(setCurrentQuestionResync(message));
 
           if (playerStatus === 'lobby' && message.status === 'question') {
             dispatch(setPlayerStatus('inGame'));
