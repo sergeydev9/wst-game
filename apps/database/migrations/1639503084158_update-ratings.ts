@@ -22,6 +22,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     },
   });
 
+  // DM: here we are updating the legacy data to update to Nov 20th where user_id = 1 (Brian).
+  pgm.sql(
+      "UPDATE user_question_ratings SET created_at = '11/20/2021', updated_at = '11/20/2021' WHERE user_id = 1"
+  );
+
   pgm.createTrigger('user_question_ratings', 'update_updated_at_trigger', {
     when: 'BEFORE',
     operation: 'UPDATE',
@@ -29,10 +34,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     function: 'update_updated_at_column',
   });
 
-  // DM: here we are updating the legacy data to update to Nov 20th where user_id = 1 (Brian).
-  pgm.sql(
-    "UPDATE user_question_ratings SET created_at = '11/20/2021' WHERE user_id = 1"
-  );
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {
